@@ -1,0 +1,322 @@
+/* ============================================================
+   VRP Seminar — Design System
+   ============================================================ */
+
+:root {
+  /* Palette — Editorial (default) */
+  --ink:        #1a1814;
+  --ink-2:      #2d2a24;
+  --ink-3:      #55504a;
+  --muted:      #8a8278;
+  --line:       #d9d1c3;
+  --line-soft:  #ebe4d4;
+  --paper:      #f6f1e4;   /* warm cream */
+  --paper-2:    #efe8d5;
+  --paper-deep: #e7ddc3;
+
+  --accent:     #6b4af5;   /* violet */
+  --accent-2:   #e89321;   /* amber */
+  --accent-3:   #2b7a5e;   /* forest */
+
+  --route-1:    #6b4af5;
+  --route-2:    #e89321;
+  --route-3:    #2b7a5e;
+  --route-4:    #c13c4a;
+  --route-5:    #3b6acb;
+
+  --depot:      #1a1814;
+  --customer:   #55504a;
+
+  /* Type */
+  --font-display: "Instrument Serif", "Times New Roman", Georgia, serif;
+  --font-body:    "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, Menlo, monospace;
+
+  /* Scale (1920x1080) */
+  --fs-hero:     180px;
+  --fs-title:    76px;
+  --fs-subtitle: 44px;
+  --fs-body:     32px;
+  --fs-small:    26px;
+  --fs-micro:    20px;
+
+  /* Spacing */
+  --pad-x:       120px;
+  --pad-y:       5px;
+  --gap-1:       16px;
+  --gap-2:       32px;
+  --gap-3:       56px;
+  --gap-4:       96px;
+}
+
+/* Variants via [data-theme] on <deck-stage> */
+deck-stage[data-theme="blueprint"] {
+  --ink:       #0b2e4a;
+  --ink-2:     #123b5b;
+  --ink-3:     #3b5d7d;
+  --muted:     #6a87a4;
+  --line:      #bcd2e4;
+  --line-soft: #d7e5f0;
+  --paper:     #eef5fb;
+  --paper-2:   #e2edf6;
+  --paper-deep:#cfdff0;
+  --accent:    #1f64c4;
+  --accent-2:  #dc5a3e;
+  --accent-3:  #1b8a7a;
+  --route-1:   #1f64c4;
+  --route-2:   #dc5a3e;
+  --route-3:   #1b8a7a;
+  --route-4:   #8a55d1;
+  --route-5:   #c29912;
+  --depot:     #0b2e4a;
+  --customer:  #3b5d7d;
+}
+
+deck-stage[data-theme="midnight"] {
+  --ink:       #f0ece1;
+  --ink-2:     #d9d3c3;
+  --ink-3:     #a8a094;
+  --muted:     #6e695f;
+  --line:      #2f2c27;
+  --line-soft: #232120;
+  --paper:     #12110f;
+  --paper-2:   #1a1815;
+  --paper-deep:#201d18;
+  --accent:    #a78bfa;
+  --accent-2:  #f5b949;
+  --accent-3:  #4ed7a1;
+  --route-1:   #a78bfa;
+  --route-2:   #f5b949;
+  --route-3:   #4ed7a1;
+  --route-4:   #ff7a83;
+  --route-5:   #7aa8f0;
+  --depot:     #f0ece1;
+  --customer:  #a8a094;
+}
+
+/* Slides baseline */
+section.slide {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  padding: 32px var(--pad-x) 96px;
+  position: relative;
+  overflow: hidden;
+  font-feature-settings: "ss01", "cv11";
+}
+
+.slide * { box-sizing: border-box; }
+
+/* Utility chrome in corners */
+.slide-chrome {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  padding: 40px 56px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-family: var(--font-mono);
+  font-size: 26px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.slide-chrome * { font-size: inherit !important; }
+.slide-chrome .left { display: flex; gap: 28px; align-items: center; white-space: nowrap; }
+.slide-chrome .pg { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 26px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.tag::before {
+  content: "";
+  display: inline-block;
+  width: 28px;
+  height: 2px;
+  background: var(--accent);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--fs-title);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  font-weight: 400;
+  text-wrap: balance;
+  margin: 0;
+}
+
+.hero {
+  font-family: var(--font-display);
+  font-size: var(--fs-hero);
+  line-height: 0.9;
+  letter-spacing: -0.025em;
+  font-weight: 400;
+  margin: 0;
+}
+
+.kicker {
+  font-family: var(--font-mono);
+  font-size: 26px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.lede {
+  font-family: var(--font-display);
+  font-size: var(--fs-subtitle);
+  line-height: 1.15;
+  letter-spacing: -0.005em;
+  color: var(--ink-2);
+  font-weight: 400;
+  text-wrap: balance;
+}
+
+.body {
+  font-size: var(--fs-body);
+  line-height: 1.35;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+.body.small { font-size: var(--fs-small); line-height: 1.4; }
+
+.mono { font-family: var(--font-mono); }
+
+/* Section divider slides */
+.section-slide {
+  background: var(--ink);
+  color: var(--paper);
+}
+.section-slide .title { color: var(--paper); }
+.section-slide .kicker { color: var(--paper-deep); }
+.section-slide .tag { color: var(--paper-deep); }
+.section-slide .tag::before { background: var(--accent-2); }
+
+.section-slide.variant-amber { background: var(--accent-2); color: var(--ink); }
+.section-slide.variant-amber .title { color: var(--ink); }
+.section-slide.variant-amber .kicker { color: var(--ink-2); }
+.section-slide.variant-amber .tag { color: var(--ink-2); }
+.section-slide.variant-amber .tag::before { background: var(--ink); }
+
+.section-slide.variant-violet { background: var(--accent); color: var(--paper); }
+.section-slide.variant-violet .title { color: var(--paper); }
+.section-slide.variant-violet .kicker { color: var(--paper); opacity: 0.85; }
+
+/* Rule lines */
+.rule {
+  height: 1px;
+  background: var(--line);
+  width: 100%;
+}
+.rule-thick { height: 2px; background: var(--ink); }
+
+/* Card */
+.card {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  padding: 36px 40px;
+}
+
+/* Grid helpers */
+.row { display: flex; gap: var(--gap-3); }
+.col { display: flex; flex-direction: column; gap: var(--gap-2); }
+
+/* Labeled stats */
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.stat .num {
+  font-family: var(--font-display);
+  font-size: 128px;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.stat .lbl {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* Page numbering comes from JS */
+
+/* KaTeX overrides */
+.katex { font-size: 1.05em; }
+.katex-display { margin: 18px 0 !important; }
+
+/* Animations — generic */
+@keyframes drawPath {
+  from { stroke-dashoffset: var(--len, 2000); }
+  to   { stroke-dashoffset: 0; }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.12); opacity: 0.85; }
+}
+
+/* Applied only on the active slide — preserves idle state on others */
+[data-deck-active] .anim-fade { animation: fadeUp 700ms both ease-out; }
+[data-deck-active] .anim-fade-1 { animation: fadeUp 700ms both ease-out; animation-delay: 120ms; }
+[data-deck-active] .anim-fade-2 { animation: fadeUp 700ms both ease-out; animation-delay: 260ms; }
+[data-deck-active] .anim-fade-3 { animation: fadeUp 700ms both ease-out; animation-delay: 420ms; }
+
+[data-deck-active] .anim-draw {
+  stroke-dasharray: var(--len, 2000);
+  animation: drawPath 1200ms both ease-out;
+}
+[data-deck-active] .anim-draw-1 { animation-delay: 150ms; }
+[data-deck-active] .anim-draw-2 { animation-delay: 450ms; }
+[data-deck-active] .anim-draw-3 { animation-delay: 750ms; }
+[data-deck-active] .anim-draw-4 { animation-delay: 1000ms; }
+
+[data-deck-active] .anim-pulse { animation: pulse 2.2s infinite ease-in-out; }
+
+/* Tweaks panel */
+.tweaks {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 2147483500;
+  background: rgba(20,18,14,0.94);
+  backdrop-filter: blur(12px);
+  color: #f0ece1;
+  border-radius: 14px;
+  padding: 16px 18px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  display: none;
+  min-width: 220px;
+  box-shadow: 0 12px 44px rgba(0,0,0,0.32);
+}
+.tweaks[data-open] { display: block; }
+.tweaks h4 { margin: 0 0 12px; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #a8a094; font-weight: 500; }
+.tweaks .row { gap: 8px; align-items: center; display: flex; margin-bottom: 8px; }
+.tweaks button {
+  appearance: none; background: transparent; color: inherit; border: 1px solid rgba(255,255,255,0.18);
+  padding: 8px 12px; border-radius: 8px; cursor: pointer; font: inherit; letter-spacing: inherit;
+  text-transform: uppercase;
+}
+.tweaks button[data-active] { background: #f0ece1; color: #12110f; border-color: #f0ece1; }
+.tweaks label { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 11px; color: #d9d3c3; }
+.tweaks .grp { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; margin-top: 8px; }

@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Vehicle Routing Problems — Seminar</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<!-- Google Fonts: Instrument Serif (display) + Inter (body) + JetBrains Mono -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- KaTeX for math -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+<link rel="stylesheet" href="styles.css"/>
+
+<style>
+  html, body { margin: 0; padding: 0; background: #000; overflow: hidden; height: 100%; }
+  body { font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif; }
+</style>
+</head>
+<body>
+
+<!-- Default-tweaks block: persisted by host when the user changes them -->
+<script>
+const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
+  "theme": "editorial",
+  "showGrid": false
+}/*EDITMODE-END*/;
+</script>
+
+<deck-stage width="1920" height="1080" id="stage">
+  <section id="root-mount" class="slide" data-label="loading" style="background: #f6f1e4; display:flex; align-items:center; justify-content:center; font-family: 'Instrument Serif', serif;">
+    <div style="font-size: 80px;">Loading…</div>
+  </section>
+</deck-stage>
+
+<!-- Tweaks panel — appears when user toggles Tweaks in toolbar -->
+<div id="tweaks" class="tweaks">
+  <h4>Tweaks</h4>
+  <div class="row">
+    <label>Theme</label>
+  </div>
+  <div class="row">
+    <button data-theme="editorial">Editorial</button>
+    <button data-theme="blueprint">Blueprint</button>
+    <button data-theme="midnight">Midnight</button>
+  </div>
+</div>
+
+<script src="deck-stage.js"></script>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="components.jsx"></script>
+<script type="text/babel" src="demo.jsx"></script>
+<script type="text/babel" src="slides-intro.jsx"></script>
+<script type="text/babel" src="slides-or.jsx"></script>
+<script type="text/babel" src="slides-a.jsx"></script>
+<script type="text/babel" src="slides-b.jsx"></script>
+
+<script type="text/babel">
+// ---------- Mount all slides into <deck-stage> ----------
+(function mountDeck() {
+  function tryMount() {
+    if (!window.Slide30 || !window.ClarkeWrightDemo || !window.SlideHistory || !window.SlideNetwork || !window.SlideORLink || !window.SlideIntroSection) {
+      setTimeout(tryMount, 60);
+      return;
+    }
+    const stage = document.getElementById("stage");
+    const placeholder = document.getElementById("root-mount");
+    if (placeholder) placeholder.remove();
+
+    // Deck order (37 slides):
+    //   1  Cover
+    //   2  Part I — Introduction  (section header)
+    //   3  History & origins
+    //   4  Operations Research link
+    //   5  A problem you meet every day
+    //   6  The economic scale
+    //   7  Who uses VRP today
+    //   8  Part II — Foundations  (section header)
+    //   9  Node
+    //  10  Edge
+    //  11  Directed arc
+    //  12  Network
+    //  13  Anatomy
+    //  14  Road → complete graph
+    //  15  Graph notation
+    //  16  TSP
+    //  17  TSP → VRP
+    //  18..37  Parts III–VII as before (Slide11..Slide30)
+    const slides = [
+      Slide01,
+      SlideIntroSection,
+      SlideHistory,
+      SlideORLink,
+      Slide02, Slide03,
+      SlideWhoUsesIt,
+      Slide05,
+      SlideNode, SlideEdge, SlideDirectedArc, SlideNetwork,
+      Slide06, Slide07, Slide08, Slide09, Slide10,
+      Slide11, Slide12, Slide13, Slide14, Slide15,
+      Slide16, Slide17, Slide18, Slide19, Slide20,
+      Slide21, Slide22, Slide23, Slide24, Slide25,
+      Slide26, Slide27, Slide28, Slide29, Slide30,
+    ];
+
+    // Render each slide's React tree into a detached host <div>, then append
+    // the resulting <section> (which is the component's root element) into <deck-stage>.
+    slides.forEach((SlideComp, idx) => {
+      const host = document.createElement("div");
+      // We render, then move the rendered <section> out and drop the host.
+      ReactDOM.createRoot(host).render(<SlideComp/>);
+      // Wait for React to render, then move
+      setTimeout(() => {
+        const section = host.firstElementChild;
+        if (section) stage.appendChild(section);
+      }, 0 + idx * 2);
+    });
+
+    // Re-apply KaTeX after children settle
+    setTimeout(() => {
+      if (window.renderMathInElement) {
+        // not used — we render via imperative TeX component
+      }
+    }, 500);
+  }
+  tryMount();
+})();
+
+// ---------- Page counter sync ----------
+window.addEventListener('message', (ev) => {
+  const d = ev.data || {};
+  if (typeof d.slideIndexChanged === 'number') {
+    const total = document.querySelectorAll('deck-stage > section.slide').length || 37;
+    const n = String(d.slideIndexChanged + 1).padStart(2, '0');
+    const t = String(total).padStart(2, '0');
+    document.querySelectorAll('[data-chrome-pg]').forEach(el => {
+      el.textContent = `${n} / ${t}`;
+    });
+  }
+});
+
+// ---------- Tweaks protocol ----------
+(function tweaks() {
+  const stage = document.getElementById("stage");
+  const panel = document.getElementById("tweaks");
+  const state = Object.assign({}, window.TWEAK_DEFAULS || {});
+
+  const apply = () => {
+    stage.setAttribute("data-theme", state.theme || "editorial");
+    panel.querySelectorAll("button[data-theme]").forEach(b => {
+      if (b.dataset.theme === (state.theme || "editorial")) b.setAttribute("data-active", "");
+      else b.removeAttribute("data-active");
+    });
+  };
+  apply();
+
+  panel.querySelectorAll("button[data-theme]").forEach(b => {
+    b.addEventListener("click", () => {
+      state.theme = b.dataset.theme;
+      apply();
+      try {
+        window.parent.postMessage({ type: "__edit_mode_set_keys", edits: { theme: state.theme } }, "*");
+      } catch (e) {}
+    });
+  });
+
+  window.addEventListener("message", (ev) => {
+    const d = ev.data || {};
+    if (d.type === "__activate_edit_mode") panel.setAttribute("data-open", "");
+    if (d.type === "__deactivate_edit_mode") panel.removeAttribute("data-open");
+  });
+  try {
+    window.parent.postMessage({ type: "__edit_mode_available" }, "*");
+  } catch (e) {}
+})();
+</script>
+
+</body>
+</html>

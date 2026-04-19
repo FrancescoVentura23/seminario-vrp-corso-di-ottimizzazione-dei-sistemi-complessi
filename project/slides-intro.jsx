@@ -16,7 +16,7 @@ function SlideIntroSection() {
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part One</div>
         <div className="hero" style={{ fontSize: 240 }}>Introduction.</div>
-        <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper-deep)" }}>
+        <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
           Where the VRP came from, who uses it today, and why it matters — the problem you meet every day and its economic scale.
         </div>
       </div>
@@ -91,14 +91,14 @@ function SlideWhoUsesIt() {
   // Brand wordmarks — stylized text-only representations, academic context.
   // Colors approximate each brand's primary hue.
   const companies = [
-    { name: "amazon",       brand: "#FF9900", sector: "E-commerce · last mile",    scale: "~6 B parcels / yr",   font: "'Inter', sans-serif", weight: 700, tracking: "-0.04em", style: "lower", swoop: true },
-    { name: "UPS",          brand: "#644117", sector: "Parcel delivery",           scale: "22 M pkgs / day",     logoImg: "assets/kisspng-united-parcel-service-united-states-postal-service-5b2d5c802e9631.4646807015296994561908.jpg" },
-    { name: "FedEx",        brand: "#4D148C", brand2: "#FF6600", sector: "Express logistics",         scale: "16 M shipments / day",font: "'Inter', sans-serif", weight: 800, tracking: "-0.03em", style: "mixed-fedex" },
-    { name: "DHL",          brand: "#D40511", sector: "International freight",     scale: "1.8 B shipments / yr",font: "'Inter', sans-serif", weight: 800, tracking: "0.04em", style: "upper" },
-    { name: "MAERSK",       brand: "#42B0D5", sector: "Container shipping",        scale: "4 M TEU fleet",       font: "'Inter', sans-serif", weight: 700, tracking: "0.02em", style: "upper" },
-    { name: "Walmart",      brand: "#0071CE", sector: "Store replenishment",       scale: "12 k US stores",      font: "'Inter', sans-serif", weight: 700, tracking: "-0.03em", style: "mixed", spark: "#FFC220" },
-    { name: "Uber Eats",    brand: "#06C167", sector: "On-demand food",            scale: "~2 B orders / yr",    logoImg: "assets/ubereats-logo.png" },
-    { name: "WM",           brand: "#00843D", sector: "Waste collection",          scale: "21 M customers",      font: "'Inter', sans-serif", weight: 800, tracking: "-0.02em", style: "upper", subtitle: "Waste Management" },
+    { name: "amazon",       brand: "#FF9900", sector: "E-commerce · last mile",    scale: "~6.3 B parcels / yr",  font: "'Inter', sans-serif", weight: 700, tracking: "-0.04em", style: "lower", swoop: true },
+    { name: "UPS",          brand: "#644117", sector: "Parcel delivery",           scale: "22.4 M pkgs / day",    font: "'Inter', sans-serif", weight: 800, tracking: "0.06em", style: "upper" },
+    { name: "FedEx",        brand: "#4D148C", brand2: "#FF6600", sector: "Express logistics",         scale: "16.6 M shipments / day", font: "'Inter', sans-serif", weight: 800, tracking: "-0.03em", style: "mixed-fedex" },
+    { name: "DHL",          brand: "#D40511", sector: "International freight",     scale: "~1.7 B shipments / yr", font: "'Inter', sans-serif", weight: 800, tracking: "0.04em", style: "upper" },
+    { name: "MAERSK",       brand: "#42B0D5", sector: "Container shipping",        scale: "~4.3 M TEU fleet",     font: "'Inter', sans-serif", weight: 700, tracking: "0.02em", style: "upper" },
+    { name: "Walmart",      brand: "#0071CE", sector: "Store replenishment",       scale: "4 605 US stores",      font: "'Inter', sans-serif", weight: 700, tracking: "-0.03em", style: "mixed", spark: "#FFC220" },
+    { name: "Uber Eats",    brand: "#06C167", sector: "On-demand food",            scale: "140 M active users",   font: "'Inter', sans-serif", weight: 700, tracking: "-0.02em", style: "mixed" },
+    { name: "WM",           brand: "#00843D", sector: "Waste collection",          scale: "~21 M customers",      font: "'Inter', sans-serif", weight: 800, tracking: "-0.02em", style: "upper", subtitle: "Waste Management" },
   ];
 
   const renderLogo = (c) => {
@@ -186,7 +186,7 @@ function SlideWhoUsesIt() {
             Also: <em>school bus routing, dial-a-ride, field service, telecom maintenance, vaccine cold-chain, humanitarian logistics</em>.
           </div>
           <div style={{ fontFamily: "var(--font-mono)", fontSize: 22, color: "var(--ink-3)", letterSpacing: "0.06em", whiteSpace: "nowrap", paddingLeft: 24 }}>
-            ≈ 2023–2024 reported metrics.
+            ≈ 2024–2025 reported metrics.
           </div>
         </div>
       </SlideFrame>
@@ -201,35 +201,32 @@ function SlideWhoUsesIt() {
 function SlideNode() {
   // Five sample nodes, spread out so annotations have room
   const nodes = [
-    { x: 220, y: 220, label: "1" },
-    { x: 560, y: 180, label: "2" },
-    { x: 820, y: 340, label: "3" },
-    { x: 340, y: 500, label: "4" },
-    { x: 680, y: 560, label: "5" },
+    { x: 220, y: 220, label: "v₁" },
+    { x: 560, y: 180, label: "v₂" },
+    { x: 820, y: 340, label: "v₃" },
+    { x: 340, y: 500, label: "v₄" },
+    { x: 680, y: 560, label: "v₅" },
   ];
   return (
     <section className="slide" data-label="Graph concepts — Node">
       <SlideFrame>
-        <div className="tag">02 · Graph theory · Node</div>
-        <h2 className="title" style={{ marginTop: 28 }}>A <em style={{ color: "var(--accent)" }}>node</em> is a point of interest.</h2>
+        <div className="tag">02 · Graph theory · Vertex (node)</div>
+        <h2 className="title" style={{ marginTop: 28 }}>A <em style={{ color: "var(--accent)" }}>vertex</em> is an element of the graph.</h2>
 
         <div style={{ marginTop: 50, display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 80, flex: 1, alignItems: "center" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
-            <div className="lede" style={{ fontSize: 44 }}>
-              In graph theory, a <em style={{ color: "var(--accent)" }}>node</em> (or <em>vertex</em>) represents an entity we care about.
+          <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+            <div className="lede" style={{ fontSize: 38, lineHeight: 1.22 }}>
+              A graph <em>G</em> has a finite, non-empty <em>vertex set</em> <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)" }}>V(G)</span> — its elements are called <em>vertices</em> (or, informally, <em>nodes</em>).
             </div>
-            <div className="body" style={{ color: "var(--ink-2)" }}>
-              In a VRP, every node is either a <em>customer</em> to serve or a <em>depot</em> where vehicles start and end.
+            <div className="body" style={{ color: "var(--ink-2)", fontSize: 26 }}>
+              In a VRP, every vertex is either a <em>customer</em> to serve or a <em>depot</em> where vehicles start and end.
             </div>
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "22px 26px" }}>
               <div className="kicker" style={{ fontSize: 22, marginBottom: 8 }}>Notation</div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 30, lineHeight: 1.5 }}>
-                V = {"{"} 0, 1, 2, …, n {"}"}<br/>
-                <span style={{ color: "var(--ink-3)" }}>with</span> vᵢ ∈ V <span style={{ color: "var(--ink-3)" }}>a single node</span>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 26, lineHeight: 1.55 }}>
+                V(G) = {"{"} v₀, v₁, v₂, …, vₙ {"}"}<br/>
+                <span style={{ color: "var(--ink-3)" }}>|V(G)| = n + 1 &nbsp;— the</span> order <span style={{ color: "var(--ink-3)" }}>of G</span>
               </div>
-            </div>
-            <div className="body small" style={{ color: "var(--ink-3)" }}>
-              Each node can carry <em>attributes</em>: coordinates (x, y), demand dᵢ, service time sᵢ, a time window [aᵢ, bᵢ]…
             </div>
           </div>
 
@@ -244,31 +241,193 @@ function SlideNode() {
               <rect x={0} y={0} width={1000} height={700} fill="url(#dotgrid-node)" opacity={0.5}/>
 
               {nodes.map((n, i) => (
-                <g key={i} className={i === 0 ? "anim-pulse" : ""} style={{ transformOrigin: `${n.x}px ${n.y}px`, transformBox: "fill-box" }}>
-                  <circle cx={n.x} cy={n.y} r={i === 0 ? 32 : 24}
-                          fill={i === 0 ? "var(--accent)" : "var(--paper)"}
-                          stroke={i === 0 ? "var(--accent)" : "var(--ink)"}
-                          strokeWidth={i === 0 ? 0 : 3}/>
-                  <text x={n.x} y={n.y + 9} textAnchor="middle"
-                        fontFamily="var(--font-mono)" fontSize={24} fontWeight={600}
-                        fill={i === 0 ? "var(--paper)" : "var(--ink)"}>
+                <g key={i} className="anim-fade-1">
+                  <circle cx={n.x} cy={n.y} r={36}
+                          fill="var(--paper)" stroke="var(--ink)" strokeWidth={3}/>
+                  <text x={n.x} y={n.y + 10} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={28} fontWeight={600}
+                        fill="var(--ink)">
                     {n.label}
                   </text>
                 </g>
               ))}
-              {/* Annotation on node 1 — leader line goes up-left to an open area */}
-              <g className="anim-fade-2">
-                <line x1={220} y1={188} x2={220} y2={120} stroke="var(--accent)" strokeWidth={1.5} strokeDasharray="4 4"/>
-                <text x={220} y={100} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={24} fill="var(--accent)">node v₁</text>
-              </g>
-              {/* Annotation on node 3 — leader line goes right into empty margin */}
-              <g className="anim-fade-3">
-                <line x1={844} y1={340} x2={920} y2={340} stroke="var(--ink-3)" strokeWidth={1.2} strokeDasharray="4 4"/>
-                <text x={924} y={346} fontFamily="var(--font-mono)" fontSize={24} fill="var(--ink-3)" textAnchor="start">vⱼ</text>
-              </g>
             </svg>
             <div style={{ position: "absolute", bottom: 16, left: 30, fontFamily: "var(--font-mono)", fontSize: 20, color: "var(--ink-3)", letterSpacing: "0.06em" }}>
               FIG. — a set of five isolated nodes — no connections yet.
+            </div>
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
+// ==========================================================
+// NODE ATTRIBUTES — cycle through service time / time window / profit-cost
+// ==========================================================
+function SlideNodeAttributes() {
+  // Same five nodes as SlideNode, slightly repositioned to leave room for a pill above each
+  const nodes = [
+    { x: 220, y: 280, label: "v₁" },
+    { x: 560, y: 240, label: "v₂" },
+    { x: 820, y: 400, label: "v₃" },
+    { x: 340, y: 560, label: "v₄" },
+    { x: 680, y: 600, label: "v₅" },
+  ];
+
+  const attributes = [
+    {
+      key: "service",
+      name: "Service time",
+      mono: "sᵢ",
+      desc: "How long the vehicle must stay at node i — unloading, paperwork, handover.",
+      color: "var(--ink)",
+      values: [
+        { display: "0.25 h" },
+        { display: "0.50 h" },
+        { display: "0.15 h" },
+        { display: "0.40 h" },
+        { display: "0.30 h" },
+      ],
+    },
+    {
+      key: "window",
+      name: "Time window",
+      mono: "[aᵢ, bᵢ]",
+      desc: "Earliest and latest arrival times allowed at node i (in hours of the day).",
+      color: "var(--accent)",
+      values: [
+        { display: "[8, 12]" },
+        { display: "[9, 13]" },
+        { display: "[10, 14]" },
+        { display: "[8, 11]" },
+        { display: "[13, 17]" },
+      ],
+    },
+    {
+      key: "price",
+      name: "Profit or cost",
+      mono: "pᵢ",
+      desc: "Revenue for serving i (green) or penalty that applies if i is visited (red).",
+      color: "var(--accent-3)",
+      values: [
+        { display: "+€40", color: "#2b7a5e" },
+        { display: "−€15", color: "#c14f3c" },
+        { display: "+€28", color: "#2b7a5e" },
+        { display: "−€22", color: "#c14f3c" },
+        { display: "+€35", color: "#2b7a5e" },
+      ],
+    },
+  ];
+
+  const [activeIdx, setActiveIdx] = React.useState(0);
+  const listRef = React.useRef(null);
+
+  // React's event delegation breaks when the <section> is moved out of the
+  // host div where createRoot() was called. Attach a native click listener
+  // on the list container instead, and dispatch via data-attr-idx.
+  React.useEffect(() => {
+    const el = listRef.current;
+    if (!el) return;
+    const handler = (e) => {
+      const card = e.target.closest("[data-attr-idx]");
+      if (!card || !el.contains(card)) return;
+      const idx = parseInt(card.getAttribute("data-attr-idx"), 10);
+      if (!Number.isNaN(idx)) setActiveIdx(idx);
+    };
+    el.addEventListener("click", handler);
+    return () => el.removeEventListener("click", handler);
+  }, []);
+
+  const active = attributes[activeIdx];
+
+  return (
+    <section className="slide" data-label="Graph concepts — Node attributes">
+      <SlideFrame>
+        <div className="tag">02 · Graph theory · Node attributes</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          Each node carries its own <em style={{ color: "var(--accent)" }}>attributes</em>.
+        </h2>
+
+        <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1fr 1.35fr", gap: 70, flex: 1, alignItems: "stretch" }}>
+          {/* Left — list of attributes */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 20, justifyContent: "center" }}>
+            <div className="lede" style={{ fontSize: 30, lineHeight: 1.25, color: "var(--ink-2)" }}>
+              In a VRP instance, every customer carries application-specific data. The three most common attributes:
+            </div>
+            <div ref={listRef} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              {attributes.map((a, i) => {
+                const isActive = i === activeIdx;
+                return (
+                  <div key={a.key} data-attr-idx={i} style={{
+                    padding: "18px 22px",
+                    border: `1px solid ${isActive ? "var(--accent)" : "var(--line)"}`,
+                    borderLeft: `${isActive ? 4 : 1}px solid ${isActive ? "var(--accent)" : "var(--line)"}`,
+                    background: isActive ? "rgba(107,74,245,0.08)" : "var(--paper-2)",
+                    transform: isActive ? "translateX(6px)" : "translateX(0)",
+                    transition: "all 420ms ease",
+                    cursor: "pointer",
+                    userSelect: "none",
+                  }}>
+                    <div style={{ display: "flex", alignItems: "baseline", gap: 14 }}>
+                      <div style={{ fontSize: 28, fontWeight: 600, color: isActive ? "var(--accent)" : "var(--ink)" }}>
+                        {a.name}
+                      </div>
+                      <div style={{ fontFamily: "var(--font-mono)", fontSize: 22, color: "var(--ink-3)" }}>
+                        {a.mono}
+                      </div>
+                    </div>
+                    <div style={{ fontSize: 21, color: "var(--ink-2)", marginTop: 6, lineHeight: 1.3 }}>
+                      {a.desc}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Right — enlarged graph, attributes animate above each node */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 30, position: "relative" }}>
+            <svg viewBox="0 0 1000 720" style={{ width: "100%", height: "100%", display: "block" }}>
+              <defs>
+                <pattern id="dotgrid-nodeattr" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <circle cx="1" cy="1" r="1" fill="var(--line)"/>
+                </pattern>
+              </defs>
+              <rect x={0} y={0} width={1000} height={720} fill="url(#dotgrid-nodeattr)" opacity={0.5}/>
+
+              {nodes.map((n, i) => {
+                const value = active.values[i];
+                const labelColor = value.color || active.color;
+                return (
+                  <g key={i}>
+                    {/* Attribute pill above node — keyed on attribute to retrigger fade */}
+                    <g key={`${active.key}-${i}`} style={{ animation: "fadeUp 520ms both ease-out" }}>
+                      <line x1={n.x} y1={n.y - 54} x2={n.x} y2={n.y - 38}
+                            stroke={labelColor} strokeWidth={1.5} strokeDasharray="3 3"/>
+                      <rect x={n.x - 68} y={n.y - 104} width={136} height={48}
+                            fill="var(--paper)" stroke={labelColor} strokeWidth={2} rx={6}/>
+                      <text x={n.x} y={n.y - 72} textAnchor="middle"
+                            fontFamily="var(--font-mono)" fontSize={24} fontWeight={600}
+                            fill={labelColor}>
+                        {value.display}
+                      </text>
+                    </g>
+                    {/* Node circle */}
+                    <circle cx={n.x} cy={n.y} r={34}
+                            fill="var(--paper)" stroke="var(--ink)" strokeWidth={3}/>
+                    <text x={n.x} y={n.y + 10} textAnchor="middle"
+                          fontFamily="var(--font-mono)" fontSize={26} fontWeight={600}
+                          fill="var(--ink)">
+                      {n.label}
+                    </text>
+                  </g>
+                );
+              })}
+            </svg>
+            <div style={{ position: "absolute", bottom: 18, left: 30, fontFamily: "var(--font-mono)", fontSize: 20, color: "var(--ink-3)", letterSpacing: "0.06em" }}>
+              FIG. — same five nodes, attribute <span style={{ color: active.color, fontFamily: "var(--font-mono)" }}>{active.mono}</span> shown above each.
             </div>
           </div>
         </div>
@@ -288,7 +447,7 @@ function SlideEdge() {
     <section className="slide" data-label="Graph concepts — Edge">
       <SlideFrame>
         <div className="tag">02 · Graph theory · Edge</div>
-        <h2 className="title" style={{ marginTop: 28 }}>An <em style={{ color: "var(--accent)" }}>edge</em> is a bidirectional link between two nodes.</h2>
+        <h2 className="title" style={{ marginTop: 28 }}>An <em style={{ color: "var(--accent)" }}>edge</em> joins two vertices.</h2>
 
         <div style={{ marginTop: 50, display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 80, flex: 1, alignItems: "center" }}>
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 30, position: "relative" }}>
@@ -335,22 +494,23 @@ function SlideEdge() {
             </svg>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 26 }}>
-            <div className="lede" style={{ fontSize: 42 }}>
-              An <em style={{ color: "var(--accent)" }}>edge</em> <span style={{ fontFamily: "var(--font-mono)" }}>e = {"{"} i, j {"}"}</span> connects two nodes with no preferred direction.
+          <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+            <div className="lede" style={{ fontSize: 36, lineHeight: 1.22 }}>
+              An edge is an <em>unordered pair</em> <span style={{ fontFamily: "var(--font-mono)" }}>e = {"{"}i, j{"}"}</span> of distinct vertices. We say <em>e joins i and j</em>, and that i and j are <em>adjacent</em>.
             </div>
-            <div className="body" style={{ color: "var(--ink-2)" }}>
-              In a VRP, an edge says: <em>you can travel between i and j</em>, and travelling costs the same either way.
+            <div className="body" style={{ color: "var(--ink-2)", fontSize: 26 }}>
+              In a VRP an edge says: <em>you can travel between i and j</em>, and travelling costs the same either way.
             </div>
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "22px 26px" }}>
               <div className="kicker" style={{ fontSize: 22, marginBottom: 8 }}>Notation</div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 28, lineHeight: 1.55 }}>
-                E = {"{"} e₁, e₂, …, eₘ {"}"}<br/>
-                <span style={{ color: "var(--ink-3)" }}>with</span> cᵢⱼ = cⱼᵢ
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 26, lineHeight: 1.55 }}>
+                E(G) = {"{"} e₁, e₂, …, eₘ {"}"}<br/>
+                <span style={{ color: "var(--ink-3)" }}>|E(G)| = m —</span> size of G<br/>
+                <span style={{ color: "var(--ink-3)" }}>cost symmetry:</span> cᵢⱼ = cⱼᵢ
               </div>
             </div>
-            <div className="body small" style={{ color: "var(--ink-3)" }}>
-              Undirected edges are the right model for Euclidean distances or symmetric street costs.
+            <div className="body small" style={{ color: "var(--ink-3)", fontSize: 22 }}>
+              A graph with no <em>loops</em> (edges ii) and no <em>multiple edges</em> between the same pair is a <em>simple graph</em> — the model we use throughout.
             </div>
           </div>
         </div>
@@ -371,47 +531,53 @@ function SlideDirectedArc() {
   return (
     <section className="slide" data-label="Graph concepts — Directed arc">
       <SlideFrame>
-        <div className="tag">02 · Graph theory · Directed arc</div>
-        <h2 className="title" style={{ marginTop: 28 }}>A <em style={{ color: "var(--accent)" }}>directed arc</em> has a head, a tail, and a direction.</h2>
+        <div className="tag">02 · Graph theory · Digraph · Arc</div>
+        <h2 className="title" style={{ marginTop: 28 }}>A <em style={{ color: "var(--accent)" }}>directed arc</em> has a tail, a head, and a direction.</h2>
 
         <div style={{ marginTop: 44, display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 70, flex: 1, alignItems: "center" }}>
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 30, position: "relative" }}>
             <svg viewBox="0 0 1000 760" style={{ width: "100%", height: "100%", display: "block" }}>
               <defs>
-                <marker id="arrow-dir" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
-                  <path d="M 0 0 L 12 6 L 0 12 z" fill="var(--accent)"/>
-                </marker>
-                <marker id="arrow-dir-2" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
-                  <path d="M 0 0 L 12 6 L 0 12 z" fill="var(--accent-2)"/>
-                </marker>
                 <pattern id="dotgrid-dir" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
                   <circle cx="1" cy="1" r="1" fill="var(--line)"/>
                 </pattern>
               </defs>
               <rect width={1000} height={760} fill="url(#dotgrid-dir)" opacity={0.5}/>
 
-              {/* Arc 1: i -> j */}
+              {/* Arc 1: i -> j — straight. Line draws first, tip appears after. */}
               <line className="anim-draw anim-draw-1"
-                    x1={A.x + 30} y1={A.y} x2={B.x - 36} y2={B.y}
-                    stroke="var(--accent)" strokeWidth={5} markerEnd="url(#arrow-dir)"
+                    x1={A.x + 30} y1={A.y} x2={B.x - 30} y2={B.y}
+                    stroke="var(--accent)" strokeWidth={5} strokeLinecap="round"
                     style={{ "--len": 450 }}/>
-              <text className="anim-fade-2" x={(A.x + B.x)/2} y={A.y - 22} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fill="var(--accent)">
+              <g className="anim-appear" style={{ "--appear-delay": "1350ms" }}
+                 transform={`translate(${B.x - 28}, ${B.y})`}>
+                <polygon points="-16,-10 0,0 -16,10" fill="var(--accent)"/>
+              </g>
+              <text className="anim-fade-2" x={(A.x + B.x)/2} y={A.y - 40} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fill="var(--accent)">
                 arc (i, j) → cost cᵢⱼ = 7.3
               </text>
 
               {/* Two arcs opposite direction, different costs */}
               <path className="anim-draw anim-draw-3"
                     d={`M ${C.x + 30} ${C.y - 14} Q ${(C.x+D.x)/2} ${C.y - 60} ${D.x - 36} ${D.y - 14}`}
-                    fill="none" stroke="var(--accent)" strokeWidth={5} markerEnd="url(#arrow-dir)"
+                    fill="none" stroke="var(--accent)" strokeWidth={5} strokeLinecap="round"
                     style={{ "--len": 520 }}/>
+              <g className="anim-appear" style={{ "--appear-delay": "1950ms" }}
+                 transform={`translate(${D.x - 36}, ${D.y - 14}) rotate(13.3)`}>
+                <polygon points="-16,-10 0,0 -16,10" fill="var(--accent)"/>
+              </g>
               <text className="anim-fade-2" x={(C.x + D.x)/2} y={C.y - 80} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fill="var(--accent)">
                 (i, j) → cᵢⱼ = 7.3
               </text>
 
               <path className="anim-draw anim-draw-4"
                     d={`M ${D.x - 36} ${D.y + 14} Q ${(C.x+D.x)/2} ${D.y + 60} ${C.x + 30} ${C.y + 14}`}
-                    fill="none" stroke="var(--accent-2)" strokeWidth={5} markerEnd="url(#arrow-dir-2)"
+                    fill="none" stroke="var(--accent-2)" strokeWidth={5} strokeLinecap="round"
                     style={{ "--len": 520 }}/>
+              <g className="anim-appear" style={{ "--appear-delay": "2200ms" }}
+                 transform={`translate(${C.x + 30}, ${C.y + 14}) rotate(193.3)`}>
+                <polygon points="-16,-10 0,0 -16,10" fill="var(--accent-2)"/>
+              </g>
               <text className="anim-fade-3" x={(C.x + D.x)/2} y={C.y + 105} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fill="var(--accent-2)">
                 (j, i) → cⱼᵢ = 9.8 &nbsp; (e.g. one-way street, uphill…)
               </text>
@@ -428,18 +594,19 @@ function SlideDirectedArc() {
             </svg>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 28, justifyContent: "center" }}>
-            <div className="lede" style={{ fontSize: 34, lineHeight: 1.22 }}>
-              A directed arc <span style={{ fontFamily: "var(--font-mono)" }}>a = (i, j)</span> points <em>from i to j</em>. Going back the other way is a <em>different</em> arc (j, i).
+          <div style={{ display: "flex", flexDirection: "column", gap: 24, justifyContent: "center" }}>
+            <div className="lede" style={{ fontSize: 32, lineHeight: 1.22 }}>
+              An <em>arc</em> is an <em>ordered pair</em> <span style={{ fontFamily: "var(--font-mono)" }}>a = (i, j)</span>: <em>i</em> is the <em>tail</em>, <em>j</em> is the <em>head</em>. A graph whose links are arcs is a <em>directed graph</em> — or <em>digraph</em>.
             </div>
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "20px 24px" }}>
               <div className="kicker" style={{ fontSize: 22, marginBottom: 8 }}>Notation</div>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 24, lineHeight: 1.55 }}>
-                A ⊆ V × V &nbsp; with &nbsp; cᵢⱼ ≠ cⱼᵢ in general
+                A(G) ⊆ V × V &nbsp;<span style={{ color: "var(--ink-3)" }}>(ordered pairs)</span><br/>
+                (i, j) ≠ (j, i) &nbsp;<span style={{ color: "var(--ink-3)" }}>and in general</span> cᵢⱼ ≠ cⱼᵢ
               </div>
             </div>
-            <div className="body" style={{ color: "var(--ink-2)", fontSize: 26, lineHeight: 1.35 }}>
-              Directed graphs are used whenever cost or feasibility of travel depends on direction: <em>one-way streets, asymmetric road networks, pickup-and-delivery precedence</em>.
+            <div className="body" style={{ color: "var(--ink-2)", fontSize: 25, lineHeight: 1.35 }}>
+              Digraphs model any situation where cost or feasibility of travel depends on direction: <em>one-way streets, asymmetric road networks, pickup-and-delivery precedence</em>.
             </div>
           </div>
         </div>
@@ -475,26 +642,25 @@ function SlideNetwork() {
       <SlideFrame>
         <div className="tag">02 · Graph theory · Network</div>
         <h2 className="title" style={{ marginTop: 28 }}>
-          A <em style={{ color: "var(--accent)" }}>network</em> is nodes + arcs, working together.
+          A <em style={{ color: "var(--accent)" }}>network</em> is a graph with a cost on every edge.
         </h2>
 
         <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1fr 1.4fr", gap: 70, flex: 1 }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 22, justifyContent: "center" }}>
-            <div className="lede" style={{ fontSize: 42 }}>
-              A <em>graph</em> (or network) is the pair &nbsp;
-              <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)" }}>G = (V, A)</span>.
+          <div style={{ display: "flex", flexDirection: "column", gap: 20, justifyContent: "center" }}>
+            <div className="lede" style={{ fontSize: 34, lineHeight: 1.22 }}>
+              A <em>weighted graph</em> — or <em>network</em> — is a graph &nbsp;
+              <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)" }}>G = (V, E)</span> equipped with a <em>cost function</em> <span style={{ fontFamily: "var(--font-mono)" }}>c: E → ℝ</span>.
             </div>
-            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "22px 26px", fontFamily: "var(--font-mono)", fontSize: 25, lineHeight: 1.55 }}>
-              V &nbsp; = &nbsp; set of nodes<br/>
-              A &nbsp; = &nbsp; set of arcs<br/>
-              cᵢⱼ &nbsp; = &nbsp; cost on arc (i, j)
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "20px 24px", fontFamily: "var(--font-mono)", fontSize: 22, lineHeight: 1.55 }}>
+              V &nbsp; = &nbsp; vertex set &nbsp; <span style={{ color: "var(--ink-3)" }}>(|V| = n + 1)</span><br/>
+              E &nbsp; = &nbsp; edge set &nbsp; <span style={{ color: "var(--ink-3)" }}>(A for arcs, if directed)</span><br/>
+              cᵢⱼ &nbsp; = &nbsp; cost of edge (i, j)
             </div>
-            <div className="body" style={{ color: "var(--ink-2)", fontSize: 28 }}>
-              In a VRP network the depot <span style={{ fontFamily: "var(--font-mono)" }}>v₀</span> is a square, customers are circles,
-              and every arc carries a travel cost.
+            <div className="body" style={{ color: "var(--ink-2)", fontSize: 25, lineHeight: 1.35 }}>
+              In a VRP, <span style={{ fontFamily: "var(--font-mono)" }}>G</span> is typically the <em>complete graph</em> <span style={{ fontFamily: "var(--font-mono)" }}>Kₙ₊₁</span>: every pair of vertices is connected, and <span style={{ fontFamily: "var(--font-mono)" }}>cᵢⱼ</span> is the travel distance or time.
             </div>
-            <div className="body small" style={{ color: "var(--ink-3)" }}>
-              From this object, an entire family of optimisation problems springs: TSP, CVRP, VRPTW, PDP…
+            <div className="body small" style={{ color: "var(--ink-3)", fontSize: 20 }}>
+              From the triple <span style={{ fontFamily: "var(--font-mono)" }}>(V, E, c)</span> an entire family of optimisation problems springs: TSP, CVRP, VRPTW, PDP…
             </div>
           </div>
 
@@ -573,5 +739,5 @@ function SlideNetwork() {
 // Escape sequences above use real unicode so we don't need to reprocess.
 // Register
 Object.assign(window, {
-  SlideIntroSection, SlideHistory, SlideWhoUsesIt, SlideNode, SlideEdge, SlideDirectedArc, SlideNetwork,
+  SlideIntroSection, SlideHistory, SlideWhoUsesIt, SlideNode, SlideNodeAttributes, SlideEdge, SlideDirectedArc, SlideNetwork,
 });

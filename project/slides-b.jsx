@@ -8,12 +8,12 @@ function Slide16() {
     <section className="slide section-slide" data-label="Part IV — Complexity">
       <div style={{ position: "absolute", top: 80, left: 120, right: 120, display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 31, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--paper-deep)" }}>
         <div>Part IV of V</div>
-        <div>Slides 24 — 25</div>
+        <div>Slides 25 — 26</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Four</div>
         <div className="hero" style={{ fontSize: 240 }}>Complexity.</div>
-        <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper-deep)" }}>
+        <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
           Why the VRP is hard — and why heuristics matter in practice.
         </div>
       </div>
@@ -129,15 +129,15 @@ function Slide18() {
 // ----- SLIDE 19 — Section IV: Family -----
 function Slide19() {
   return (
-    <section className="slide section-slide variant-amber" data-label="Part V — VRP family">
-      <div style={{ position: "absolute", top: 80, left: 120, right: 120, display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 31, letterSpacing: "0.1em", textTransform: "uppercase" }}>
+    <section className="slide section-slide" data-label="Part V — VRP family">
+      <div style={{ position: "absolute", top: 80, left: 120, right: 120, display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 31, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--paper-deep)" }}>
         <div>Part V of V</div>
-        <div>Slides 27 — 30</div>
+        <div>Slides 28 — 31</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-        <div className="kicker" style={{ marginBottom: 40 }}>Part Five</div>
+        <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Five</div>
         <div className="hero" style={{ fontSize: 240 }}>The family.</div>
-        <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15 }}>
+        <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
           A taxonomy of VRP variants — time windows, backhauls, pickup & delivery, and beyond.
         </div>
       </div>
@@ -376,12 +376,12 @@ function Slide24() {
     <section className="slide section-slide" data-label="Part VI — Live demo">
       <div style={{ position: "absolute", top: 80, left: 120, right: 120, display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 31, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--paper-deep)" }}>
         <div>Live demo</div>
-        <div>Slides 32 — 33</div>
+        <div>Slides 33 — 34</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Interactive</div>
         <div className="hero" style={{ fontSize: 220 }}>Clarke–Wright.</div>
-        <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper-deep)" }}>
+        <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
           The savings heuristic — still the starting point for most real VRP solvers, 60 years later.
         </div>
       </div>
@@ -478,7 +478,7 @@ function Slide27() {
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Applications</div>
         <div className="hero" style={{ fontSize: 240 }}>In the wild.</div>
-        <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper-deep)" }}>
+        <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
           Four industries where VRP solvers directly drive planning decisions every day.
         </div>
       </div>
@@ -559,7 +559,7 @@ function Slide29() {
 // ----- SLIDE 30 — Closing -----
 function Slide30() {
   return (
-    <section className="slide section-slide variant-violet" data-label="Thank you">
+    <section className="slide section-slide" data-label="Thank you">
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <div className="kicker" style={{ marginBottom: 30 }}>End of lecture</div>
         <div className="hero" style={{ fontSize: 260 }}>Questions?</div>

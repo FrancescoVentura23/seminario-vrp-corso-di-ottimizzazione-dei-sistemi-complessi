@@ -67,7 +67,7 @@ const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
 // ---------- Mount all slides into <deck-stage> ----------
 (function mountDeck() {
   function tryMount() {
-    if (!window.Slide30 || !window.ClarkeWrightDemo || !window.SlideHistory || !window.SlideNetwork || !window.SlideORLink || !window.SlideIntroSection) {
+    if (!window.Slide30 || !window.ClarkeWrightDemo || !window.SlideHistory || !window.SlideNetwork || !window.SlideORLink || !window.SlideIntroSection || !window.SlideNodeAttributes) {
       setTimeout(tryMount, 60);
       return;
     }
@@ -75,7 +75,7 @@ const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
     const placeholder = document.getElementById("root-mount");
     if (placeholder) placeholder.remove();
 
-    // Deck order (37 slides):
+    // Deck order (38 slides):
     //   1  Cover
     //   2  Part I — Introduction  (section header)
     //   3  History & origins
@@ -85,15 +85,16 @@ const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
     //   7  Who uses VRP today
     //   8  Part II — Foundations  (section header)
     //   9  Node
-    //  10  Edge
-    //  11  Directed arc
-    //  12  Network
-    //  13  Anatomy
-    //  14  Road → complete graph
-    //  15  Graph notation
-    //  16  TSP
-    //  17  TSP → VRP
-    //  18..37  Parts III–VII as before (Slide11..Slide30)
+    //  10  Node attributes (animated)
+    //  11  Edge
+    //  12  Directed arc
+    //  13  Network
+    //  14  Anatomy
+    //  15  Road → complete graph
+    //  16  Graph notation
+    //  17  TSP
+    //  18  TSP → VRP
+    //  19..38  Parts III–VII as before (Slide11..Slide30)
     const slides = [
       Slide01,
       SlideIntroSection,
@@ -102,7 +103,7 @@ const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
       Slide02, Slide03,
       SlideWhoUsesIt,
       Slide05,
-      SlideNode, SlideEdge, SlideDirectedArc, SlideNetwork,
+      SlideNode, SlideNodeAttributes, SlideEdge, SlideDirectedArc, SlideNetwork,
       Slide06, Slide07, Slide08, Slide09, Slide10,
       Slide11, Slide12, Slide13, Slide14, Slide15,
       Slide16, Slide17, Slide18, Slide19, Slide20,
@@ -137,7 +138,7 @@ const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
 window.addEventListener('message', (ev) => {
   const d = ev.data || {};
   if (typeof d.slideIndexChanged === 'number') {
-    const total = document.querySelectorAll('deck-stage > section.slide').length || 37;
+    const total = document.querySelectorAll('deck-stage > section.slide').length || 38;
     const n = String(d.slideIndexChanged + 1).padStart(2, '0');
     const t = String(total).padStart(2, '0');
     document.querySelectorAll('[data-chrome-pg]').forEach(el => {

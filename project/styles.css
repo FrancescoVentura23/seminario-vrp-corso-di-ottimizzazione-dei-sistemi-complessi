@@ -194,25 +194,14 @@ section.slide {
 
 .mono { font-family: var(--font-mono); }
 
-/* Section divider slides */
-.section-slide {
-  background: var(--ink);
-  color: var(--paper);
+/* Section divider slides — always black background, cream text */
+section.section-slide {
+  background: #1a1814 !important;
+  color: var(--paper) !important;
 }
-.section-slide .title { color: var(--paper); }
-.section-slide .kicker { color: var(--paper-deep); }
-.section-slide .tag { color: var(--paper-deep); }
-.section-slide .tag::before { background: var(--accent-2); }
-
-.section-slide.variant-amber { background: var(--accent-2); color: var(--ink); }
-.section-slide.variant-amber .title { color: var(--ink); }
-.section-slide.variant-amber .kicker { color: var(--ink-2); }
-.section-slide.variant-amber .tag { color: var(--ink-2); }
-.section-slide.variant-amber .tag::before { background: var(--ink); }
-
-.section-slide.variant-violet { background: var(--accent); color: var(--paper); }
-.section-slide.variant-violet .title { color: var(--paper); }
-.section-slide.variant-violet .kicker { color: var(--paper); opacity: 0.85; }
+section.section-slide .title  { color: var(--paper); }
+section.section-slide .kicker { color: var(--paper-deep); }
+section.section-slide .tag    { color: var(--paper-deep); }
 
 /* Rule lines */
 .rule {
@@ -273,6 +262,10 @@ section.slide {
   0%, 100% { transform: scale(1); opacity: 1; }
   50%      { transform: scale(1.12); opacity: 0.85; }
 }
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
 
 /* Applied only on the active slide — preserves idle state on others */
 [data-deck-active] .anim-fade { animation: fadeUp 700ms both ease-out; }
@@ -290,6 +283,14 @@ section.slide {
 [data-deck-active] .anim-draw-4 { animation-delay: 1000ms; }
 
 [data-deck-active] .anim-pulse { animation: pulse 2.2s infinite ease-in-out; }
+
+/* Arrowhead tip: fades in after the body of its arc has finished drawing.
+   Set --appear-delay inline to line up with anim-draw-N completion. */
+[data-deck-active] .anim-appear {
+  opacity: 0;
+  animation: fadeIn 400ms both ease-out;
+  animation-delay: var(--appear-delay, 0ms);
+}
 
 /* Tweaks panel */
 .tweaks {

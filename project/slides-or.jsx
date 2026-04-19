@@ -67,7 +67,7 @@ function SlideORLink() {
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 22, color: "var(--ink-3)", whiteSpace: "nowrap" }}>1 depot · 8 customers · 3 routes</div>
             </div>
 
-            <svg viewBox="0 0 1000 680" style={{ flex: 1, width: "100%", height: "auto" }}>
+            <svg viewBox="0 0 1000 680" style={{ flex: 1, width: "100%", height: "auto", maxHeight: 420 }}>
               {/* grid */}
               <defs>
                 <pattern id="orgrid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
@@ -96,9 +96,6 @@ function SlideORLink() {
                   <text x={c.x} y={c.y + 6} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={18} fill="var(--ink)">
                     {i + 1}
                   </text>
-                  <text x={c.x + 22} y={c.y - 16} fontFamily="var(--font-mono)" fontSize={16} fill="var(--ink-3)">
-                    d={c.d}
-                  </text>
                 </g>
               ))}
 
@@ -116,6 +113,7 @@ function SlideORLink() {
               <span><span style={{ display: "inline-block", width: 14, height: 14, background: "var(--accent-3)", marginRight: 8, verticalAlign: "middle" }}/>Route 3</span>
             </div>
             <div style={{ marginTop: 10, fontFamily: "var(--font-mono)", fontSize: 20, color: "var(--ink-3)" }}>min Σ cᵢⱼ xᵢⱼ · s.t. capacity, covering</div>
+            <div style={{ marginTop: 6, fontFamily: "var(--font-mono)", fontSize: 20, color: "var(--ink-3)" }}>{"xᵢⱼ ∈ {0, 1} — binary decision variables"}</div>
           </div>
         </div>
       </SlideFrame>

@@ -174,7 +174,7 @@ function SlideWhoUsesIt() {
                 <div className="body small" style={{ color: "var(--ink-3)", fontSize: 22 }}>{c.sector}</div>
                 {c.subtitle && <div style={{ fontSize: 18, color: "var(--ink-3)", marginTop: 2, fontStyle: "italic" }}>{c.subtitle}</div>}
               </div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 22, color: "var(--ink)", letterSpacing: "0.04em" }}>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 32, fontWeight: 600, color: "var(--ink)", letterSpacing: "0.03em", lineHeight: 1.2 }}>
                 {c.scale}
               </div>
             </div>

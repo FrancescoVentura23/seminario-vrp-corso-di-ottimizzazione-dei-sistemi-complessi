@@ -165,44 +165,37 @@ function Slide02() {
     <section className="slide" data-label="A problem you meet every day">
       <SlideFrame>
         <div className="tag">Introduction · Motivation</div>
-        <h2 className="title" style={{ marginTop: 32, maxWidth: 1400 }}>
+        <h2 className="title" style={{ marginTop: 16, maxWidth: 1400 }}>
           Every time a vehicle leaves a depot to serve multiple customers, someone is solving a VRP.
         </h2>
 
-        <div style={{ marginTop: 72, display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 0, border: "1px solid var(--line)" }}>
+        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 0, border: "1px solid var(--line)", flex: 1 }}>
           {examples.map((ex, i) => (
             <div key={i} style={{
-              padding: "28px 26px",
+              padding: "36px 32px",
               borderRight: (i % 4 !== 3) ? "1px solid var(--line)" : "none",
               borderBottom: i < 4 ? "1px solid var(--line)" : "none",
-              minHeight: 220,
               display: "flex",
               flexDirection: "column",
-              gap: 14,
+              gap: 18,
             }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
                 <div style={{
-                  width: 64, height: 64,
+                  width: 84, height: 84,
                   background: "var(--paper-2)",
                   border: "1px solid var(--line)",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   flexShrink: 0,
                 }}>
-                  <Icon name={ex.icon} size={40}/>
+                  <Icon name={ex.icon} size={52}/>
                 </div>
-                <div className="kicker" style={{ fontSize: 22, lineHeight: 1.25 }}>{ex.k}</div>
+                <div className="kicker" style={{ fontSize: 26, lineHeight: 1.25 }}>{ex.k}</div>
               </div>
-              <div style={{ fontFamily: "var(--font-display)", fontSize: 30, lineHeight: 1.18, color: "var(--ink)" }}>
+              <div style={{ fontFamily: "var(--font-display)", fontSize: 34, lineHeight: 1.18, color: "var(--ink)" }}>
                 {ex.v}
               </div>
             </div>
           ))}
-        </div>
-
-        <div style={{ marginTop: "auto", paddingTop: 40, display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-          <div className="body" style={{ maxWidth: 900, color: "var(--ink-3)" }}>
-            The problem is universal because most goods and services are delivered through a hub-and-spoke pattern.
-          </div>
         </div>
       </SlideFrame>
     </section>

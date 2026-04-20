@@ -375,11 +375,11 @@ function Slide05() {
     <section className="slide section-slide" data-label="Part II — Foundations">
       <div style={{ position: "absolute", top: 80, left: 120, right: 120, display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 31, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--paper-deep)" }}>
         <div>Part II of V</div>
-        <div>Slides 9 — 18</div>
+        <div>Slides 9 — 19</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Two</div>
-        <div className="hero" style={{ fontSize: 240 }}>Foundations.</div>
+        <div className="hero" style={{ fontSize: 240 }}>Foundations</div>
         <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
           The ingredients of every routing problem — road graph, customers, depot, vehicles — and the TSP as their common ancestor.
         </div>
@@ -626,11 +626,11 @@ function Slide11() {
     <section className="slide section-slide" data-label="Part III — CVRP">
       <div style={{ position: "absolute", top: 80, left: 120, right: 120, display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 31, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--paper-deep)" }}>
         <div>Part III of V</div>
-        <div>Slides 20 — 23</div>
+        <div>Slides 21 — 24</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Three</div>
-        <div className="hero" style={{ fontSize: 240 }}>The CVRP.</div>
+        <div className="hero" style={{ fontSize: 240 }}>The CVRP</div>
         <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
           The capacitated VRP — the core member of the family, from which all other variants are built.
         </div>

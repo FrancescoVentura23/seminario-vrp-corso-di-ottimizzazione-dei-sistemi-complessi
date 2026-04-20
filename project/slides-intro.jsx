@@ -15,7 +15,7 @@ function SlideIntroSection() {
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part One</div>
-        <div className="hero" style={{ fontSize: 240 }}>Introduction.</div>
+        <div className="hero" style={{ fontSize: 240 }}>Introduction</div>
         <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
           Where the VRP came from, who uses it today, and why it matters — the problem you meet every day and its economic scale.
         </div>
@@ -45,19 +45,19 @@ function SlideHistory() {
         </h2>
 
         <div style={{ marginTop: 48, display: "grid", gridTemplateColumns: "1.15fr 1fr", gap: 80, flex: 1, minHeight: 0 }}>
-          {/* Left — the why */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 36 }}>
+          {/* Left — the why + image */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 28, minHeight: 0 }}>
             <div className="lede" style={{ fontSize: 34, lineHeight: 1.35, maxWidth: 900 }}>
               <span style={{ color: "var(--accent)" }}>George Dantzig</span> and <span style={{ color: "var(--accent)" }}>John Ramser</span> published <em>The Truck Dispatching Problem</em> in <em>Management Science</em>, October 1959.
             </div>
 
-            <div className="body" style={{ color: "var(--ink-2)", maxWidth: 900, fontSize: 28, lineHeight: 1.4 }}>
+            <div className="body" style={{ color: "var(--ink-2)", maxWidth: 900, fontSize: 26, lineHeight: 1.4 }}>
               The question was practical: how should a fleet of tanker trucks deliver gasoline from a bulk terminal to a scattered set of service stations, at minimum cost?
             </div>
 
-            <div className="body" style={{ color: "var(--ink-3)", maxWidth: 900, fontSize: 26, lineHeight: 1.4 }}>
-              They generalised the Traveling Salesman Problem — one tour, one vehicle — to <em>many tours, many vehicles, with capacity</em>. The paper gave the problem its first formal name and its first linear-programming treatment.
-            </div>
+            {/* Image — flex: 1 lets it take remaining height; objectFit contain shows it in full */}
+            <img src="assets/George_Dantzig.jpg" alt="George Dantzig fun fact"
+                 style={{ flex: 1, minHeight: 0, width: "100%", objectFit: "contain", objectPosition: "center", display: "block" }}/>
           </div>
 
           {/* Right — timeline */}
@@ -521,6 +521,146 @@ function SlideEdge() {
 
 
 // ==========================================================
+// GRAPH CONCEPT — SIMPLE GRAPH (no loops, no multiple edges)
+// ==========================================================
+function SlideSimpleGraph() {
+  // Bad example (top-right): two vertices with a loop on v₁ and two parallel edges between v₁–v₂.
+  // Coordinates live inside a viewBox 1000×460.
+  const BAD = { A: { x: 330, y: 290 }, B: { x: 720, y: 290 } };
+  // Good example (bottom-right): triangle inside viewBox 1000×460.
+  const GOOD = {
+    A: { x: 260, y: 160 },
+    B: { x: 740, y: 160 },
+    C: { x: 500, y: 370 },
+  };
+  return (
+    <section className="slide" data-label="Graph concepts — Simple graph">
+      <SlideFrame>
+        <div className="tag">02 · Graph theory · Simple graph</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          A <em style={{ color: "var(--accent)" }}>simple graph</em> has no loops and no multiple edges.
+        </h2>
+
+        <div style={{ marginTop: 44, display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 70, flex: 1, alignItems: "stretch", minHeight: 0 }}>
+          {/* Left — definition */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 22, justifyContent: "center" }}>
+            <div className="lede" style={{ fontSize: 34, lineHeight: 1.22 }}>
+              A graph is <em>simple</em> when two conditions hold: no edge joins a vertex to itself, and no pair of vertices is connected by more than one edge.
+            </div>
+
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "20px 24px" }}>
+              <div className="kicker" style={{ fontSize: 22, marginBottom: 10 }}>Two forbidden patterns</div>
+              <div style={{ fontSize: 24, lineHeight: 1.4, color: "var(--ink-2)" }}>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 8 }}>
+                  <span style={{ fontFamily: "var(--font-mono)", color: "#c14f3c", fontWeight: 600, minWidth: 140 }}>loop</span>
+                  <span>an edge <span style={{ fontFamily: "var(--font-mono)" }}>{"{i, i}"}</span> from a vertex to itself.</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
+                  <span style={{ fontFamily: "var(--font-mono)", color: "#c14f3c", fontWeight: 600, minWidth: 140 }}>multi-edge</span>
+                  <span>two or more edges sharing the same endpoints.</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="body" style={{ color: "var(--ink-2)", fontSize: 25, lineHeight: 1.35 }}>
+              In a VRP a loop would mean <em>travelling from a customer to itself</em>, and a multi-edge would mean <em>two different ways to get from i to j with the same cost</em> — neither carries information.
+            </div>
+            <div className="body small" style={{ color: "var(--ink-3)", fontSize: 22, lineHeight: 1.35 }}>
+              Throughout this seminar, every <span style={{ fontFamily: "var(--font-mono)" }}>G = (V, E)</span> is assumed simple.
+            </div>
+          </div>
+
+          {/* Right — forbidden vs allowed, each panel is a flex-column so the SVG fills the leftover space */}
+          <div style={{ display: "grid", gridTemplateRows: "1fr 1fr", gap: 18, minHeight: 0 }}>
+            {/* Forbidden */}
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 20, position: "relative", display: "flex", flexDirection: "column", minHeight: 0 }}>
+              <div className="kicker" style={{ fontSize: 20, color: "#c14f3c", marginBottom: 6 }}>Not a simple graph</div>
+              <svg viewBox="0 0 1000 460" preserveAspectRatio="xMidYMid meet" style={{ width: "100%", flex: 1, minHeight: 0, display: "block" }}>
+                <defs>
+                  <pattern id="dotgrid-simplebad" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <circle cx="1" cy="1" r="1" fill="var(--line)"/>
+                  </pattern>
+                </defs>
+                <rect width={1000} height={460} fill="url(#dotgrid-simplebad)" opacity={0.5}/>
+
+                {/* Loop on v₁ — a circle tangent to the upper-left of the node */}
+                <circle cx={BAD.A.x - 48} cy={BAD.A.y - 48} r={42}
+                        fill="none" stroke="#c14f3c" strokeWidth={4}/>
+                <text x={BAD.A.x - 90} y={BAD.A.y - 110} fontFamily="var(--font-mono)" fontSize={22} fill="#c14f3c">
+                  loop {"{v₁, v₁}"}
+                </text>
+
+                {/* Two parallel edges between A and B — one curving up, one curving down */}
+                <path d={`M ${BAD.A.x + 30} ${BAD.A.y} Q ${(BAD.A.x + BAD.B.x)/2} ${BAD.A.y - 110} ${BAD.B.x - 30} ${BAD.B.y}`}
+                      fill="none" stroke="#c14f3c" strokeWidth={4}/>
+                <path d={`M ${BAD.A.x + 30} ${BAD.A.y} Q ${(BAD.A.x + BAD.B.x)/2} ${BAD.A.y + 110} ${BAD.B.x - 30} ${BAD.B.y}`}
+                      fill="none" stroke="#c14f3c" strokeWidth={4}/>
+                <text x={(BAD.A.x + BAD.B.x)/2} y={BAD.B.y + 140} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fill="#c14f3c">
+                  two parallel edges {"{v₁, v₂}"}
+                </text>
+
+                {/* Nodes on top of edges */}
+                {[[BAD.A, "v₁"], [BAD.B, "v₂"]].map(([n, l], i) => (
+                  <g key={i}>
+                    <circle cx={n.x} cy={n.y} r={28} fill="var(--paper)" stroke="var(--ink)" strokeWidth={3}/>
+                    <text x={n.x} y={n.y + 9} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fontWeight={600} fill="var(--ink)">
+                      {l}
+                    </text>
+                  </g>
+                ))}
+
+                {/* Red cross in upper-right corner */}
+                <g transform="translate(930, 55)">
+                  <circle r={26} fill="#c14f3c"/>
+                  <line x1={-12} y1={-12} x2={12} y2={12} stroke="var(--paper)" strokeWidth={4} strokeLinecap="round"/>
+                  <line x1={-12} y1={12} x2={12} y2={-12} stroke="var(--paper)" strokeWidth={4} strokeLinecap="round"/>
+                </g>
+              </svg>
+            </div>
+
+            {/* Allowed */}
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 20, position: "relative", display: "flex", flexDirection: "column", minHeight: 0 }}>
+              <div className="kicker" style={{ fontSize: 20, color: "#2b7a5e", marginBottom: 6 }}>Simple graph</div>
+              <svg viewBox="0 0 1000 460" preserveAspectRatio="xMidYMid meet" style={{ width: "100%", flex: 1, minHeight: 0, display: "block" }}>
+                <defs>
+                  <pattern id="dotgrid-simplegood" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <circle cx="1" cy="1" r="1" fill="var(--line)"/>
+                  </pattern>
+                </defs>
+                <rect width={1000} height={460} fill="url(#dotgrid-simplegood)" opacity={0.5}/>
+
+                {/* Three edges, one per pair */}
+                {[[GOOD.A, GOOD.B], [GOOD.B, GOOD.C], [GOOD.C, GOOD.A]].map(([p, q], i) => (
+                  <line key={i} x1={p.x} y1={p.y} x2={q.x} y2={q.y}
+                        stroke="var(--accent)" strokeWidth={4} strokeLinecap="round"/>
+                ))}
+
+                {/* Nodes */}
+                {[[GOOD.A, "v₁"], [GOOD.B, "v₂"], [GOOD.C, "v₃"]].map(([n, l], i) => (
+                  <g key={i}>
+                    <circle cx={n.x} cy={n.y} r={28} fill="var(--paper)" stroke="var(--ink)" strokeWidth={3}/>
+                    <text x={n.x} y={n.y + 9} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fontWeight={600} fill="var(--ink)">
+                      {l}
+                    </text>
+                  </g>
+                ))}
+
+                {/* Green check in upper-right corner */}
+                <g transform="translate(930, 55)">
+                  <circle r={26} fill="#2b7a5e"/>
+                  <polyline points="-12,0 -3,10 13,-10" fill="none" stroke="var(--paper)" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
+// ==========================================================
 // GRAPH CONCEPT — DIRECTED ARC
 // ==========================================================
 function SlideDirectedArc() {
@@ -739,5 +879,5 @@ function SlideNetwork() {
 // Escape sequences above use real unicode so we don't need to reprocess.
 // Register
 Object.assign(window, {
-  SlideIntroSection, SlideHistory, SlideWhoUsesIt, SlideNode, SlideNodeAttributes, SlideEdge, SlideDirectedArc, SlideNetwork,
+  SlideIntroSection, SlideHistory, SlideWhoUsesIt, SlideNode, SlideNodeAttributes, SlideEdge, SlideSimpleGraph, SlideDirectedArc, SlideNetwork,
 });

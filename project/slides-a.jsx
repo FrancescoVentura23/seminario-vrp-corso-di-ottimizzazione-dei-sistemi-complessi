@@ -372,14 +372,33 @@ function Slide04() {
 // ----- SLIDE 5 — Section I -----
 function Slide05() {
   return (
-    <section className="slide section-slide" data-label="Part II — Foundations">
+    <section className="slide section-slide" data-label="Part II — Graph Theory">
       <div style={{ position: "absolute", top: 80, left: 120, right: 120, display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 31, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--paper-deep)" }}>
-        <div>Part II of V</div>
-        <div>Slides 9 — 19</div>
+        <div>Part II of IX</div>
+        <div>Slides 9 — 16</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Two</div>
-        <div className="hero" style={{ fontSize: 240 }}>Foundations</div>
+        <div className="hero" style={{ fontSize: 240 }}>Graph Theory</div>
+        <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
+          Vertices, edges, arcs, simple graphs, digraphs and networks — the mathematical language every VRP model is written in.
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ----- SECTION HEADER — Part III: VRP elements -----
+function SlideVRPElementsSection() {
+  return (
+    <section className="slide section-slide" data-label="Part III — VRP elements">
+      <div style={{ position: "absolute", top: 80, left: 120, right: 120, display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 31, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--paper-deep)" }}>
+        <div>Part III of IX</div>
+        <div>Slides 18 — 20</div>
+      </div>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+        <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Three</div>
+        <div className="hero" style={{ fontSize: 240 }}>VRP elements</div>
         <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
           The ingredients of every routing problem — road graph, customers, depot, vehicles — and the TSP as their common ancestor.
         </div>
@@ -390,34 +409,114 @@ function Slide05() {
 
 // ----- SLIDE 6 — Anatomy -----
 function Slide06() {
+  const ic = { fill: "none", stroke: "var(--accent)", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" };
   const parts = [
-    { k: "Road network", d: "Graph of streets & junctions; arcs carry cost and travel time." },
-    { k: "Customers", d: "Located at vertices; have demand, service time, possible time windows." },
-    { k: "Depots", d: "Origin/destination of routes; hold the vehicle fleet." },
-    { k: "Vehicles", d: "Capacity, costs, allowed arcs. Homogeneous or heterogeneous fleet." },
-    { k: "Drivers", d: "Working hours, breaks — usually absorbed into vehicle constraints." },
-    { k: "Objective", d: "Minimise total cost, number of vehicles, or a weighted combination." },
+    {
+      k: "Road network", d: "Graph of streets & junctions; arcs carry cost and travel time.",
+      icon: (
+        <svg viewBox="0 0 48 48" width={52} height={52} {...ic}>
+          <circle cx={10} cy={10} r={5}/><circle cx={38} cy={10} r={5}/><circle cx={24} cy={40} r={5}/>
+          <line x1={15} y1={10} x2={33} y2={10}/>
+          <line x1={12} y1={14} x2={22} y2={36}/>
+          <line x1={36} y1={14} x2={26} y2={36}/>
+        </svg>
+      ),
+    },
+    {
+      k: "Customers", d: "Located at vertices; have demand, service time, possible time windows.",
+      icon: (
+        <svg viewBox="0 0 48 48" width={52} height={52} {...ic}>
+          <path d="M24 44 C24 44 8 30 8 18 C8 10.3 15.2 4 24 4 C32.8 4 40 10.3 40 18 C40 30 24 44 24 44Z"/>
+          <circle cx={24} cy={18} r={6}/>
+        </svg>
+      ),
+    },
+    {
+      k: "Depots", d: "Origin/destination of routes; hold the vehicle fleet.",
+      icon: (
+        <svg viewBox="0 0 48 48" width={52} height={52} {...ic}>
+          <path d="M4 22 L24 6 L44 22"/>
+          <rect x={8} y={22} width={32} height={20} rx={1}/>
+          <rect x={19} y={30} width={10} height={12}/>
+        </svg>
+      ),
+    },
+    {
+      k: "Vehicles", d: "Capacity, costs, allowed arcs. Homogeneous or heterogeneous fleet.",
+      icon: (
+        <svg viewBox="0 0 52 48" width={56} height={52} {...ic}>
+          <rect x={2} y={12} width={26} height={22} rx={2}/>
+          <path d="M28 16 L28 34 L48 34 L48 24 L40 16 Z"/>
+          <circle cx={10} cy={38} r={4}/><circle cx={38} cy={38} r={4}/>
+          <line x1={14} y1={34} x2={34} y2={34}/>
+          <line x1={28} y1={24} x2={48} y2={24}/>
+        </svg>
+      ),
+    },
+    {
+      k: "Drivers", d: "Working hours, breaks — usually absorbed into vehicle constraints.",
+      icon: (
+        <svg viewBox="0 0 48 48" width={52} height={52} fill="none" stroke="var(--accent)" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+          {/* Head */}
+          <circle cx={24} cy={9} r={6}/>
+          {/* Shoulders */}
+          <path d="M10 24 Q10 17 24 17 Q38 17 38 24"/>
+          {/* Steering wheel rim */}
+          <circle cx={24} cy={36} r={10}/>
+          {/* Hub */}
+          <circle cx={24} cy={36} r={2.5} fill="var(--accent)"/>
+          {/* 3 spokes */}
+          <line x1={24} y1={26} x2={24} y2={33.5}/>
+          <line x1={15.3} y1={41} x2={21.3} y2={37.2}/>
+          <line x1={32.7} y1={41} x2={26.7} y2={37.2}/>
+        </svg>
+      ),
+    },
+    {
+      k: "Objective", d: "Minimise total cost, number of vehicles, or a weighted combination.",
+      icon: (
+        <svg viewBox="0 0 48 48" width={52} height={52} fill="none" strokeLinecap="round" strokeLinejoin="round">
+          {/* Outer frame */}
+          <rect x={3} y={3} width={42} height={42} rx={3} stroke="var(--accent)" strokeWidth={1.5}/>
+          {/* "min" label */}
+          <text x={24} y={18} textAnchor="middle" fontSize={11} fontFamily="monospace" fill="var(--accent)" letterSpacing="1.5">min</text>
+          {/* Separator */}
+          <line x1={7} y1={22} x2={41} y2={22} stroke="var(--accent)" strokeWidth={1}/>
+          {/* Dollar sign */}
+          <text x={13} y={39} textAnchor="middle" fontSize={15} fontFamily="serif" fill="var(--accent)">$</text>
+          {/* Clock */}
+          <circle cx={24} cy={34} r={5} stroke="var(--accent)" strokeWidth={1.5}/>
+          <line x1={24} y1={30} x2={24} y2={34} stroke="var(--accent)" strokeWidth={1.5}/>
+          <line x1={24} y1={34} x2={27} y2={34} stroke="var(--accent)" strokeWidth={1.5}/>
+          {/* Mini truck */}
+          <rect x={33} y={30} width={10} height={7} rx={1} stroke="var(--accent)" strokeWidth={1.5}/>
+          <circle cx={35} cy={38.5} r={2} stroke="var(--accent)" strokeWidth={1.5}/>
+          <circle cx={41} cy={38.5} r={2} stroke="var(--accent)" strokeWidth={1.5}/>
+        </svg>
+      ),
+    },
   ];
   return (
     <section className="slide" data-label="Anatomy of a routing problem">
       <SlideFrame>
-        <div className="tag">02 · Foundations</div>
+        <div className="tag">03 · VRP elements</div>
         <h2 className="title" style={{ marginTop: 28 }}>The anatomy of a routing problem.</h2>
         <div className="body" style={{ marginTop: 28, color: "var(--ink-3)", maxWidth: 1300 }}>
           Every VRP instance is built from the same six components. Different variants just tune which constraints apply to each.
         </div>
 
-        <div style={{ marginTop: 60, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 0, border: "1px solid var(--line)" }}>
+        <div style={{ marginTop: 44, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 0, border: "1px solid var(--line)" }}>
           {parts.map((p, i) => (
             <div key={i} style={{
-              padding: "36px 32px", minHeight: 240,
+              padding: "28px 32px 32px", minHeight: 250,
               borderRight: (i % 3 !== 2) ? "1px solid var(--line)" : "none",
               borderBottom: i < 3 ? "1px solid var(--line)" : "none",
-              background: i === 0 ? "var(--paper-2)" : "transparent",
+              background: "var(--paper-2)",
             }}>
-              <div className="kicker" style={{ fontSize: 25, color: "var(--accent)" }}>0{i+1}</div>
-              <div style={{ fontFamily: "var(--font-display)", fontSize: 42, marginTop: 10, lineHeight: 1 }}>{p.k}</div>
-              <div className="body small" style={{ marginTop: 14, color: "var(--ink-3)" }}>{p.d}</div>
+              {p.icon}
+              <div className="kicker" style={{ fontSize: 22, color: "var(--accent)", marginTop: 12 }}>0{i+1}</div>
+              <div style={{ fontFamily: "var(--font-display)", fontSize: 38, marginTop: 6, lineHeight: 1 }}>{p.k}</div>
+              <div className="body small" style={{ marginTop: 12, color: "var(--ink-3)" }}>{p.d}</div>
             </div>
           ))}
         </div>
@@ -426,75 +525,253 @@ function Slide06() {
   );
 }
 
-// ----- SLIDE 7 — Road as a graph -----
+// ----- SLIDE 7 — Road as a graph (button-triggered animation) -----
 function Slide07() {
-  // Sparse road graph (left) -> complete graph (right)
+  const [phase, setPhase] = React.useState(0); // 0=road, 1=animating
+  const [animKey, setAnimKey] = React.useState(0);
+  const sectionRef = React.useRef(null);
+  const btnRef = React.useRef(null);
+
+  // Reset to static road view whenever the slide becomes active
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (el.hasAttribute('data-deck-active')) { setPhase(0); setAnimKey(k => k + 1); }
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
+    return () => obs.disconnect();
+  }, []);
+
+  // Native click: React event delegation breaks after section is moved in the DOM
+  React.useEffect(() => {
+    const btn = btnRef.current;
+    if (!btn) return;
+    const handler = () => { setPhase(1); setAnimKey(k => k + 1); };
+    btn.addEventListener('click', handler);
+    return () => btn.removeEventListener('click', handler);
+  }, []);
+
   const roadNodes = [
-    { x:120, y:140 }, { x:260, y:90 },  { x:420, y:130 }, { x:560, y:110 },
-    { x:640, y:240 }, { x:720, y:370 }, { x:580, y:450 }, { x:400, y:490 },
-    { x:260, y:460 }, { x:120, y:340 }, { x:240, y:250 }, { x:450, y:300 },
+    { x: 400, y: 170 },  // 0  C₁
+    { x: 560, y: 115 },  // 1  junction
+    { x: 730, y: 155 },  // 2  C₂
+    { x: 900, y: 130 },  // 3  junction
+    { x: 990, y: 265 },  // 4  C₃
+    { x: 1060, y: 390 }, // 5  junction
+    { x: 910, y: 480 },  // 6  C₄
+    { x: 720, y: 520 },  // 7  junction
+    { x: 535, y: 490 },  // 8  C₅
+    { x: 360, y: 375 },  // 9  junction
+    { x: 510, y: 285 },  // 10 junction
+    { x: 740, y: 330 },  // 11 junction
   ];
   const roadEdges = [
     [0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,0],
-    [0,10],[1,10],[2,11],[3,4],[4,11],[5,11],[7,11],[10,11],[10,8],[11,6],
+    [0,10],[1,10],[2,11],[4,11],[5,11],[7,11],[10,11],[10,8],[11,6],
   ];
-  const customers = [0,2,4,6,8];
+  const customers  = [0, 2, 4, 6, 8];
+  const custLabels = ["C₁","C₂","C₃","C₄","C₅"];
+  const hlEdgeSet  = new Set(["0-1","1-2"]); // path C₁ → junction → C₂
+
+  // Timing for phase-1 animation (ms)
+  const DUR        = 12000;
+  const T_DRAW1    = 800;   // C₁→junc arc turns blue
+  const T_DRAW2    = 2000;  // junc→C₂ arc turns blue (after first finishes)
+  const T_CALLOUT  = 3400;  // callout "shortest path C₁→C₂" appears
+  const T_REPLACE1 = 4800;  // path arcs replaced by direct C₁→C₂ edge; cost label appears
+  const T_COLLAPSE = 6500;  // rest of road collapses; all remaining complete-graph edges draw in
+  const T_GONE     = 8800;  // everything road-related fully gone
+
+  const pD1    = (T_DRAW1/DUR*100).toFixed(1),       pD1e   = ((T_DRAW1+900)/DUR*100).toFixed(1);
+  const pD2    = (T_DRAW2/DUR*100).toFixed(1),       pD2e   = ((T_DRAW2+900)/DUR*100).toFixed(1);
+  const pCout  = (T_CALLOUT/DUR*100).toFixed(1),     pCoute = ((T_CALLOUT+700)/DUR*100).toFixed(1);
+  const pRepl  = (T_REPLACE1/DUR*100).toFixed(1),    pReple = ((T_REPLACE1+900)/DUR*100).toFixed(1);
+  const pColl  = (T_COLLAPSE/DUR*100).toFixed(1),    pGone  = (T_GONE/DUR*100).toFixed(1);
+  const pCostEnd = ((T_REPLACE1+1200)/DUR*100).toFixed(1);
+  const pLbl2End = ((T_GONE+1400)/DUR*100).toFixed(1);
+
+  // Highlighted path segment lengths
+  const seg01 = Math.hypot(roadNodes[1].x-roadNodes[0].x, roadNodes[1].y-roadNodes[0].y);
+  const seg12 = Math.hypot(roadNodes[2].x-roadNodes[1].x, roadNodes[2].y-roadNodes[1].y);
 
   return (
-    <section className="slide" data-label="The road as a graph">
+    <section ref={sectionRef} className="slide" data-label="The road as a graph">
+      <style>{`
+        /* Rest of road: fades at T_COLLAPSE */
+        @keyframes s07-road      { 0%,${pColl}%{opacity:.32} ${pGone}%,100%{opacity:0} }
+        /* Path edges base: fades earlier at T_REPLACE1 */
+        @keyframes s07-road-path { 0%,${pRepl}%{opacity:.32} ${pReple}%,100%{opacity:0} }
+        /* Other junctions: fade at T_COLLAPSE */
+        @keyframes s07-junc      { 0%{opacity:.6} ${pColl}%{opacity:.6} ${pGone}%,100%{opacity:0} }
+        /* Path junction (node 1): fades at T_REPLACE1 */
+        @keyframes s07-junc-path { 0%{opacity:.6} ${pRepl}%{opacity:.6} ${pReple}%,100%{opacity:0} }
+        /* ROAD NETWORK label: fades at T_COLLAPSE */
+        @keyframes s07-rl        { 0%,${pColl}%{opacity:1} ${pGone}%,100%{opacity:0} }
+        /* Highlighted path arcs: draw then fade at T_REPLACE1 */
+        @keyframes s07-hlp1      { 0%,${pD1}%{stroke-dashoffset:var(--len);opacity:1} ${pD1e}%,${pRepl}%{stroke-dashoffset:0;opacity:1} ${pReple}%,100%{stroke-dashoffset:0;opacity:0} }
+        @keyframes s07-hlp2      { 0%,${pD2}%{stroke-dashoffset:var(--len);opacity:1} ${pD2e}%,${pRepl}%{stroke-dashoffset:0;opacity:1} ${pReple}%,100%{stroke-dashoffset:0;opacity:0} }
+        /* Callout: appears at T_CALLOUT, fades at T_REPLACE1 */
+        @keyframes s07-callout   { 0%,${pCout}%{opacity:0;transform:translateY(6px)} ${pCoute}%,${pRepl}%{opacity:1;transform:translateY(0)} ${pReple}%,100%{opacity:0;transform:translateY(0)} }
+        /* COMPLETE GRAPH label: fades in after road is gone */
+        @keyframes s07-lbl2      { 0%,${pGone}%{opacity:0;transform:translateY(8px)} ${pLbl2End}%,100%{opacity:1;transform:translateY(0)} }
+      `}</style>
       <SlideFrame>
-        <div className="tag">02 · Foundations</div>
-        <h2 className="title" style={{ marginTop: 28 }}>From the road network to a complete graph.</h2>
-        <div className="body" style={{ marginTop: 18, color: "var(--ink-3)", maxWidth: 1400 }}>
-          The sparse road graph is preprocessed by shortest-path computation into a complete graph whose vertices are only depots and customers.
+        <div className="tag">03 · VRP elements</div>
+        <h2 className="title" style={{ marginTop: 20 }}>From the road network to a complete graph.</h2>
+        <div className="body" style={{ marginTop: 14, color: "var(--ink-3)", maxWidth: 1500, fontSize: 28 }}>
+          Roads are sparse — you can't drive directly between any two customers. VRP needs the travel cost for <em>every</em> pair.
+          A shortest-path computation collapses the network: junctions disappear and only customers remain, connected by a <em>complete graph</em> whose edge weights are the minimum road distances.
         </div>
 
-        <div style={{ marginTop: 40, flex: 1, display: "grid", gridTemplateColumns: "1fr 140px 1fr", gap: 20 }}>
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 20, display: "flex", flexDirection: "column" }}>
-            <div className="kicker" style={{ marginBottom: 8 }}>Road network</div>
-            <svg viewBox="0 0 820 580" style={{ flex: 1, width: "100%" }}>
-              {roadEdges.map(([a,b], i) => (
-                <line key={i} x1={roadNodes[a].x} y1={roadNodes[a].y} x2={roadNodes[b].x} y2={roadNodes[b].y}
-                      stroke="var(--ink-3)" strokeWidth={2} opacity={0.5}/>
-              ))}
-              {roadNodes.map((n, i) => (
-                <circle key={i} cx={n.x} cy={n.y} r={customers.includes(i) ? 11 : 5}
-                        fill={customers.includes(i) ? "var(--paper)" : "var(--ink-3)"}
-                        stroke={customers.includes(i) ? "var(--ink)" : "none"} strokeWidth={2} />
-              ))}
-              <text x={20} y={560} fontFamily="var(--font-mono)" fontSize={14} fill="var(--ink-3)">sparse · junctions = small dots · customers = circles</text>
-            </svg>
-          </div>
+        <div style={{ marginTop: 20, flex: 1, position: "relative", background: "var(--paper-2)", border: "1px solid var(--line)", padding: 20 }}>
+          {/* Always in DOM so btnRef stays stable; hidden once animation starts */}
+          <button ref={btnRef} style={{
+            position: "absolute", top: 20, right: 20, zIndex: 10,
+            background: "var(--accent)", color: "#fff",
+            border: "none", borderRadius: 8, padding: "12px 28px",
+            fontFamily: "var(--font-mono)", fontSize: 18, letterSpacing: "0.06em",
+            cursor: "pointer", textTransform: "uppercase",
+            visibility: phase === 0 ? "visible" : "hidden"
+          }}>Network collapsing →</button>
 
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-mono)", fontSize: 40, color: "var(--accent)" }}>
-            <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: 60, lineHeight: 1 }}>→</div>
-              <div style={{ fontSize: 24, marginTop: 10, color: "var(--ink-3)", textTransform: "uppercase", letterSpacing: "0.08em" }}>shortest paths</div>
-            </div>
-          </div>
+          <svg viewBox="0 0 1400 540" style={{ width: "100%", height: "100%", display: "block" }}>
+            <defs>
+              <pattern id="dotgrid-s07" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                <circle cx="1" cy="1" r="1" fill="var(--line)"/>
+              </pattern>
+            </defs>
+            <rect width={1400} height={540} fill="url(#dotgrid-s07)" opacity={0.5}/>
 
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 20, display: "flex", flexDirection: "column" }}>
-            <div className="kicker" style={{ marginBottom: 8 }}>Complete graph G = (V, A)</div>
-            <svg viewBox="0 0 820 580" style={{ flex: 1, width: "100%" }}>
-              {customers.map((ci, i) =>
-                customers.slice(i+1).map((cj, j) => (
-                  <line key={`${i}-${j}`} x1={roadNodes[ci].x} y1={roadNodes[ci].y}
-                        x2={roadNodes[cj].x} y2={roadNodes[cj].y}
-                        stroke="var(--accent)" strokeWidth={1.8} opacity={0.45} />
-                ))
-              )}
-              {customers.map((ci, i) => (
-                <g key={i}>
-                  {i === 0 ? (
-                    <rect x={roadNodes[ci].x-12} y={roadNodes[ci].y-12} width={24} height={24} fill="var(--ink)"/>
-                  ) : (
-                    <circle cx={roadNodes[ci].x} cy={roadNodes[ci].y} r={12} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2} />
-                  )}
-                </g>
-              ))}
-              <text x={20} y={560} fontFamily="var(--font-mono)" fontSize={14} fill="var(--ink-3)">complete · cost cᵢⱼ = shortest-path cost between i and j</text>
-            </svg>
-          </div>
+            {phase === 0 ? (
+              /* ── Static road network ── */
+              <>
+                <text x={30} y={32} fontFamily="var(--font-mono)" fontSize={18} letterSpacing="0.1em"
+                      fill="var(--ink-3)">ROAD NETWORK</text>
+                {roadEdges.map(([a,b], i) => (
+                  <line key={i} x1={roadNodes[a].x} y1={roadNodes[a].y} x2={roadNodes[b].x} y2={roadNodes[b].y}
+                        stroke="var(--ink-3)" strokeWidth={2} opacity={0.32}/>
+                ))}
+                {roadNodes.map((n, i) => customers.includes(i) ? null : (
+                  <circle key={i} cx={n.x} cy={n.y} r={7} fill="var(--ink-3)" opacity={0.6}/>
+                ))}
+                {customers.map((ci, i) => (
+                  <g key={i}>
+                    <circle cx={roadNodes[ci].x} cy={roadNodes[ci].y} r={22}
+                            fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
+                    <text x={roadNodes[ci].x} y={roadNodes[ci].y+7} textAnchor="middle"
+                          fontFamily="var(--font-mono)" fontSize={16} fontWeight={600} fill="var(--ink)">{custLabels[i]}</text>
+                  </g>
+                ))}
+              </>
+            ) : (
+              /* ── Animated collapse ── */
+              <g key={animKey}>
+                {/* "ROAD NETWORK" label fades out at full opacity */}
+                <text x={30} y={32} fontFamily="var(--font-mono)" fontSize={18} letterSpacing="0.1em" fill="var(--ink-3)"
+                      style={{ animation: `s07-rl ${DUR}ms both ease-in-out` }}>ROAD NETWORK</text>
+                {/* "COMPLETE GRAPH" label fades in */}
+                <text x={30} y={32} fontFamily="var(--font-mono)" fontSize={18} letterSpacing="0.1em" fill="var(--accent)"
+                      style={{ animation: `s07-lbl2 ${DUR}ms both ease-in-out` }}>COMPLETE GRAPH  G = (V, E)</text>
+
+                {/* Road edges: base layer fades at T_REPLACE1 for path, T_COLLAPSE for rest */}
+                {roadEdges.map(([a,b], i) => {
+                  const k = `${Math.min(a,b)}-${Math.max(a,b)}`;
+                  const hl = hlEdgeSet.has(k);
+                  const seg = k === "0-1" ? seg01 : k === "1-2" ? seg12 : null;
+                  // Edges touching the path junction (node 1) must also fade at T_REPLACE1
+                  const baseKf = (hl || a === 1 || b === 1) ? "s07-road-path" : "s07-road";
+                  return (
+                    <React.Fragment key={i}>
+                      {/* Muted base — path edges fade at T_REPLACE1, others at T_COLLAPSE */}
+                      <line x1={roadNodes[a].x} y1={roadNodes[a].y} x2={roadNodes[b].x} y2={roadNodes[b].y}
+                            stroke="var(--ink-3)" strokeWidth={2}
+                            style={{ animation: `${baseKf} ${DUR}ms both ease-in-out` }}/>
+                      {/* Accent overlay — C₁→junc first (s07-hlp1), junc→C₂ second (s07-hlp2) */}
+                      {hl && (
+                        <line x1={roadNodes[a].x} y1={roadNodes[a].y} x2={roadNodes[b].x} y2={roadNodes[b].y}
+                              stroke="var(--accent)" strokeWidth={5}
+                              style={{ '--len': seg, strokeDasharray: seg, strokeDashoffset: seg,
+                                       animation: `${k === "0-1" ? "s07-hlp1" : "s07-hlp2"} ${DUR}ms both ease-in-out` }}/>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+
+                {/* Junction nodes — path junction (node 1) fades at T_REPLACE1, others at T_COLLAPSE */}
+                {roadNodes.map((n, i) => customers.includes(i) ? null : (
+                  <circle key={i} cx={n.x} cy={n.y} r={7} fill="var(--ink-3)"
+                          style={{ animation: `${i === 1 ? "s07-junc-path" : "s07-junc"} ${DUR}ms both ease-in-out` }}/>
+                ))}
+
+                {/* Callout: appears at T_CALL, fades with road */}
+                {(() => {
+                  const mx = (roadNodes[0].x + roadNodes[2].x) / 2;
+                  const my = roadNodes[1].y - 52;
+                  return (
+                    <g style={{ animation: `s07-callout ${DUR}ms both ease-in-out` }}>
+                      <rect x={mx-160} y={my-20} width={320} height={58} rx={4}
+                            fill="var(--paper)" stroke="var(--accent)" strokeWidth={1.5}/>
+                      <text x={mx} y={my+6} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={16} fill="var(--accent)">shortest path C₁ → C₂</text>
+                      <text x={mx} y={my+26} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill="var(--ink-3)">via 1 junction  ·  cost = 5.2 km</text>
+                    </g>
+                  );
+                })()}
+
+                {/* Complete graph edges:
+                     C₁→C₂ (ii=0,jj=0) draws at T_REPLACE1 — replaces the path arcs
+                     All others draw at T_COLLAPSE + stagger — replace the rest of the road */}
+                {customers.map((ci, ii) =>
+                  customers.slice(ii+1).map((cj, jj) => {
+                    const hlE = ii===0 && jj===0;
+                    const len = Math.hypot(roadNodes[cj].x-roadNodes[ci].x, roadNodes[cj].y-roadNodes[ci].y);
+                    const delay = hlE ? T_REPLACE1 : T_COLLAPSE + (ii*5+jj)*140;
+                    return (
+                      <line key={`e${ii}-${jj}`} x1={roadNodes[ci].x} y1={roadNodes[ci].y}
+                            x2={roadNodes[cj].x} y2={roadNodes[cj].y}
+                            stroke="var(--accent)" strokeWidth={hlE ? 3.5 : 1.5}
+                            style={{ '--len': len, strokeDasharray: len, strokeDashoffset: len,
+                                     opacity: hlE ? 1 : 0.35,
+                                     animation: `drawPath 800ms both ease-out`,
+                                     animationDelay: `${delay}ms` }}/>
+                    );
+                  })
+                )}
+
+                {/* Cost label on C₁–C₂ edge — appears with the direct edge at T_REPLACE1 */}
+                {(() => {
+                  const mx = (roadNodes[0].x + roadNodes[2].x) / 2;
+                  const my = (roadNodes[0].y + roadNodes[2].y) / 2 - 32;
+                  return (
+                    <g style={{ opacity: 0, animation: `fadeUp 600ms both ease-out`,
+                                animationDelay: `${T_REPLACE1 + 600}ms` }}>
+                      <rect x={mx-72} y={my-16} width={144} height={34} rx={4}
+                            fill="var(--paper)" stroke="var(--accent)" strokeWidth={1.5}/>
+                      <text x={mx} y={my+7} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={16} fill="var(--accent)">c₁₂ = 5.2 km</text>
+                    </g>
+                  );
+                })()}
+
+                {/* Customer nodes — always visible */}
+                {customers.map((ci, i) => (
+                  <g key={i}>
+                    <circle cx={roadNodes[ci].x} cy={roadNodes[ci].y} r={22}
+                            fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
+                    <text x={roadNodes[ci].x} y={roadNodes[ci].y+7} textAnchor="middle"
+                          fontFamily="var(--font-mono)" fontSize={16} fontWeight={600} fill="var(--ink)">{custLabels[i]}</text>
+                  </g>
+                ))}
+              </g>
+            )}
+
+            {/* Legend */}
+            <g transform="translate(30,516)">
+              <circle cx={8} cy={-2} r={7} fill="var(--ink-3)" opacity={0.5}/>
+              <text x={24} y={4} fontFamily="var(--font-mono)" fontSize={13} fill="var(--ink-3)">junction (disappears)</text>
+              <circle cx={230} cy={-2} r={10} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>
+              <text x={250} y={4} fontFamily="var(--font-mono)" fontSize={13} fill="var(--ink-3)">customer (stays)</text>
+            </g>
+          </svg>
         </div>
       </SlideFrame>
     </section>
@@ -506,23 +783,24 @@ function Slide08() {
   return (
     <section className="slide" data-label="Vertices and arcs">
       <SlideFrame>
-        <div className="tag">02 · Foundations · Notation</div>
+        <div className="tag">03 · VRP elements · Notation</div>
         <h2 className="title" style={{ marginTop: 28 }}>The basic graph-theoretic notation.</h2>
 
         <div style={{ marginTop: 50, display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 80, flex: 1 }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "300px 1fr", alignItems: "end" }}>
             {[
               ["G = (V, A)", "directed complete graph (undirected: E)"],
               ["V = {0, 1, …, n}", "vertex 0 is the depot; 1…n are the customers"],
               ["cᵢⱼ ≥ 0", "travel cost on arc (i, j)"],
               ["dᵢ", "demand of customer i; d₀ = 0"],
-              ["K identical vehicles", "each with capacity C"],
               ["δ⁺(i), δ⁻(i)", "forward / backward star of vertex i"],
+              ["cᵢⱼ = cⱼᵢ ?", "symmetric (SCVRP) vs asymmetric (ACVRP) cost matrix"],
+              ["cᵢⱼ ≤ cᵢₖ + cₖⱼ", "triangle inequality — automatic when cᵢⱼ is a shortest path"],
             ].map(([k, v], i) => (
-              <div key={i} style={{ display: "flex", gap: 30, alignItems: "baseline", borderBottom: "1px solid var(--line)", paddingBottom: 16 }}>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: 28, color: "var(--ink)", minWidth: 280 }}>{k}</div>
-                <div style={{ fontSize: 34, color: "var(--ink-3)" }}>{v}</div>
-              </div>
+              <React.Fragment key={i}>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 28, color: "var(--ink)", borderBottom: "1px solid var(--line)", paddingBottom: 14, paddingTop: i === 0 ? 0 : 14, paddingRight: 16 }}>{k}</div>
+                <div style={{ fontSize: 26, color: "var(--ink-3)", borderBottom: "1px solid var(--line)", paddingBottom: 14, paddingTop: i === 0 ? 0 : 14 }}>{v}</div>
+              </React.Fragment>
             ))}
           </div>
 
@@ -531,11 +809,13 @@ function Slide08() {
               nodes={EX_NODES.slice(0, 8)}
               routes={[]}
               showEdges
+              edgeOpacity={0.45}
               showLabels
               width={800} height={560}
               nodeRadius={14}
               depotRadius={16}
               labelFontSize={15}
+              viewBoxOverride="160 55 620 510"
             />
           </div>
         </div>
@@ -544,39 +824,696 @@ function Slide08() {
   );
 }
 
-// ----- SLIDE 9 — TSP definition -----
-function Slide09() {
-  // Single TSP tour through all customers
-  const tspRoute = [1,2,3,4,10,5,6,11,7,8,9]; // indices into EX_NODES
+// ----- SECTION HEADER — TSP -----
+function SlideTSPSection() {
   return (
-    <section className="slide" data-label="The Traveling Salesman Problem">
-      <SlideFrame>
-        <div className="tag">02 · Foundations · TSP</div>
-        <h2 className="title" style={{ marginTop: 28 }}>The Traveling Salesman Problem — one vehicle, one tour.</h2>
+    <section className="slide section-slide" data-label="Part IV — TSP">
+      <div style={{ position: "absolute", top: 80, left: 120, right: 120, display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 31, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--paper-deep)" }}>
+        <div>Part IV of IX</div>
+        <div>Slides 22 — 28</div>
+      </div>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+        <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Four</div>
+        <div className="hero" style={{ fontSize: 200 }}>Traveling<br/>Salesman</div>
+        <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
+          The simplest non-trivial routing problem — one vehicle, no capacity limit, visit everyone exactly once. The ancestor of every VRP.
+        </div>
+      </div>
+    </section>
+  );
+}
 
-        <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 80, flex: 1 }}>
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 28 }}>
-            <VRPGraph
-              nodes={EX_NODES}
-              routes={[tspRoute]}
-              width={900} height={600}
-              strokeWidth={4}
-              nodeRadius={11}
-              depotRadius={15}
-              routeColors={["var(--ink)"]}
-            />
+// ----- SLIDE 9 — TSP informal definition -----
+function Slide09() {
+  const [animKey, setAnimKey] = React.useState(0);
+  const sectionRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (el.hasAttribute('data-deck-active')) setAnimKey(k => k + 1);
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
+    return () => obs.disconnect();
+  }, []);
+
+  const tspRoute = [1,2,3,4,10,5,6,11,7,8,9];
+
+  return (
+    <section ref={sectionRef} className="slide" data-label="The Traveling Salesman Problem">
+      <SlideFrame>
+        <div className="tag">04 · TSP · Informal statement</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          One vehicle, <em style={{ color: "var(--accent)" }}>n cities</em>, one closed tour.
+        </h2>
+
+        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 60, flex: 1 }}>
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 28, position: "relative" }}>
+            <div key={animKey} style={{ width: "100%", height: "100%" }}>
+              <VRPGraph
+                key={animKey}
+                nodes={EX_NODES}
+                routes={[tspRoute]}
+                width={900} height={600}
+                strokeWidth={4}
+                nodeRadius={11}
+                depotRadius={15}
+                routeColors={["var(--ink)"]}
+              />
+            </div>
+            <div style={{ position: "absolute", bottom: 18, left: 30, fontFamily: "var(--font-mono)", fontSize: 20, color: "var(--ink-3)", letterSpacing: "0.06em" }}>
+              FIG. — a single closed tour through depot and every customer.
+            </div>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 28 }}>
-            <div className="lede">
-              Find the minimum-cost Hamiltonian circuit visiting every vertex exactly once.
+
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 22 }}>
+            <div className="lede" style={{ fontSize: 34, lineHeight: 1.22 }}>
+              A salesman leaves a <em>depot</em>, visits <em>n</em> customers <em>exactly once</em>, and returns home — with the smallest possible total distance.
             </div>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 24, color: "var(--ink-2)", lineHeight: 1.5, background: "var(--paper-2)", padding: "22px 26px", border: "1px solid var(--line)" }}>
-              <div>TSP = VRP with</div>
-              <div style={{ marginTop: 6, color: "var(--accent)" }}>K = 1 &nbsp;and&nbsp; C ≥ d(V)</div>
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "18px 24px" }}>
+              <div className="kicker" style={{ fontSize: 20, marginBottom: 10 }}>Ingredients</div>
+              <ul style={{ margin: 0, paddingLeft: 22, fontSize: 22, color: "var(--ink-2)", lineHeight: 1.4, display: "flex", flexDirection: "column", gap: 6 }}>
+                <li>One vehicle — no capacity limit.</li>
+                <li>A depot <span style={{ fontFamily: "var(--font-mono)" }}>v₀</span> and <span style={{ fontFamily: "var(--font-mono)" }}>n</span> customer vertices.</li>
+                <li>Complete graph with arc costs <span style={{ fontFamily: "var(--font-mono)" }}>cᵢⱼ</span>.</li>
+                <li>Each customer visited <em>exactly once</em>.</li>
+                <li>The tour is <em>closed</em>: ends where it started.</li>
+              </ul>
             </div>
-            <div className="body small" style={{ color: "var(--ink-3)" }}>
-              Every VRP can be seen as a set of coupled TSPs, one per vehicle — subject to capacity, time, and precedence constraints.
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 22, color: "var(--ink-2)", lineHeight: 1.4, background: "var(--paper-2)", padding: "14px 20px", border: "1px solid var(--line)" }}>
+              TSP = VRP &nbsp;with&nbsp; <span style={{ color: "var(--accent)" }}>K = 1</span> &nbsp;and&nbsp; <span style={{ color: "var(--accent)" }}>C ≥ d(V)</span>
             </div>
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+// ----- SLIDE TSP — HAMILTONIAN CIRCUIT -----
+function SlideTSPHamiltonian() {
+  const [animKey, setAnimKey] = React.useState(0);
+  const sectionRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (el.hasAttribute('data-deck-active')) setAnimKey(k => k + 1);
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
+    return () => obs.disconnect();
+  }, []);
+
+  const nodes = [
+    { x: 500, y: 130, label: "v₀" },
+    { x: 760, y: 230, label: "v₁" },
+    { x: 830, y: 450, label: "v₂" },
+    { x: 670, y: 620, label: "v₃" },
+    { x: 330, y: 620, label: "v₄" },
+    { x: 170, y: 450, label: "v₅" },
+    { x: 240, y: 230, label: "v₆" },
+  ];
+  const tour = [0, 1, 2, 3, 4, 5, 6, 0];
+  const r = 34;
+
+  return (
+    <section ref={sectionRef} className="slide" data-label="Hamiltonian circuit">
+      <SlideFrame>
+        <div className="tag">04 · TSP · Hamiltonian circuit</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          A valid tour is a <em style={{ color: "var(--accent)" }}>Hamiltonian circuit</em>.
+        </h2>
+
+        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 60, flex: 1, alignItems: "center" }}>
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 26, position: "relative" }}>
+            <svg viewBox="0 0 1000 760" style={{ width: "100%", height: "100%", display: "block" }}>
+              <defs>
+                <pattern id="dotgrid-tsph" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <circle cx="1" cy="1" r="1" fill="var(--line)"/>
+                </pattern>
+                <marker id="tsph-arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent)"/>
+                </marker>
+              </defs>
+              <rect width={1000} height={760} fill="url(#dotgrid-tsph)" opacity={0.5}/>
+
+              <g key={animKey}>
+                {/* Tour arcs — draw sequentially */}
+                {tour.slice(0, -1).map((from, i) => {
+                  const a = nodes[from], b = nodes[tour[i+1]];
+                  const dx = b.x - a.x, dy = b.y - a.y;
+                  const len = Math.hypot(dx, dy);
+                  const ux = dx / len, uy = dy / len;
+                  const x1 = a.x + ux * r, y1 = a.y + uy * r;
+                  const x2 = b.x - ux * r, y2 = b.y - uy * r;
+                  const delay = 1200 + i * 380;
+                  const segLen = Math.hypot(x2 - x1, y2 - y1);
+                  return (
+                    <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
+                          stroke="var(--accent)" strokeWidth={4} strokeLinecap="round"
+                          markerEnd="url(#tsph-arr)"
+                          style={{
+                            "--len": segLen,
+                            strokeDasharray: segLen,
+                            animation: "drawPath 700ms both ease-in-out",
+                            animationDelay: `${delay}ms`,
+                          }}/>
+                  );
+                })}
+
+                {/* Sequence number pills */}
+                {tour.slice(0, -1).map((from, i) => {
+                  const a = nodes[from], b = nodes[tour[i+1]];
+                  const mx = (a.x + b.x) / 2;
+                  const my = (a.y + b.y) / 2;
+                  const delay = 1200 + i * 380 + 500;
+                  return (
+                    <g key={`lab-${i}`}
+                       style={{ opacity: 0, animation: "fadeUp 400ms both ease-out", animationDelay: `${delay}ms` }}>
+                      <circle cx={mx} cy={my} r={14} fill="var(--paper)" stroke="var(--accent)" strokeWidth={1.5}/>
+                      <text x={mx} y={my + 6} textAnchor="middle" fontFamily="var(--font-mono)"
+                            fontSize={16} fill="var(--accent)" fontWeight={600}>{i + 1}</text>
+                    </g>
+                  );
+                })}
+
+                {/* Nodes — depot square, customers circles */}
+                {nodes.map((n, i) => (
+                  <g key={i} style={{ animation: "fadeUp 500ms both ease-out", animationDelay: `${i * 130}ms` }}>
+                    {i === 0 ? (
+                      <rect x={n.x - r} y={n.y - r} width={r*2} height={r*2}
+                            fill="var(--depot)" rx={4}/>
+                    ) : (
+                      <circle cx={n.x} cy={n.y} r={r} fill="var(--paper)" stroke="var(--ink)" strokeWidth={3}/>
+                    )}
+                    <text x={n.x} y={n.y + 10} textAnchor="middle"
+                          fontFamily="var(--font-mono)" fontSize={24} fontWeight={600}
+                          fill={i === 0 ? "var(--paper)" : "var(--ink)"}>
+                      {n.label}
+                    </text>
+                  </g>
+                ))}
+              </g>
+
+              <text x={500} y={740} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={20} fill="var(--ink-3)">
+                FIG. — a closed walk that visits each vertex exactly once.
+              </text>
+            </svg>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 22, justifyContent: "center" }}>
+            <div className="lede" style={{ fontSize: 32, lineHeight: 1.25 }}>
+              A <em>Hamiltonian circuit</em> is a cyclic ordering of the vertex set — every vertex appears <em>exactly once</em>, and the walk closes on the starting vertex.
+            </div>
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "18px 22px", fontFamily: "var(--font-mono)", fontSize: 22, lineHeight: 1.55 }}>
+              τ = (v<sub>π(0)</sub>, v<sub>π(1)</sub>, …, v<sub>π(n)</sub>, v<sub>π(0)</sub>)
+              <div style={{ color: "var(--ink-3)", marginTop: 10, fontSize: 20 }}>
+                π is a permutation of {"{"}0, 1, …, n{"}"}.
+              </div>
+            </div>
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "18px 22px" }}>
+              <div className="kicker" style={{ fontSize: 20, marginBottom: 8 }}>Cost of a tour</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 22 }}>
+                <TeX display>{String.raw`c(\tau) \;=\; \sum_{k=0}^{n} c_{\,\pi(k),\,\pi(k+1)}`}</TeX>
+              </div>
+              <div style={{ color: "var(--ink-3)", fontSize: 20, marginTop: 4 }}>
+                TSP asks for the circuit of <em>minimum</em> cost.
+              </div>
+            </div>
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+// ----- SLIDE TSP — ILP FORMULATION -----
+function SlideTSPFormulation() {
+  return (
+    <section className="slide" data-label="TSP — ILP formulation">
+      <SlideFrame>
+        <div className="tag">04 · TSP · Integer programming model</div>
+        <h2 className="title" style={{ marginTop: 28 }}>A binary model on the arcs of the complete graph.</h2>
+
+        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 56, flex: 1 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 20, justifyContent: "center" }}>
+            <div className="body" style={{ color: "var(--ink-2)", fontSize: 26, lineHeight: 1.35 }}>
+              One decision variable per arc of the complete graph G = (V, A):
+            </div>
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 22, fontFamily: "var(--font-mono)", fontSize: 23, lineHeight: 1.55 }}>
+              xᵢⱼ = 1 &nbsp;if arc (i, j) belongs to the tour<br/>
+              xᵢⱼ = 0 &nbsp;otherwise
+            </div>
+            <div className="body" style={{ color: "var(--ink-2)", fontSize: 23, lineHeight: 1.35 }}>
+              The model needs three families of constraints:
+            </div>
+            <ul style={{ margin: 0, paddingLeft: 22, fontSize: 22, color: "var(--ink-2)", lineHeight: 1.4, display: "flex", flexDirection: "column", gap: 8 }}>
+              <li><em>Out-degree 1</em> — the tour <em>leaves</em> every vertex exactly once.</li>
+              <li><em>In-degree 1</em> — the tour <em>arrives</em> at every vertex exactly once.</li>
+              <li style={{ color: "var(--accent)" }}><em>Subtour elimination</em> — the selected arcs must form a <em>single</em> connected cycle.</li>
+            </ul>
+            <div className="body small" style={{ color: "var(--ink-3)", fontSize: 20, lineHeight: 1.35 }}>
+              Without the third family, degree-feasible solutions could break into several disjoint cycles.
+            </div>
+          </div>
+
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "30px 38px", fontFamily: "var(--font-mono)", fontSize: 23, lineHeight: 1.55 }}>
+            <div style={{ fontFamily: "var(--font-display)", fontSize: 30, marginBottom: 16 }}>
+              <TeX display>{String.raw`\min \; \sum_{i \in V} \sum_{\substack{j \in V \\ j \neq i}} c_{ij}\, x_{ij}`}</TeX>
+            </div>
+            <div style={{ color: "var(--ink-3)", marginBottom: 10 }}>subject to</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr auto", rowGap: 14, columnGap: 18 }}>
+              <div>
+                <TeX>{String.raw`\sum_{\substack{j \in V \\ j \neq i}} x_{ij} = 1`}</TeX> &nbsp; ∀ i ∈ V
+              </div>
+              <div style={{ color: "var(--ink-3)" }}>(out-degree)</div>
+
+              <div>
+                <TeX>{String.raw`\sum_{\substack{i \in V \\ i \neq j}} x_{ij} = 1`}</TeX> &nbsp; ∀ j ∈ V
+              </div>
+              <div style={{ color: "var(--ink-3)" }}>(in-degree)</div>
+
+              <div style={{ color: "var(--accent)" }}>
+                <TeX>{String.raw`\sum_{i \in S} \sum_{\substack{j \in S \\ j \neq i}} x_{ij} \;\leq\; |S| - 1`}</TeX>
+                <div style={{ color: "var(--accent)", fontSize: 19, marginTop: 4 }}>∀ S ⊊ V, &nbsp; 2 ≤ |S| ≤ n − 1</div>
+              </div>
+              <div style={{ color: "var(--accent)" }}>(subtour elim.)</div>
+
+              <div>xᵢⱼ ∈ {"{"}0, 1{"}"}</div>
+              <div style={{ color: "var(--ink-3)" }}>(integrality)</div>
+            </div>
+            <div style={{ color: "var(--ink-3)", fontSize: 20, marginTop: 20, lineHeight: 1.4 }}>
+              Dantzig, Fulkerson &amp; Johnson (1954) — the formulation that solved a 49-city instance by hand.
+            </div>
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+// ----- SLIDE TSP — SUBTOUR PROBLEM -----
+function SlideTSPSubtourProblem() {
+  const [animKey, setAnimKey] = React.useState(0);
+  const sectionRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (el.hasAttribute('data-deck-active')) setAnimKey(k => k + 1);
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
+    return () => obs.disconnect();
+  }, []);
+
+  // Two disjoint cycles sharing no vertices
+  const group1 = [
+    { x: 200, y: 230, label: "v₀" },
+    { x: 430, y: 160, label: "v₁" },
+    { x: 500, y: 360, label: "v₂" },
+    { x: 260, y: 410, label: "v₆" },
+  ];
+  const group2 = [
+    { x: 720, y: 240, label: "v₃" },
+    { x: 880, y: 420, label: "v₄" },
+    { x: 700, y: 560, label: "v₅" },
+  ];
+  const cycle1 = [[0,1],[1,2],[2,3],[3,0]];
+  const cycle2 = [[0,1],[1,2],[2,0]];
+  const r = 30;
+
+  const arcSegments = (grp, edges, color, startDelay) =>
+    edges.map(([a, b], i) => {
+      const na = grp[a], nb = grp[b];
+      const dx = nb.x - na.x, dy = nb.y - na.y;
+      const len = Math.hypot(dx, dy);
+      const ux = dx / len, uy = dy / len;
+      const x1 = na.x + ux * r, y1 = na.y + uy * r;
+      const x2 = nb.x - ux * r, y2 = nb.y - uy * r;
+      const segLen = Math.hypot(x2 - x1, y2 - y1);
+      const delay = startDelay + i * 350;
+      return (
+        <line key={`${color}-${i}`} x1={x1} y1={y1} x2={x2} y2={y2}
+              stroke={color} strokeWidth={4} strokeLinecap="round"
+              style={{
+                "--len": segLen,
+                strokeDasharray: segLen,
+                animation: "drawPath 700ms both ease-in-out",
+                animationDelay: `${delay}ms`,
+              }}/>
+      );
+    });
+
+  return (
+    <section ref={sectionRef} className="slide" data-label="The subtour problem">
+      <SlideFrame>
+        <div className="tag">04 · TSP · The subtour issue</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          Degree constraints alone <em style={{ color: "var(--accent-2)" }}>are not enough</em>.
+        </h2>
+
+        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 60, flex: 1, alignItems: "center" }}>
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 26, position: "relative" }}>
+            <svg viewBox="0 0 1050 720" style={{ width: "100%", height: "100%", display: "block" }}>
+              <defs>
+                <pattern id="dotgrid-sub" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <circle cx="1" cy="1" r="1" fill="var(--line)"/>
+                </pattern>
+              </defs>
+              <rect width={1050} height={720} fill="url(#dotgrid-sub)" opacity={0.5}/>
+
+              <g key={animKey}>
+                {/* Subset hulls fade in after cycles */}
+                <g style={{
+                  opacity: 0,
+                  animation: "fadeUp 600ms both ease-out",
+                  animationDelay: `${900 + (cycle1.length + cycle2.length) * 350 + 500}ms`,
+                }}>
+                  <ellipse cx={350} cy={290} rx={230} ry={175}
+                           fill="var(--accent)" fillOpacity={0.06}
+                           stroke="var(--accent)" strokeWidth={2} strokeDasharray="6 5"/>
+                  <text x={150} y={120} fontFamily="var(--font-display)"
+                        fontStyle="italic" fontSize={40} fill="var(--accent)">S₁</text>
+                  <ellipse cx={780} cy={405} rx={180} ry={190}
+                           fill="var(--accent-2)" fillOpacity={0.06}
+                           stroke="var(--accent-2)" strokeWidth={2} strokeDasharray="6 5"/>
+                  <text x={950} y={155} fontFamily="var(--font-display)"
+                        fontStyle="italic" fontSize={40} fill="var(--accent-2)">S₂</text>
+                </g>
+
+                {/* Cycle 1 arcs */}
+                {arcSegments(group1, cycle1, "var(--accent)", 1000)}
+                {/* Cycle 2 arcs */}
+                {arcSegments(group2, cycle2, "var(--accent-2)", 1000 + cycle1.length * 350 + 150)}
+
+                {/* Nodes */}
+                {group1.map((n, i) => (
+                  <g key={`g1-${i}`} style={{ animation: "fadeUp 500ms both ease-out", animationDelay: `${i * 120}ms` }}>
+                    <circle cx={n.x} cy={n.y} r={r} fill="var(--paper)" stroke="var(--ink)" strokeWidth={3}/>
+                    <text x={n.x} y={n.y + 9} textAnchor="middle"
+                          fontFamily="var(--font-mono)" fontSize={22} fontWeight={600} fill="var(--ink)">
+                      {n.label}
+                    </text>
+                  </g>
+                ))}
+                {group2.map((n, i) => (
+                  <g key={`g2-${i}`} style={{ animation: "fadeUp 500ms both ease-out", animationDelay: `${(i + group1.length) * 120}ms` }}>
+                    <circle cx={n.x} cy={n.y} r={r} fill="var(--paper)" stroke="var(--ink)" strokeWidth={3}/>
+                    <text x={n.x} y={n.y + 9} textAnchor="middle"
+                          fontFamily="var(--font-mono)" fontSize={22} fontWeight={600} fill="var(--ink)">
+                      {n.label}
+                    </text>
+                  </g>
+                ))}
+              </g>
+
+              <text x={525} y={700} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={20} fill="var(--ink-3)">
+                FIG. — every vertex has in-degree 1 and out-degree 1, yet this is <em>not</em> a tour.
+              </text>
+            </svg>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 22, justifyContent: "center" }}>
+            <div className="lede" style={{ fontSize: 32, lineHeight: 1.25 }}>
+              A solution satisfying all degree equalities can still decompose into <em>two or more disjoint cycles</em>.
+            </div>
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--accent-2)", borderLeft: "4px solid var(--accent-2)", padding: "18px 22px" }}>
+              <div className="kicker" style={{ fontSize: 20, marginBottom: 8, color: "var(--accent-2)" }}>Why it happens</div>
+              <div style={{ fontSize: 23, color: "var(--ink-2)", lineHeight: 1.4 }}>
+                Degree constraints are <em>local</em>: they see each vertex in isolation. They cannot express the <em>global</em> property that all vertices must lie on a single cycle.
+              </div>
+            </div>
+            <div className="body" style={{ color: "var(--ink-2)", fontSize: 23, lineHeight: 1.35 }}>
+              We need a constraint that <em style={{ color: "var(--accent)" }}>forbids every proper subset</em> S ⊊ V from closing on itself.
+            </div>
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+// ----- SLIDE TSP — DFJ SUBTOUR ELIMINATION -----
+function SlideTSPDFJ() {
+  const [animKey, setAnimKey] = React.useState(0);
+  const sectionRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (el.hasAttribute('data-deck-active')) setAnimKey(k => k + 1);
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
+    return () => obs.disconnect();
+  }, []);
+
+  const inside = [
+    { x: 640, y: 210 },
+    { x: 780, y: 290 },
+    { x: 770, y: 440 },
+    { x: 620, y: 470 },
+    { x: 560, y: 340 },
+  ];
+  const outside = [
+    { x: 200, y: 180 },
+    { x: 330, y: 340 },
+    { x: 200, y: 500 },
+    { x: 380, y: 540 },
+  ];
+
+  return (
+    <section ref={sectionRef} className="slide" data-label="DFJ subtour elimination">
+      <SlideFrame>
+        <div className="tag">04 · TSP · Subtour elimination (DFJ)</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          Forbid every proper subset from closing on itself.
+        </h2>
+
+        <div style={{ marginTop: 30, display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 56, flex: 1, alignItems: "center" }}>
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 26, position: "relative" }}>
+            <svg viewBox="0 0 950 680" style={{ width: "100%", height: "100%", display: "block" }}>
+              <defs>
+                <pattern id="dotgrid-dfj" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <circle cx="1" cy="1" r="1" fill="var(--line)"/>
+                </pattern>
+                <marker id="dfj-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent)"/>
+                </marker>
+              </defs>
+              <rect width={950} height={680} fill="url(#dotgrid-dfj)" opacity={0.5}/>
+
+              <g key={animKey}>
+                {/* Subset S */}
+                <g style={{ opacity: 0, animation: "fadeUp 600ms both ease-out", animationDelay: "200ms" }}>
+                  <ellipse cx={670} cy={340} rx={220} ry={190}
+                           fill="var(--accent)" fillOpacity={0.08}
+                           stroke="var(--accent)" strokeWidth={2.5} strokeDasharray="8 6"/>
+                  <text x={670} y={130} textAnchor="middle" fontFamily="var(--font-display)"
+                        fontStyle="italic" fontSize={44} fill="var(--accent)">S</text>
+                </g>
+
+                {/* Nodes inside S */}
+                {inside.map(({x, y}, i) => (
+                  <g key={`in-${i}`} style={{ opacity: 0, animation: "fadeUp 500ms both ease-out", animationDelay: `${500 + i * 100}ms` }}>
+                    <circle cx={x} cy={y} r={19} fill="var(--paper)" stroke="var(--accent)" strokeWidth={2.5}/>
+                  </g>
+                ))}
+
+                {/* Nodes outside S */}
+                {outside.map(({x, y}, i) => (
+                  <g key={`out-${i}`} style={{ opacity: 0, animation: "fadeUp 500ms both ease-out", animationDelay: `${500 + i * 100}ms` }}>
+                    <circle cx={x} cy={y} r={19} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
+                  </g>
+                ))}
+
+                {/* Boundary-crossing arc */}
+                {(() => {
+                  const a = outside[1], b = inside[4];
+                  const dx = b.x - a.x, dy = b.y - a.y;
+                  const L = Math.hypot(dx, dy);
+                  const ux = dx / L, uy = dy / L;
+                  const x1 = a.x + ux * 22, y1 = a.y + uy * 22;
+                  const x2 = b.x - ux * 22, y2 = b.y - uy * 22;
+                  const segLen = Math.hypot(x2 - x1, y2 - y1);
+                  return (
+                    <line x1={x1} y1={y1} x2={x2} y2={y2}
+                          stroke="var(--accent)" strokeWidth={4.5} markerEnd="url(#dfj-arr)"
+                          style={{
+                            "--len": segLen,
+                            strokeDasharray: segLen,
+                            animation: "drawPath 900ms both ease-out",
+                            animationDelay: "1700ms",
+                          }}/>
+                  );
+                })()}
+
+                {/* Callout */}
+                <g style={{ opacity: 0, animation: "fadeUp 600ms both ease-out", animationDelay: "2400ms" }}>
+                  <rect x={305} y={205} width={220} height={38} rx={4}
+                        fill="var(--paper)" stroke="var(--accent)" strokeWidth={1.5}/>
+                  <text x={415} y={230} textAnchor="middle" fontFamily="var(--font-mono)"
+                        fontSize={19} fill="var(--accent)">≥ 1 arc must enter S</text>
+                </g>
+              </g>
+
+              <text x={475} y={660} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={19} fill="var(--ink-3)">
+                FIG. — at least one arc must cross the boundary of every proper subset S.
+              </text>
+            </svg>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 18, justifyContent: "center" }}>
+            <div className="lede" style={{ fontSize: 30, lineHeight: 1.22 }}>
+              The <em>Dantzig–Fulkerson–Johnson</em> cut. For every proper subset <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)" }}>S</span> of vertices, the arcs chosen <em>inside</em> S must fall short of forming a cycle — forcing at least one arc to cross the boundary.
+            </div>
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "18px 22px", fontFamily: "var(--font-mono)", fontSize: 22 }}>
+              <div style={{ color: "var(--ink-3)", fontSize: 18, marginBottom: 4 }}>packing form</div>
+              <TeX display>{String.raw`\sum_{i \in S}\sum_{\substack{j \in S \\ j \neq i}} x_{ij} \;\leq\; |S| - 1`}</TeX>
+            </div>
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "18px 22px", fontFamily: "var(--font-mono)", fontSize: 22 }}>
+              <div style={{ color: "var(--ink-3)", fontSize: 18, marginBottom: 4 }}>equivalent cut form</div>
+              <TeX display>{String.raw`\sum_{i \notin S}\sum_{j \in S} x_{ij} \;\geq\; 1`}</TeX>
+            </div>
+            <div className="body small" style={{ color: "var(--ink-3)", fontSize: 20, lineHeight: 1.35 }}>
+              Required for every S ⊊ V with 2 ≤ |S| ≤ n − 1.
+            </div>
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+// ----- SLIDE TSP — EXPONENTIAL BLOW-UP -----
+function SlideTSPExponential() {
+  const [animKey, setAnimKey] = React.useState(0);
+  const sectionRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (el.hasAttribute('data-deck-active')) setAnimKey(k => k + 1);
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
+    return () => obs.disconnect();
+  }, []);
+
+  // Bars: log10 of the number of valid S. At (n=5) only ~25; log≈1.4.
+  // Pinned to a shared max (30) for the log scale axis.
+  const data = [
+    { n: 5,   label: "25",        log: 1.4  },
+    { n: 10,  label: "≈ 10³",     log: 3.0  },
+    { n: 20,  label: "≈ 10⁶",     log: 6.0  },
+    { n: 50,  label: "≈ 10¹⁵",    log: 15.0 },
+    { n: 100, label: "≈ 10³⁰",    log: 30.0 },
+  ];
+
+  const axisMax = 32;
+  const chartY0 = 560;
+  const chartTop = 80;
+  const chartH = chartY0 - chartTop; // 480
+  const barW = 88;
+  const gap = 38;
+  const x0 = 130;
+
+  return (
+    <section ref={sectionRef} className="slide" data-label="Exponential blow-up of DFJ">
+      <SlideFrame>
+        <div className="tag">04 · TSP · The combinatorial wall</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          Subtour elimination constraints grow <em style={{ color: "var(--accent)" }}>exponentially</em>.
+        </h2>
+
+        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 56, flex: 1, alignItems: "center" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 20, justifyContent: "center" }}>
+            <div className="lede" style={{ fontSize: 30, lineHeight: 1.22 }}>
+              One DFJ constraint for <em>every</em> proper subset of <span style={{ fontFamily: "var(--font-mono)" }}>V</span> of size between 2 and n − 1:
+            </div>
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "20px 24px", fontFamily: "var(--font-mono)", fontSize: 22 }}>
+              <TeX display>{String.raw`\#\{S \subsetneq V : 2 \leq |S| \leq n-1\} \;=\; 2^{n} - n - 2`}</TeX>
+            </div>
+            <div className="body" style={{ color: "var(--ink-2)", fontSize: 23, lineHeight: 1.35 }}>
+              Already unmanageable at n ≈ 30. For realistic instances — hundreds of customers — the full model <em>cannot even be written down</em>, let alone passed to a solver.
+            </div>
+            <div style={{ background: "var(--ink)", color: "var(--paper)", padding: "18px 22px" }}>
+              <div className="kicker" style={{ fontSize: 20, color: "var(--paper-deep)", marginBottom: 8 }}>How it is solved in practice</div>
+              <div style={{ fontSize: 22, lineHeight: 1.4 }}>
+                Subtour cuts are <em>never enumerated</em>: they are added <em>lazily</em> during branch-and-cut, triggered by a separation oracle only when the current fractional solution violates one.
+              </div>
+            </div>
+          </div>
+
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 30, position: "relative" }}>
+            <svg viewBox="0 0 900 680" style={{ width: "100%", height: "100%", display: "block" }}>
+              {/* Axes */}
+              <line x1={80} y1={chartTop} x2={80} y2={chartY0} stroke="var(--ink)" strokeWidth={2}/>
+              <line x1={80} y1={chartY0} x2={860} y2={chartY0} stroke="var(--ink)" strokeWidth={2}/>
+
+              <text x={30} y={50} fontFamily="var(--font-mono)" fontSize={18} fill="var(--ink-3)">
+                log₁₀(#constraints)
+              </text>
+              <text x={860} y={610} fontFamily="var(--font-mono)" fontSize={18} fill="var(--ink-3)" textAnchor="end">
+                n (cities) →
+              </text>
+
+              {/* Y ticks */}
+              {[0, 10, 20, 30].map((v) => {
+                const y = chartY0 - (v / axisMax) * chartH;
+                return (
+                  <g key={v}>
+                    <line x1={75} y1={y} x2={80} y2={y} stroke="var(--ink)" strokeWidth={1.5}/>
+                    <line x1={80} y1={y} x2={860} y2={y} stroke="var(--line)" strokeWidth={1} strokeDasharray="3 5"/>
+                    <text x={65} y={y + 5} textAnchor="end" fontFamily="var(--font-mono)" fontSize={16} fill="var(--ink-3)">
+                      10{v === 0 ? "⁰" : v === 10 ? "¹⁰" : v === 20 ? "²⁰" : "³⁰"}
+                    </text>
+                  </g>
+                );
+              })}
+
+              <g key={animKey}>
+                {data.map((d, i) => {
+                  const xCenter = x0 + i * (barW + gap) + barW / 2;
+                  const h = (d.log / axisMax) * chartH;
+                  const delay = 400 + i * 280;
+                  const color = i < 2 ? "var(--accent)" : "var(--accent-2)";
+                  return (
+                    <g key={i}>
+                      {/* Growing bar — implemented as a thick stroked line */}
+                      <line x1={xCenter} y1={chartY0} x2={xCenter} y2={chartY0 - h}
+                            stroke={color} strokeWidth={barW}
+                            style={{
+                              "--len": h,
+                              strokeDasharray: h,
+                              animation: "drawPath 900ms both ease-out",
+                              animationDelay: `${delay}ms`,
+                            }}/>
+                      {/* Count label above bar */}
+                      <text x={xCenter} y={chartY0 - h - 14}
+                            textAnchor="middle" fontFamily="var(--font-mono)"
+                            fontSize={19} fontWeight={600} fill={color}
+                            style={{ opacity: 0, animation: "fadeUp 500ms both ease-out", animationDelay: `${delay + 700}ms` }}>
+                        {d.label}
+                      </text>
+                      {/* n label below */}
+                      <text x={xCenter} y={chartY0 + 28}
+                            textAnchor="middle" fontFamily="var(--font-mono)"
+                            fontSize={20} fontWeight={600} fill="var(--ink)">
+                        n = {d.n}
+                      </text>
+                    </g>
+                  );
+                })}
+              </g>
+
+              <text x={470} y={655} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={18} fill="var(--ink-3)">
+                FIG. — logarithmic vertical axis: each step up is a factor of 10.
+              </text>
+            </svg>
           </div>
         </div>
       </SlideFrame>
@@ -589,7 +1526,7 @@ function Slide10() {
   return (
     <section className="slide" data-label="TSP to VRP">
       <SlideFrame>
-        <div className="tag">02 · Foundations</div>
+        <div className="tag">03 · VRP elements</div>
         <h2 className="title" style={{ marginTop: 28 }}>From one tour to many — how TSP becomes VRP.</h2>
 
         <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, flex: 1 }}>
@@ -625,11 +1562,11 @@ function Slide11() {
   return (
     <section className="slide section-slide" data-label="Part III — CVRP">
       <div style={{ position: "absolute", top: 80, left: 120, right: 120, display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 31, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--paper-deep)" }}>
-        <div>Part III of V</div>
-        <div>Slides 21 — 24</div>
+        <div>Part V of IX</div>
+        <div>Slides 23 — 26</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-        <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Three</div>
+        <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Five</div>
         <div className="hero" style={{ fontSize: 240 }}>The CVRP</div>
         <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
           The capacitated VRP — the core member of the family, from which all other variants are built.
@@ -644,7 +1581,7 @@ function Slide12() {
   return (
     <section className="slide" data-label="CVRP informal definition">
       <SlideFrame>
-        <div className="tag">03 · CVRP</div>
+        <div className="tag">04 · CVRP</div>
         <h2 className="title" style={{ marginTop: 28 }}>CVRP — informal statement.</h2>
 
         <div style={{ marginTop: 50, display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 80, flex: 1, alignItems: "center" }}>
@@ -671,7 +1608,7 @@ function Slide13() {
   return (
     <section className="slide" data-label="The three constraints">
       <SlideFrame>
-        <div className="tag">03 · CVRP</div>
+        <div className="tag">04 · CVRP</div>
         <h2 className="title" style={{ marginTop: 28 }}>Three constraints define the CVRP.</h2>
 
         <div style={{ marginTop: 60, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 40, flex: 1 }}>
@@ -722,7 +1659,7 @@ function Slide14() {
   return (
     <section className="slide" data-label="Two-index ILP formulation">
       <SlideFrame>
-        <div className="tag">03 · CVRP · Model VRP1</div>
+        <div className="tag">04 · CVRP · Model VRP1</div>
         <h2 className="title" style={{ marginTop: 28 }}>A two-index integer formulation.</h2>
 
         <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 60, flex: 1 }}>
@@ -768,7 +1705,7 @@ function Slide15() {
   return (
     <section className="slide" data-label="Capacity-cut constraints">
       <SlideFrame>
-        <div className="tag">03 · CVRP · Valid inequality</div>
+        <div className="tag">04 · CVRP · Valid inequality</div>
         <h2 className="title" style={{ marginTop: 28 }}>Capacity cuts forbid over-loaded clusters.</h2>
 
         <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, flex: 1 }}>
@@ -827,8 +1764,10 @@ function Slide15() {
 // Register slides A
 // ---------------------------------------------------------------
 Object.assign(window, {
-  Slide01, Slide02, Slide03, Slide04, Slide05,
-  Slide06, Slide07, Slide08, Slide09, Slide10,
+  Slide01, Slide02, Slide03, Slide04, Slide05, SlideVRPElementsSection,
+  Slide06, Slide07, Slide08, SlideTSPSection, Slide09,
+  SlideTSPHamiltonian, SlideTSPFormulation, SlideTSPSubtourProblem, SlideTSPDFJ, SlideTSPExponential,
+  Slide10,
   Slide11, Slide12, Slide13, Slide14, Slide15,
   EX_NODES, EX_ROUTES,
 });

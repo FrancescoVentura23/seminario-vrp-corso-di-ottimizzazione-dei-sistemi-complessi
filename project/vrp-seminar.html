@@ -67,7 +67,7 @@ const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
 // ---------- Mount all slides into <deck-stage> ----------
 (function mountDeck() {
   function tryMount() {
-    if (!window.Slide30 || !window.ClarkeWrightDemo || !window.SlideHistory || !window.SlideNetwork || !window.SlideORLink || !window.SlideIntroSection || !window.SlideNodeAttributes) {
+    if (!window.Slide30 || !window.ClarkeWrightDemo || !window.SlideHistory || !window.SlideNetwork || !window.SlideORLink || !window.SlideIntroSection || !window.SlideNodeAttributes || !window.SlideVRPElementsSection || !window.SlideStarNotation || !window.SlideTSPSection || !window.SlideTSPHamiltonian || !window.SlideTSPFormulation || !window.SlideTSPSubtourProblem || !window.SlideTSPDFJ || !window.SlideTSPExponential) {
       setTimeout(tryMount, 60);
       return;
     }
@@ -75,7 +75,7 @@ const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
     const placeholder = document.getElementById("root-mount");
     if (placeholder) placeholder.remove();
 
-    // Deck order (39 slides):
+    // Deck order (48 slides):
     //   1  Cover
     //   2  Part I — Introduction  (section header)
     //   3  History & origins
@@ -89,13 +89,22 @@ const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
     //  11  Edge
     //  12  Simple graph
     //  13  Directed arc
-    //  14  Network
-    //  15  Anatomy
-    //  16  Road → complete graph
-    //  17  Graph notation
-    //  18  TSP
-    //  19  TSP → VRP
-    //  20..39  Parts III–VII as before (Slide11..Slide30)
+    //  14  Digraph
+    //  15  Forward / backward star
+    //  16  Network
+    //  17  Part III — VRP elements (section header)
+    //  18  Anatomy
+    //  19  Road → complete graph
+    //  20  Graph notation
+    //  21  Part IV — TSP  (section header)
+    //  22  TSP informal
+    //  23  Hamiltonian circuit
+    //  24  TSP — ILP formulation
+    //  25  The subtour problem
+    //  26  DFJ subtour elimination
+    //  27  Exponential blow-up
+    //  28  TSP → VRP
+    //  29..48  Parts V–IX as before (Slide11..Slide30)
     const slides = [
       Slide01,
       SlideIntroSection,
@@ -104,8 +113,12 @@ const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
       Slide02, Slide03,
       SlideWhoUsesIt,
       Slide05,
-      SlideNode, SlideNodeAttributes, SlideEdge, SlideSimpleGraph, SlideDirectedArc, SlideNetwork,
-      Slide06, Slide07, Slide08, Slide09, Slide10,
+      SlideNode, SlideNodeAttributes, SlideEdge, SlideSimpleGraph, SlideDirectedArc, SlideDigraph, SlideStarNotation, SlideNetwork,
+      SlideVRPElementsSection,
+      Slide06, Slide07, Slide08,
+      SlideTSPSection,
+      Slide09, SlideTSPHamiltonian, SlideTSPFormulation, SlideTSPSubtourProblem, SlideTSPDFJ, SlideTSPExponential,
+      Slide10,
       Slide11, Slide12, Slide13, Slide14, Slide15,
       Slide16, Slide17, Slide18, Slide19, Slide20,
       Slide21, Slide22, Slide23, Slide24, Slide25,

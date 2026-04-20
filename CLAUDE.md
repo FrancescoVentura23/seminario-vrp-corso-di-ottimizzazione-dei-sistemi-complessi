@@ -1,6 +1,6 @@
 # Seminario VRP — Guida rapida
 
-Deck HTML/CSS/JS esportato da Claude Design. **39 slide** gestite dal web component `<deck-stage>` in [project/deck-stage.js](project/deck-stage.js), montate da [project/vrp-seminar.html](project/vrp-seminar.html).
+Deck HTML/CSS/JS esportato da Claude Design. **48 slide** gestite dal web component `<deck-stage>` in [project/deck-stage.js](project/deck-stage.js), montate da [project/vrp-seminar.html](project/vrp-seminar.html).
 
 ## Come far partire la presentazione
 
@@ -54,32 +54,41 @@ Ogni section header è una slide con `className="section-slide"`. Per modificare
 | 11 | Edge | `SlideEdge` | slides-intro.jsx |
 | 12 | Simple graph | `SlideSimpleGraph` | slides-intro.jsx |
 | 13 | Directed arc | `SlideDirectedArc` | slides-intro.jsx |
-| 14 | Network | `SlideNetwork` | slides-intro.jsx |
-| 15 | Anatomy of a routing problem | `Slide06` | slides-a.jsx |
-| 16 | Road → complete graph | `Slide07` | slides-a.jsx |
-| 17 | Graph notation | `Slide08` | slides-a.jsx |
-| 18 | TSP | `Slide09` | slides-a.jsx |
-| 19 | TSP → VRP | `Slide10` | slides-a.jsx |
-| 20 | **Part III — CVRP** *(section header)* | `Slide11` | slides-a.jsx |
-| 21 | CVRP informal definition | `Slide12` | slides-a.jsx |
-| 22 | CVRP formal model | `Slide13` | slides-a.jsx |
-| 23 | Valid inequality | `Slide14` | slides-a.jsx |
-| 24 | CVRP example | `Slide15` | slides-a.jsx |
-| 25 | **Part IV — Complexity** *(section header)* | `Slide16` | slides-b.jsx |
-| 26 | NP-hardness & explosion | `Slide17` | slides-b.jsx |
-| 27 | Why heuristics | `Slide18` | slides-b.jsx |
-| 28 | **Part V — VRP family** *(section header)* | `Slide19` | slides-b.jsx |
-| 29 | Taxonomy | `Slide20` | slides-b.jsx |
-| 30 | VRPTW | `Slide21` | slides-b.jsx |
-| 31 | Backhauls & PD | `Slide22` | slides-b.jsx |
-| 32 | Multi-depot & open VRP | `Slide23` | slides-b.jsx |
-| 33 | **Part VI — Live demo** *(section header)* | `Slide24` | slides-b.jsx |
-| 34 | Clarke-Wright idea | `Slide25` | slides-b.jsx |
-| 35 | Interactive demo | `Slide26` | slides-b.jsx |
-| 36 | **Part VII — Applications** *(section header)* | `Slide27` | slides-b.jsx |
-| 37 | Case studies | `Slide28` | slides-b.jsx |
-| 38 | Takeaways | `Slide29` | slides-b.jsx |
-| 39 | Closing / references | `Slide30` | slides-b.jsx |
+| 14 | Digraph | `SlideDigraph` | slides-intro.jsx |
+| 15 | Forward / backward star | `SlideStarNotation` | slides-intro.jsx |
+| 16 | Network | `SlideNetwork` | slides-intro.jsx |
+| 17 | **Part III — VRP elements** *(section header)* | `SlideVRPElementsSection` | slides-a.jsx |
+| 18 | Anatomy of a routing problem | `Slide06` | slides-a.jsx |
+| 19 | Road → complete graph | `Slide07` | slides-a.jsx |
+| 20 | Graph notation | `Slide08` | slides-a.jsx |
+| 21 | **Part IV — TSP** *(section header)* | `SlideTSPSection` | slides-a.jsx |
+| 22 | TSP — informal statement | `Slide09` | slides-a.jsx |
+| 23 | Hamiltonian circuit (animated) | `SlideTSPHamiltonian` | slides-a.jsx |
+| 24 | TSP — ILP formulation | `SlideTSPFormulation` | slides-a.jsx |
+| 25 | The subtour problem (animated) | `SlideTSPSubtourProblem` | slides-a.jsx |
+| 26 | DFJ subtour elimination | `SlideTSPDFJ` | slides-a.jsx |
+| 27 | Exponential blow-up (animated) | `SlideTSPExponential` | slides-a.jsx |
+| 28 | TSP → VRP | `Slide10` | slides-a.jsx |
+| 29 | **Part V — CVRP** *(section header)* | `Slide11` | slides-a.jsx |
+| 30 | CVRP informal definition | `Slide12` | slides-a.jsx |
+| 31 | CVRP three constraints | `Slide13` | slides-a.jsx |
+| 32 | Two-index ILP formulation | `Slide14` | slides-a.jsx |
+| 33 | Capacity-cut inequality | `Slide15` | slides-a.jsx |
+| 34 | **Part VI — Complexity** *(section header)* | `Slide16` | slides-b.jsx |
+| 35 | NP-hardness & explosion | `Slide17` | slides-b.jsx |
+| 36 | Why heuristics | `Slide18` | slides-b.jsx |
+| 37 | **Part VII — VRP family** *(section header)* | `Slide19` | slides-b.jsx |
+| 38 | Taxonomy | `Slide20` | slides-b.jsx |
+| 39 | VRPTW | `Slide21` | slides-b.jsx |
+| 40 | Backhauls & PD | `Slide22` | slides-b.jsx |
+| 41 | Multi-depot & open VRP | `Slide23` | slides-b.jsx |
+| 42 | **Part VIII — Live demo** *(section header)* | `Slide24` | slides-b.jsx |
+| 43 | Clarke-Wright idea | `Slide25` | slides-b.jsx |
+| 44 | Interactive demo | `Slide26` | slides-b.jsx |
+| 45 | **Part IX — Applications** *(section header)* | `Slide27` | slides-b.jsx |
+| 46 | Case studies | `Slide28` | slides-b.jsx |
+| 47 | Takeaways | `Slide29` | slides-b.jsx |
+| 48 | Closing / references | `Slide30` | slides-b.jsx |
 
 > Per aggiungere o spostare una slide: modifica l'array `slides` in [project/vrp-seminar.html](project/vrp-seminar.html) (riga ~95) e aggiorna i range "Slides X — Y" nel section header corrispondente.
 

@@ -10,7 +10,7 @@ function SlideIntroSection() {
   return (
     <section className="slide section-slide" data-label="Part I — Introduction">
       <div style={{ position: "absolute", top: 80, left: 120, right: 120, display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 31, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--paper-deep)" }}>
-        <div>Part I of V</div>
+        <div>Part I of IX</div>
         <div>Slides 3 — 7</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
@@ -230,7 +230,7 @@ function SlideNode() {
             </div>
           </div>
 
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 30, position: "relative" }}>
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 30, position: "relative", alignSelf: "start" }}>
             <svg viewBox="0 0 1000 700" style={{ width: "100%", height: "100%", display: "block" }}>
               {/* dotted grid */}
               <defs>
@@ -267,16 +267,30 @@ function SlideNode() {
 // NODE ATTRIBUTES — cycle through service time / time window / profit-cost
 // ==========================================================
 function SlideNodeAttributes() {
-  // Same five nodes as SlideNode, slightly repositioned to leave room for a pill above each
+  // Identical positions to SlideNode — nodes appear to stay on screen across the transition
   const nodes = [
-    { x: 220, y: 280, label: "v₁" },
-    { x: 560, y: 240, label: "v₂" },
-    { x: 820, y: 400, label: "v₃" },
-    { x: 340, y: 560, label: "v₄" },
-    { x: 680, y: 600, label: "v₅" },
+    { x: 220, y: 220, label: "v₁" },
+    { x: 560, y: 180, label: "v₂" },
+    { x: 820, y: 340, label: "v₃" },
+    { x: 340, y: 500, label: "v₄" },
+    { x: 680, y: 560, label: "v₅" },
   ];
 
   const attributes = [
+    {
+      key: "demand",
+      name: "Demand",
+      mono: "dᵢ",
+      desc: "Amount of goods to be delivered or collected at node i. The depot carries no demand: d₀ = 0.",
+      color: "var(--accent-2)",
+      values: [
+        { display: "4 units" },
+        { display: "3 units" },
+        { display: "2 units" },
+        { display: "5 units" },
+        { display: "3 units" },
+      ],
+    },
     {
       key: "service",
       name: "Service time",
@@ -322,7 +336,20 @@ function SlideNodeAttributes() {
   ];
 
   const [activeIdx, setActiveIdx] = React.useState(0);
+  const [animKey, setAnimKey] = React.useState(0);
   const listRef = React.useRef(null);
+  const sectionRef = React.useRef(null);
+
+  // Restart zoom animation every time this slide becomes active
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (el.hasAttribute('data-deck-active')) setAnimKey(k => k + 1);
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
+    return () => obs.disconnect();
+  }, []);
 
   // React's event delegation breaks when the <section> is moved out of the
   // host div where createRoot() was called. Attach a native click listener
@@ -343,18 +370,18 @@ function SlideNodeAttributes() {
   const active = attributes[activeIdx];
 
   return (
-    <section className="slide" data-label="Graph concepts — Node attributes">
+    <section ref={sectionRef} className="slide" data-label="Graph concepts — Node attributes">
       <SlideFrame>
         <div className="tag">02 · Graph theory · Node attributes</div>
         <h2 className="title" style={{ marginTop: 28 }}>
           Each node carries its own <em style={{ color: "var(--accent)" }}>attributes</em>.
         </h2>
 
-        <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1fr 1.35fr", gap: 70, flex: 1, alignItems: "stretch" }}>
+        <div style={{ marginTop: 50, display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 80, flex: 1, alignItems: "center" }}>
           {/* Left — list of attributes */}
           <div style={{ display: "flex", flexDirection: "column", gap: 20, justifyContent: "center" }}>
             <div className="lede" style={{ fontSize: 30, lineHeight: 1.25, color: "var(--ink-2)" }}>
-              In a VRP instance, every customer carries application-specific data. The three most common attributes:
+              In a VRP instance, every customer carries application-specific data. The four most common attributes:
             </div>
             <div ref={listRef} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               {attributes.map((a, i) => {
@@ -387,23 +414,32 @@ function SlideNodeAttributes() {
             </div>
           </div>
 
-          {/* Right — enlarged graph, attributes animate above each node */}
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 30, position: "relative" }}>
-            <svg viewBox="0 0 1000 720" style={{ width: "100%", height: "100%", display: "block" }}>
+          {/* Right — same layout as SlideNode so nodes look continuous across the transition */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 30, position: "relative", alignSelf: "start" }}>
+            <svg viewBox="0 0 1000 700" style={{ width: "100%", height: "100%", display: "block" }}>
               <defs>
                 <pattern id="dotgrid-nodeattr" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
                   <circle cx="1" cy="1" r="1" fill="var(--line)"/>
                 </pattern>
               </defs>
-              <rect x={0} y={0} width={1000} height={720} fill="url(#dotgrid-nodeattr)" opacity={0.5}/>
+              <rect x={0} y={0} width={1000} height={700} fill="url(#dotgrid-nodeattr)" opacity={0.5}/>
 
               {nodes.map((n, i) => {
                 const value = active.values[i];
                 const labelColor = value.color || active.color;
                 return (
                   <g key={i}>
-                    {/* Attribute pill above node — keyed on attribute to retrigger fade */}
-                    <g key={`${active.key}-${i}`} style={{ animation: "fadeUp 520ms both ease-out" }}>
+                    {/* Node circle — no animation, same as SlideNode (visual continuity) */}
+                    <circle cx={n.x} cy={n.y} r={36}
+                            fill="var(--paper)" stroke="var(--ink)" strokeWidth={3}/>
+                    <text x={n.x} y={n.y + 10} textAnchor="middle"
+                          fontFamily="var(--font-mono)" fontSize={28} fontWeight={600}
+                          fill="var(--ink)">
+                      {n.label}
+                    </text>
+                    {/* Attribute pill — fades in staggered after slide becomes active */}
+                    <g key={`${active.key}-${i}-${animKey}`}
+                       style={{ animation: "fadeUp 520ms both ease-out", animationDelay: `${200 + i * 100}ms` }}>
                       <line x1={n.x} y1={n.y - 54} x2={n.x} y2={n.y - 38}
                             stroke={labelColor} strokeWidth={1.5} strokeDasharray="3 3"/>
                       <rect x={n.x - 68} y={n.y - 104} width={136} height={48}
@@ -414,14 +450,6 @@ function SlideNodeAttributes() {
                         {value.display}
                       </text>
                     </g>
-                    {/* Node circle */}
-                    <circle cx={n.x} cy={n.y} r={34}
-                            fill="var(--paper)" stroke="var(--ink)" strokeWidth={3}/>
-                    <text x={n.x} y={n.y + 10} textAnchor="middle"
-                          fontFamily="var(--font-mono)" fontSize={26} fontWeight={600}
-                          fill="var(--ink)">
-                      {n.label}
-                    </text>
                   </g>
                 );
               })}
@@ -496,7 +524,7 @@ function SlideEdge() {
 
           <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
             <div className="lede" style={{ fontSize: 36, lineHeight: 1.22 }}>
-              An edge is an <em>unordered pair</em> <span style={{ fontFamily: "var(--font-mono)" }}>e = {"{"}i, j{"}"}</span> of distinct vertices. We say <em>e joins i and j</em>, and that i and j are <em>adjacent</em>.
+              An edge is an <em>unordered pair</em> <span style={{ fontFamily: "var(--font-mono)" }}>e = {"{"}i, j{"}"}</span> of distinct vertices. We say <em>e joins i and j</em>, and that i and j are <em>adjacent</em>. The set of all edges of G is written <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)" }}>E(G)</span>.
             </div>
             <div className="body" style={{ color: "var(--ink-2)", fontSize: 26 }}>
               In a VRP an edge says: <em>you can travel between i and j</em>, and travelling costs the same either way.
@@ -508,9 +536,6 @@ function SlideEdge() {
                 <span style={{ color: "var(--ink-3)" }}>|E(G)| = m —</span> size of G<br/>
                 <span style={{ color: "var(--ink-3)" }}>cost symmetry:</span> cᵢⱼ = cⱼᵢ
               </div>
-            </div>
-            <div className="body small" style={{ color: "var(--ink-3)", fontSize: 22 }}>
-              A graph with no <em>loops</em> (edges ii) and no <em>multiple edges</em> between the same pair is a <em>simple graph</em> — the model we use throughout.
             </div>
           </div>
         </div>
@@ -545,8 +570,12 @@ function SlideSimpleGraph() {
           {/* Left — definition */}
           <div style={{ display: "flex", flexDirection: "column", gap: 22, justifyContent: "center" }}>
             <div className="lede" style={{ fontSize: 34, lineHeight: 1.22 }}>
-              A graph is <em>simple</em> when two conditions hold: no edge joins a vertex to itself, and no pair of vertices is connected by more than one edge.
+              A graph is <em>simple</em> when two conditions hold:
             </div>
+            <ul style={{ margin: 0, paddingLeft: 36, display: "flex", flexDirection: "column", gap: 14 }}>
+              <li style={{ fontSize: 30, lineHeight: 1.35, color: "var(--ink-2)" }}>no edge joins a vertex to itself;</li>
+              <li style={{ fontSize: 30, lineHeight: 1.35, color: "var(--ink-2)" }}>no pair of vertices is connected by more than one edge.</li>
+            </ul>
 
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "20px 24px" }}>
               <div className="kicker" style={{ fontSize: 22, marginBottom: 10 }}>Two forbidden patterns</div>
@@ -563,7 +592,11 @@ function SlideSimpleGraph() {
             </div>
 
             <div className="body" style={{ color: "var(--ink-2)", fontSize: 25, lineHeight: 1.35 }}>
-              In a VRP a loop would mean <em>travelling from a customer to itself</em>, and a multi-edge would mean <em>two different ways to get from i to j with the same cost</em> — neither carries information.
+              The assumption is <em>without loss of generality</em>:
+              <ul style={{ margin: "10px 0 0 0", paddingLeft: 28, display: "flex", flexDirection: "column", gap: 10 }}>
+                <li>A loop has cost 0 and is never part of an optimal tour — it can always be removed.</li>
+                <li>If two parallel edges connect the same pair, only the one with <em>minimum cost</em> is ever used — the other is redundant and can be dropped.</li>
+              </ul>
             </div>
             <div className="body small" style={{ color: "var(--ink-3)", fontSize: 22, lineHeight: 1.35 }}>
               Throughout this seminar, every <span style={{ fontFamily: "var(--font-mono)" }}>G = (V, E)</span> is assumed simple.
@@ -583,21 +616,25 @@ function SlideSimpleGraph() {
                 </defs>
                 <rect width={1000} height={460} fill="url(#dotgrid-simplebad)" opacity={0.5}/>
 
-                {/* Loop on v₁ — a circle tangent to the upper-left of the node */}
-                <circle cx={BAD.A.x - 48} cy={BAD.A.y - 48} r={42}
-                        fill="none" stroke="#c14f3c" strokeWidth={4}/>
-                <text x={BAD.A.x - 90} y={BAD.A.y - 110} fontFamily="var(--font-mono)" fontSize={22} fill="#c14f3c">
-                  loop {"{v₁, v₁}"}
-                </text>
+                {/* Loop on v₁ — blinks to highlight it as a forbidden pattern */}
+                <g className="anim-blink">
+                  <circle cx={BAD.A.x - 48} cy={BAD.A.y - 48} r={42}
+                          fill="none" stroke="#c14f3c" strokeWidth={4}/>
+                  <text x={BAD.A.x - 90} y={BAD.A.y - 110} fontFamily="var(--font-mono)" fontSize={22} fill="#c14f3c">
+                    loop {"{v₁, v₁}"}
+                  </text>
+                </g>
 
-                {/* Two parallel edges between A and B — one curving up, one curving down */}
-                <path d={`M ${BAD.A.x + 30} ${BAD.A.y} Q ${(BAD.A.x + BAD.B.x)/2} ${BAD.A.y - 110} ${BAD.B.x - 30} ${BAD.B.y}`}
-                      fill="none" stroke="#c14f3c" strokeWidth={4}/>
-                <path d={`M ${BAD.A.x + 30} ${BAD.A.y} Q ${(BAD.A.x + BAD.B.x)/2} ${BAD.A.y + 110} ${BAD.B.x - 30} ${BAD.B.y}`}
-                      fill="none" stroke="#c14f3c" strokeWidth={4}/>
-                <text x={(BAD.A.x + BAD.B.x)/2} y={BAD.B.y + 140} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fill="#c14f3c">
-                  two parallel edges {"{v₁, v₂}"}
-                </text>
+                {/* Two parallel edges — blink offset so loop and edges alternate */}
+                <g className="anim-blink-2">
+                  <path d={`M ${BAD.A.x + 30} ${BAD.A.y} Q ${(BAD.A.x + BAD.B.x)/2} ${BAD.A.y - 110} ${BAD.B.x - 30} ${BAD.B.y}`}
+                        fill="none" stroke="#c14f3c" strokeWidth={4}/>
+                  <path d={`M ${BAD.A.x + 30} ${BAD.A.y} Q ${(BAD.A.x + BAD.B.x)/2} ${BAD.A.y + 110} ${BAD.B.x - 30} ${BAD.B.y}`}
+                        fill="none" stroke="#c14f3c" strokeWidth={4}/>
+                  <text x={(BAD.A.x + BAD.B.x)/2} y={BAD.B.y + 140} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fill="#c14f3c">
+                    two parallel edges {"{v₁, v₂}"}
+                  </text>
+                </g>
 
                 {/* Nodes on top of edges */}
                 {[[BAD.A, "v₁"], [BAD.B, "v₂"]].map(([n, l], i) => (
@@ -736,7 +773,7 @@ function SlideDirectedArc() {
 
           <div style={{ display: "flex", flexDirection: "column", gap: 24, justifyContent: "center" }}>
             <div className="lede" style={{ fontSize: 32, lineHeight: 1.22 }}>
-              An <em>arc</em> is an <em>ordered pair</em> <span style={{ fontFamily: "var(--font-mono)" }}>a = (i, j)</span>: <em>i</em> is the <em>tail</em>, <em>j</em> is the <em>head</em>. A graph whose links are arcs is a <em>directed graph</em> — or <em>digraph</em>.
+              An <em>arc</em> is an <em>ordered pair</em> <span style={{ fontFamily: "var(--font-mono)" }}>a = (i, j)</span>: <em>i</em> is the <em>tail</em>, <em>j</em> is the <em>head</em>. A graph whose links are arcs is a <em>directed graph</em> — or <em>digraph</em>. The set of all arcs is written <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)" }}>A(G)</span>, and replaces <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)" }}>E(G)</span>: the difference is that here order matters — <span style={{ fontFamily: "var(--font-mono)" }}>(i, j)</span> and <span style={{ fontFamily: "var(--font-mono)" }}>(j, i)</span> are two distinct arcs.
             </div>
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "20px 24px" }}>
               <div className="kicker" style={{ fontSize: 22, marginBottom: 8 }}>Notation</div>
@@ -745,9 +782,362 @@ function SlideDirectedArc() {
                 (i, j) ≠ (j, i) &nbsp;<span style={{ color: "var(--ink-3)" }}>and in general</span> cᵢⱼ ≠ cⱼᵢ
               </div>
             </div>
-            <div className="body" style={{ color: "var(--ink-2)", fontSize: 25, lineHeight: 1.35 }}>
-              Digraphs model any situation where cost or feasibility of travel depends on direction: <em>one-way streets, asymmetric road networks, pickup-and-delivery precedence</em>.
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
+// ==========================================================
+// GRAPH CONCEPT — DIGRAPH (directed graph)
+// ==========================================================
+function SlideDigraph() {
+  const [animKey, setAnimKey] = React.useState(0);
+  const sectionRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (el.hasAttribute('data-deck-active')) setAnimKey(k => k + 1);
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
+    return () => obs.disconnect();
+  }, []);
+
+  // Four nodes forming a small digraph with asymmetric costs
+  const nodes = [
+    { x: 260, y: 220, label: "A" },
+    { x: 740, y: 220, label: "B" },
+    { x: 740, y: 560, label: "C" },
+    { x: 260, y: 560, label: "D" },
+  ];
+  // Arcs: [from, to, cost, curveDir] — curveDir shifts the label above or below
+  const arcs = [
+    [0, 1, "4.2", -1],
+    [1, 0, "7.8", +1],
+    [1, 2, "3.1", -1],
+    [2, 3, "5.5", -1],
+    [3, 0, "2.9", -1],
+    [0, 2, "9.0",  0],
+  ];
+
+  const r = 30;
+
+  // Returns { d, mx, my, ax, ay, angle } for both straight and curved arcs
+  function computeArc(a, b, curve) {
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const len = Math.hypot(dx, dy);
+    const ux = dx / len, uy = dy / len;
+    const x1 = a.x + ux * r, y1 = a.y + uy * r;
+    const x2 = b.x - ux * r, y2 = b.y - uy * r;
+    if (curve === 0) {
+      return {
+        d: `M ${x1} ${y1} L ${x2} ${y2}`,
+        mx: (x1 + x2) / 2, my: (y1 + y2) / 2,
+        ax: x2, ay: y2,
+        angle: Math.atan2(dy, dx) * 180 / Math.PI,
+      };
+    }
+    // Canonical perpendicular (same node-order regardless of direction → A→B and B→A curve apart)
+    const [p, q] = (a.x < b.x || (a.x === b.x && a.y < b.y)) ? [a, b] : [b, a];
+    const cl = Math.hypot(q.x - p.x, q.y - p.y);
+    const cpx = -(q.y - p.y) / cl, cpy = (q.x - p.x) / cl;
+    const cx = (a.x + b.x) / 2 + cpx * 60 * curve;
+    const cy = (a.y + b.y) / 2 + cpy * 60 * curve;
+    // Tangent at bezier endpoint = direction from control point to endpoint
+    return {
+      d: `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`,
+      mx: cx, my: cy,
+      ax: x2, ay: y2,
+      angle: Math.atan2(y2 - cy, x2 - cx) * 180 / Math.PI,
+    };
+  }
+
+  return (
+    <section ref={sectionRef} className="slide" data-label="Graph concepts — Digraph">
+      <SlideFrame>
+        <div className="tag">02 · Graph theory · Digraph</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          A <em style={{ color: "var(--accent)" }}>digraph</em> models asymmetric travel costs.
+        </h2>
+
+        <div style={{ marginTop: 44, display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 70, flex: 1, alignItems: "center" }}>
+          {/* Left — definition */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 24, justifyContent: "center" }}>
+            <div className="lede" style={{ fontSize: 33, lineHeight: 1.25 }}>
+              A <em>directed graph</em> — or <em>digraph</em> — replaces edges with arcs. The arc set <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)" }}>A(G)</span> collects ordered pairs: going from i to j is a different arc than going from j to i, and the two costs need not be equal.
             </div>
+
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "18px 24px" }}>
+              <div className="kicker" style={{ fontSize: 20, marginBottom: 8 }}>When to use a digraph in VRP</div>
+              <ul style={{ margin: 0, paddingLeft: 28, display: "flex", flexDirection: "column", gap: 10 }}>
+                <li style={{ fontSize: 24, color: "var(--ink-2)", lineHeight: 1.35 }}><em>One-way streets</em> — arc (i, j) exists but (j, i) does not.</li>
+                <li style={{ fontSize: 24, color: "var(--ink-2)", lineHeight: 1.35 }}><em>Asymmetric road times</em> — uphill vs. downhill, traffic direction.</li>
+                <li style={{ fontSize: 24, color: "var(--ink-2)", lineHeight: 1.35 }}><em>Pickup-and-delivery</em> — precedence forces a specific arc direction.</li>
+              </ul>
+            </div>
+
+            <div className="body small" style={{ color: "var(--ink-3)", fontSize: 22, lineHeight: 1.35 }}>
+              When cᵢⱼ = cⱼᵢ for all pairs the digraph reduces to an undirected graph — the two representations are equivalent.
+            </div>
+          </div>
+
+          {/* Right — digraph SVG */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 30, position: "relative" }}>
+            <svg viewBox="0 0 1000 780" style={{ width: "100%", height: "100%", display: "block" }}>
+              <defs>
+                <pattern id="dotgrid-dig" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <circle cx="1" cy="1" r="1" fill="var(--line)"/>
+                </pattern>
+              </defs>
+              <rect width={1000} height={780} fill="url(#dotgrid-dig)" opacity={0.5}/>
+
+              <g key={animKey}>
+              {/* Phase 2 — arcs draw in after nodes */}
+              {arcs.map(([ai, bi, cost, curve], i) => {
+                const a = nodes[ai], b = nodes[bi];
+                const { d, mx, my, ax, ay, angle: aAngle } = computeArc(a, b, curve);
+                const arcDelay = 2800 + i * 700;
+                const arrowDelay = arcDelay + 1100;
+                const costDelay = arcDelay + 1200;
+                return (
+                  <g key={i}>
+                    {/* Body draws first */}
+                    <path d={d} fill="none" stroke="var(--accent)" strokeWidth={3}
+                          strokeLinecap="round"
+                          style={{
+                            strokeDasharray: 2000,
+                            strokeDashoffset: 2000,
+                            animation: "drawPath 1200ms both ease-in-out",
+                            animationDelay: `${arcDelay}ms`,
+                          }}/>
+                    {/* Arrowhead appears after body finishes */}
+                    <g transform={`translate(${ax}, ${ay}) rotate(${aAngle})`}>
+                      <g style={{ animation: "fadeUp 150ms both ease-out", animationDelay: `${arrowDelay}ms` }}>
+                        <polygon points="-13,-8 0,0 -13,8" fill="var(--accent)"/>
+                      </g>
+                    </g>
+                    {/* Phase 3 — cost labels appear when their arc finishes */}
+                    <g style={{ animation: "fadeUp 600ms both ease-out", animationDelay: `${costDelay}ms` }}>
+                      <rect x={mx - 34} y={my - 18} width={68} height={32}
+                            fill="var(--paper)" stroke="var(--accent)" strokeWidth={1.5} rx={4}/>
+                      <text x={mx} y={my + 6} textAnchor="middle"
+                            fontFamily="var(--font-mono)" fontSize={20} fill="var(--accent)">{cost}</text>
+                    </g>
+                  </g>
+                );
+              })}
+
+              {/* Phase 1 — nodes appear first, staggered */}
+              {nodes.map((n, i) => (
+                <g key={i} style={{ animation: "fadeUp 800ms both ease-out", animationDelay: `${i * 600}ms` }}>
+                  <circle cx={n.x} cy={n.y} r={r} fill="var(--paper)" stroke="var(--ink)" strokeWidth={3}/>
+                  <text x={n.x} y={n.y + 10} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={26} fontWeight={600} fill="var(--ink)">
+                    {n.label}
+                  </text>
+                </g>
+              ))}
+
+              </g>{/* end animKey group */}
+
+              <text x={500} y={745} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={20} fill="var(--ink-3)">
+                FIG. — A→B costs 4.2, but B→A costs 7.8 (e.g. different road times).
+              </text>
+            </svg>
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
+// ==========================================================
+// GRAPH CONCEPT — FORWARD / BACKWARD STAR
+// ==========================================================
+function SlideStarNotation() {
+  const [animKey, setAnimKey] = React.useState(0);
+  const sectionRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (el.hasAttribute('data-deck-active')) setAnimKey(k => k + 1);
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
+    return () => obs.disconnect();
+  }, []);
+
+  const r = 28;
+  const ci = { x: 500, y: 390 };
+
+  const surrounding = [
+    { x: 200, y: 175, label: "a" },
+    { x: 500, y: 105, label: "b" },
+    { x: 820, y: 480, label: "c" },
+    { x: 830, y: 195, label: "d" },
+    { x: 720, y: 655, label: "e" },
+    { x: 148, y: 615, label: "f" },
+  ];
+  const outIdx = [0, 1, 2];
+  const inIdx  = [3, 4, 5];
+
+  function computeStraightArc(from, to) {
+    const dx = to.x - from.x, dy = to.y - from.y;
+    const len = Math.hypot(dx, dy);
+    const ux = dx / len, uy = dy / len;
+    const x1 = from.x + ux * r, y1 = from.y + uy * r;
+    const x2 = to.x  - ux * r, y2 = to.y  - uy * r;
+    return { x1, y1, x2, y2, arcLen: Math.hypot(x2 - x1, y2 - y1), angle: Math.atan2(dy, dx) * 180 / Math.PI };
+  }
+
+  // Timing
+  const surroundStagger = 210;
+  const nodesEnd = 400 + (surrounding.length - 1) * surroundStagger + 500 + 250;
+  const arcDraw = 520, arcGap = 370, arrowOff = arcDraw - 70;
+  const outStart = nodesEnd;
+  const labelPlusDelay = outStart + outIdx.length * arcGap + arcDraw + 180;
+  const inStart = labelPlusDelay + 550;
+  const labelMinusDelay = inStart + inIdx.length * arcGap + arcDraw + 180;
+
+  return (
+    <section ref={sectionRef} className="slide" data-label="Graph concepts — Star notation">
+      <SlideFrame>
+        <div className="tag">02 · Graph theory · Digraph · Star notation</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          <em style={{ color: "var(--accent)" }}>Forward</em> and{" "}
+          <em style={{ color: "var(--accent-2)" }}>backward</em> star of a vertex.
+        </h2>
+
+        <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 70, flex: 1, alignItems: "center" }}>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 22, justifyContent: "center" }}>
+            <div className="lede" style={{ fontSize: 32, lineHeight: 1.25 }}>
+              For a vertex <span style={{ fontFamily: "var(--font-mono)" }}>i</span> in a digraph, its incident arcs split into two <em>stars</em>.
+            </div>
+
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", borderLeft: "6px solid var(--accent)", padding: "18px 24px", fontFamily: "var(--font-mono)", fontSize: 24, lineHeight: 1.65 }}>
+              <span style={{ color: "var(--accent)", fontWeight: 700 }}>δ⁺(i)</span>
+              <span style={{ color: "var(--ink-2)" }}> = forward star</span><br/>
+              <span style={{ color: "var(--ink-3)", fontSize: 19 }}>all arcs <em>leaving</em> i &nbsp;=&nbsp; {"{ (i,j) ∈ A }"}</span>
+            </div>
+
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", borderLeft: "6px solid var(--accent-2)", padding: "18px 24px", fontFamily: "var(--font-mono)", fontSize: 24, lineHeight: 1.65 }}>
+              <span style={{ color: "var(--accent-2)", fontWeight: 700 }}>δ⁻(i)</span>
+              <span style={{ color: "var(--ink-2)" }}> = backward star</span><br/>
+              <span style={{ color: "var(--ink-3)", fontSize: 19 }}>all arcs <em>entering</em> i &nbsp;=&nbsp; {"{ (j,i) ∈ A }"}</span>
+            </div>
+
+            <div className="body small" style={{ color: "var(--ink-3)", fontSize: 20, lineHeight: 1.4 }}>
+              Flow conservation at <span style={{ fontFamily: "var(--font-mono)" }}>i</span>:<br/>
+              <span style={{ fontFamily: "var(--font-mono)" }}>
+                Σ<sub>δ⁺(i)</sub> x<sub>ij</sub> &minus; Σ<sub>δ⁻(i)</sub> x<sub>ji</sub> = b<sub>i</sub>
+              </span>
+            </div>
+          </div>
+
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 30, position: "relative" }}>
+            <svg viewBox="0 0 1000 780" style={{ width: "100%", height: "100%", display: "block" }}>
+              <defs>
+                <pattern id="dotgrid-star" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <circle cx="1" cy="1" r="1" fill="var(--line)"/>
+                </pattern>
+              </defs>
+              <rect width={1000} height={780} fill="url(#dotgrid-star)" opacity={0.5}/>
+
+              <g key={animKey}>
+
+                {/* Outgoing arcs — δ⁺(i) */}
+                {outIdx.map((ni, i) => {
+                  const { x1, y1, x2, y2, arcLen, angle } = computeStraightArc(ci, surrounding[ni]);
+                  const delay = outStart + i * arcGap;
+                  return (
+                    <g key={`out-${i}`}>
+                      <line x1={x1} y1={y1} x2={x2} y2={y2}
+                            stroke="var(--accent)" strokeWidth={3.5} strokeLinecap="round"
+                            style={{ "--len": arcLen, strokeDasharray: arcLen, strokeDashoffset: arcLen,
+                                     animation: `drawPath ${arcDraw}ms both ease-out`,
+                                     animationDelay: `${delay}ms` }}/>
+                      <g transform={`translate(${x2},${y2}) rotate(${angle})`}>
+                        <g style={{ animation: "fadeUp 150ms both ease-out", animationDelay: `${delay + arrowOff}ms` }}>
+                          <polygon points="-14,-8 0,0 -14,8" fill="var(--accent)"/>
+                        </g>
+                      </g>
+                    </g>
+                  );
+                })}
+
+                {/* δ⁺(i) badge */}
+                <g style={{ animation: "fadeUp 500ms both ease-out", animationDelay: `${labelPlusDelay}ms` }}>
+                  <rect x={310} y={262} width={154} height={44} rx={8}
+                        fill="var(--paper)" stroke="var(--accent)" strokeWidth={2.5}/>
+                  <text x={387} y={290} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={24} fontWeight={700} fill="var(--accent)">δ⁺(i)</text>
+                </g>
+
+                {/* Incoming arcs — δ⁻(i) */}
+                {inIdx.map((ni, i) => {
+                  const { x1, y1, x2, y2, arcLen, angle } = computeStraightArc(surrounding[ni], ci);
+                  const delay = inStart + i * arcGap;
+                  return (
+                    <g key={`in-${i}`}>
+                      <line x1={x1} y1={y1} x2={x2} y2={y2}
+                            stroke="var(--accent-2)" strokeWidth={3.5} strokeLinecap="round"
+                            style={{ "--len": arcLen, strokeDasharray: arcLen, strokeDashoffset: arcLen,
+                                     animation: `drawPath ${arcDraw}ms both ease-out`,
+                                     animationDelay: `${delay}ms` }}/>
+                      <g transform={`translate(${x2},${y2}) rotate(${angle})`}>
+                        <g style={{ animation: "fadeUp 150ms both ease-out", animationDelay: `${delay + arrowOff}ms` }}>
+                          <polygon points="-14,-8 0,0 -14,8" fill="var(--accent-2)"/>
+                        </g>
+                      </g>
+                    </g>
+                  );
+                })}
+
+                {/* δ⁻(i) badge */}
+                <g style={{ animation: "fadeUp 500ms both ease-out", animationDelay: `${labelMinusDelay}ms` }}>
+                  <rect x={536} y={474} width={154} height={44} rx={8}
+                        fill="var(--paper)" stroke="var(--accent-2)" strokeWidth={2.5}/>
+                  <text x={613} y={502} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={24} fontWeight={700} fill="var(--accent-2)">δ⁻(i)</text>
+                </g>
+
+                {/* Central node i — rendered on top of arcs */}
+                <g style={{ animation: "fadeUp 600ms both ease-out", animationDelay: "0ms" }}>
+                  <circle cx={ci.x} cy={ci.y} r={r + 4} fill="var(--ink)" stroke="var(--ink)" strokeWidth={3}/>
+                  <text x={ci.x} y={ci.y + 10} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={26} fontWeight={700} fill="var(--paper)">i</text>
+                </g>
+
+                {/* Surrounding nodes */}
+                {surrounding.map((n, i) => (
+                  <g key={i} style={{ animation: "fadeUp 500ms both ease-out", animationDelay: `${400 + i * surroundStagger}ms` }}>
+                    <circle cx={n.x} cy={n.y} r={r} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
+                    <text x={n.x} y={n.y + 9} textAnchor="middle"
+                          fontFamily="var(--font-mono)" fontSize={22} fontWeight={600} fill="var(--ink)">
+                      {n.label}
+                    </text>
+                  </g>
+                ))}
+
+                {/* Legend */}
+                <g transform="translate(60, 734)">
+                  <line x1={0} y1={-4} x2={36} y2={-4} stroke="var(--accent)" strokeWidth={3}/>
+                  <polygon points="34,-12 46,-4 34,4" fill="var(--accent)"/>
+                  <text x={54} y={2} fontFamily="var(--font-mono)" fontSize={19} fill="var(--ink-2)">δ⁺(i) — forward star</text>
+                  <line x1={440} y1={-4} x2={476} y2={-4} stroke="var(--accent-2)" strokeWidth={3}/>
+                  <polygon points="474,-12 486,-4 474,4" fill="var(--accent-2)"/>
+                  <text x={494} y={2} fontFamily="var(--font-mono)" fontSize={19} fill="var(--ink-2)">δ⁻(i) — backward star</text>
+                </g>
+
+              </g>
+            </svg>
           </div>
         </div>
       </SlideFrame>
@@ -760,6 +1150,19 @@ function SlideDirectedArc() {
 // GRAPH CONCEPT — NETWORK (build-up animation)
 // ==========================================================
 function SlideNetwork() {
+  const [animKey, setAnimKey] = React.useState(0);
+  const sectionRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (el.hasAttribute('data-deck-active')) setAnimKey(k => k + 1);
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
+    return () => obs.disconnect();
+  }, []);
+
   // Eight nodes (one depot) arranged in a plane
   const N = [
     { x: 500, y: 380, role: "depot",    label: "0" },
@@ -772,13 +1175,13 @@ function SlideNetwork() {
     { x: 280, y: 560, role: "customer", label: "7" },
     { x: 180, y: 400, role: "customer", label: "8" },
   ];
-  // A subset of edges — looks like a plausible road network
+  // A subset of edges — looks like a plausible road network [from, to, cost]
   const edges = [
-    [0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8],
-    [1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,1],
+    [0,1,3.2],[0,2,4.7],[0,3,5.1],[0,4,6.3],[0,5,5.8],[0,6,4.4],[0,7,3.9],[0,8,2.8],
+    [1,2,2.1],[2,3,3.4],[3,4,2.9],[4,5,3.1],[5,6,2.5],[6,7,3.7],[7,8,2.3],[8,1,4.0],
   ];
   return (
-    <section className="slide" data-label="Graph concepts — Network">
+    <section ref={sectionRef} className="slide" data-label="Graph concepts — Network">
       <SlideFrame>
         <div className="tag">02 · Graph theory · Network</div>
         <h2 className="title" style={{ marginTop: 28 }}>
@@ -810,62 +1213,63 @@ function SlideNetwork() {
                 <pattern id="dotgrid-net" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
                   <circle cx="1" cy="1" r="1" fill="var(--line)"/>
                 </pattern>
-                <marker id="arrow-net" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                  <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent)" opacity={0.6}/>
-                </marker>
               </defs>
               <rect width={1000} height={780} fill="url(#dotgrid-net)" opacity={0.5}/>
 
-              {/* Edges draw in sequence */}
-              {edges.map(([a, b], i) => {
-                const na = N[a], nb = N[b];
-                const delay = 80 + i * 90;
-                const len = Math.hypot(nb.x - na.x, nb.y - na.y);
-                // Shorten line endpoints so arrow doesn't enter the node
-                const r = 26;
-                const dx = (nb.x - na.x) / len, dy = (nb.y - na.y) / len;
-                const x1 = na.x + dx * r, y1 = na.y + dy * r;
-                const x2 = nb.x - dx * r, y2 = nb.y - dy * r;
-                return (
-                  <line key={i}
-                        x1={x1} y1={y1} x2={x2} y2={y2}
-                        stroke="var(--accent)" strokeOpacity={0.55}
-                        strokeWidth={2.5}
-                        markerEnd="url(#arrow-net)"
-                        style={{
-                          strokeDasharray: len,
-                          strokeDashoffset: len,
-                          animation: "drawPath 600ms both ease-out",
-                          animationDelay: `${delay}ms`,
-                          "--len": len,
-                        }}/>
-                );
-              })}
-
-              {/* Nodes */}
-              {N.map((n, i) => (
-                <g key={i} className={`anim-fade-${Math.min(3, Math.floor(i / 3))}`}>
-                  {n.role === "depot" ? (
-                    <rect x={n.x - 26} y={n.y - 26} width={52} height={52} fill="var(--ink)"/>
-                  ) : (
+              <g key={animKey}>
+                {/* Phase 1 — tutti i nodi appaiono staggered (300ms l'uno) */}
+                {N.map((n, i) => (
+                  <g key={i} style={{ animation: "fadeUp 600ms both ease-out", animationDelay: `${i * 300}ms` }}>
                     <circle cx={n.x} cy={n.y} r={24} fill="var(--paper)" stroke="var(--ink)" strokeWidth={3}/>
-                  )}
-                  <text x={n.x} y={n.y + 8} textAnchor="middle"
-                        fontFamily="var(--font-mono)" fontSize={22} fontWeight={600}
-                        fill={n.role === "depot" ? "var(--paper)" : "var(--ink)"}>
-                    {n.label}
-                  </text>
-                </g>
-              ))}
+                    <text x={n.x} y={n.y + 8} textAnchor="middle"
+                          fontFamily="var(--font-mono)" fontSize={22} fontWeight={600}
+                          fill="var(--ink)">
+                      {n.label}
+                    </text>
+                  </g>
+                ))}
+
+                {/* Phase 2 — edges + cost labels, dopo che tutti i nodi sono apparsi */}
+                {edges.map(([a, b, cost], i) => {
+                  const na = N[a], nb = N[b];
+                  const len = Math.hypot(nb.x - na.x, nb.y - na.y);
+                  const nodeR = 24;
+                  const dx = (nb.x - na.x) / len, dy = (nb.y - na.y) / len;
+                  const x1 = na.x + dx * nodeR, y1 = na.y + dy * nodeR;
+                  const x2 = nb.x - dx * nodeR, y2 = nb.y - dy * nodeR;
+                  const mx = (na.x + nb.x) / 2, my = (na.y + nb.y) / 2;
+                  const nodesEnd = (N.length - 1) * 300 + 600;
+                  const edgeDelay = nodesEnd + i * 120;
+                  const costDelay = edgeDelay + 500;
+                  return (
+                    <g key={i}>
+                      <line x1={x1} y1={y1} x2={x2} y2={y2}
+                            stroke="var(--accent)" strokeOpacity={0.55} strokeWidth={2.5}
+                            style={{
+                              strokeDasharray: len, strokeDashoffset: len, "--len": len,
+                              animation: "drawPath 500ms both ease-out",
+                              animationDelay: `${edgeDelay}ms`,
+                            }}/>
+                      <g style={{ animation: "fadeUp 400ms both ease-out", animationDelay: `${costDelay}ms` }}>
+                        <rect x={mx - 24} y={my - 14} width={48} height={26}
+                              fill="var(--paper)" stroke="var(--accent)" strokeWidth={1} rx={3}
+                              opacity={0.9}/>
+                        <text x={mx} y={my + 5} textAnchor="middle"
+                              fontFamily="var(--font-mono)" fontSize={16} fill="var(--accent)">
+                          {cost.toFixed(1)}
+                        </text>
+                      </g>
+                    </g>
+                  );
+                })}
+              </g>
 
               {/* Legend */}
               <g transform="translate(40, 720)">
-                <rect x={0} y={-16} width={24} height={24} fill="var(--ink)"/>
-                <text x={34} y={3} fontFamily="var(--font-mono)" fontSize={20} fill="var(--ink-2)">depot</text>
-                <circle cx={160} cy={-4} r={12} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>
-                <text x={180} y={3} fontFamily="var(--font-mono)" fontSize={20} fill="var(--ink-2)">customer</text>
-                <line x1={320} y1={-4} x2={380} y2={-4} stroke="var(--accent)" strokeWidth={2.5} markerEnd="url(#arrow-net)" opacity={0.7}/>
-                <text x={390} y={3} fontFamily="var(--font-mono)" fontSize={20} fill="var(--ink-2)">arc (i, j)</text>
+                <circle cx={12} cy={-4} r={12} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>
+                <text x={34} y={3} fontFamily="var(--font-mono)" fontSize={20} fill="var(--ink-2)">node</text>
+                <line x1={120} y1={-4} x2={180} y2={-4} stroke="var(--accent)" strokeWidth={2.5} opacity={0.7}/>
+                <text x={192} y={3} fontFamily="var(--font-mono)" fontSize={20} fill="var(--ink-2)">edge {"{"} i, j {"}"}</text>
               </g>
             </svg>
           </div>
@@ -879,5 +1283,5 @@ function SlideNetwork() {
 // Escape sequences above use real unicode so we don't need to reprocess.
 // Register
 Object.assign(window, {
-  SlideIntroSection, SlideHistory, SlideWhoUsesIt, SlideNode, SlideNodeAttributes, SlideEdge, SlideSimpleGraph, SlideDirectedArc, SlideNetwork,
+  SlideIntroSection, SlideHistory, SlideWhoUsesIt, SlideNode, SlideNodeAttributes, SlideEdge, SlideSimpleGraph, SlideDirectedArc, SlideDigraph, SlideStarNotation, SlideNetwork,
 });

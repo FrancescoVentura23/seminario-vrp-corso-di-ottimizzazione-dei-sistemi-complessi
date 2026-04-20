@@ -65,6 +65,7 @@ function VRPGraph({
   className = "",
   routeColors,
   labelFontSize = 16,
+  viewBoxOverride,
 }) {
   const colors = routeColors || [
     "var(--route-1)", "var(--route-2)", "var(--route-3)",
@@ -90,7 +91,7 @@ function VRPGraph({
   };
 
   return (
-    <svg viewBox={`0 0 ${width} ${height}`} className={className}
+    <svg viewBox={viewBoxOverride || `0 0 ${width} ${height}`} className={className}
          style={{ width: "100%", height: "100%", display: "block", overflow: "visible" }}>
       {/* All possible edges (complete graph) — dashed, subtle */}
       {showEdges && nodes.map((a, i) =>
@@ -139,9 +140,10 @@ function VRPGraph({
                       fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.2} />
             )}
             {showLabels && (
-              <text x={n.x} y={n.y + (isDepot ? depotRadius + 22 : nodeRadius + 22)}
+              <text x={n.x} y={isDepot ? n.y + depotRadius + 18 : n.y + labelFontSize * 0.38}
                     fontFamily="var(--font-mono)" fontSize={labelFontSize}
-                    textAnchor="middle" fill="var(--ink-3)"
+                    textAnchor="middle" fill={isDepot ? "var(--ink-3)" : "var(--ink)"}
+                    fontWeight={isDepot ? 400 : 600}
                     style={{ letterSpacing: "0.04em" }}>
                 {isDepot ? "DEPOT" : (n.label || `v${i}`)}
               </text>

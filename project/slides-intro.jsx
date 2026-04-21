@@ -210,11 +210,11 @@ function SlideNode() {
   return (
     <section className="slide" data-label="Graph concepts — Node">
       <SlideFrame>
-        <div className="tag">02 · Graph theory · Vertex (node)</div>
+        <div className="tag">Graph theory · Vertex (node)</div>
         <h2 className="title" style={{ marginTop: 28 }}>A <em style={{ color: "var(--accent)" }}>vertex</em> is an element of the graph.</h2>
 
-        <div style={{ marginTop: 50, display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 80, flex: 1, alignItems: "center" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+        <div style={{ marginTop: 50, display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 80, flex: 1, alignItems: "stretch" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 24, justifyContent: "center" }}>
             <div className="lede" style={{ fontSize: 38, lineHeight: 1.22 }}>
               A graph <em>G</em> has a finite, non-empty <em>vertex set</em> <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)" }}>V(G)</span> — its elements are called <em>vertices</em> (or, informally, <em>nodes</em>).
             </div>
@@ -230,7 +230,7 @@ function SlideNode() {
             </div>
           </div>
 
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 30, position: "relative", alignSelf: "start" }}>
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 30, position: "relative" }}>
             <svg viewBox="0 0 1000 700" style={{ width: "100%", height: "100%", display: "block" }}>
               {/* dotted grid */}
               <defs>
@@ -372,14 +372,14 @@ function SlideNodeAttributes() {
   return (
     <section ref={sectionRef} className="slide" data-label="Graph concepts — Node attributes">
       <SlideFrame>
-        <div className="tag">02 · Graph theory · Node attributes</div>
+        <div className="tag">Graph theory · Node attributes</div>
         <h2 className="title" style={{ marginTop: 28 }}>
           Each node carries its own <em style={{ color: "var(--accent)" }}>attributes</em>.
         </h2>
 
-        <div style={{ marginTop: 50, display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 80, flex: 1, alignItems: "center" }}>
+        <div style={{ marginTop: 50, display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 80, flex: 1, alignItems: "stretch" }}>
           {/* Left — list of attributes */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 20, justifyContent: "center" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 20, justifyContent: "space-between" }}>
             <div className="lede" style={{ fontSize: 30, lineHeight: 1.25, color: "var(--ink-2)" }}>
               In a VRP instance, every customer carries application-specific data. The four most common attributes:
             </div>
@@ -415,7 +415,7 @@ function SlideNodeAttributes() {
           </div>
 
           {/* Right — same layout as SlideNode so nodes look continuous across the transition */}
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 30, position: "relative", alignSelf: "start" }}>
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 30, position: "relative" }}>
             <svg viewBox="0 0 1000 700" style={{ width: "100%", height: "100%", display: "block" }}>
               <defs>
                 <pattern id="dotgrid-nodeattr" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
@@ -474,7 +474,7 @@ function SlideEdge() {
   return (
     <section className="slide" data-label="Graph concepts — Edge">
       <SlideFrame>
-        <div className="tag">02 · Graph theory · Edge</div>
+        <div className="tag">Graph theory · Edge</div>
         <h2 className="title" style={{ marginTop: 28 }}>An <em style={{ color: "var(--accent)" }}>edge</em> joins two vertices.</h2>
 
         <div style={{ marginTop: 50, display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 80, flex: 1, alignItems: "center" }}>
@@ -561,7 +561,7 @@ function SlideSimpleGraph() {
   return (
     <section className="slide" data-label="Graph concepts — Simple graph">
       <SlideFrame>
-        <div className="tag">02 · Graph theory · Simple graph</div>
+        <div className="tag">Graph theory · Simple graph</div>
         <h2 className="title" style={{ marginTop: 28 }}>
           A <em style={{ color: "var(--accent)" }}>simple graph</em> has no loops and no multiple edges.
         </h2>
@@ -708,7 +708,7 @@ function SlideDirectedArc() {
   return (
     <section className="slide" data-label="Graph concepts — Directed arc">
       <SlideFrame>
-        <div className="tag">02 · Graph theory · Digraph · Arc</div>
+        <div className="tag">Graph theory · Digraph · Arc</div>
         <h2 className="title" style={{ marginTop: 28 }}>A <em style={{ color: "var(--accent)" }}>directed arc</em> has a tail, a head, and a direction.</h2>
 
         <div style={{ marginTop: 44, display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 70, flex: 1, alignItems: "center" }}>
@@ -859,7 +859,7 @@ function SlideDigraph() {
   return (
     <section ref={sectionRef} className="slide" data-label="Graph concepts — Digraph">
       <SlideFrame>
-        <div className="tag">02 · Graph theory · Digraph</div>
+        <div className="tag">Graph theory · Digraph</div>
         <h2 className="title" style={{ marginTop: 28 }}>
           A <em style={{ color: "var(--accent)" }}>digraph</em> models asymmetric travel costs.
         </h2>
@@ -1008,7 +1008,7 @@ function SlideStarNotation() {
   return (
     <section ref={sectionRef} className="slide" data-label="Graph concepts — Star notation">
       <SlideFrame>
-        <div className="tag">02 · Graph theory · Digraph · Star notation</div>
+        <div className="tag">Graph theory · Digraph · Star notation</div>
         <h2 className="title" style={{ marginTop: 28 }}>
           <em style={{ color: "var(--accent)" }}>Forward</em> and{" "}
           <em style={{ color: "var(--accent-2)" }}>backward</em> star of a vertex.
@@ -1183,7 +1183,7 @@ function SlideNetwork() {
   return (
     <section ref={sectionRef} className="slide" data-label="Graph concepts — Network">
       <SlideFrame>
-        <div className="tag">02 · Graph theory · Network</div>
+        <div className="tag">Graph theory · Network</div>
         <h2 className="title" style={{ marginTop: 28 }}>
           A <em style={{ color: "var(--accent)" }}>network</em> is a graph with a cost on every edge.
         </h2>

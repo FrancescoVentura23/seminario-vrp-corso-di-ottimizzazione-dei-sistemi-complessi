@@ -266,6 +266,10 @@ section.section-slide .tag    { color: var(--paper-deep); }
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
 @keyframes zoomIn {
   from { transform: scale(0.82); transform-origin: center; }
   to   { transform: scale(1);    transform-origin: center; }

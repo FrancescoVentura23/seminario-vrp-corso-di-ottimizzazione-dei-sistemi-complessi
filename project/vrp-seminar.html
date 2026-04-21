@@ -67,7 +67,7 @@ const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
 // ---------- Mount all slides into <deck-stage> ----------
 (function mountDeck() {
   function tryMount() {
-    if (!window.Slide30 || !window.ClarkeWrightDemo || !window.SlideHistory || !window.SlideNetwork || !window.SlideORLink || !window.SlideIntroSection || !window.SlideNodeAttributes || !window.SlideVRPElementsSection || !window.SlideStarNotation || !window.SlideTSPSection || !window.SlideTSPHamiltonian || !window.SlideTSPFormulation || !window.SlideTSPSubtourProblem || !window.SlideTSPDFJ || !window.SlideTSPExponential) {
+    if (!window.Slide30 || !window.ClarkeWrightDemo || !window.SlideHistory || !window.SlideNetwork || !window.SlideORLink || !window.SlideIntroSection || !window.SlideNodeAttributes || !window.SlideVRPElementsSection || !window.SlideStarNotation || !window.SlideTSPSection || !window.SlideTSPHamiltonian || !window.SlideTSPDegree || !window.SlideTSPFormulation || !window.SlideTSPSubtourProblem || !window.SlideTSPDFJ || !window.SlideTSPExponential) {
       setTimeout(tryMount, 60);
       return;
     }
@@ -100,9 +100,10 @@ const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
     //  22  TSP informal
     //  23  Hamiltonian circuit
     //  24  TSP — ILP formulation
-    //  25  The subtour problem
-    //  26  DFJ subtour elimination
-    //  27  Exponential blow-up
+    //  25  Degree constraints
+    //  26  The subtour problem
+    //  27  DFJ subtour elimination
+    //  28  Exponential blow-up
     //  28  TSP → VRP
     //  29..48  Parts V–IX as before (Slide11..Slide30)
     const slides = [
@@ -117,7 +118,7 @@ const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
       SlideVRPElementsSection,
       Slide06, Slide07, Slide08,
       SlideTSPSection,
-      Slide09, SlideTSPHamiltonian, SlideTSPFormulation, SlideTSPSubtourProblem, SlideTSPDFJ, SlideTSPExponential,
+      Slide09, SlideTSPHamiltonian, SlideTSPFormulation, SlideTSPDegree, SlideTSPSubtourProblem, SlideTSPDFJ, SlideTSPExponential,
       Slide10,
       Slide11, Slide12, Slide13, Slide14, Slide15,
       Slide16, Slide17, Slide18, Slide19, Slide20,

@@ -33,7 +33,7 @@ function Slide17() {
   return (
     <section className="slide" data-label="NP-hardness and explosion">
       <SlideFrame>
-        <div className="tag">05 · Complexity</div>
+        <div className="tag">Complexity</div>
         <h2 className="title" style={{ marginTop: 28 }}>CVRP is NP-hard — enumeration doesn't scale.</h2>
 
         <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 80, flex: 1 }}>
@@ -81,7 +81,7 @@ function Slide18() {
   return (
     <section className="slide" data-label="Exact vs heuristic">
       <SlideFrame>
-        <div className="tag">05 · Complexity</div>
+        <div className="tag">Complexity</div>
         <h2 className="title" style={{ marginTop: 28 }}>Two families of algorithms — two different promises.</h2>
 
         <div style={{ marginTop: 60, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, flex: 1 }}>
@@ -151,7 +151,7 @@ function Slide20() {
   return (
     <section className="slide" data-label="VRP taxonomy">
       <SlideFrame>
-        <div className="tag">06 · Family · Fig. 1.1</div>
+        <div className="tag">Family · Fig. 1.1</div>
         <h2 className="title" style={{ marginTop: 28 }}>The basic VRPs and their interconnections.</h2>
 
         <div style={{ marginTop: 40, flex: 1, background: "var(--paper-2)", border: "1px solid var(--line)", padding: 40 }}>
@@ -222,7 +222,7 @@ function Slide21() {
   return (
     <section className="slide" data-label="VRPTW">
       <SlideFrame>
-        <div className="tag">06 · Family</div>
+        <div className="tag">Family</div>
         <h2 className="title" style={{ marginTop: 28 }}>VRP with Time Windows — every customer has a time interval.</h2>
 
         <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 60, flex: 1 }}>
@@ -267,7 +267,7 @@ function Slide22() {
   return (
     <section className="slide" data-label="VRPB">
       <SlideFrame>
-        <div className="tag">06 · Family</div>
+        <div className="tag">Family</div>
         <h2 className="title" style={{ marginTop: 28 }}>VRP with Backhauls — linehauls first, then backhauls.</h2>
 
         <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 60, flex: 1 }}>
@@ -323,7 +323,7 @@ function Slide23() {
   return (
     <section className="slide" data-label="VRPPD">
       <SlideFrame>
-        <div className="tag">06 · Family</div>
+        <div className="tag">Family</div>
         <h2 className="title" style={{ marginTop: 28 }}>VRP with Pickup & Delivery — coupled origin-destination pairs.</h2>
 
         <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 60, flex: 1 }}>
@@ -394,7 +394,7 @@ function Slide25() {
   return (
     <section className="slide" data-label="Clarke-Wright idea">
       <SlideFrame>
-        <div className="tag">07 · Clarke–Wright (1964)</div>
+        <div className="tag">Clarke–Wright (1964)</div>
         <h2 className="title" style={{ marginTop: 28 }}>The savings idea — merge two round-trips if it shortens the total.</h2>
 
         <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, flex: 1 }}>
@@ -455,7 +455,7 @@ function Slide26() {
       <SlideFrame>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div>
-            <div className="tag">06 · Live demo</div>
+            <div className="tag">Live demo</div>
             <h2 className="title" style={{ marginTop: 20 }}>Step through the savings algorithm.</h2>
             <div className="body small" style={{ color: "var(--ink-3)", marginTop: 10 }}>
               Press <b className="mono">step ▶</b> or <b className="mono">auto</b> to merge pairs in decreasing order of savings.
@@ -499,7 +499,7 @@ function Slide28() {
   return (
     <section className="slide" data-label="Case studies">
       <SlideFrame>
-        <div className="tag">08 · Applications</div>
+        <div className="tag">Applications</div>
         <h2 className="title" style={{ marginTop: 28 }}>Six canonical case studies.</h2>
 
         <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 0, border: "1px solid var(--line)" }}>
@@ -536,7 +536,7 @@ function Slide29() {
   return (
     <section className="slide" data-label="Takeaways">
       <SlideFrame>
-        <div className="tag">· Takeaways</div>
+        <div className="tag">Takeaways</div>
         <h2 className="title" style={{ marginTop: 28 }}>Four things worth remembering.</h2>
 
         <div style={{ marginTop: 50, display: "flex", flexDirection: "column", gap: 0, flex: 1 }}>

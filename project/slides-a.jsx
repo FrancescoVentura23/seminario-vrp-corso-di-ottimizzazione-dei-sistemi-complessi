@@ -334,7 +334,7 @@ function Slide04() {
       <SlideFrame>
         <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 100, flex: 1 }}>
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
-            <div className="tag">01 · Origins</div>
+            <div className="tag">Origins</div>
             <div style={{ fontFamily: "var(--font-display)", fontSize: 260, lineHeight: 0.85, letterSpacing: "-0.03em", marginTop: 24 }}>
               <span style={{ color: "var(--accent)" }}>1959</span>
             </div>
@@ -499,7 +499,7 @@ function Slide06() {
   return (
     <section className="slide" data-label="Anatomy of a routing problem">
       <SlideFrame>
-        <div className="tag">03 · VRP elements</div>
+        <div className="tag">VRP elements</div>
         <h2 className="title" style={{ marginTop: 28 }}>The anatomy of a routing problem.</h2>
         <div className="body" style={{ marginTop: 28, color: "var(--ink-3)", maxWidth: 1300 }}>
           Every VRP instance is built from the same six components. Different variants just tune which constraints apply to each.
@@ -617,7 +617,7 @@ function Slide07() {
         @keyframes s07-lbl2      { 0%,${pGone}%{opacity:0;transform:translateY(8px)} ${pLbl2End}%,100%{opacity:1;transform:translateY(0)} }
       `}</style>
       <SlideFrame>
-        <div className="tag">03 · VRP elements</div>
+        <div className="tag">VRP elements</div>
         <h2 className="title" style={{ marginTop: 20 }}>From the road network to a complete graph.</h2>
         <div className="body" style={{ marginTop: 14, color: "var(--ink-3)", maxWidth: 1500, fontSize: 28 }}>
           Roads are sparse — you can't drive directly between any two customers. VRP needs the travel cost for <em>every</em> pair.
@@ -783,11 +783,11 @@ function Slide08() {
   return (
     <section className="slide" data-label="Vertices and arcs">
       <SlideFrame>
-        <div className="tag">03 · VRP elements · Notation</div>
+        <div className="tag">VRP elements · Notation</div>
         <h2 className="title" style={{ marginTop: 28 }}>The basic graph-theoretic notation.</h2>
 
         <div style={{ marginTop: 50, display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 80, flex: 1 }}>
-          <div style={{ display: "grid", gridTemplateColumns: "300px 1fr", alignItems: "end" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "300px 1fr", alignContent: "center" }}>
             {[
               ["G = (V, A)", "directed complete graph (undirected: E)"],
               ["V = {0, 1, …, n}", "vertex 0 is the depot; 1…n are the customers"],
@@ -798,8 +798,8 @@ function Slide08() {
               ["cᵢⱼ ≤ cᵢₖ + cₖⱼ", "triangle inequality — automatic when cᵢⱼ is a shortest path"],
             ].map(([k, v], i) => (
               <React.Fragment key={i}>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: 28, color: "var(--ink)", borderBottom: "1px solid var(--line)", paddingBottom: 14, paddingTop: i === 0 ? 0 : 14, paddingRight: 16 }}>{k}</div>
-                <div style={{ fontSize: 26, color: "var(--ink-3)", borderBottom: "1px solid var(--line)", paddingBottom: 14, paddingTop: i === 0 ? 0 : 14 }}>{v}</div>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 22, color: "var(--ink)", borderBottom: "1px solid var(--line)", paddingBottom: 9, paddingTop: i === 0 ? 0 : 9, paddingRight: 16 }}>{k}</div>
+                <div style={{ fontSize: 21, color: "var(--ink-3)", borderBottom: "1px solid var(--line)", paddingBottom: 9, paddingTop: i === 0 ? 0 : 9, lineHeight: 1.25 }}>{v}</div>
               </React.Fragment>
             ))}
           </div>
@@ -845,48 +845,55 @@ function SlideTSPSection() {
 
 // ----- SLIDE 9 — TSP informal definition -----
 function Slide09() {
+  const [showRoute, setShowRoute] = React.useState(false);
   const [animKey, setAnimKey] = React.useState(0);
   const sectionRef = React.useRef(null);
+  const btnRef = React.useRef(null);
 
+  // Route: depot(0)→1→2→3→4→5→6→7→depot(0) as [x1,y1,x2,y2] segments
+  const nodes09 = EX_NODES.slice(0, 8);
+  const tour = [0, 1, 2, 3, 4, 5, 6, 7, 0];
+  const routeSegments = tour.slice(0, -1).map((id, i) => {
+    const a = nodes09[id], b = nodes09[tour[i + 1]];
+    return [a.x, a.y, b.x, b.y];
+  });
+
+  // Reset when slide leaves view
   React.useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
     const obs = new MutationObserver(() => {
-      if (el.hasAttribute('data-deck-active')) setAnimKey(k => k + 1);
+      if (!el.hasAttribute('data-deck-active')) {
+        setShowRoute(false);
+        setAnimKey(0);
+      }
     });
     obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
     return () => obs.disconnect();
   }, []);
 
-  const tspRoute = [1,2,3,4,10,5,6,11,7,8,9];
+  // Native click listener — React event delegation breaks when the section
+  // is moved out of the createRoot host div by the deck-stage web component.
+  React.useEffect(() => {
+    const btn = btnRef.current;
+    if (!btn) return;
+    const handler = () => {
+      setShowRoute(true);
+      setAnimKey(k => k + 1);
+    };
+    btn.addEventListener("click", handler);
+    return () => btn.removeEventListener("click", handler);
+  }, []);
 
   return (
     <section ref={sectionRef} className="slide" data-label="The Traveling Salesman Problem">
       <SlideFrame>
-        <div className="tag">04 · TSP · Informal statement</div>
+        <div className="tag">TSP · Informal statement</div>
         <h2 className="title" style={{ marginTop: 28 }}>
           One vehicle, <em style={{ color: "var(--accent)" }}>n cities</em>, one closed tour.
         </h2>
 
-        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 60, flex: 1 }}>
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 28, position: "relative" }}>
-            <div key={animKey} style={{ width: "100%", height: "100%" }}>
-              <VRPGraph
-                key={animKey}
-                nodes={EX_NODES}
-                routes={[tspRoute]}
-                width={900} height={600}
-                strokeWidth={4}
-                nodeRadius={11}
-                depotRadius={15}
-                routeColors={["var(--ink)"]}
-              />
-            </div>
-            <div style={{ position: "absolute", bottom: 18, left: 30, fontFamily: "var(--font-mono)", fontSize: 20, color: "var(--ink-3)", letterSpacing: "0.06em" }}>
-              FIG. — a single closed tour through depot and every customer.
-            </div>
-          </div>
-
+        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 60, flex: 1 }}>
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 22 }}>
             <div className="lede" style={{ fontSize: 34, lineHeight: 1.22 }}>
               A salesman leaves a <em>depot</em>, visits <em>n</em> customers <em>exactly once</em>, and returns home — with the smallest possible total distance.
@@ -903,6 +910,84 @@ function Slide09() {
             </div>
             <div style={{ fontFamily: "var(--font-mono)", fontSize: 22, color: "var(--ink-2)", lineHeight: 1.4, background: "var(--paper-2)", padding: "14px 20px", border: "1px solid var(--line)" }}>
               TSP = VRP &nbsp;with&nbsp; <span style={{ color: "var(--accent)" }}>K = 1</span> &nbsp;and&nbsp; <span style={{ color: "var(--accent)" }}>C ≥ d(V)</span>
+            </div>
+          </div>
+
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 28, position: "relative" }}>
+            {/* Always in DOM so btnRef stays stable across slide revisits; hidden once route is shown */}
+            <button
+              ref={btnRef}
+              style={{
+                position: "absolute",
+                top: 16,
+                right: 16,
+                zIndex: 10,
+                fontFamily: "var(--font-mono)",
+                fontSize: 16,
+                letterSpacing: "0.07em",
+                textTransform: "uppercase",
+                padding: "10px 22px",
+                background: "#1d4ed8",
+                color: "#ffffff",
+                border: "none",
+                cursor: "pointer",
+                visibility: showRoute ? "hidden" : "visible",
+              }}
+            >
+              find a possible solution
+            </button>
+
+            {/* Route overlay — rendered BEFORE VRPGraph so nodes sit on top */}
+            {showRoute && (
+              <svg
+                key={animKey}
+                viewBox="160 55 620 510"
+                preserveAspectRatio="xMidYMid meet"
+                style={{
+                  position: "absolute",
+                  top: 28, left: 28,
+                  width: "calc(100% - 56px)",
+                  height: "calc(100% - 56px)",
+                  pointerEvents: "none",
+                }}
+              >
+                {routeSegments.map(([x1, y1, x2, y2], i) => {
+                  const len = Math.hypot(x2 - x1, y2 - y1);
+                  return (
+                    <line key={i}
+                      x1={x1} y1={y1} x2={x2} y2={y2}
+                      stroke="var(--accent)" strokeWidth={5} strokeLinecap="round"
+                      style={{
+                        strokeDasharray: len,
+                        strokeDashoffset: len,
+                        "--len": len,
+                        animation: `drawPath 700ms both ease-in-out`,
+                        animationDelay: `${i * 550}ms`,
+                      }}
+                    />
+                  );
+                })}
+              </svg>
+            )}
+
+            {/* Background graph — position relative + zIndex:1 to stack above the absolute overlay */}
+            <div style={{ width: "100%", height: "100%", pointerEvents: "none", position: "relative", zIndex: 1 }}>
+              <VRPGraph
+                nodes={nodes09}
+                routes={[]}
+                showEdges
+                edgeOpacity={showRoute ? 0.15 : 0.45}
+                showLabels
+                width={800} height={560}
+                nodeRadius={14}
+                depotRadius={16}
+                labelFontSize={15}
+                viewBoxOverride="160 55 620 510"
+              />
+            </div>
+
+            <div style={{ position: "absolute", bottom: 18, left: 30, fontFamily: "var(--font-mono)", fontSize: 20, color: "var(--ink-3)", letterSpacing: "0.06em" }}>
+              FIG. — a single closed tour through depot and every customer.
             </div>
           </div>
         </div>
@@ -941,7 +1026,7 @@ function SlideTSPHamiltonian() {
   return (
     <section ref={sectionRef} className="slide" data-label="Hamiltonian circuit">
       <SlideFrame>
-        <div className="tag">04 · TSP · Hamiltonian circuit</div>
+        <div className="tag">TSP · Hamiltonian circuit</div>
         <h2 className="title" style={{ marginTop: 28 }}>
           A valid tour is a <em style={{ color: "var(--accent)" }}>Hamiltonian circuit</em>.
         </h2>
@@ -960,7 +1045,7 @@ function SlideTSPHamiltonian() {
               <rect width={1000} height={760} fill="url(#dotgrid-tsph)" opacity={0.5}/>
 
               <g key={animKey}>
-                {/* Tour arcs — draw sequentially */}
+                {/* Tour arcs — draw sequentially (body only, no markerEnd) */}
                 {tour.slice(0, -1).map((from, i) => {
                   const a = nodes[from], b = nodes[tour[i+1]];
                   const dx = b.x - a.x, dy = b.y - a.y;
@@ -973,13 +1058,32 @@ function SlideTSPHamiltonian() {
                   return (
                     <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
                           stroke="var(--accent)" strokeWidth={4} strokeLinecap="round"
-                          markerEnd="url(#tsph-arr)"
                           style={{
                             "--len": segLen,
                             strokeDasharray: segLen,
                             animation: "drawPath 700ms both ease-in-out",
                             animationDelay: `${delay}ms`,
                           }}/>
+                  );
+                })}
+
+                {/* Arrowheads — appear after each arc body finishes */}
+                {tour.slice(0, -1).map((from, i) => {
+                  const a = nodes[from], b = nodes[tour[i+1]];
+                  const dx = b.x - a.x, dy = b.y - a.y;
+                  const len = Math.hypot(dx, dy);
+                  const ux = dx / len, uy = dy / len;
+                  const x2 = b.x - ux * r, y2 = b.y - uy * r;
+                  const aw = 10, al = 20;
+                  const tip = [x2, y2];
+                  const base = [x2 - ux * al, y2 - uy * al];
+                  const p1 = [base[0] - uy * aw, base[1] + ux * aw];
+                  const p2 = [base[0] + uy * aw, base[1] - ux * aw];
+                  const pts = `${tip[0]},${tip[1]} ${p1[0]},${p1[1]} ${p2[0]},${p2[1]}`;
+                  const delay = 1200 + i * 380 + 680;
+                  return (
+                    <polygon key={`arr-${i}`} points={pts} fill="var(--accent)"
+                             style={{ opacity: 0, animation: "fadeUp 150ms both ease-out", animationDelay: `${delay}ms` }}/>
                   );
                 })}
 
@@ -1032,6 +1136,11 @@ function SlideTSPHamiltonian() {
               <div style={{ color: "var(--ink-3)", marginTop: 10, fontSize: 20 }}>
                 π is a permutation of {"{"}0, 1, …, n{"}"}.
               </div>
+              <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid var(--line)", fontSize: 19, color: "var(--ink-2)" }}>
+                On a complete graph of&nbsp;<em>n</em>&nbsp;vertices there are&nbsp;
+                <span style={{ color: "var(--accent)", fontWeight: 600 }}>(n − 1)!</span>&nbsp;
+                distinct directed tours.
+              </div>
             </div>
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "18px 22px" }}>
               <div className="kicker" style={{ fontSize: 20, marginBottom: 8 }}>Cost of a tour</div>
@@ -1049,12 +1158,160 @@ function SlideTSPHamiltonian() {
   );
 }
 
+// ----- SLIDE TSP — DEGREE CONSTRAINTS -----
+function SlideTSPDegree() {
+  const [animKey, setAnimKey] = React.useState(0);
+  const sectionRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (el.hasAttribute('data-deck-active')) setAnimKey(k => k + 1);
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
+    return () => obs.disconnect();
+  }, []);
+
+  const r = 26;
+  // index 0 = focused node (center), 1-5 = other nodes (unlabeled)
+  const pos = [
+    { x: 250, y: 255 },
+    { x: 250, y: 52  },
+    { x: 432, y: 168 },
+    { x: 370, y: 430 },
+    { x: 130, y: 430 },
+    { x: 68,  y: 168 },
+  ];
+
+  const seg = (a, b) => {
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const d = Math.hypot(dx, dy);
+    const ux = dx/d, uy = dy/d;
+    const x1 = a.x + ux*r, y1 = a.y + uy*r;
+    const x2 = b.x - ux*r, y2 = b.y - uy*r;
+    return { x1, y1, x2, y2, ux, uy, len: Math.hypot(x2-x1, y2-y1) };
+  };
+
+  const arrowPts = (s) => {
+    const aw = 9, al = 18;
+    const bx = s.x2 - s.ux*al, by = s.y2 - s.uy*al;
+    return `${s.x2},${s.y2} ${bx - s.uy*aw},${by + s.ux*aw} ${bx + s.uy*aw},${by - s.ux*aw}`;
+  };
+
+  const outCandidates = [1, 3, 4, 5];
+  const outSelected   = 2;
+  const inCandidates  = [1, 2, 3, 5];
+  const inSelected    = 4;
+
+  const renderGraph = (direction, candidates, selected, focusLabel, color, ak) => {
+    const cSegs = candidates.map(j =>
+      direction === "out" ? seg(pos[0], pos[j]) : seg(pos[j], pos[0])
+    );
+    const sSeg = direction === "out"
+      ? seg(pos[0], pos[selected])
+      : seg(pos[selected], pos[0]);
+
+    return (
+      <svg key={ak} viewBox="0 0 500 490"
+           style={{ width: "100%", height: "100%", display: "block" }}>
+        {/* candidate arcs — dashed gray */}
+        {cSegs.map((s, idx) => (
+          <line key={idx} x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2}
+            stroke="var(--ink-3)" strokeWidth={2} strokeDasharray="7 5"
+            style={{ opacity: 0, animation: "fadeUp 300ms both ease-out",
+                     animationDelay: `${500 + idx * 60}ms` }} />
+        ))}
+
+        {/* selected arc body */}
+        <line x1={sSeg.x1} y1={sSeg.y1} x2={sSeg.x2} y2={sSeg.y2}
+          stroke={color} strokeWidth={4} strokeLinecap="round"
+          style={{ "--len": sSeg.len, strokeDasharray: sSeg.len,
+                   animation: "drawPath 700ms both ease-in-out",
+                   animationDelay: "1100ms" }} />
+
+        {/* selected arrowhead */}
+        <polygon points={arrowPts(sSeg)} fill={color}
+          style={{ opacity: 0, animation: "fadeUp 150ms both ease-out",
+                   animationDelay: "1770ms" }} />
+
+        {/* other nodes (unlabeled) */}
+        {pos.slice(1).map((n, i) => (
+          <g key={i} style={{ animation: "fadeUp 400ms both ease-out",
+                              animationDelay: `${(i + 1) * 80}ms` }}>
+            <circle cx={n.x} cy={n.y} r={r}
+              fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>
+          </g>
+        ))}
+
+        {/* focused node — same style as others, ink border */}
+        <g style={{ animation: "fadeUp 400ms both ease-out", animationDelay: "0ms" }}>
+          <circle cx={pos[0].x} cy={pos[0].y} r={r + 3}
+            fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
+          <text x={pos[0].x} y={pos[0].y + 7} textAnchor="middle"
+            fontFamily="var(--font-mono)" fontSize={19} fontWeight={700}
+            fill="var(--ink)">{focusLabel}</text>
+        </g>
+      </svg>
+    );
+  };
+
+  return (
+    <section ref={sectionRef} className="slide" data-label="Degree constraints">
+      <SlideFrame>
+        <div className="tag">TSP · Degree constraints</div>
+        <h2 className="title" style={{ marginTop: 16 }}>
+          Every vertex must be <em style={{ color: "var(--accent)" }}>left</em> and{" "}
+          <em style={{ color: "var(--accent-2)" }}>entered</em> exactly once.
+        </h2>
+
+        <div style={{ marginTop: 14, display: "grid", gridTemplateColumns: "1fr 1fr",
+                      gap: 36, flex: 1, minHeight: 0 }}>
+
+          {/* OUT-DEGREE — violet */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 14, minHeight: 0 }}>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 22, color: "var(--ink-2)", lineHeight: 1.35 }}>
+              <span style={{ color: "var(--accent)", fontWeight: 700 }}>Out-degree = 1</span>
+              {" "}— exactly one arc <em>leaves</em> vᵢ.
+            </div>
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)",
+                          padding: "18px 26px", fontSize: 34 }}>
+              <TeX display>{String.raw`\sum_{\substack{j \in V \\ j \neq i}} x_{ij} = 1 \qquad \forall\, i \in V`}</TeX>
+            </div>
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)",
+                          padding: 10, flex: 1, minHeight: 0, overflow: "hidden" }}>
+              {renderGraph("out", outCandidates, outSelected, "vᵢ", "var(--accent)", `out-${animKey}`)}
+            </div>
+          </div>
+
+          {/* IN-DEGREE — amber */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 14, minHeight: 0 }}>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 22, color: "var(--ink-2)", lineHeight: 1.35 }}>
+              <span style={{ color: "var(--accent-2)", fontWeight: 700 }}>In-degree = 1</span>
+              {" "}— exactly one arc <em>arrives at</em> vⱼ.
+            </div>
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)",
+                          padding: "18px 26px", fontSize: 34 }}>
+              <TeX display>{String.raw`\sum_{\substack{i \in V \\ i \neq j}} x_{ij} = 1 \qquad \forall\, j \in V`}</TeX>
+            </div>
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)",
+                          padding: 10, flex: 1, minHeight: 0, overflow: "hidden" }}>
+              {renderGraph("in", inCandidates, inSelected, "vⱼ", "var(--accent-2)", `in-${animKey}`)}
+            </div>
+          </div>
+
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
 // ----- SLIDE TSP — ILP FORMULATION -----
 function SlideTSPFormulation() {
   return (
     <section className="slide" data-label="TSP — ILP formulation">
       <SlideFrame>
-        <div className="tag">04 · TSP · Integer programming model</div>
+        <div className="tag">TSP · Integer programming model</div>
         <h2 className="title" style={{ marginTop: 28 }}>A binary model on the arcs of the complete graph.</h2>
 
         <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 56, flex: 1 }}>
@@ -1137,9 +1394,9 @@ function SlideTSPSubtourProblem() {
     { x: 260, y: 410, label: "v₆" },
   ];
   const group2 = [
-    { x: 720, y: 240, label: "v₃" },
-    { x: 880, y: 420, label: "v₄" },
-    { x: 700, y: 560, label: "v₅" },
+    { x: 760, y: 240, label: "v₃" },
+    { x: 920, y: 420, label: "v₄" },
+    { x: 740, y: 560, label: "v₅" },
   ];
   const cycle1 = [[0,1],[1,2],[2,3],[3,0]];
   const cycle2 = [[0,1],[1,2],[2,0]];
@@ -1170,8 +1427,8 @@ function SlideTSPSubtourProblem() {
   return (
     <section ref={sectionRef} className="slide" data-label="The subtour problem">
       <SlideFrame>
-        <div className="tag">04 · TSP · The subtour issue</div>
-        <h2 className="title" style={{ marginTop: 28 }}>
+        <div className="tag">TSP · The subtour issue</div>
+        <h2 className="title" style={{ marginTop: 28, minHeight: 150 }}>
           Degree constraints alone <em style={{ color: "var(--accent-2)" }}>are not enough</em>.
         </h2>
 
@@ -1197,10 +1454,10 @@ function SlideTSPSubtourProblem() {
                            stroke="var(--accent)" strokeWidth={2} strokeDasharray="6 5"/>
                   <text x={150} y={120} fontFamily="var(--font-display)"
                         fontStyle="italic" fontSize={40} fill="var(--accent)">S₁</text>
-                  <ellipse cx={780} cy={405} rx={180} ry={190}
+                  <ellipse cx={830} cy={405} rx={200} ry={240}
                            fill="var(--accent-2)" fillOpacity={0.06}
                            stroke="var(--accent-2)" strokeWidth={2} strokeDasharray="6 5"/>
-                  <text x={950} y={155} fontFamily="var(--font-display)"
+                  <text x={1010} y={175} textAnchor="end" fontFamily="var(--font-display)"
                         fontStyle="italic" fontSize={40} fill="var(--accent-2)">S₂</text>
                 </g>
 
@@ -1258,124 +1515,261 @@ function SlideTSPSubtourProblem() {
 
 // ----- SLIDE TSP — DFJ SUBTOUR ELIMINATION -----
 function SlideTSPDFJ() {
+  const group1 = [
+    { x: 200, y: 230, label: "v₀" },
+    { x: 430, y: 160, label: "v₁" },
+    { x: 500, y: 360, label: "v₂" },
+    { x: 260, y: 410, label: "v₆" },
+  ];
+  const group2 = [
+    { x: 760, y: 240, label: "v₃" },
+    { x: 920, y: 420, label: "v₄" },
+    { x: 740, y: 560, label: "v₅" },
+  ];
+  const cycle1 = [[0,1],[1,2],[2,3],[3,0]]; // v₀→v₁, v₁→v₂, v₂→v₆, v₆→v₀
+  const cycle2 = [[0,1],[1,2],[2,0]];       // v₃→v₄, v₄→v₅, v₅→v₃
+  const r = 30;
+
+  const segment = (na, nb) => {
+    const dx = nb.x - na.x, dy = nb.y - na.y;
+    const len = Math.hypot(dx, dy);
+    const ux = dx / len, uy = dy / len;
+    return {
+      x1: na.x + ux * r, y1: na.y + uy * r,
+      x2: nb.x - ux * r, y2: nb.y - uy * r,
+    };
+  };
+  const segLen = (s) => Math.hypot(s.x2 - s.x1, s.y2 - s.y1);
+
+  // Cross-subset arcs created when the packing-form constraint activates.
+  // v₁ (in S₁) → v₃ (in S₂),  v₂ (in S₁) → v₅ (in S₂)
+  const crossV1V3 = segment(group1[1], group2[0]);
+  const crossV2V5 = segment(group1[2], group2[2]);
+  const lenV1V3 = segLen(crossV1V3);
+  const lenV2V5 = segLen(crossV2V5);
+
+  const [active, setActive] = React.useState(null);
   const [animKey, setAnimKey] = React.useState(0);
+  const btnsRef = React.useRef(null);
   const sectionRef = React.useRef(null);
 
+  // Reset interactive state whenever the slide leaves the stage.
   React.useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
     const obs = new MutationObserver(() => {
-      if (el.hasAttribute('data-deck-active')) setAnimKey(k => k + 1);
+      if (!el.hasAttribute('data-deck-active')) setActive(null);
     });
     obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
     return () => obs.disconnect();
   }, []);
 
-  const inside = [
-    { x: 640, y: 210 },
-    { x: 780, y: 290 },
-    { x: 770, y: 440 },
-    { x: 620, y: 470 },
-    { x: 560, y: 340 },
-  ];
-  const outside = [
-    { x: 200, y: 180 },
-    { x: 330, y: 340 },
-    { x: 200, y: 500 },
-    { x: 380, y: 540 },
-  ];
+  // Native click listener — React's event delegation doesn't reach slides
+  // after deck-stage moves them out of their original host.
+  React.useEffect(() => {
+    const el = btnsRef.current;
+    if (!el) return;
+    const handler = (e) => {
+      const btn = e.target.closest('[data-constraint]');
+      if (!btn || !el.contains(btn)) return;
+      setActive(btn.getAttribute('data-constraint'));
+      setAnimKey(k => k + 1);
+    };
+    el.addEventListener('click', handler);
+    return () => el.removeEventListener('click', handler);
+  }, []);
+
+  const isPacking = active === 'packing';
+  const isCut     = active === 'cut';
 
   return (
     <section ref={sectionRef} className="slide" data-label="DFJ subtour elimination">
       <SlideFrame>
-        <div className="tag">04 · TSP · Subtour elimination (DFJ)</div>
-        <h2 className="title" style={{ marginTop: 28 }}>
+        <div className="tag">TSP · Subtour elimination (DFJ)</div>
+        <h2 className="title" style={{ marginTop: 28, minHeight: 150 }}>
           Forbid every proper subset from closing on itself.
         </h2>
 
-        <div style={{ marginTop: 30, display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 56, flex: 1, alignItems: "center" }}>
+        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 60, flex: 1, alignItems: "center" }}>
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 26, position: "relative" }}>
-            <svg viewBox="0 0 950 680" style={{ width: "100%", height: "100%", display: "block" }}>
+            <svg viewBox="0 0 1050 720" style={{ width: "100%", height: "100%", display: "block", overflow: "visible" }}>
               <defs>
-                <pattern id="dotgrid-dfj" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                <pattern id="dotgrid-dfj2" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
                   <circle cx="1" cy="1" r="1" fill="var(--line)"/>
                 </pattern>
-                <marker id="dfj-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                  <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent)"/>
-                </marker>
               </defs>
-              <rect width={950} height={680} fill="url(#dotgrid-dfj)" opacity={0.5}/>
+              <rect width={1050} height={720} fill="url(#dotgrid-dfj2)" opacity={0.5}/>
 
-              <g key={animKey}>
-                {/* Subset S */}
-                <g style={{ opacity: 0, animation: "fadeUp 600ms both ease-out", animationDelay: "200ms" }}>
-                  <ellipse cx={670} cy={340} rx={220} ry={190}
-                           fill="var(--accent)" fillOpacity={0.08}
-                           stroke="var(--accent)" strokeWidth={2.5} strokeDasharray="8 6"/>
-                  <text x={670} y={130} textAnchor="middle" fontFamily="var(--font-display)"
-                        fontStyle="italic" fontSize={44} fill="var(--accent)">S</text>
+              <ellipse cx={350} cy={290} rx={230} ry={175}
+                       fill="var(--accent)" fillOpacity={0.06}
+                       stroke="var(--accent)" strokeWidth={2} strokeDasharray="6 5"/>
+              <text x={150} y={120} fontFamily="var(--font-display)"
+                    fontStyle="italic" fontSize={40} fill="var(--accent)">S₁</text>
+              <ellipse cx={830} cy={405} rx={200} ry={240}
+                       fill="var(--accent-2)" fillOpacity={0.06}
+                       stroke="var(--accent-2)" strokeWidth={2} strokeDasharray="6 5"/>
+              <text x={1010} y={175} textAnchor="end" fontFamily="var(--font-display)"
+                    fontStyle="italic" fontSize={40} fill="var(--accent-2)">S₂</text>
+
+              {/* Cycle 1 — arc v₁→v₂ (index 1) blinks, then fades out.
+                  All delays include a 1500ms pause after the click, to give the viewer
+                  time to register which button was pressed before the animation begins.
+                  Packing: blink at 1500ms, fade at 2800ms.
+                  Cut:     crossing arcs appear first, then this blinks at 3700ms and fades at 5000ms. */}
+              {cycle1.map((e, i) => {
+                const s = segment(group1[e[0]], group1[e[1]]);
+                const animateHide = (isPacking || isCut) && i === 1;
+                const blinkDelay = isPacking ? 1500 : 3700;
+                const fadeDelay  = isPacking ? 2800 : 5000;
+                return <line key={`c1-${i}-${animKey}`} {...s}
+                             stroke="var(--accent)" strokeWidth={4} strokeLinecap="round"
+                             style={animateHide ? {
+                               animation: `fadeOut 450ms ease-out ${fadeDelay}ms both, blink 400ms ease-in-out ${blinkDelay}ms 3`,
+                             } : {}}/>;
+              })}
+              {/* Cycle 2 — arc v₅→v₃ (index 2) same behaviour as the S₁ arc above */}
+              {cycle2.map((e, i) => {
+                const s = segment(group2[e[0]], group2[e[1]]);
+                const animateHide = (isPacking || isCut) && i === 2;
+                const blinkDelay = isPacking ? 1500 : 3700;
+                const fadeDelay  = isPacking ? 2800 : 5000;
+                return <line key={`c2-${i}-${animKey}`} {...s}
+                             stroke="var(--accent-2)" strokeWidth={4} strokeLinecap="round"
+                             style={animateHide ? {
+                               animation: `fadeOut 450ms ease-out ${fadeDelay}ms both, blink 400ms ease-in-out ${blinkDelay}ms 3`,
+                             } : {}}/>;
+              })}
+
+              {/* Crossing arcs v₁→v₃ and v₂→v₅ — appear for both forms but with different ordering.
+                  Packing: crossings appear last (after callout).
+                  Cut:     crossings appear first (after the 1.5s initial pause). */}
+              {(isPacking || isCut) && (
+                <g key={`cross-${animKey}`}>
+                  <line {...crossV1V3}
+                        stroke="var(--ink)" strokeWidth={4} strokeLinecap="round"
+                        style={{
+                          "--len": lenV1V3,
+                          strokeDasharray: lenV1V3,
+                          animation: "drawPath 900ms both ease-out",
+                          animationDelay: isPacking ? "4100ms" : "1500ms",
+                        }}/>
+                  <line {...crossV2V5}
+                        stroke="var(--ink)" strokeWidth={4} strokeLinecap="round"
+                        style={{
+                          "--len": lenV2V5,
+                          strokeDasharray: lenV2V5,
+                          animation: "drawPath 900ms both ease-out",
+                          animationDelay: isPacking ? "4400ms" : "1800ms",
+                        }}/>
                 </g>
+              )}
 
-                {/* Nodes inside S */}
-                {inside.map(({x, y}, i) => (
-                  <g key={`in-${i}`} style={{ opacity: 0, animation: "fadeUp 500ms both ease-out", animationDelay: `${500 + i * 100}ms` }}>
-                    <circle cx={x} cy={y} r={19} fill="var(--paper)" stroke="var(--accent)" strokeWidth={2.5}/>
-                  </g>
-                ))}
-
-                {/* Nodes outside S */}
-                {outside.map(({x, y}, i) => (
-                  <g key={`out-${i}`} style={{ opacity: 0, animation: "fadeUp 500ms both ease-out", animationDelay: `${500 + i * 100}ms` }}>
-                    <circle cx={x} cy={y} r={19} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
-                  </g>
-                ))}
-
-                {/* Boundary-crossing arc */}
-                {(() => {
-                  const a = outside[1], b = inside[4];
-                  const dx = b.x - a.x, dy = b.y - a.y;
-                  const L = Math.hypot(dx, dy);
-                  const ux = dx / L, uy = dy / L;
-                  const x1 = a.x + ux * 22, y1 = a.y + uy * 22;
-                  const x2 = b.x - ux * 22, y2 = b.y - uy * 22;
-                  const segLen = Math.hypot(x2 - x1, y2 - y1);
-                  return (
-                    <line x1={x1} y1={y1} x2={x2} y2={y2}
-                          stroke="var(--accent)" strokeWidth={4.5} markerEnd="url(#dfj-arr)"
-                          style={{
-                            "--len": segLen,
-                            strokeDasharray: segLen,
-                            animation: "drawPath 900ms both ease-out",
-                            animationDelay: "1700ms",
-                          }}/>
-                  );
-                })()}
-
-                {/* Callout */}
-                <g style={{ opacity: 0, animation: "fadeUp 600ms both ease-out", animationDelay: "2400ms" }}>
-                  <rect x={305} y={205} width={220} height={38} rx={4}
-                        fill="var(--paper)" stroke="var(--accent)" strokeWidth={1.5}/>
-                  <text x={415} y={230} textAnchor="middle" fontFamily="var(--font-mono)"
-                        fontSize={19} fill="var(--accent)">≥ 1 arc must enter S</text>
+              {group1.map((n, i) => (
+                <g key={`g1-${i}`}>
+                  <circle cx={n.x} cy={n.y} r={r} fill="var(--paper)" stroke="var(--ink)" strokeWidth={3}/>
+                  <text x={n.x} y={n.y + 9} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={22} fontWeight={600} fill="var(--ink)">
+                    {n.label}
+                  </text>
                 </g>
-              </g>
+              ))}
+              {group2.map((n, i) => (
+                <g key={`g2-${i}`}>
+                  <circle cx={n.x} cy={n.y} r={r} fill="var(--paper)" stroke="var(--ink)" strokeWidth={3}/>
+                  <text x={n.x} y={n.y + 9} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={22} fontWeight={600} fill="var(--ink)">
+                    {n.label}
+                  </text>
+                </g>
+              ))}
 
-              <text x={475} y={660} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={19} fill="var(--ink-3)">
-                FIG. — at least one arc must cross the boundary of every proper subset S.
+              {/* Degree-constraints callout — KaTeX inside foreignObject, positioned
+                  above the viewBox top (negative y) so it sits clear of S₁ / v₁.
+                  Requires overflow:visible on the parent <svg> element.
+                  Packing: appears at 1900ms (after arcs blink+fade).
+                  Cut:     appears at 1400ms (after crossing arcs drawn). */}
+              {(isPacking || isCut) && (
+                <foreignObject key={`deg-${animKey}`} x={135} y={-170} width={780} height={220}
+                               style={{
+                                 opacity: 0,
+                                 animation: "fadeUp 600ms both ease-out",
+                                 animationDelay: isPacking ? "3400ms" : "2900ms",
+                                 overflow: "visible",
+                               }}>
+                  <div xmlns="http://www.w3.org/1999/xhtml" style={{
+                    width: "100%",
+                    height: "100%",
+                    background: "var(--paper)",
+                    border: "2px solid var(--ink)",
+                    borderRadius: 6,
+                    padding: "16px 28px",
+                    boxSizing: "border-box",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 14,
+                    fontFamily: "var(--font-mono)",
+                  }}>
+                    <div style={{ fontSize: 19, color: "var(--ink-3)", letterSpacing: "0.08em" }}>
+                      DEGREE CONSTRAINTS STILL HOLD
+                    </div>
+                    <div style={{ display: "flex", gap: 64, alignItems: "center" }}>
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                        <div style={{ fontSize: 16, color: "var(--ink-3)", letterSpacing: "0.06em" }}>OUT-DEGREE</div>
+                        <div style={{ fontSize: 38 }}>
+                          <TeX>{String.raw`\sum_{\substack{j \in V \\ j \neq i}} x_{ij} = 1`}</TeX>
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                        <div style={{ fontSize: 16, color: "var(--ink-3)", letterSpacing: "0.06em" }}>IN-DEGREE</div>
+                        <div style={{ fontSize: 38 }}>
+                          <TeX>{String.raw`\sum_{\substack{i \in V \\ i \neq j}} x_{ij} = 1`}</TeX>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </foreignObject>
+              )}
+
+              <text x={525} y={700} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={20} fill="var(--ink-3)">
+                FIG. — every vertex has in-degree 1 and out-degree 1, yet this is <em>not</em> a tour.
               </text>
             </svg>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 18, justifyContent: "center" }}>
+          <div ref={btnsRef} style={{ display: "flex", flexDirection: "column", gap: 18, justifyContent: "center" }}>
             <div className="lede" style={{ fontSize: 30, lineHeight: 1.22 }}>
               The <em>Dantzig–Fulkerson–Johnson</em> cut. For every proper subset <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)" }}>S</span> of vertices, the arcs chosen <em>inside</em> S must fall short of forming a cycle — forcing at least one arc to cross the boundary.
             </div>
-            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "18px 22px", fontFamily: "var(--font-mono)", fontSize: 22 }}>
-              <div style={{ color: "var(--ink-3)", fontSize: 18, marginBottom: 4 }}>packing form</div>
+            <div data-constraint="packing" style={{
+              background: isPacking ? "rgba(107,74,245,0.08)" : "var(--paper-2)",
+              border: `1px solid ${isPacking ? "var(--accent)" : "var(--line)"}`,
+              borderLeft: `${isPacking ? 4 : 1}px solid ${isPacking ? "var(--accent)" : "var(--line)"}`,
+              padding: "18px 22px",
+              fontFamily: "var(--font-mono)",
+              fontSize: 22,
+              cursor: "pointer",
+              userSelect: "none",
+              transform: isPacking ? "translateX(6px)" : "translateX(0)",
+              transition: "all 320ms ease",
+            }}>
+              <div style={{ color: isPacking ? "var(--accent)" : "var(--ink-3)", fontSize: 18, marginBottom: 4 }}>packing form</div>
               <TeX display>{String.raw`\sum_{i \in S}\sum_{\substack{j \in S \\ j \neq i}} x_{ij} \;\leq\; |S| - 1`}</TeX>
             </div>
-            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "18px 22px", fontFamily: "var(--font-mono)", fontSize: 22 }}>
-              <div style={{ color: "var(--ink-3)", fontSize: 18, marginBottom: 4 }}>equivalent cut form</div>
+            <div data-constraint="cut" style={{
+              background: isCut ? "rgba(107,74,245,0.08)" : "var(--paper-2)",
+              border: `1px solid ${isCut ? "var(--accent)" : "var(--line)"}`,
+              borderLeft: `${isCut ? 4 : 1}px solid ${isCut ? "var(--accent)" : "var(--line)"}`,
+              padding: "18px 22px",
+              fontFamily: "var(--font-mono)",
+              fontSize: 22,
+              cursor: "pointer",
+              userSelect: "none",
+              transform: isCut ? "translateX(6px)" : "translateX(0)",
+              transition: "all 320ms ease",
+            }}>
+              <div style={{ color: isCut ? "var(--accent)" : "var(--ink-3)", fontSize: 18, marginBottom: 4 }}>equivalent cut form</div>
               <TeX display>{String.raw`\sum_{i \notin S}\sum_{j \in S} x_{ij} \;\geq\; 1`}</TeX>
             </div>
             <div className="body small" style={{ color: "var(--ink-3)", fontSize: 20, lineHeight: 1.35 }}>
@@ -1424,7 +1818,7 @@ function SlideTSPExponential() {
   return (
     <section ref={sectionRef} className="slide" data-label="Exponential blow-up of DFJ">
       <SlideFrame>
-        <div className="tag">04 · TSP · The combinatorial wall</div>
+        <div className="tag">TSP · The combinatorial wall</div>
         <h2 className="title" style={{ marginTop: 28 }}>
           Subtour elimination constraints grow <em style={{ color: "var(--accent)" }}>exponentially</em>.
         </h2>
@@ -1526,7 +1920,7 @@ function Slide10() {
   return (
     <section className="slide" data-label="TSP to VRP">
       <SlideFrame>
-        <div className="tag">03 · VRP elements</div>
+        <div className="tag">VRP elements</div>
         <h2 className="title" style={{ marginTop: 28 }}>From one tour to many — how TSP becomes VRP.</h2>
 
         <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, flex: 1 }}>
@@ -1581,7 +1975,7 @@ function Slide12() {
   return (
     <section className="slide" data-label="CVRP informal definition">
       <SlideFrame>
-        <div className="tag">04 · CVRP</div>
+        <div className="tag">CVRP</div>
         <h2 className="title" style={{ marginTop: 28 }}>CVRP — informal statement.</h2>
 
         <div style={{ marginTop: 50, display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 80, flex: 1, alignItems: "center" }}>
@@ -1608,7 +2002,7 @@ function Slide13() {
   return (
     <section className="slide" data-label="The three constraints">
       <SlideFrame>
-        <div className="tag">04 · CVRP</div>
+        <div className="tag">CVRP</div>
         <h2 className="title" style={{ marginTop: 28 }}>Three constraints define the CVRP.</h2>
 
         <div style={{ marginTop: 60, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 40, flex: 1 }}>
@@ -1659,7 +2053,7 @@ function Slide14() {
   return (
     <section className="slide" data-label="Two-index ILP formulation">
       <SlideFrame>
-        <div className="tag">04 · CVRP · Model VRP1</div>
+        <div className="tag">CVRP · Model VRP1</div>
         <h2 className="title" style={{ marginTop: 28 }}>A two-index integer formulation.</h2>
 
         <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 60, flex: 1 }}>
@@ -1705,7 +2099,7 @@ function Slide15() {
   return (
     <section className="slide" data-label="Capacity-cut constraints">
       <SlideFrame>
-        <div className="tag">04 · CVRP · Valid inequality</div>
+        <div className="tag">CVRP · Valid inequality</div>
         <h2 className="title" style={{ marginTop: 28 }}>Capacity cuts forbid over-loaded clusters.</h2>
 
         <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, flex: 1 }}>
@@ -1766,7 +2160,7 @@ function Slide15() {
 Object.assign(window, {
   Slide01, Slide02, Slide03, Slide04, Slide05, SlideVRPElementsSection,
   Slide06, Slide07, Slide08, SlideTSPSection, Slide09,
-  SlideTSPHamiltonian, SlideTSPFormulation, SlideTSPSubtourProblem, SlideTSPDFJ, SlideTSPExponential,
+  SlideTSPHamiltonian, SlideTSPDegree, SlideTSPFormulation, SlideTSPSubtourProblem, SlideTSPDFJ, SlideTSPExponential,
   Slide10,
   Slide11, Slide12, Slide13, Slide14, Slide15,
   EX_NODES, EX_ROUTES,

@@ -92,6 +92,108 @@ Ogni section header è una slide con `className="section-slide"`. Per modificare
 
 > Per aggiungere o spostare una slide: modifica l'array `slides` in [project/vrp-seminar.html](project/vrp-seminar.html) (riga ~95) e aggiorna i range "Slides X — Y" nel section header corrispondente.
 
+## Pattern e gotcha per animazioni e interattività
+
+### 1. Event handler: usare listener nativi, non `onClick`
+
+`deck-stage.js` sposta ogni `<section>` fuori dal div host di `createRoot()`. React usa event delegation sulla root, che non segue il nodo spostato → **`onClick` non funziona mai nelle slide**.
+
+Soluzione obbligatoria: listener nativo via `useRef` + `useEffect`:
+
+```jsx
+const btnRef = React.useRef(null);
+React.useEffect(() => {
+  const btn = btnRef.current;
+  if (!btn) return;
+  const handler = () => { /* aggiorna stato */ };
+  btn.addEventListener("click", handler);
+  return () => btn.removeEventListener("click", handler);
+}, []);
+// Nel JSX: <button ref={btnRef}>...</button>
+```
+
+Esempio funzionante: `SlideNodeAttributes` in [project/slides-intro.jsx](project/slides-intro.jsx) e `Slide09` in [project/slides-a.jsx](project/slides-a.jsx).
+
+### 2. Riavviare un'animazione: usare `key`
+
+Le animazioni CSS si attivano al mount del DOM node. Per riavviarle su click, metti `key={animKey}` sull'elemento animato e incrementa `animKey` nello state:
+
+```jsx
+const [animKey, setAnimKey] = React.useState(0);
+// nel handler:
+setAnimKey(k => k + 1);
+// nel JSX:
+<svg key={animKey} ...> ... </svg>
+```
+
+### 3. `drawPath` e la variabile `--len`
+
+Il keyframe CSS `drawPath` usa `var(--len, 2000)` come `stroke-dashoffset` iniziale. Se non imposti `--len`, usa il fallback 2000 e l'animazione parte già a metà percorso. **Sempre** passare `"--len": len` nell'`style`:
+
+```jsx
+style={{
+  strokeDasharray: len,
+  strokeDashoffset: len,
+  "--len": len,              // ← obbligatorio
+  animation: `drawPath 700ms both ease-in-out`,
+  animationDelay: `${i * 550}ms`,
+}}
+```
+
+### 4. Animazione segmento-per-segmento (path drawing lento)
+
+`VRPGraph` disegna tutte le route in un colpo solo con `anim-draw`. Per un percorso lento (segmento dopo segmento), sovrapponi un SVG custom con `<line>` separati e delay scalati:
+
+```jsx
+{showRoute && (
+  <svg key={animKey} viewBox="160 55 620 510"
+       style={{ position:"absolute", top:28, left:28,
+                width:"calc(100% - 56px)", height:"calc(100% - 56px)",
+                pointerEvents:"none" }}>
+    {segments.map(([x1,y1,x2,y2], i) => {
+      const len = Math.hypot(x2-x1, y2-y1);
+      return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
+               stroke="var(--accent)" strokeWidth={5} strokeLinecap="round"
+               style={{ strokeDasharray:len, strokeDashoffset:len, "--len":len,
+                        animation:`drawPath 700ms both ease-in-out`,
+                        animationDelay:`${i * 550}ms` }} />;
+    })}
+  </svg>
+)}
+```
+
+### 5. Stacking CSS: `position:absolute` sopravanza gli elementi statici
+
+Un SVG/div con `position:absolute` viene dipinto **dopo** (sopra) tutti gli elementi `position:static` nello stesso stacking context, indipendentemente dall'ordine nel DOM. Se vuoi che un elemento statico (es. VRPGraph con i nodi) stia sopra un overlay assoluto, dagli `position:relative` e `zIndex` esplicito:
+
+```jsx
+// overlay (position:absolute, zIndex implicito 0) → sotto
+<svg style={{ position:"absolute", ... }} />
+// VRPGraph wrapper → sopra
+<div style={{ position:"relative", zIndex:1, pointerEvents:"none" }}>
+  <VRPGraph ... />
+</div>
+```
+
+### 6. Reset animazione quando la slide esce dalla vista
+
+Usa un `MutationObserver` sul `ref` della `<section>` per osservare `data-deck-active`:
+
+```jsx
+React.useEffect(() => {
+  const el = sectionRef.current;
+  if (!el) return;
+  const obs = new MutationObserver(() => {
+    if (!el.hasAttribute('data-deck-active')) {
+      setShowRoute(false);   // reset stato
+      setAnimKey(0);
+    }
+  });
+  obs.observe(el, { attributes:true, attributeFilter:['data-deck-active'] });
+  return () => obs.disconnect();
+}, []);
+```
+
 ## File del progetto
 
 - [project/vrp-seminar.html](project/vrp-seminar.html) — entry point, monta tutte le slide

@@ -1230,52 +1230,188 @@ function SlideTSPLazy() {
 
 
 function SlideTSPMinCut() {
-  const [step, setStep] = React.useState(0);
+  const r = 30;
+  const [mode, setMode] = React.useState('integer');
+  // animStep: 0 subtours, 1 callout, 2 crosses picked (blink+morph), 3 old arcs fade, 4 idle
+  // (idle = post-animation / slide not yet active; disappearing arcs are simply not
+  // rendered so no stale CSS animations are kicked off on mount)
+  const [animStep, setAnimStep] = React.useState(4);
+  const [animKey, setAnimKey] = React.useState(0);
+  const [isActive, setIsActive] = React.useState(false);
+  const btnsRef = React.useRef(null);
   const sectionRef = React.useRef(null);
 
+  // Track whether the slide is active so the integer animation only
+  // plays while visible and restarts on every activation.
   React.useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    let timers = [];
-    const play = () => {
-      timers.forEach(clearTimeout);
-      timers = [];
-      setStep(0);
-      timers.push(setTimeout(() => setStep(1), 900));
-      timers.push(setTimeout(() => setStep(2), 2000));
-      timers.push(setTimeout(() => setStep(3), 3100));
+    const check = () => {
+      const active = el.hasAttribute('data-deck-active');
+      setIsActive(active);
+      if (!active) setMode('integer');
     };
-    const obs = new MutationObserver(() => {
-      if (el.hasAttribute('data-deck-active')) play();
-      else { timers.forEach(clearTimeout); timers = []; setStep(0); }
-    });
+    check();
+    const obs = new MutationObserver(check);
     obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
-    if (el.hasAttribute('data-deck-active')) play();
-    return () => { obs.disconnect(); timers.forEach(clearTimeout); };
+    return () => obs.disconnect();
   }, []);
 
+  // Native click delegation — React's onClick doesn't reach slides after
+  // deck-stage moves them out of their original host. Clicking "Integer
+  // tour" bumps animKey so the animation replays even if mode didn't change.
+  React.useEffect(() => {
+    const el = btnsRef.current;
+    if (!el) return;
+    const handler = (e) => {
+      const btn = e.target.closest('[data-mode]');
+      if (!btn || !el.contains(btn)) return;
+      const m = btn.getAttribute('data-mode');
+      setMode(m);
+      if (m === 'integer') setAnimKey(k => k + 1);
+    };
+    el.addEventListener('click', handler);
+    return () => el.removeEventListener('click', handler);
+  }, []);
+
+  // Integer animation: 0 → 1 → 2 → 3 with setTimeout. Only fires when the
+  // slide is active and mode is integer. When not animating, we park at
+  // step 4 (idle): disappearing arcs render as nothing at all, which
+  // prevents the fade animation from being re-kicked on every remount.
+  //
+  // useLayoutEffect (not useEffect) so that the animStep reset happens
+  // synchronously before the browser paints — otherwise the transition
+  // from idle → active briefly shows the final-state scene.
+  React.useLayoutEffect(() => {
+    if (!isActive || mode !== 'integer') {
+      setAnimStep(4);
+      return;
+    }
+    setAnimStep(0);
+    const timers = [];
+    timers.push(setTimeout(() => setAnimStep(1), 1800));
+    timers.push(setTimeout(() => setAnimStep(2), 3800));
+    timers.push(setTimeout(() => setAnimStep(3), 6200));  // step 2 takes ~2.2s (blink 1s + morph 1.2s)
+    return () => timers.forEach(clearTimeout);
+  }, [isActive, mode, animKey]);
+
+  // Same layout as slide 27 (SlideTSPDFJ): 4 vertices in S, 3 in V\S.
   const V = [
-    { id: '1', x: 170, y:  90, side: 'S' },
-    { id: '2', x:  90, y: 250, side: 'S' },
-    { id: '3', x: 270, y: 250, side: 'S' },
-    { id: '4', x: 540, y:  90, side: 'T' },
-    { id: '5', x: 460, y: 250, side: 'T' },
-    { id: '6', x: 640, y: 250, side: 'T' },
+    { id: 'v0', label: 'v₀', x: 200, y: 230, side: 'S' },
+    { id: 'v1', label: 'v₁', x: 430, y: 160, side: 'S' },
+    { id: 'v2', label: 'v₂', x: 500, y: 360, side: 'S' },
+    { id: 'v6', label: 'v₆', x: 260, y: 410, side: 'S' },
+    { id: 'v3', label: 'v₃', x: 760, y: 240, side: 'T' },
+    { id: 'v4', label: 'v₄', x: 920, y: 420, side: 'T' },
+    { id: 'v5', label: 'v₅', x: 740, y: 560, side: 'T' },
   ];
   const byId = Object.fromEntries(V.map(v => [v.id, v]));
 
-  // Weights chosen so every vertex has degree exactly 2 in x* — a valid
-  // point of the LP relaxation. The only S violating DFJ is the left shore
-  // {1,2,3}: its boundary x*(δ(S)) = 0.3 + 0.3 = 0.6 < 2.
-  const intraEdges = [
-    { a: '1', b: '2', w: 1.0 }, { a: '2', b: '3', w: 1.0 }, { a: '3', b: '1', w: 0.7 },
-    { a: '4', b: '5', w: 0.7 }, { a: '5', b: '6', w: 1.0 }, { a: '6', b: '4', w: 1.0 },
+  // Integer scene as a storyboard: the full 9-arc set that ever appears
+  // during the animation, each tagged with its role. The Hamiltonian tour
+  // v₀→v₁→v₃→v₄→v₅→v₂→v₆→v₀ is reached only at step 3. Before that:
+  //   step 0–1 : v₁→v₂ and v₅→v₃ carry the two subtours (w=1);
+  //              v₁→v₃ and v₅→v₂ are pending crosses (w=0, dashed).
+  //   step 2   : crosses are chosen (w=1, solid).
+  //   step 3   : the two subtour-closing arcs flip to 0, blink, disappear.
+  const INTEGER_ARCS = [
+    { from: 'v0', to: 'v1', group: 'S',     kind: 'static' },
+    { from: 'v1', to: 'v2', group: 'S',     kind: 'disappearing' },
+    { from: 'v2', to: 'v6', group: 'S',     kind: 'static' },
+    { from: 'v6', to: 'v0', group: 'S',     kind: 'static' },
+    { from: 'v3', to: 'v4', group: 'T',     kind: 'static' },
+    { from: 'v4', to: 'v5', group: 'T',     kind: 'static' },
+    { from: 'v5', to: 'v3', group: 'T',     kind: 'disappearing' },
+    { from: 'v1', to: 'v3', group: 'cross', kind: 'appearing' },
+    { from: 'v5', to: 'v2', group: 'cross', kind: 'appearing' },
   ];
-  const crossEdges = [
-    { a: '1', b: '4', w: 0.3 },
-    { a: '3', b: '5', w: 0.3 },
-  ];
-  const cutSum = crossEdges.reduce((s, e) => s + e.w, 0);
+
+  // Map animation step + arc kind → weight, dash flag, and the active
+  // transition: `morphing` for appearing arcs at step 2 (blink 1s, then
+  // the dashed body grows into a continuous line), `fading` for
+  // disappearing arcs at step 3 (blink 3×, then fade out).
+  // At idle (step 4) the disappearing arcs are simply not rendered via
+  // the `hidden` flag — avoids kicking off stale CSS animations on mount.
+  const arcState = (kind, step) => {
+    if (kind === 'appearing') {
+      if (step < 2)   return { w: 0, dashed: true,  morphing: false, fading: false };
+      if (step === 2) return { w: 1, dashed: true,  morphing: true,  fading: false };
+      return            { w: 1, dashed: false, morphing: false, fading: false };
+    }
+    if (kind === 'disappearing') {
+      if (step === 3) return { w: 0, dashed: false, morphing: false, fading: true  };
+      if (step >= 4)  return { hidden: true };
+      return            { w: 1, dashed: false, morphing: false, fading: false };
+    }
+    return { w: 1, dashed: false, morphing: false, fading: false };
+  };
+
+  // Fractional x* with in-deg = out-deg = 1 at every vertex, but v₁ and v₅
+  // split their out-flow into two arcs each, giving x*(δ(S)) = 0.6 < 2.
+  const FRACTIONAL = {
+    intraS: [
+      { from: 'v0', to: 'v1', w: 1.0 },
+      { from: 'v1', to: 'v2', w: 0.7 },
+      { from: 'v2', to: 'v6', w: 1.0 },
+      { from: 'v6', to: 'v0', w: 1.0 },
+    ],
+    intraT: [
+      { from: 'v3', to: 'v4', w: 1.0 },
+      { from: 'v4', to: 'v5', w: 1.0 },
+      { from: 'v5', to: 'v3', w: 0.7 },
+    ],
+    cross: [
+      { from: 'v1', to: 'v3', w: 0.3 },   // δ⁺(S): out of S
+      { from: 'v5', to: 'v2', w: 0.3 },   // δ⁻(S): into S
+    ],
+  };
+
+  const fmt = (w) => mode === 'integer' ? `${w}` : w.toFixed(1);
+  const isInt = mode === 'integer';
+  const isFrac = mode === 'fractional';
+  // Integer cut total during the animation: 0 before step 2, 2 after.
+  const intCutSum = animStep >= 2 ? 2 : 0;
+  const fracCutSum = 0.6;
+
+  const btnStyle = (active) => ({
+    cursor: "pointer",
+    userSelect: "none",
+    background: active ? "rgba(107,74,245,0.08)" : "var(--paper-2)",
+    border: `1px solid ${active ? "var(--accent)" : "var(--line)"}`,
+    borderLeft: `${active ? 4 : 1}px solid ${active ? "var(--accent)" : "var(--line)"}`,
+    padding: "14px 20px",
+    fontSize: 20,
+    lineHeight: 1.5,
+    color: "var(--ink-2)",
+    transform: active ? "translateX(6px)" : "translateX(0)",
+    transition: "all 320ms ease",
+  });
+
+  const segment = (na, nb) => {
+    const dx = nb.x - na.x, dy = nb.y - na.y;
+    const len = Math.hypot(dx, dy);
+    const ux = dx / len, uy = dy / len;
+    return {
+      x1: na.x + ux * r, y1: na.y + uy * r,
+      x2: nb.x - ux * r, y2: nb.y - uy * r,
+    };
+  };
+
+  // Place a weight label perpendicular to the edge midpoint, on the side
+  // farther from `awayFrom`. Using each cluster centroid keeps intra-cycle
+  // labels on the outside of the cycle; for crossings we pass a point
+  // above or below the line to steer the label into the gap.
+  const labelPos = (na, nb, awayFrom, dist = 36) => {
+    const midX = (na.x + nb.x) / 2, midY = (na.y + nb.y) / 2;
+    const dx = nb.x - na.x, dy = nb.y - na.y;
+    const len = Math.hypot(dx, dy);
+    const nx = -dy / len, ny = dx / len;
+    const s = (midX - awayFrom.x) * nx + (midY - awayFrom.y) * ny;
+    const sign = s >= 0 ? 1 : -1;
+    return { x: midX + nx * dist * sign, y: midY + ny * dist * sign };
+  };
+  const CENTER_S = { x: 347, y: 290 };   // centroid of {v₀,v₁,v₂,v₆}
+  const CENTER_T = { x: 807, y: 407 };   // centroid of {v₃,v₄,v₅}
 
   return (
     <section ref={sectionRef} className="slide" data-label="Why separation is a min-cut problem">
@@ -1288,154 +1424,260 @@ function SlideTSPMinCut() {
         <div style={{ marginTop: 22, display: "grid", gridTemplateColumns: "1fr 1.05fr", gap: 40, flex: 1, alignItems: "stretch", minHeight: 0 }}>
 
           {/* -------- Left column: the equivalence -------- */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <div className="lede" style={{ fontSize: 28, lineHeight: 1.3 }}>
-              Intuition: in any <em>integer</em> tour the boundary of every subset S carries <em>exactly 2 units</em> — the tour enters S once and exits once. In a fractional x* this is no longer forced: <TeX>{String.raw`x^*(\delta(S))`}</TeX> can <em>fall below 2</em>, and a DFJ violation is precisely an S where this happens.
+          <div ref={btnsRef} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div className="lede" style={{ fontSize: 24, lineHeight: 1.35 }}>
+              Read <TeX>{String.raw`x^*(\delta(S))`}</TeX> as the <em>total weight</em> on the boundary — the sum <TeX>{String.raw`\sum_{(i,j)\in\delta(S)} x^*_{ij}`}</TeX>, <em>not</em> a count of arcs.
             </div>
 
-            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "14px 20px" }}>
-              <div className="kicker" style={{ fontSize: 19, marginBottom: 8 }}>Identity (from degree = 2)</div>
-              <div style={{ fontSize: 21, lineHeight: 1.5, color: "var(--ink-2)" }}>
-                Sum the degree constraint <TeX>{String.raw`\sum_{\substack{j \in V \\ j \neq i}} x^*_{ij}=2`}</TeX> (j ranges over every other vertex of V) over every i ∈ S:
-                <div style={{ margin: "6px 0" }}>
-                  <TeX display>{String.raw`\sum_{i \in S} \sum_{\substack{j \in V \\ j \neq i}} x^*_{ij} \;=\; 2|S|`}</TeX>
-                </div>
-                That double sum counts each <em>intra-S</em> edge <em>twice</em> (once from each endpoint in S) and each <em>boundary</em> edge <em>once</em>, so:
+            {/* Click to show the integer-tour scene on the right. */}
+            <div data-mode="integer" style={btnStyle(isInt)}>
+              <div className="kicker" style={{ fontSize: 17, marginBottom: 4, color: isInt ? "var(--accent)" : "var(--ink-3)" }}>Integer tour</div>
+              Every <TeX>{String.raw`x_{ij} \in \{0,1\}`}</TeX>: the tour enters S once and exits once ⇒ exactly one arc in <TeX>{String.raw`\delta^+(S)`}</TeX> and one in <TeX>{String.raw`\delta^-(S)`}</TeX>, giving <TeX>{String.raw`1+1 = 2`}</TeX>. "2 units" = this total weight, which in the integer case happens to be 2 arcs of weight 1.
+            </div>
+
+            {/* Click to show the fractional x* scene (DFJ violation). */}
+            <div data-mode="fractional" style={btnStyle(isFrac)}>
+              <div className="kicker" style={{ fontSize: 17, marginBottom: 4, color: isFrac ? "var(--accent)" : "var(--ink-3)" }}>Fractional x*</div>
+              Those 2 units can be <em>spread</em> across many boundary arcs with non-integer weights — and the total can <em>fall below 2</em>. A DFJ violation is exactly an S where <TeX>{String.raw`x^*(\delta(S)) < 2`}</TeX>.
+            </div>
+
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "12px 20px" }}>
+              <div className="kicker" style={{ fontSize: 17, marginBottom: 6 }}>Identity (from in + out = 2)</div>
+              <div style={{ fontSize: 19, lineHeight: 1.45, color: "var(--ink-2)" }}>
+                Summing <TeX>{String.raw`\sum_{j \neq i}(x^*_{ij}+x^*_{ji})=2`}</TeX> over i ∈ S counts each intra-S arc twice and each boundary arc once:
                 <div style={{ margin: "6px 0 0" }}>
-                  <TeX display>{String.raw`2\,x^*(E(S)) \;+\; x^*(\delta(S)) \;=\; 2|S|`}</TeX>
+                  <TeX display>{String.raw`2\,x^*(A(S)) \;+\; x^*(\delta(S)) \;=\; 2|S|`}</TeX>
                 </div>
               </div>
             </div>
 
             {/* Highlighted equivalence — the punchline */}
             <div style={{ background: "var(--accent)", color: "var(--paper)", padding: "14px 22px", textAlign: "center" }}>
-              <div style={{ fontSize: 17, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 6, color: "var(--paper-deep)", opacity: 0.9 }}>DFJ ⟺ min-cut</div>
-              <div style={{ fontSize: 24 }}>
-                <TeX display>{String.raw`x^*(E(S)) > |S|-1 \;\Longleftrightarrow\; x^*(\delta(S)) < 2`}</TeX>
+              <div style={{ fontSize: 15, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 6, color: "var(--paper-deep)", opacity: 0.9 }}>DFJ ⟺ min-cut</div>
+              <div style={{ fontSize: 22 }}>
+                <TeX display>{String.raw`x^*(A(S)) > |S|-1 \;\Longleftrightarrow\; x^*(\delta(S)) < 2`}</TeX>
               </div>
-              <div style={{ marginTop: 8, fontSize: 17, color: "var(--paper-deep)", fontStyle: "italic", opacity: 0.95 }}>
-                Finding a violated S ⇒ find the partition of V that minimizes x*(δ(S)) — a global min-cut. Precise algorithm on the next slide.
+              <div style={{ marginTop: 6, fontSize: 15, color: "var(--paper-deep)", fontStyle: "italic", opacity: 0.95 }}>
+                Finding a violated S ⇒ minimize x*(δ(S)) over all S — a global min-cut.
               </div>
             </div>
           </div>
 
-          {/* -------- Right column: animated graph -------- */}
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 18, display: "flex", flexDirection: "column", alignItems: "stretch", justifyContent: "center", overflow: "hidden", minHeight: 0 }}>
-            <svg viewBox="0 0 740 340" preserveAspectRatio="xMidYMid meet" style={{ width: "100%", height: "auto", display: "block" }}>
-              {/* subtle boundary (the "cut") appearing from step 1 */}
-              {step >= 1 && (
-                <line x1={370} y1={20} x2={370} y2={310}
-                      stroke="var(--accent)" strokeWidth={2} strokeDasharray="6 6"
-                      style={{ opacity: 0, animation: "fadeIn 500ms both ease-out" }}/>
-              )}
+          {/* -------- Right column: same layout as slide 27 (DFJ) -------- */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 26, display: "flex", flexDirection: "column", minHeight: 0, position: "relative" }}>
 
-              {/* intra-cluster edges (always visible) */}
-              {intraEdges.map((e, i) => {
-                const va = byId[e.a], vb = byId[e.b];
-                const mx = (va.x + vb.x) / 2, my = (va.y + vb.y) / 2;
+            {/* Animation callout for integer mode — subtour diagnosis at step 1,
+                flips to "Hamiltonian tour" headline at step 3. Rendered as an
+                absolutely-positioned HTML overlay so it sits crisply above the
+                SVG without competing with its scaling. */}
+            {isInt && animStep >= 1 && animStep <= 3 && (
+              <div key={`callout-${animStep >= 3 ? 'tour' : 'sub'}-${animKey}`}
+                   style={{
+                     position: "absolute",
+                     top: 20,
+                     left: "50%",
+                     transform: "translateX(-50%)",
+                     padding: "10px 20px",
+                     border: `2px solid ${animStep >= 3 ? "var(--accent)" : "var(--ink)"}`,
+                     background: animStep >= 3 ? "var(--accent)" : "var(--paper)",
+                     color: animStep >= 3 ? "var(--paper)" : "var(--ink)",
+                     borderRadius: 3,
+                     fontFamily: "var(--font-mono)",
+                     fontSize: 16,
+                     fontWeight: 600,
+                     whiteSpace: "nowrap",
+                     zIndex: 3,
+                     animation: "fadeUp 420ms both ease-out",
+                   }}>
+                {animStep >= 3
+                  ? "x(δ(S)) = 1 + 1 = 2  ⇒  Hamiltonian tour"
+                  : "x(δ(S)) = 0 + 0 = 0 < 2  ⇒  there are subtours!"}
+              </div>
+            )}
+
+            <svg viewBox="100 90 930 560" preserveAspectRatio="xMidYMid meet"
+                 style={{ width: "100%", flex: "1 1 auto", minHeight: 0, display: "block", overflow: "visible" }}>
+              <defs>
+                <pattern id="dotgrid-mincut" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <circle cx="1" cy="1" r="1" fill="var(--line)"/>
+                </pattern>
+                {/* Arrow markers: one per stroke colour so the head matches
+                    the arc. `markerUnits=userSpaceOnUse` keeps the arrow the
+                    same size regardless of stroke thickness; refX=16 aligns
+                    the tip with the line endpoint (which already sits at the
+                    node border thanks to `segment()`). */}
+                <marker id="arrow-accent" markerUnits="userSpaceOnUse"
+                        viewBox="0 0 16 12" markerWidth="16" markerHeight="12"
+                        refX="16" refY="6" orient="auto">
+                  <path d="M0,0 L16,6 L0,12 z" fill="var(--accent)"/>
+                </marker>
+                <marker id="arrow-accent2" markerUnits="userSpaceOnUse"
+                        viewBox="0 0 16 12" markerWidth="16" markerHeight="12"
+                        refX="16" refY="6" orient="auto">
+                  <path d="M0,0 L16,6 L0,12 z" fill="var(--accent-2)"/>
+                </marker>
+                <marker id="arrow-ink" markerUnits="userSpaceOnUse"
+                        viewBox="0 0 18 14" markerWidth="18" markerHeight="14"
+                        refX="18" refY="7" orient="auto">
+                  <path d="M0,0 L18,7 L0,14 z" fill="var(--ink)"/>
+                </marker>
+              </defs>
+              <rect width={1050} height={720} fill="url(#dotgrid-mincut)" opacity={0.5}/>
+
+              {/* S ellipse (same coords as S₁ in slide 27) */}
+              <ellipse cx={350} cy={290} rx={230} ry={175}
+                       fill="var(--accent)" fillOpacity={0.06}
+                       stroke="var(--accent)" strokeWidth={2} strokeDasharray="6 5"/>
+              <text x={150} y={120} fontFamily="var(--font-display)"
+                    fontStyle="italic" fontSize={40} fill="var(--accent)">S</text>
+
+              {/* V\S ellipse (same coords as S₂ in slide 27) */}
+              <ellipse cx={830} cy={405} rx={200} ry={240}
+                       fill="var(--accent-2)" fillOpacity={0.06}
+                       stroke="var(--accent-2)" strokeWidth={2} strokeDasharray="6 5"/>
+              <text x={1010} y={175} textAnchor="end" fontFamily="var(--font-display)"
+                    fontStyle="italic" fontSize={40} fill="var(--accent-2)">V \ S</text>
+
+              {/* Arc rendering — integer mode replays the storyboard,
+                  fractional mode shows the static x* scene. */}
+              {isInt ? INTEGER_ARCS.map((arc, i) => {
+                const state = arcState(arc.kind, animStep);
+                if (state.hidden) return null;  // idle: disappearing arcs simply absent
+                const va = byId[arc.from], vb = byId[arc.to];
+                const seg = segment(va, vb);
+                const isCross = arc.group === 'cross';
+                const stroke = arc.group === 'S' ? "var(--accent)"
+                             : arc.group === 'T' ? "var(--accent-2)"
+                                                 : "var(--ink)";
+                const marker = arc.group === 'S' ? "arrow-accent"
+                             : arc.group === 'T' ? "arrow-accent2"
+                                                 : "arrow-ink";
+                const center = arc.group === 'S' ? CENTER_S
+                             : arc.group === 'T' ? CENTER_T
+                             : (arc.from === 'v1' ? { x: 595, y: 600 } : { x: 620, y: 100 });
+                const lp = labelPos(va, vb, center, isCross ? 34 : 38);
+                // Per-arc animation: `morphing` at step 2 blinks the freshly
+                // picked crosses for 1 s then grows their dashed body into a
+                // continuous line; `fading` at step 3 blinks 3× and fades out.
+                const animStyle = state.fading ? {
+                  animation: "blink 400ms ease-in-out 0ms 3, fadeOut 500ms ease-out 1400ms both",
+                } : state.morphing ? {
+                  animation: "blink 500ms ease-in-out 0ms 2, dashToSolid 1200ms ease-out 1000ms both",
+                } : undefined;
                 return (
-                  <g key={`ie-${i}`}>
-                    <line x1={va.x} y1={va.y} x2={vb.x} y2={vb.y}
-                          stroke="var(--ink)" strokeWidth={2.2} opacity={step >= 2 ? 0.25 : 0.5}
-                          style={{ transition: "opacity 400ms ease" }}/>
-                    <text x={mx} y={my - 6} textAnchor="middle"
-                          fontFamily="var(--font-mono)" fontSize={14} fill="var(--ink-3)">
-                      {e.w.toFixed(1)}
+                  <g key={`int-${i}-${animKey}-${state.fading ? 'f' : state.morphing ? 'm' : 'n'}`}>
+                    <line {...seg}
+                          stroke={stroke}
+                          strokeWidth={isCross ? 4.5 : 4}
+                          strokeLinecap="butt"
+                          strokeDasharray={state.dashed ? "12 7" : undefined}
+                          markerEnd={`url(#${marker})`}
+                          style={animStyle}/>
+                    <text x={lp.x} y={lp.y + (isCross ? 8 : 7)} textAnchor="middle"
+                          fontFamily="var(--font-mono)"
+                          fontSize={isCross ? 28 : 22}
+                          fontWeight={isCross ? 700 : 500}
+                          fill={isCross ? "var(--ink)" : "var(--ink-2)"}
+                          style={animStyle}>
+                      {state.w}
                     </text>
                   </g>
                 );
-              })}
-
-              {/* cross edges — these are the δ(S) we highlight at step 2 */}
-              {crossEdges.map((e, i) => {
-                const va = byId[e.a], vb = byId[e.b];
-                const mx = (va.x + vb.x) / 2, my = (va.y + vb.y) / 2;
-                const hi = step >= 2;
-                return (
-                  <g key={`ce-${i}`}>
-                    <line x1={va.x} y1={va.y} x2={vb.x} y2={vb.y}
-                          stroke={hi ? "var(--accent)" : "var(--ink)"}
-                          strokeWidth={hi ? 4 : 2.2}
-                          opacity={hi ? 1 : 0.55}
-                          style={{ transition: "stroke 400ms ease, stroke-width 400ms ease, opacity 400ms ease" }}/>
-                    <text x={mx} y={my - 10} textAnchor="middle"
-                          fontFamily="var(--font-mono)"
-                          fontSize={hi ? 17 : 14}
-                          fontWeight={hi ? 600 : 400}
-                          fill={hi ? "var(--accent)" : "var(--ink-3)"}
-                          style={{ transition: "all 400ms ease" }}>
-                      {e.w.toFixed(1)}
-                    </text>
-                  </g>
-                );
-              })}
-
-              {/* vertices */}
-              {V.map((v) => {
-                const colored = step >= 1;
-                const color = !colored ? "var(--ink)" : (v.side === 'S' ? "var(--accent)" : "var(--ink)");
-                return (
-                  <g key={v.id}>
-                    <circle cx={v.x} cy={v.y} r={20}
-                            fill="var(--paper)"
-                            stroke={color}
-                            strokeWidth={3}
-                            style={{ transition: "stroke 400ms ease" }}/>
-                    <text x={v.x} y={v.y + 6} textAnchor="middle"
-                          fontFamily="var(--font-mono)"
-                          fontSize={18} fontWeight={600}
-                          fill={color}
-                          style={{ transition: "fill 400ms ease" }}>{v.id}</text>
-                  </g>
-                );
-              })}
-
-              {/* shore labels */}
-              {step >= 1 && (
-                <g style={{ opacity: 0, animation: "fadeUp 500ms both ease-out" }}>
-                  <text x={180} y={320} textAnchor="middle"
-                        fontFamily="var(--font-mono)" fontSize={17} fontWeight={600}
-                        fill="var(--accent)">S</text>
-                  <text x={550} y={320} textAnchor="middle"
-                        fontFamily="var(--font-mono)" fontSize={17} fontWeight={600}
-                        fill="var(--ink-2)">V \ S</text>
-                </g>
+              }) : (
+                <>
+                  {/* Fractional — intra-S arcs */}
+                  {FRACTIONAL.intraS.map((e, i) => {
+                    const va = byId[e.from], vb = byId[e.to];
+                    const seg = segment(va, vb);
+                    const lp = labelPos(va, vb, CENTER_S, 38);
+                    return (
+                      <g key={`frac-is-${i}`}>
+                        <line {...seg} stroke="var(--accent)" strokeWidth={4}
+                              strokeLinecap="butt" markerEnd="url(#arrow-accent)"/>
+                        <text x={lp.x} y={lp.y + 7} textAnchor="middle"
+                              fontFamily="var(--font-mono)" fontSize={22}
+                              fontWeight={500} fill="var(--ink-2)">
+                          {fmt(e.w)}
+                        </text>
+                      </g>
+                    );
+                  })}
+                  {/* Fractional — intra-(V\S) arcs */}
+                  {FRACTIONAL.intraT.map((e, i) => {
+                    const va = byId[e.from], vb = byId[e.to];
+                    const seg = segment(va, vb);
+                    const lp = labelPos(va, vb, CENTER_T, 38);
+                    return (
+                      <g key={`frac-it-${i}`}>
+                        <line {...seg} stroke="var(--accent-2)" strokeWidth={4}
+                              strokeLinecap="butt" markerEnd="url(#arrow-accent2)"/>
+                        <text x={lp.x} y={lp.y + 7} textAnchor="middle"
+                              fontFamily="var(--font-mono)" fontSize={22}
+                              fontWeight={500} fill="var(--ink-2)">
+                          {fmt(e.w)}
+                        </text>
+                      </g>
+                    );
+                  })}
+                  {/* Fractional — crossing arcs (δ(S)) */}
+                  {FRACTIONAL.cross.map((e, i) => {
+                    const va = byId[e.from], vb = byId[e.to];
+                    const seg = segment(va, vb);
+                    const awayFrom = e.from === 'v1' ? { x: 595, y: 600 } : { x: 620, y: 100 };
+                    const lp = labelPos(va, vb, awayFrom, 34);
+                    return (
+                      <g key={`frac-ce-${i}`}>
+                        <line {...seg} stroke="var(--ink)" strokeWidth={4.5}
+                              strokeLinecap="butt" markerEnd="url(#arrow-ink)"/>
+                        <text x={lp.x} y={lp.y + 8} textAnchor="middle"
+                              fontFamily="var(--font-mono)" fontSize={28}
+                              fontWeight={700} fill="var(--ink)">
+                          {fmt(e.w)}
+                        </text>
+                      </g>
+                    );
+                  })}
+                </>
               )}
 
-              {/* result callout */}
-              {step >= 3 && (
-                <g style={{ opacity: 0, animation: "fadeUp 600ms both ease-out" }}>
-                  <rect x={220} y={6} width={300} height={36} fill="var(--accent)" rx={3}/>
-                  <text x={370} y={31} textAnchor="middle"
-                        fontFamily="var(--font-mono)" fontSize={17} fontWeight={600}
-                        fill="var(--paper)">
-                    x*(δ(S)) = {cutSum.toFixed(1)} &lt; 2  →  violated
+              {/* Vertices (same style as slide 27: paper fill, ink stroke) */}
+              {V.map((v) => (
+                <g key={v.id}>
+                  <circle cx={v.x} cy={v.y} r={r} fill="var(--paper)"
+                          stroke="var(--ink)" strokeWidth={3}/>
+                  <text x={v.x} y={v.y + 9} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={22}
+                        fontWeight={600} fill="var(--ink)">
+                    {v.label}
                   </text>
                 </g>
-              )}
+              ))}
+
             </svg>
 
-            {/* running caption under the graph — anchored to the story on the left */}
-            <div style={{ marginTop: 12, minHeight: 60, fontSize: 17, textAlign: "center", fontFamily: "var(--font-mono)", lineHeight: 1.45 }}>
-              {step < 1 && (
-                <span style={{ color: "var(--ink-3)" }}>
-                  ① fractional x* — every vertex has degree 2, some edges at 1.0, others at 0.3
-                </span>
-              )}
-              {step === 1 && (
-                <span style={{ color: "var(--ink-2)" }}>
-                  ② the min-cut algorithm splits V into the two cheapest shores — here S = {"{1, 2, 3}"}
-                </span>
-              )}
-              {step === 2 && (
-                <span style={{ color: "var(--accent)" }}>
-                  ③ boundary δ(S) = only the two bridge edges — sum them under x*
-                </span>
-              )}
-              {step >= 3 && (
-                <span style={{ color: "var(--accent)", fontWeight: 600 }}>
-                  ④ x*(δ(S)) = 0.3 + 0.3 = 0.6 &lt; 2 &nbsp;⇒&nbsp; DFJ violated on S = {"{1, 2, 3}"}
-                </span>
+            {/* Figure caption — HTML so it wraps naturally; changes with mode
+                and with animation step. */}
+            <div style={{ marginTop: 14, fontFamily: "var(--font-mono)", fontSize: 17, color: "var(--ink-3)", lineHeight: 1.55 }}>
+              {isInt ? (
+                animStep >= 3 ? (
+                  <>
+                    FIG. — integer Hamiltonian tour; every x_ij ∈ {"{0, 1}"}, in-deg = out-deg = 1.
+                    <br/>
+                    For S = {"{v₀, v₁, v₂, v₆}"}: x(δ⁺(S)) = 1, x(δ⁻(S)) = 1, so x(δ(S)) = {intCutSum}.
+                  </>
+                ) : (
+                  <>
+                    FIG. — two disjoint subtours on S and V \ S; crossings pending.
+                    <br/>
+                    For S = {"{v₀, v₁, v₂, v₆}"}: x(δ(S)) = 0 — DFJ violated.
+                  </>
+                )
+              ) : (
+                <>
+                  FIG. — fractional x* with in-deg(i) = out-deg(i) = 1 at every vertex.
+                  <br/>
+                  For S = {"{v₀, v₁, v₂, v₆}"}: x*(δ(S)) = 0.3 + 0.3 = {fracCutSum.toFixed(1)} &lt; 2.
+                </>
               )}
             </div>
           </div>

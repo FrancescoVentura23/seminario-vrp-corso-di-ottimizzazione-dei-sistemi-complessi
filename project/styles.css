@@ -278,6 +278,13 @@ section.section-slide .tag    { color: var(--paper-deep); }
   0%, 100% { opacity: 1; }
   50%      { opacity: 0.15; }
 }
+@keyframes dashToSolid {
+  /* Morphs a dashed stroke into a continuous line by stretching the
+     dash length well past any reasonable arc length while closing the
+     gap. Used together with `blink` to signal arc selection. */
+  from { stroke-dasharray: 12 7; }
+  to   { stroke-dasharray: 500 0; }
+}
 
 /* Applied only on the active slide — preserves idle state on others */
 [data-deck-active] .anim-fade { animation: fadeUp 700ms both ease-out; }

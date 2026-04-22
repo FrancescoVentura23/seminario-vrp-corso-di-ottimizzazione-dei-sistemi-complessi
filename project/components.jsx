@@ -195,8 +195,34 @@ function BigNumber({ value, label, sub, size = 180 }) {
 }
 
 // -----------------------------------------------------------
+// Shared example instance — used by several slides (cover, VRP
+// elements, TSP, CVRP). Kept here so slide files can stay
+// independent of each other.
+// -----------------------------------------------------------
+const EX_NODES = (() => {
+  const depot = { x: 420, y: 300, id: 0 };
+  const custs = [
+    { x: 220, y: 170, demand: 4 }, { x: 330, y: 110, demand: 3 },
+    { x: 540, y: 110, demand: 2 }, { x: 680, y: 180, demand: 5 },
+    { x: 730, y: 330, demand: 3 }, { x: 640, y: 470, demand: 4 },
+    { x: 460, y: 510, demand: 2 }, { x: 240, y: 480, demand: 3 },
+    { x: 140, y: 350, demand: 4 }, { x: 290, y: 260, demand: 2 },
+    { x: 570, y: 260, demand: 3 }, { x: 520, y: 420, demand: 2 },
+  ];
+  return [depot, ...custs.map((c, i) => ({ ...c, id: i + 1 }))];
+})();
+
+const EX_ROUTES = [
+  [9, 1, 2, 10],       // route 1
+  [3, 4, 5, 11],       // route 2
+  [6, 7, 12],          // route 3
+  [8],                 // route 4 (single)
+];
+
+// -----------------------------------------------------------
 // Export to window
 // -----------------------------------------------------------
 Object.assign(window, {
   TeX, SlideFrame, VRPGraph, BigNumber, makeInstance,
+  EX_NODES, EX_ROUTES,
 });

@@ -58,16 +58,41 @@ const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
 
 <script type="text/babel" src="components.jsx"></script>
 <script type="text/babel" src="demo.jsx"></script>
-<script type="text/babel" src="slides-intro.jsx"></script>
-<script type="text/babel" src="slides-or.jsx"></script>
-<script type="text/babel" src="slides-a.jsx"></script>
-<script type="text/babel" src="slides-b.jsx"></script>
+<script type="text/babel" src="slides/01-cover.jsx"></script>
+<script type="text/babel" src="slides/02-intro.jsx"></script>
+<script type="text/babel" src="slides/03-foundations.jsx"></script>
+<script type="text/babel" src="slides/04-vrp-elements.jsx"></script>
+<script type="text/babel" src="slides/05-tsp.jsx"></script>
+<script type="text/babel" src="slides/06-cvrp.jsx"></script>
+<script type="text/babel" src="slides/07-complexity.jsx"></script>
+<script type="text/babel" src="slides/08-family.jsx"></script>
+<script type="text/babel" src="slides/09-live-demo.jsx"></script>
+<script type="text/babel" src="slides/10-applications.jsx"></script>
 
 <script type="text/babel">
 // ---------- Mount all slides into <deck-stage> ----------
+// Slide order mirrors the file layout under slides/. Each file loaded above
+// registers its Slide* functions on window, and the mount waits until the
+// last-registered symbol from every file is present before building the deck.
 (function mountDeck() {
+  // One sentinel per slides/ file (the last function registered in it) plus
+  // ClarkeWrightDemo from demo.jsx.
+  const sentinels = [
+    "Slide01",           // 01-cover.jsx
+    "SlideWhoUsesIt",    // 02-intro.jsx
+    "SlideNetwork",      // 03-foundations.jsx
+    "Slide08",           // 04-vrp-elements.jsx
+    "Slide10",           // 05-tsp.jsx
+    "Slide15",           // 06-cvrp.jsx
+    "Slide18",           // 07-complexity.jsx
+    "Slide23",           // 08-family.jsx
+    "Slide26",           // 09-live-demo.jsx
+    "Slide30",           // 10-applications.jsx
+    "ClarkeWrightDemo",  // demo.jsx
+  ];
+
   function tryMount() {
-    if (!window.Slide30 || !window.ClarkeWrightDemo || !window.SlideHistory || !window.SlideNetwork || !window.SlideORLink || !window.SlideIntroSection || !window.SlideNodeAttributes || !window.SlideVRPElementsSection || !window.SlideStarNotation || !window.SlideTSPSection || !window.SlideTSPHamiltonian || !window.SlideTSPDegree || !window.SlideTSPFormulation || !window.SlideTSPSubtourProblem || !window.SlideTSPDFJ || !window.SlideTSPExponential) {
+    if (sentinels.some((k) => !window[k])) {
       setTimeout(tryMount, 60);
       return;
     }
@@ -75,68 +100,34 @@ const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
     const placeholder = document.getElementById("root-mount");
     if (placeholder) placeholder.remove();
 
-    // Deck order (48 slides):
-    //   1  Cover
-    //   2  Part I — Introduction  (section header)
-    //   3  History & origins
-    //   4  Operations Research link
-    //   5  A problem you meet every day
-    //   6  The economic scale
-    //   7  Who uses VRP today
-    //   8  Part II — Foundations  (section header)
-    //   9  Node
-    //  10  Node attributes (animated)
-    //  11  Edge
-    //  12  Simple graph
-    //  13  Directed arc
-    //  14  Digraph
-    //  15  Forward / backward star
-    //  16  Network
-    //  17  Part III — VRP elements (section header)
-    //  18  Anatomy
-    //  19  Road → complete graph
-    //  20  Graph notation
-    //  21  Part IV — TSP  (section header)
-    //  22  TSP informal
-    //  23  Hamiltonian circuit
-    //  24  TSP — ILP formulation
-    //  25  Degree constraints
-    //  26  The subtour problem
-    //  27  DFJ subtour elimination
-    //  28  Exponential blow-up
-    //  28  TSP → VRP
-    //  29..48  Parts V–IX as before (Slide11..Slide30)
+    // Deck order — see CLAUDE.md for the human-readable table.
     const slides = [
-      Slide01,
-      SlideIntroSection,
-      SlideHistory,
-      SlideORLink,
-      Slide02, Slide03,
-      SlideWhoUsesIt,
-      Slide05,
-      SlideNode, SlideNodeAttributes, SlideEdge, SlideSimpleGraph, SlideDirectedArc, SlideDigraph, SlideStarNotation, SlideNetwork,
-      SlideVRPElementsSection,
-      Slide06, Slide07, Slide08,
-      SlideTSPSection,
-      Slide09, SlideTSPHamiltonian, SlideTSPFormulation, SlideTSPDegree, SlideTSPSubtourProblem, SlideTSPDFJ, SlideTSPExponential,
-      Slide10,
-      Slide11, Slide12, Slide13, Slide14, Slide15,
-      Slide16, Slide17, Slide18, Slide19, Slide20,
-      Slide21, Slide22, Slide23, Slide24, Slide25,
-      Slide26, Slide27, Slide28, Slide29, Slide30,
+      Slide01,                                                                                         // Part I — cover
+      SlideIntroSection, SlideHistory, SlideORLink, Slide02, Slide03, SlideWhoUsesIt,                  // Part I — intro
+      Slide05, SlideNode, SlideNodeAttributes, SlideEdge, SlideSimpleGraph,                            // Part II — foundations
+      SlideDirectedArc, SlideDigraph, SlideStarNotation, SlideNetwork,
+      SlideVRPElementsSection, Slide06, Slide07, Slide08,                                              // Part III — VRP elements
+      SlideTSPSection, Slide09, SlideTSPHamiltonian, SlideTSPFormulation,                              // Part IV — TSP
+      SlideTSPDegree, SlideTSPSubtourProblem, SlideTSPDFJ, SlideTSPExponential, SlideTSPLazy, SlideTSPMinCut, SlideTSPMinCutAlgo, Slide10,
+      Slide11, Slide12, Slide13, Slide14, Slide15,                                                     // Part V — CVRP
+      Slide16, Slide17, Slide18,                                                                       // Part VI — complexity
+      Slide19, Slide20, Slide21, Slide22, Slide23,                                                     // Part VII — family
+      Slide24, Slide25, Slide26,                                                                       // Part VIII — live demo
+      Slide27, Slide28, Slide29, Slide30,                                                              // Part IX — applications
     ];
 
     // Render each slide's React tree into a detached host <div>, then append
-    // the resulting <section> (which is the component's root element) into <deck-stage>.
-    slides.forEach((SlideComp, idx) => {
+    // the resulting <section> (which is the component's root element) into
+    // <deck-stage>. flushSync forces React 18 to render synchronously so the
+    // <section> exists immediately — without it, a cold load (no browser/Babel
+    // cache, cold JIT) can append slides before React has produced their DOM,
+    // and those slides silently go missing from the deck.
+    slides.forEach((SlideComp) => {
       const host = document.createElement("div");
-      // We render, then move the rendered <section> out and drop the host.
-      ReactDOM.createRoot(host).render(<SlideComp/>);
-      // Wait for React to render, then move
-      setTimeout(() => {
-        const section = host.firstElementChild;
-        if (section) stage.appendChild(section);
-      }, 0 + idx * 2);
+      const root = ReactDOM.createRoot(host);
+      ReactDOM.flushSync(() => root.render(<SlideComp/>));
+      const section = host.firstElementChild;
+      if (section) stage.appendChild(section);
     });
 
     // Re-apply KaTeX after children settle
@@ -153,7 +144,7 @@ const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
 window.addEventListener('message', (ev) => {
   const d = ev.data || {};
   if (typeof d.slideIndexChanged === 'number') {
-    const total = document.querySelectorAll('deck-stage > section.slide').length || 38;
+    const total = document.querySelectorAll('deck-stage > section.slide').length || 52;
     const n = String(d.slideIndexChanged + 1).padStart(2, '0');
     const t = String(total).padStart(2, '0');
     document.querySelectorAll('[data-chrome-pg]').forEach(el => {

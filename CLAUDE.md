@@ -1,6 +1,6 @@
 # Seminario VRP — Guida rapida
 
-Deck HTML/CSS/JS esportato da Claude Design. **48 slide** gestite dal web component `<deck-stage>` in [project/deck-stage.js](project/deck-stage.js), montate da [project/vrp-seminar.html](project/vrp-seminar.html).
+Deck HTML/CSS/JS esportato da Claude Design. **52 slide** gestite dal web component `<deck-stage>` in [project/deck-stage.js](project/deck-stage.js), montate da [project/vrp-seminar.html](project/vrp-seminar.html).
 
 ## Come far partire la presentazione
 
@@ -33,7 +33,33 @@ Muovendo il mouse appare in basso un overlay con i bottoni prev/next/reset. L'in
 
 ## Esportare in PDF
 
-`Cmd+P` nel browser → *Salva come PDF*. Il CSS `@media print` in [project/deck-stage.js:230-265](project/deck-stage.js#L230-L265) impagina una slide per pagina alla dimensione autorizzata (1920×1080).
+`Cmd+P` nel browser → *Salva come PDF*. Il CSS `@media print` in [project/deck-stage.js](project/deck-stage.js) impagina una slide per pagina alla dimensione autorizzata (1920×1080).
+
+## Struttura dei file
+
+```
+project/
+├── vrp-seminar.html      # entry point: monta tutte le slide
+├── deck-stage.js         # web component <deck-stage> (navigazione, print)
+├── styles.css            # stili condivisi
+├── components.jsx        # componenti riusabili (TeX, SlideFrame, VRPGraph, BigNumber) + dati EX_NODES / EX_ROUTES condivisi
+├── demo.jsx              # ClarkeWrightDemo (demo interattiva)
+├── slides/
+│   ├── 01-cover.jsx            # Cover
+│   ├── 02-intro.jsx            # Part I — Introduction
+│   ├── 03-foundations.jsx      # Part II — Foundations (graph theory)
+│   ├── 04-vrp-elements.jsx     # Part III — VRP elements
+│   ├── 05-tsp.jsx              # Part IV — TSP
+│   ├── 06-cvrp.jsx             # Part V — CVRP
+│   ├── 07-complexity.jsx       # Part VI — Complexity
+│   ├── 08-family.jsx           # Part VII — VRP family
+│   ├── 09-live-demo.jsx        # Part VIII — Live demo
+│   └── 10-applications.jsx     # Part IX — Applications & closing
+├── assets/                # immagini fisse del deck
+└── uploads/               # caricamenti dell'utente
+```
+
+Ogni file in `slides/` è un `<script type="text/babel">` che definisce le sue funzioni `Slide*` e le registra su `window` in fondo al file. L'array di mount in [project/vrp-seminar.html](project/vrp-seminar.html) legge questi globali e li rende in ordine.
 
 ## Struttura della presentazione
 
@@ -41,56 +67,60 @@ Ogni section header è una slide con `className="section-slide"`. Per modificare
 
 | # | Slide | Funzione | File |
 |---|-------|----------|------|
-| 1 | Cover | `Slide01` | slides-a.jsx |
-| 2 | **Part I — Introduction** *(section header)* | `SlideIntroSection` | slides-intro.jsx |
-| 3 | History & origins | `SlideHistory` | slides-intro.jsx |
-| 4 | Operations Research link | `SlideORLink` | slides-or.jsx |
-| 5 | A problem you meet every day | `Slide02` | slides-a.jsx |
-| 6 | The economic scale | `Slide03` | slides-a.jsx |
-| 7 | Who uses VRP today | `SlideWhoUsesIt` | slides-intro.jsx |
-| 8 | **Part II — Foundations** *(section header)* | `Slide05` | slides-a.jsx |
-| 9 | Node | `SlideNode` | slides-intro.jsx |
-| 10 | Node attributes (animated) | `SlideNodeAttributes` | slides-intro.jsx |
-| 11 | Edge | `SlideEdge` | slides-intro.jsx |
-| 12 | Simple graph | `SlideSimpleGraph` | slides-intro.jsx |
-| 13 | Directed arc | `SlideDirectedArc` | slides-intro.jsx |
-| 14 | Digraph | `SlideDigraph` | slides-intro.jsx |
-| 15 | Forward / backward star | `SlideStarNotation` | slides-intro.jsx |
-| 16 | Network | `SlideNetwork` | slides-intro.jsx |
-| 17 | **Part III — VRP elements** *(section header)* | `SlideVRPElementsSection` | slides-a.jsx |
-| 18 | Anatomy of a routing problem | `Slide06` | slides-a.jsx |
-| 19 | Road → complete graph | `Slide07` | slides-a.jsx |
-| 20 | Graph notation | `Slide08` | slides-a.jsx |
-| 21 | **Part IV — TSP** *(section header)* | `SlideTSPSection` | slides-a.jsx |
-| 22 | TSP — informal statement | `Slide09` | slides-a.jsx |
-| 23 | Hamiltonian circuit (animated) | `SlideTSPHamiltonian` | slides-a.jsx |
-| 24 | TSP — ILP formulation | `SlideTSPFormulation` | slides-a.jsx |
-| 25 | The subtour problem (animated) | `SlideTSPSubtourProblem` | slides-a.jsx |
-| 26 | DFJ subtour elimination | `SlideTSPDFJ` | slides-a.jsx |
-| 27 | Exponential blow-up (animated) | `SlideTSPExponential` | slides-a.jsx |
-| 28 | TSP → VRP | `Slide10` | slides-a.jsx |
-| 29 | **Part V — CVRP** *(section header)* | `Slide11` | slides-a.jsx |
-| 30 | CVRP informal definition | `Slide12` | slides-a.jsx |
-| 31 | CVRP three constraints | `Slide13` | slides-a.jsx |
-| 32 | Two-index ILP formulation | `Slide14` | slides-a.jsx |
-| 33 | Capacity-cut inequality | `Slide15` | slides-a.jsx |
-| 34 | **Part VI — Complexity** *(section header)* | `Slide16` | slides-b.jsx |
-| 35 | NP-hardness & explosion | `Slide17` | slides-b.jsx |
-| 36 | Why heuristics | `Slide18` | slides-b.jsx |
-| 37 | **Part VII — VRP family** *(section header)* | `Slide19` | slides-b.jsx |
-| 38 | Taxonomy | `Slide20` | slides-b.jsx |
-| 39 | VRPTW | `Slide21` | slides-b.jsx |
-| 40 | Backhauls & PD | `Slide22` | slides-b.jsx |
-| 41 | Multi-depot & open VRP | `Slide23` | slides-b.jsx |
-| 42 | **Part VIII — Live demo** *(section header)* | `Slide24` | slides-b.jsx |
-| 43 | Clarke-Wright idea | `Slide25` | slides-b.jsx |
-| 44 | Interactive demo | `Slide26` | slides-b.jsx |
-| 45 | **Part IX — Applications** *(section header)* | `Slide27` | slides-b.jsx |
-| 46 | Case studies | `Slide28` | slides-b.jsx |
-| 47 | Takeaways | `Slide29` | slides-b.jsx |
-| 48 | Closing / references | `Slide30` | slides-b.jsx |
+| 1 | Cover | `Slide01` | [slides/01-cover.jsx](project/slides/01-cover.jsx) |
+| 2 | **Part I — Introduction** *(section header)* | `SlideIntroSection` | [slides/02-intro.jsx](project/slides/02-intro.jsx) |
+| 3 | History & origins | `SlideHistory` | [slides/02-intro.jsx](project/slides/02-intro.jsx) |
+| 4 | Operations Research link | `SlideORLink` | [slides/02-intro.jsx](project/slides/02-intro.jsx) |
+| 5 | A problem you meet every day | `Slide02` | [slides/02-intro.jsx](project/slides/02-intro.jsx) |
+| 6 | The economic scale | `Slide03` | [slides/02-intro.jsx](project/slides/02-intro.jsx) |
+| 7 | Who uses VRP today | `SlideWhoUsesIt` | [slides/02-intro.jsx](project/slides/02-intro.jsx) |
+| 8 | **Part II — Foundations** *(section header)* | `Slide05` | [slides/03-foundations.jsx](project/slides/03-foundations.jsx) |
+| 9 | Node | `SlideNode` | [slides/03-foundations.jsx](project/slides/03-foundations.jsx) |
+| 10 | Node attributes (animated) | `SlideNodeAttributes` | [slides/03-foundations.jsx](project/slides/03-foundations.jsx) |
+| 11 | Edge | `SlideEdge` | [slides/03-foundations.jsx](project/slides/03-foundations.jsx) |
+| 12 | Simple graph | `SlideSimpleGraph` | [slides/03-foundations.jsx](project/slides/03-foundations.jsx) |
+| 13 | Directed arc | `SlideDirectedArc` | [slides/03-foundations.jsx](project/slides/03-foundations.jsx) |
+| 14 | Digraph | `SlideDigraph` | [slides/03-foundations.jsx](project/slides/03-foundations.jsx) |
+| 15 | Forward / backward star | `SlideStarNotation` | [slides/03-foundations.jsx](project/slides/03-foundations.jsx) |
+| 16 | Network | `SlideNetwork` | [slides/03-foundations.jsx](project/slides/03-foundations.jsx) |
+| 17 | **Part III — VRP elements** *(section header)* | `SlideVRPElementsSection` | [slides/04-vrp-elements.jsx](project/slides/04-vrp-elements.jsx) |
+| 18 | Anatomy of a routing problem | `Slide06` | [slides/04-vrp-elements.jsx](project/slides/04-vrp-elements.jsx) |
+| 19 | Road → complete graph | `Slide07` | [slides/04-vrp-elements.jsx](project/slides/04-vrp-elements.jsx) |
+| 20 | Graph notation | `Slide08` | [slides/04-vrp-elements.jsx](project/slides/04-vrp-elements.jsx) |
+| 21 | **Part IV — TSP** *(section header)* | `SlideTSPSection` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 22 | TSP — informal statement | `Slide09` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 23 | Hamiltonian circuit (animated) | `SlideTSPHamiltonian` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 24 | TSP — ILP formulation | `SlideTSPFormulation` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 25 | Degree constraints | `SlideTSPDegree` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 26 | The subtour problem (animated) | `SlideTSPSubtourProblem` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 27 | DFJ subtour elimination | `SlideTSPDFJ` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 28 | Exponential blow-up (animated) | `SlideTSPExponential` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 29 | Lazy subtour cuts in branch-and-cut | `SlideTSPLazy` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 30 | Separation = min-cut (animated) | `SlideTSPMinCut` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 31 | Separation oracle — precise algorithm | `SlideTSPMinCutAlgo` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 32 | TSP → VRP | `Slide10` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 33 | **Part V — CVRP** *(section header)* | `Slide11` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 34 | CVRP informal definition | `Slide12` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 35 | CVRP three constraints | `Slide13` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 36 | Two-index ILP formulation | `Slide14` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 37 | Capacity-cut inequality | `Slide15` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 38 | **Part VI — Complexity** *(section header)* | `Slide16` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
+| 39 | NP-hardness & explosion | `Slide17` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
+| 40 | Why heuristics | `Slide18` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
+| 41 | **Part VII — VRP family** *(section header)* | `Slide19` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 42 | Taxonomy | `Slide20` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 43 | VRPTW | `Slide21` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 44 | Backhauls & PD | `Slide22` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 45 | Multi-depot & open VRP | `Slide23` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 46 | **Part VIII — Live demo** *(section header)* | `Slide24` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
+| 47 | Clarke-Wright idea | `Slide25` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
+| 48 | Interactive demo | `Slide26` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
+| 49 | **Part IX — Applications** *(section header)* | `Slide27` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
+| 50 | Case studies | `Slide28` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
+| 51 | Takeaways | `Slide29` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
+| 52 | Closing / references | `Slide30` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
 
-> Per aggiungere o spostare una slide: modifica l'array `slides` in [project/vrp-seminar.html](project/vrp-seminar.html) (riga ~95) e aggiorna i range "Slides X — Y" nel section header corrispondente.
+> Per aggiungere una slide: crea la funzione nel file della parte corrispondente, aggiungila all'`Object.assign(window, {...})` in fondo a quel file, poi inseriscila nell'array `slides` dentro [project/vrp-seminar.html](project/vrp-seminar.html).
 
 ## Pattern e gotcha per animazioni e interattività
 
@@ -112,7 +142,7 @@ React.useEffect(() => {
 // Nel JSX: <button ref={btnRef}>...</button>
 ```
 
-Esempio funzionante: `SlideNodeAttributes` in [project/slides-intro.jsx](project/slides-intro.jsx) e `Slide09` in [project/slides-a.jsx](project/slides-a.jsx).
+Esempio funzionante: `SlideNodeAttributes` in [project/slides/03-foundations.jsx](project/slides/03-foundations.jsx) e `Slide09` in [project/slides/05-tsp.jsx](project/slides/05-tsp.jsx).
 
 ### 2. Riavviare un'animazione: usare `key`
 
@@ -194,14 +224,6 @@ React.useEffect(() => {
 }, []);
 ```
 
-## File del progetto
+### 7. Mount sincrono con `flushSync`
 
-- [project/vrp-seminar.html](project/vrp-seminar.html) — entry point, monta tutte le slide
-- [project/deck-stage.js](project/deck-stage.js) — web component che gestisce navigazione e rendering
-- [project/styles.css](project/styles.css) — stili condivisi
-- [project/components.jsx](project/components.jsx) — componenti riutilizzabili
-- [project/slides-intro.jsx](project/slides-intro.jsx) — slide intro + graph theory (node, node attributes, edge, simple graph, arc, network) + section header Intro
-- [project/slides-or.jsx](project/slides-or.jsx) — slide Operations Research
-- [project/slides-a.jsx](project/slides-a.jsx) — slide 1 e 5–22 (Cover, Foundations, CVRP)
-- [project/slides-b.jsx](project/slides-b.jsx) — slide 23–37 (Complexity, Family, Demo, Applications)
-- [project/demo.jsx](project/demo.jsx) — demo interattiva Clarke-Wright (`ClarkeWrightDemo`)
+Il mount in [project/vrp-seminar.html](project/vrp-seminar.html) avvolge `root.render(...)` in `ReactDOM.flushSync(...)`: questo forza React 18 a renderizzare sincronamente, così la `<section>` è disponibile subito per essere spostata in `<deck-stage>`. Senza questa forzatura, a freddo (cache vuota, JIT freddo) alcune slide venivano appese prima che React avesse prodotto il DOM → sparivano dal deck finché non si ricaricava la pagina.

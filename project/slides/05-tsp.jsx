@@ -655,12 +655,12 @@ function SlideTSPSubtourProblem() {
                            fill="var(--accent)" fillOpacity={0.06}
                            stroke="var(--accent)" strokeWidth={2} strokeDasharray="6 5"/>
                   <text x={150} y={120} fontFamily="var(--font-display)"
-                        fontStyle="italic" fontSize={40} fill="var(--accent)">S₁</text>
+                        fontStyle="italic" fontSize={40} fill="var(--accent)">S</text>
                   <ellipse cx={830} cy={405} rx={200} ry={240}
                            fill="var(--accent-2)" fillOpacity={0.06}
                            stroke="var(--accent-2)" strokeWidth={2} strokeDasharray="6 5"/>
                   <text x={1010} y={175} textAnchor="end" fontFamily="var(--font-display)"
-                        fontStyle="italic" fontSize={40} fill="var(--accent-2)">S₂</text>
+                        fontStyle="italic" fontSize={40} fill="var(--accent-2)">V \ S</text>
                 </g>
 
                 {/* Cycle 1 arcs */}
@@ -838,12 +838,12 @@ function SlideTSPDFJ() {
                        fill="var(--accent)" fillOpacity={0.06}
                        stroke="var(--accent)" strokeWidth={2} strokeDasharray="6 5"/>
               <text x={150} y={120} fontFamily="var(--font-display)"
-                    fontStyle="italic" fontSize={40} fill="var(--accent)">S₁</text>
+                    fontStyle="italic" fontSize={40} fill="var(--accent)">S</text>
               <ellipse cx={830} cy={405} rx={200} ry={240}
                        fill="var(--accent-2)" fillOpacity={0.06}
                        stroke="var(--accent-2)" strokeWidth={2} strokeDasharray="6 5"/>
               <text x={1010} y={175} textAnchor="end" fontFamily="var(--font-display)"
-                    fontStyle="italic" fontSize={40} fill="var(--accent-2)">S₂</text>
+                    fontStyle="italic" fontSize={40} fill="var(--accent-2)">V \ S</text>
 
               {/* Cycle 1 — arc v₁→v₂ (index 1) blinks, then fades out.
                   All delays include a 1500ms pause after the click, to give the viewer

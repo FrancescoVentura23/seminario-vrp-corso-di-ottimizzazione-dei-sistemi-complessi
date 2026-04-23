@@ -995,6 +995,31 @@ function SlideTSPExponential() {
   const gap = 38;
   const x0 = 130;
 
+  // Gradient stops: green (few constraints = tractable) → yellow/orange → red
+  // (many constraints = intractable). t in [0,1].
+  const gradientStops = [
+    { t: 0.00, r: 0x2b, g: 0x7a, b: 0x5e }, // forest green  (like --accent-3 light)
+    { t: 0.30, r: 0x7a, g: 0x9a, b: 0x2e }, // lime / olive
+    { t: 0.55, r: 0xe8, g: 0x93, b: 0x21 }, // amber          (like --accent-2 light)
+    { t: 0.80, r: 0xd2, g: 0x5a, b: 0x25 }, // orange
+    { t: 1.00, r: 0xb8, g: 0x32, b: 0x2e }, // red / danger
+  ];
+  const expColor = (t) => {
+    const x = Math.max(0, Math.min(1, t));
+    for (let i = 0; i < gradientStops.length - 1; i++) {
+      const a = gradientStops[i], b = gradientStops[i + 1];
+      if (x <= b.t) {
+        const k = (x - a.t) / (b.t - a.t);
+        const r = Math.round(a.r + (b.r - a.r) * k);
+        const g = Math.round(a.g + (b.g - a.g) * k);
+        const bl = Math.round(a.b + (b.b - a.b) * k);
+        return `rgb(${r}, ${g}, ${bl})`;
+      }
+    }
+    const last = gradientStops[gradientStops.length - 1];
+    return `rgb(${last.r}, ${last.g}, ${last.b})`;
+  };
+
   return (
     <section ref={sectionRef} className="slide" data-label="Exponential blow-up of DFJ">
       <SlideFrame>
@@ -1063,7 +1088,9 @@ function SlideTSPExponential() {
                   const xCenter = x0 + i * (barW + gap) + barW / 2;
                   const h = (d.log / axisMax) * chartH;
                   const delay = 400 + i * 280;
-                  const color = i < 2 ? "var(--accent)" : "var(--accent-2)";
+                  // Position along the gradient: smooth green → amber → red
+                  // progression across the 5 bars.
+                  const color = expColor(i / (data.length - 1));
                   return (
                     <g key={i}>
                       {/* Growing bar — implemented as a thick stroked line */}

@@ -777,6 +777,25 @@ function SlideTSPDFJ() {
                 <pattern id="dotgrid-dfj2" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
                   <circle cx="1" cy="1" r="1" fill="var(--line)"/>
                 </pattern>
+                {/* Arrow markers — same pattern as slide 30 (SlideTSPMinCut):
+                    markerUnits=userSpaceOnUse keeps head size independent of
+                    stroke width; refX aligned with tip so it meets the line
+                    endpoint (already at the node border via `segment()`). */}
+                <marker id="arrow-accent-dfj" markerUnits="userSpaceOnUse"
+                        viewBox="0 0 16 12" markerWidth="16" markerHeight="12"
+                        refX="16" refY="6" orient="auto">
+                  <path d="M0,0 L16,6 L0,12 z" fill="var(--accent)"/>
+                </marker>
+                <marker id="arrow-accent2-dfj" markerUnits="userSpaceOnUse"
+                        viewBox="0 0 16 12" markerWidth="16" markerHeight="12"
+                        refX="16" refY="6" orient="auto">
+                  <path d="M0,0 L16,6 L0,12 z" fill="var(--accent-2)"/>
+                </marker>
+                <marker id="arrow-ink-dfj" markerUnits="userSpaceOnUse"
+                        viewBox="0 0 18 14" markerWidth="18" markerHeight="14"
+                        refX="18" refY="7" orient="auto">
+                  <path d="M0,0 L18,7 L0,14 z" fill="var(--ink)"/>
+                </marker>
               </defs>
               <rect width={1050} height={720} fill="url(#dotgrid-dfj2)" opacity={0.5}/>
 
@@ -802,7 +821,8 @@ function SlideTSPDFJ() {
                 const blinkDelay = isPacking ? 1500 : 3700;
                 const fadeDelay  = isPacking ? 2800 : 5000;
                 return <line key={`c1-${i}-${animKey}`} {...s}
-                             stroke="var(--accent)" strokeWidth={4} strokeLinecap="round"
+                             stroke="var(--accent)" strokeWidth={4} strokeLinecap="butt"
+                             markerEnd="url(#arrow-accent-dfj)"
                              style={animateHide ? {
                                animation: `fadeOut 450ms ease-out ${fadeDelay}ms both, blink 400ms ease-in-out ${blinkDelay}ms 3`,
                              } : {}}/>;
@@ -814,7 +834,8 @@ function SlideTSPDFJ() {
                 const blinkDelay = isPacking ? 1500 : 3700;
                 const fadeDelay  = isPacking ? 2800 : 5000;
                 return <line key={`c2-${i}-${animKey}`} {...s}
-                             stroke="var(--accent-2)" strokeWidth={4} strokeLinecap="round"
+                             stroke="var(--accent-2)" strokeWidth={4} strokeLinecap="butt"
+                             markerEnd="url(#arrow-accent2-dfj)"
                              style={animateHide ? {
                                animation: `fadeOut 450ms ease-out ${fadeDelay}ms both, blink 400ms ease-in-out ${blinkDelay}ms 3`,
                              } : {}}/>;
@@ -826,7 +847,8 @@ function SlideTSPDFJ() {
               {(isPacking || isCut) && (
                 <g key={`cross-${animKey}`}>
                   <line {...crossV1V3}
-                        stroke="var(--ink)" strokeWidth={4} strokeLinecap="round"
+                        stroke="var(--ink)" strokeWidth={4} strokeLinecap="butt"
+                        markerEnd="url(#arrow-ink-dfj)"
                         style={{
                           "--len": lenV1V3,
                           strokeDasharray: lenV1V3,
@@ -834,7 +856,8 @@ function SlideTSPDFJ() {
                           animationDelay: isPacking ? "4100ms" : "1500ms",
                         }}/>
                   <line {...crossV2V5}
-                        stroke="var(--ink)" strokeWidth={4} strokeLinecap="round"
+                        stroke="var(--ink)" strokeWidth={4} strokeLinecap="butt"
+                        markerEnd="url(#arrow-ink-dfj)"
                         style={{
                           "--len": lenV2V5,
                           strokeDasharray: lenV2V5,

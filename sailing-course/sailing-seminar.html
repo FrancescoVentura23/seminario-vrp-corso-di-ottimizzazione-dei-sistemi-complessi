@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Sailing English Course — Ten Days at Sea</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<!-- Google Fonts: Instrument Serif (display) + Inter (body) + JetBrains Mono -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="styles.css"/>
+
+<style>
+  html, body { margin: 0; padding: 0; background: #000; overflow: hidden; height: 100%; }
+  body { font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif; }
+</style>
+</head>
+<body>
+
+<!-- Default-tweaks block: persisted by host when the user changes them -->
+<script>
+const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
+  "theme": "marine"
+}/*EDITMODE-END*/;
+</script>
+
+<deck-stage width="1920" height="1080" id="stage">
+  <section id="root-mount" class="slide" data-label="loading"
+           style="background:#f3ecdb; display:flex; align-items:center; justify-content:center; font-family:'Instrument Serif', serif;">
+    <div style="font-size: 80px;">Loading…</div>
+  </section>
+</deck-stage>
+
+<!-- Tweaks panel — appears when host toggles edit mode -->
+<div id="tweaks" class="tweaks">
+  <h4>Tweaks</h4>
+  <div class="row"><label>Theme</label></div>
+  <div class="row">
+    <button data-theme="marine">Marine</button>
+    <button data-theme="blueprint">Blueprint</button>
+    <button data-theme="midnight">Midnight</button>
+  </div>
+</div>
+
+<script src="deck-stage.js"></script>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="components.jsx"></script>
+<script type="text/babel" src="slides/01-cover-intro.jsx"></script>
+<script type="text/babel" src="slides/02-daily-structure.jsx"></script>
+<script type="text/babel" src="slides/03-method-closing.jsx"></script>
+
+<script type="text/babel">
+// ---------- Mount all slides into <deck-stage> ----------
+(function mountDeck() {
+  // One sentinel per slides/ file (the last function registered in it).
+  const sentinels = [
+    "SlideRoute",       // 01-cover-intro.jsx
+    "SlideEvening",     // 02-daily-structure.jsx
+    "SlideClosing",     // 03-method-closing.jsx
+    "SlideFrame",       // components.jsx
+  ];
+
+  function tryMount() {
+    if (sentinels.some((k) => !window[k])) {
+      setTimeout(tryMount, 60);
+      return;
+    }
+    const stage = document.getElementById("stage");
+    const placeholder = document.getElementById("root-mount");
+    if (placeholder) placeholder.remove();
+
+    const slides = [
+      SlideCover, SlideLetter, SlideOverview, SlideRoute,                                // Part I
+      SlideDaySection, SlideDayGrid,                                                     // Part II — section + overview
+      SlideMorning, SlideSailing, SlideLunch, SlideAfternoon, SlideFreeTime, SlideEvening, // Part II — six blocks
+      SlideLearning, SlideSafety, SlideClosing,                                          // Part III
+    ];
+
+    slides.forEach((SlideComp) => {
+      const host = document.createElement("div");
+      const root = ReactDOM.createRoot(host);
+      ReactDOM.flushSync(() => root.render(<SlideComp/>));
+      const section = host.firstElementChild;
+      if (section) stage.appendChild(section);
+    });
+  }
+  tryMount();
+})();
+
+// ---------- Page counter sync ----------
+window.addEventListener('message', (ev) => {
+  const d = ev.data || {};
+  if (typeof d.slideIndexChanged === 'number') {
+    const total = document.querySelectorAll('deck-stage > section.slide').length || 15;
+    const n = String(d.slideIndexChanged + 1).padStart(2, '0');
+    const t = String(total).padStart(2, '0');
+    document.querySelectorAll('[data-chrome-pg]').forEach(el => {
+      el.textContent = `${n} / ${t}`;
+    });
+  }
+});
+
+// ---------- Tweaks protocol ----------
+(function tweaks() {
+  const stage = document.getElementById("stage");
+  const panel = document.getElementById("tweaks");
+  const state = Object.assign({}, window.TWEAK_DEFAULS || {});
+
+  const apply = () => {
+    const theme = state.theme || "marine";
+    if (theme === "marine") stage.removeAttribute("data-theme");
+    else stage.setAttribute("data-theme", theme);
+    panel.querySelectorAll("button[data-theme]").forEach(b => {
+      if (b.dataset.theme === theme) b.setAttribute("data-active", "");
+      else b.removeAttribute("data-active");
+    });
+  };
+  apply();
+
+  panel.querySelectorAll("button[data-theme]").forEach(b => {
+    b.addEventListener("click", () => {
+      state.theme = b.dataset.theme;
+      apply();
+      try {
+        window.parent.postMessage({ type: "__edit_mode_set_keys", edits: { theme: state.theme } }, "*");
+      } catch (e) {}
+    });
+  });
+
+  window.addEventListener("message", (ev) => {
+    const d = ev.data || {};
+    if (d.type === "__activate_edit_mode") panel.setAttribute("data-open", "");
+    if (d.type === "__deactivate_edit_mode") panel.removeAttribute("data-open");
+  });
+  try {
+    window.parent.postMessage({ type: "__edit_mode_available" }, "*");
+  } catch (e) {}
+})();
+</script>
+
+</body>
+</html>

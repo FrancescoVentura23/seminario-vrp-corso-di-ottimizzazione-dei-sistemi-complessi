@@ -1025,7 +1025,7 @@ function SlideTSPExponential() {
       <SlideFrame>
         <div className="tag">TSP · The combinatorial wall</div>
         <h2 className="title" style={{ marginTop: 28 }}>
-          Subtour elimination constraints grow <em style={{ color: "var(--accent)" }}>exponentially</em>.
+          Subtour elimination constraints grow <em style={{ color: "#b8322e" }}>exponentially</em>.
         </h2>
 
         <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 56, flex: 1, alignItems: "center" }}>

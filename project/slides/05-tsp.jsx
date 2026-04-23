@@ -582,8 +582,8 @@ function SlideTSPSubtourProblem() {
   const cycle2 = [[0,1],[1,2],[2,0]];
   const r = 30;
 
-  const arcSegments = (grp, edges, color, startDelay, markerUrl) =>
-    edges.map(([a, b], i) => {
+  const segData = (grp, edges) =>
+    edges.map(([a, b]) => {
       const na = grp[a], nb = grp[b];
       const dx = nb.x - na.x, dy = nb.y - na.y;
       const len = Math.hypot(dx, dy);
@@ -591,19 +591,30 @@ function SlideTSPSubtourProblem() {
       const x1 = na.x + ux * r, y1 = na.y + uy * r;
       const x2 = nb.x - ux * r, y2 = nb.y - uy * r;
       const segLen = Math.hypot(x2 - x1, y2 - y1);
-      const delay = startDelay + i * 350;
-      return (
-        <line key={`${color}-${i}`} x1={x1} y1={y1} x2={x2} y2={y2}
-              stroke={color} strokeWidth={4} strokeLinecap="butt"
-              markerEnd={markerUrl}
-              style={{
-                "--len": segLen,
-                strokeDasharray: segLen,
-                animation: "drawPath 700ms both ease-in-out",
-                animationDelay: `${delay}ms`,
-              }}/>
-      );
+      const aw = 9, al = 18;
+      const bx = x2 - ux * al, by = y2 - uy * al;
+      const pts = `${x2},${y2} ${bx - uy*aw},${by + ux*aw} ${bx + uy*aw},${by - ux*aw}`;
+      return { x1, y1, x2, y2, segLen, pts };
     });
+
+  const arcBodies = (grp, edges, color, startDelay) =>
+    segData(grp, edges).map((s, i) => (
+      <line key={`${color}-body-${i}`} x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2}
+            stroke={color} strokeWidth={4} strokeLinecap="butt"
+            style={{
+              "--len": s.segLen,
+              strokeDasharray: s.segLen,
+              animation: "drawPath 700ms both ease-in-out",
+              animationDelay: `${startDelay + i * 350}ms`,
+            }}/>
+    ));
+
+  const arcHeads = (grp, edges, color, startDelay) =>
+    segData(grp, edges).map((s, i) => (
+      <polygon key={`${color}-head-${i}`} points={s.pts} fill={color}
+               style={{ opacity: 0, animation: "fadeUp 150ms both ease-out",
+                        animationDelay: `${startDelay + i * 350 + 680}ms` }}/>
+    ));
 
   return (
     <section ref={sectionRef} className="slide" data-label="The subtour problem">
@@ -653,9 +664,10 @@ function SlideTSPSubtourProblem() {
                 </g>
 
                 {/* Cycle 1 arcs */}
-                {arcSegments(group1, cycle1, "var(--accent)", 1000, "url(#arrow-accent-sub)")}
-                {/* Cycle 2 arcs */}
-                {arcSegments(group2, cycle2, "var(--accent-2)", 1000 + cycle1.length * 350 + 150, "url(#arrow-accent2-sub)")}
+                {arcBodies(group1, cycle1, "var(--accent)", 1000)}
+                {arcBodies(group2, cycle2, "var(--accent-2)", 1000 + cycle1.length * 350 + 150)}
+                {arcHeads(group1, cycle1, "var(--accent)", 1000)}
+                {arcHeads(group2, cycle2, "var(--accent-2)", 1000 + cycle1.length * 350 + 150)}
 
                 {/* Nodes */}
                 {group1.map((n, i) => (
@@ -773,6 +785,18 @@ function SlideTSPDFJ() {
   const isPacking = active === 'packing';
   const isCut     = active === 'cut';
 
+  const dx13 = group2[0].x - group1[1].x, dy13 = group2[0].y - group1[1].y;
+  const d13 = Math.hypot(dx13, dy13);
+  const ux13 = dx13/d13, uy13 = dy13/d13;
+  const dx25 = group2[2].x - group1[2].x, dy25 = group2[2].y - group1[2].y;
+  const d25 = Math.hypot(dx25, dy25);
+  const ux25 = dx25/d25, uy25 = dy25/d25;
+  const crossArrowPts = (s, ux, uy) => {
+    const aw = 9, al = 18;
+    const bx = s.x2 - ux*al, by = s.y2 - uy*al;
+    return `${s.x2},${s.y2} ${bx - uy*aw},${by + ux*aw} ${bx + uy*aw},${by - ux*aw}`;
+  };
+
   return (
     <section ref={sectionRef} className="slide" data-label="DFJ subtour elimination">
       <SlideFrame>
@@ -859,7 +883,6 @@ function SlideTSPDFJ() {
                 <g key={`cross-${animKey}`}>
                   <line {...crossV1V3}
                         stroke="var(--ink)" strokeWidth={4} strokeLinecap="butt"
-                        markerEnd="url(#arrow-ink-dfj)"
                         style={{
                           "--len": lenV1V3,
                           strokeDasharray: lenV1V3,
@@ -868,13 +891,18 @@ function SlideTSPDFJ() {
                         }}/>
                   <line {...crossV2V5}
                         stroke="var(--ink)" strokeWidth={4} strokeLinecap="butt"
-                        markerEnd="url(#arrow-ink-dfj)"
                         style={{
                           "--len": lenV2V5,
                           strokeDasharray: lenV2V5,
                           animation: "drawPath 900ms both ease-out",
                           animationDelay: isPacking ? "4400ms" : "1800ms",
                         }}/>
+                  <polygon points={crossArrowPts(crossV1V3, ux13, uy13)} fill="var(--ink)"
+                           style={{ opacity: 0, animation: "fadeUp 150ms both ease-out",
+                                    animationDelay: isPacking ? "4980ms" : "2380ms" }}/>
+                  <polygon points={crossArrowPts(crossV2V5, ux25, uy25)} fill="var(--ink)"
+                           style={{ opacity: 0, animation: "fadeUp 150ms both ease-out",
+                                    animationDelay: isPacking ? "5280ms" : "2680ms" }}/>
                 </g>
               )}
 

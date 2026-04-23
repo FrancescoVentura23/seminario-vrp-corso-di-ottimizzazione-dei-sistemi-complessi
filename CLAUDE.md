@@ -1,6 +1,6 @@
 # Seminario VRP — Guida rapida
 
-Deck HTML/CSS/JS esportato da Claude Design. **52 slide** gestite dal web component `<deck-stage>` in [project/deck-stage.js](project/deck-stage.js), montate da [project/vrp-seminar.html](project/vrp-seminar.html).
+Deck HTML/CSS/JS esportato da Claude Design. **53 slide** gestite dal web component `<deck-stage>` in [project/deck-stage.js](project/deck-stage.js), montate da [project/vrp-seminar.html](project/vrp-seminar.html).
 
 ## Come far partire la presentazione
 
@@ -13,6 +13,8 @@ https://francescoventura23.github.io/seminario-vrp-corso-di-ottimizzazione-dei-s
 ```
 
 Si aggiorna automaticamente entro ~1 minuto da ogni `git push` sul branch `main`.
+
+Le credenziali GitHub sono già configurate nell'URL remoto — `git push origin main` funziona senza autenticazione interattiva.
 
 ### In locale (sviluppo)
 
@@ -236,10 +238,23 @@ React.useEffect(() => {
 }, []);
 ```
 
-### 7. Tap zone mobile: solo i bordi (10%), non i terzi
+### 7. Workflow git — rimuovere i lock prima di committare
+
+Il repo può accumulare file `.lock` stantii in `.git/` (lasciati da sessioni interrotte o da VS Code). Prima di qualsiasi `git add / commit / push`, eseguire sempre:
+
+```bash
+find .git -name "*.lock" -delete
+git add <files>
+git commit -m "..."
+git push origin main
+```
+
+Nota: VS Code git integration è disabilitata per questo repo via `.vscode/settings.json` (`"git.enabled": false`) per evitare conflitti di lock con sessioni Dispatch.
+
+### 8. Tap zone mobile: solo i bordi (10%), non i terzi
 
 Su touch device, `deck-stage.js` monta due zone trasparenti a sinistra e destra per navigare (tocco sinistro = indietro, tocco destro = avanti). Queste zone coprono il **10% del bordo** ciascuna — il restante 80% centrale è libero per interagire con bottoni e animazioni nelle slide. Non allargare le tap zone oltre il 15% o i bottoni nelle slide laterali diventano inaccessibili da telefono.
 
-### 8. Mount sincrono con `flushSync`
+### 9. Mount sincrono con `flushSync`
 
 Il mount in [project/vrp-seminar.html](project/vrp-seminar.html) avvolge `root.render(...)` in `ReactDOM.flushSync(...)`: questo forza React 18 a renderizzare sincronamente, così la `<section>` è disponibile subito per essere spostata in `<deck-stage>`. Senza questa forzatura, a freddo (cache vuota, JIT freddo) alcune slide venivano appese prima che React avesse prodotto il DOM → sparivano dal deck finché non si ricaricava la pagina.

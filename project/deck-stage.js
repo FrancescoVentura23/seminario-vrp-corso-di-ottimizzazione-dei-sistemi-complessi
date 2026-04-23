@@ -103,8 +103,8 @@
       visibility: visible;
     }
 
-    /* Tap zones for mobile — back/forward thirds like Stories.
-       Transparent, no visible UI, don't block the overlay. */
+    /* Tap zones for mobile — narrow strips at edges (10% each) so interactive
+       slide elements in the central 80% remain tappable. */
     .tapzones {
       position: fixed;
       inset: 0;
@@ -112,10 +112,15 @@
       z-index: 2147482000;
       pointer-events: none;
     }
-    .tapzone {
-      flex: 1;
+    .tapzone--back,
+    .tapzone--fwd {
+      flex: 0 0 10%;
       pointer-events: auto;
       -webkit-tap-highlight-color: transparent;
+    }
+    .tapzone--mid {
+      flex: 1;
+      pointer-events: none;
     }
     /* Only activate tap zones on coarse pointers (touch devices). */
     @media (hover: hover) and (pointer: fine) {

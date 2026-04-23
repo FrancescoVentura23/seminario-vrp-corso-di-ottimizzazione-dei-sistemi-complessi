@@ -291,3 +291,41 @@ Su touch device, `deck-stage.js` monta due zone trasparenti a sinistra e destra 
 ### 9. Mount sincrono con `flushSync`
 
 Il mount in [project/vrp-seminar.html](project/vrp-seminar.html) avvolge `root.render(...)` in `ReactDOM.flushSync(...)`: questo forza React 18 a renderizzare sincronamente, così la `<section>` è disponibile subito per essere spostata in `<deck-stage>`. Senza questa forzatura, a freddo (cache vuota, JIT freddo) alcune slide venivano appese prima che React avesse prodotto il DOM → sparivano dal deck finché non si ricaricava la pagina.
+
+### 10. Frecce animate: non usare `markerEnd` con `drawPath`
+
+SVG `markerEnd` posiziona la punta all'endpoint geometrico della linea indipendentemente dal `stroke-dashoffset` corrente → la punta appare immediatamente, prima che il corpo sia disegnato.
+
+**Soluzione obbligatoria**: omettere `markerEnd` e disegnare le punte come `<polygon>` separati con `opacity: 0` e `fadeUp` ritardato di ~680ms rispetto all'inizio del segmento corrispondente.
+
+**Regola critica di ordine**: rendere **prima tutti i body** e **poi tutte le punte** in due `.map()` distinti — mai interleaved (es. con `flatMap`). La struttura che funziona (verificata in slide 23 e 26):
+
+```jsx
+{/* 1. Tutti i segmenti */}
+{edges.map((e, i) => (
+  <line key={`body-${i}`} ...
+        style={{ "--len": segLen, strokeDasharray: segLen,
+                 animation: "drawPath 700ms both ease-in-out",
+                 animationDelay: `${startDelay + i * 350}ms` }}/>
+))}
+{/* 2. Tutte le punte — DOPO tutti i body */}
+{edges.map((e, i) => (
+  <polygon key={`head-${i}`} points={pts} fill={color}
+           style={{ opacity: 0, animation: "fadeUp 150ms both ease-out",
+                    animationDelay: `${startDelay + i * 350 + 680}ms` }}/>
+))}
+```
+
+Calcolo dei punti del poligono (punta in direzione `(ux, uy)`, tip in `(x2, y2)`):
+
+```javascript
+const aw = 9, al = 18;
+const bx = x2 - ux * al, by = y2 - uy * al;
+const pts = `${x2},${y2} ${bx - uy*aw},${by + ux*aw} ${bx + uy*aw},${by - ux*aw}`;
+```
+
+Esempio funzionante: `SlideTSPHamiltonian` (slide 23) e `SlideTSPSubtourProblem` (slide 26) in [slides/05-tsp.jsx](project/slides/05-tsp.jsx).
+
+### 11. Modifiche locali non visibili su GitHub Pages finché non si fa push
+
+Le modifiche ai file locali sono visibili subito su `http://localhost:8000` ma **non** su GitHub Pages finché non si esegue `git push origin main`. Se si testa su GitHub Pages e le modifiche sembrano non applicate, verificare prima se il push è stato fatto.

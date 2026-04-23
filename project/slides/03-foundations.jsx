@@ -445,7 +445,7 @@ function SlideSimpleGraph() {
                 <g className="anim-blink">
                   <circle cx={BAD.A.x - 48} cy={BAD.A.y - 48} r={42}
                           fill="none" stroke="#c14f3c" strokeWidth={4}/>
-                  <text x={BAD.A.x - 90} y={BAD.A.y - 110} fontFamily="var(--font-mono)" fontSize={22} fill="#c14f3c">
+                  <text x={BAD.A.x - 90} y={BAD.A.y - 110} fontFamily="var(--font-mono)" fontSize={32} fontWeight={600} fill="#c14f3c">
                     loop {"{v₁, v₁}"}
                   </text>
                 </g>
@@ -456,7 +456,7 @@ function SlideSimpleGraph() {
                         fill="none" stroke="#c14f3c" strokeWidth={4}/>
                   <path d={`M ${BAD.A.x + 30} ${BAD.A.y} Q ${(BAD.A.x + BAD.B.x)/2} ${BAD.A.y + 110} ${BAD.B.x - 30} ${BAD.B.y}`}
                         fill="none" stroke="#c14f3c" strokeWidth={4}/>
-                  <text x={(BAD.A.x + BAD.B.x)/2} y={BAD.B.y + 140} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fill="#c14f3c">
+                  <text x={(BAD.A.x + BAD.B.x)/2} y={BAD.B.y + 140} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={32} fontWeight={600} fill="#c14f3c">
                     two parallel edges {"{v₁, v₂}"}
                   </text>
                 </g>

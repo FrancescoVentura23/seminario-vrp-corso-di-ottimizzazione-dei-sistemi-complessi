@@ -2,6 +2,39 @@
 
 Deck HTML/CSS/JS esportato da Claude Design. **53 slide** gestite dal web component `<deck-stage>` in [project/deck-stage.js](project/deck-stage.js), montate da [project/vrp-seminar.html](project/vrp-seminar.html).
 
+## Istruzioni per Claude Dispatch
+
+Quando si usa Claude Dispatch dal telefono per modificare la presentazione, inviare questo messaggio (sostituendo la parte tra parentesi quadre):
+
+```
+Lavora nella cartella:
+~/Documents/GitHub/seminario-vrp-corso-di-ottimizzazione-dei-sistemi-complessi/
+
+Leggi il CLAUDE.md nella root: contiene la struttura completa della presentazione,
+i file coinvolti e i pattern obbligatori da seguire.
+
+[DESCRIVI QUI LA MODIFICA — esempi:
+- "Aggiungi una slide dopo la slide 40 che spiega l'euristica 2-opt"
+- "Nella slide 34 cambia il titolo in X e aggiungi un bullet point su Y"
+- "Rendi la slide 28 più visiva con un grafico a barre"]
+
+Prima di committare, rimuovi eventuali lock stantii:
+find .git -name "*.lock" -delete
+
+Poi committa e pusha:
+git add <file modificati>
+git commit -m "descrizione modifica"
+git push origin main
+```
+
+Note operative:
+- Il Mac deve restare **sveglio** con la **Claude Desktop app aperta**
+- Le credenziali GitHub sono già configurate — il push funziona senza autenticazione
+- VS Code git integration è disabilitata (`"git.enabled": false`) per evitare conflitti di lock
+- Dopo il push attendere ~1 minuto e ricaricare il browser sul telefono
+
+---
+
 ## Come far partire la presentazione
 
 ### Da remoto (telefono o qualsiasi browser)

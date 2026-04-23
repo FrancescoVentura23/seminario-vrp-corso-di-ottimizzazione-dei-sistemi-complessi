@@ -745,9 +745,9 @@ function SlideTSPDFJ() {
   const segLen = (s) => Math.hypot(s.x2 - s.x1, s.y2 - s.y1);
 
   // Cross-subset arcs created when the packing-form constraint activates.
-  // v₁ (in S₁) → v₃ (in S₂),  v₂ (in S₁) → v₅ (in S₂)
+  // v₁ (in S₁) → v₃ (in S₂),  v₅ (in S₂) → v₂ (in S₁)
   const crossV1V3 = segment(group1[1], group2[0]);
-  const crossV2V5 = segment(group1[2], group2[2]);
+  const crossV2V5 = segment(group2[2], group1[2]);
   const lenV1V3 = segLen(crossV1V3);
   const lenV2V5 = segLen(crossV2V5);
 
@@ -788,7 +788,7 @@ function SlideTSPDFJ() {
   const dx13 = group2[0].x - group1[1].x, dy13 = group2[0].y - group1[1].y;
   const d13 = Math.hypot(dx13, dy13);
   const ux13 = dx13/d13, uy13 = dy13/d13;
-  const dx25 = group2[2].x - group1[2].x, dy25 = group2[2].y - group1[2].y;
+  const dx25 = group1[2].x - group2[2].x, dy25 = group1[2].y - group2[2].y;
   const d25 = Math.hypot(dx25, dy25);
   const ux25 = dx25/d25, uy25 = dy25/d25;
   const crossArrowPts = (s, ux, uy) => {

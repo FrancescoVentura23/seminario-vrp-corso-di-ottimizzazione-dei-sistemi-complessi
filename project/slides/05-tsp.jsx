@@ -582,7 +582,7 @@ function SlideTSPSubtourProblem() {
   const cycle2 = [[0,1],[1,2],[2,0]];
   const r = 30;
 
-  const arcSegments = (grp, edges, color, startDelay) =>
+  const arcSegments = (grp, edges, color, startDelay, markerUrl) =>
     edges.map(([a, b], i) => {
       const na = grp[a], nb = grp[b];
       const dx = nb.x - na.x, dy = nb.y - na.y;
@@ -594,7 +594,8 @@ function SlideTSPSubtourProblem() {
       const delay = startDelay + i * 350;
       return (
         <line key={`${color}-${i}`} x1={x1} y1={y1} x2={x2} y2={y2}
-              stroke={color} strokeWidth={4} strokeLinecap="round"
+              stroke={color} strokeWidth={4} strokeLinecap="butt"
+              markerEnd={markerUrl}
               style={{
                 "--len": segLen,
                 strokeDasharray: segLen,
@@ -619,6 +620,16 @@ function SlideTSPSubtourProblem() {
                 <pattern id="dotgrid-sub" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
                   <circle cx="1" cy="1" r="1" fill="var(--line)"/>
                 </pattern>
+                <marker id="arrow-accent-sub" markerUnits="userSpaceOnUse"
+                        viewBox="0 0 16 12" markerWidth="16" markerHeight="12"
+                        refX="16" refY="6" orient="auto">
+                  <path d="M0,0 L16,6 L0,12 z" fill="var(--accent)"/>
+                </marker>
+                <marker id="arrow-accent2-sub" markerUnits="userSpaceOnUse"
+                        viewBox="0 0 16 12" markerWidth="16" markerHeight="12"
+                        refX="16" refY="6" orient="auto">
+                  <path d="M0,0 L16,6 L0,12 z" fill="var(--accent-2)"/>
+                </marker>
               </defs>
               <rect width={1050} height={720} fill="url(#dotgrid-sub)" opacity={0.5}/>
 
@@ -642,9 +653,9 @@ function SlideTSPSubtourProblem() {
                 </g>
 
                 {/* Cycle 1 arcs */}
-                {arcSegments(group1, cycle1, "var(--accent)", 1000)}
+                {arcSegments(group1, cycle1, "var(--accent)", 1000, "url(#arrow-accent-sub)")}
                 {/* Cycle 2 arcs */}
-                {arcSegments(group2, cycle2, "var(--accent-2)", 1000 + cycle1.length * 350 + 150)}
+                {arcSegments(group2, cycle2, "var(--accent-2)", 1000 + cycle1.length * 350 + 150, "url(#arrow-accent2-sub)")}
 
                 {/* Nodes */}
                 {group1.map((n, i) => (

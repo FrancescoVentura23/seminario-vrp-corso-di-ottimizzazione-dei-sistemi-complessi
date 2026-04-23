@@ -30,7 +30,7 @@ git push origin main
 Note operative:
 - Il Mac deve restare **sveglio** con la **Claude Desktop app aperta**
 - Le credenziali GitHub sono già configurate — il push funziona senza autenticazione
-- VS Code git integration è disabilitata (`"git.enabled": false`) per evitare conflitti di lock
+- VS Code git integration è **abilitata** (`"git.enabled": true`) — funziona normalmente quando VS Code è aperto. **Tenere VS Code chiuso mentre si usa Claude Dispatch**: se entrambi girano contemporaneamente possono generare `.git/*.lock` stantii che bloccano i commit
 - Dopo il push attendere ~1 minuto e ricaricare il browser sul telefono
 
 ---
@@ -282,7 +282,7 @@ git commit -m "..."
 git push origin main
 ```
 
-Nota: VS Code git integration è disabilitata per questo repo via `.vscode/settings.json` (`"git.enabled": false`) per evitare conflitti di lock con sessioni Dispatch.
+Nota: VS Code git integration è abilitata (`"git.enabled": true`). Per evitare conflitti di lock, **tenere VS Code chiuso quando si usa Claude Dispatch**.
 
 ### 8. Tap zone mobile: solo i bordi (10%), non i terzi
 

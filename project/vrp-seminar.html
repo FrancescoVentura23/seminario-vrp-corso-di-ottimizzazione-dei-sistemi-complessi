@@ -58,6 +58,7 @@ const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
 
 <script type="text/babel" src="components.jsx"></script>
 <script type="text/babel" src="demo.jsx"></script>
+<script type="text/babel" src="slides/00-test.jsx"></script>
 <script type="text/babel" src="slides/01-cover.jsx"></script>
 <script type="text/babel" src="slides/02-intro.jsx"></script>
 <script type="text/babel" src="slides/03-foundations.jsx"></script>
@@ -78,6 +79,7 @@ const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
   // One sentinel per slides/ file (the last function registered in it) plus
   // ClarkeWrightDemo from demo.jsx.
   const sentinels = [
+    "SlideTestProva",    // 00-test.jsx
     "Slide01",           // 01-cover.jsx
     "SlideWhoUsesIt",    // 02-intro.jsx
     "SlideNetwork",      // 03-foundations.jsx
@@ -102,6 +104,7 @@ const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
 
     // Deck order — see CLAUDE.md for the human-readable table.
     const slides = [
+      SlideTestProva,                                                                                  // Test placeholder
       Slide01,                                                                                         // Part I — cover
       SlideIntroSection, SlideHistory, SlideORLink, Slide02, Slide03, SlideWhoUsesIt,                  // Part I — intro
       Slide05, SlideNode, SlideNodeAttributes, SlideEdge, SlideSimpleGraph,                            // Part II — foundations
@@ -144,7 +147,7 @@ const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
 window.addEventListener('message', (ev) => {
   const d = ev.data || {};
   if (typeof d.slideIndexChanged === 'number') {
-    const total = document.querySelectorAll('deck-stage > section.slide').length || 52;
+    const total = document.querySelectorAll('deck-stage > section.slide').length || 53;
     const n = String(d.slideIndexChanged + 1).padStart(2, '0');
     const t = String(total).padStart(2, '0');
     document.querySelectorAll('[data-chrome-pg]').forEach(el => {

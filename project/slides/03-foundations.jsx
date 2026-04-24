@@ -397,10 +397,6 @@ function SlideSimpleGraph() {
             <div className="lede" style={{ fontSize: 34, lineHeight: 1.22 }}>
               A graph is <em>simple</em> when two conditions hold:
             </div>
-            <ul style={{ margin: 0, paddingLeft: 36, display: "flex", flexDirection: "column", gap: 14 }}>
-              <li style={{ fontSize: 30, lineHeight: 1.35, color: "var(--ink-2)" }}>no edge joins a vertex to itself;</li>
-              <li style={{ fontSize: 30, lineHeight: 1.35, color: "var(--ink-2)" }}>no pair of vertices is connected by more than one edge.</li>
-            </ul>
 
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "20px 24px" }}>
               <div className="kicker" style={{ fontSize: 22, marginBottom: 10 }}>Two forbidden patterns</div>
@@ -445,7 +441,7 @@ function SlideSimpleGraph() {
                 <g className="anim-blink">
                   <circle cx={BAD.A.x - 48} cy={BAD.A.y - 48} r={42}
                           fill="none" stroke="#c14f3c" strokeWidth={4}/>
-                  <text x={BAD.A.x - 90} y={BAD.A.y - 110} fontFamily="var(--font-mono)" fontSize={32} fontWeight={600} fill="#c14f3c">
+                  <text x={BAD.A.x - 90} y={BAD.A.y - 110} fontFamily="var(--font-mono)" fontSize={42} fontWeight={600} fill="#c14f3c">
                     loop {"{v₁, v₁}"}
                   </text>
                 </g>
@@ -456,7 +452,7 @@ function SlideSimpleGraph() {
                         fill="none" stroke="#c14f3c" strokeWidth={4}/>
                   <path d={`M ${BAD.A.x + 30} ${BAD.A.y} Q ${(BAD.A.x + BAD.B.x)/2} ${BAD.A.y + 110} ${BAD.B.x - 30} ${BAD.B.y}`}
                         fill="none" stroke="#c14f3c" strokeWidth={4}/>
-                  <text x={(BAD.A.x + BAD.B.x)/2} y={BAD.B.y + 140} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={32} fontWeight={600} fill="#c14f3c">
+                  <text x={(BAD.A.x + BAD.B.x)/2} y={BAD.B.y + 140} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={42} fontWeight={600} fill="#c14f3c">
                     two parallel edges {"{v₁, v₂}"}
                   </text>
                 </g>
@@ -526,12 +522,25 @@ function SlideSimpleGraph() {
 // GRAPH CONCEPT — DIRECTED ARC
 
 function SlideDirectedArc() {
+  const [animKey, setAnimKey] = React.useState(0);
+  const sectionRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (el.hasAttribute('data-deck-active')) setAnimKey(k => k + 1);
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
+    return () => obs.disconnect();
+  }, []);
+
   const A = { x: 260, y: 260 };
   const B = { x: 720, y: 260 };
   const C = { x: 260, y: 500 };
   const D = { x: 720, y: 500 };
   return (
-    <section className="slide" data-label="Graph concepts — Directed arc">
+    <section ref={sectionRef} className="slide" data-label="Graph concepts — Directed arc">
       <SlideFrame>
         <div className="tag">Graph theory · Arc</div>
         <h2 className="title" style={{ marginTop: 28 }}>A <em style={{ color: "var(--accent)" }}>directed arc</em> has a tail, a head, and a direction.</h2>
@@ -546,53 +555,62 @@ function SlideDirectedArc() {
               </defs>
               <rect width={1000} height={760} fill="url(#dotgrid-dir)" opacity={0.5}/>
 
-              {/* Arc 1: i -> j — straight. Line draws first, tip appears after. */}
-              <line className="anim-draw anim-draw-1"
-                    x1={A.x + 30} y1={A.y} x2={B.x - 30} y2={B.y}
-                    stroke="var(--accent)" strokeWidth={5} strokeLinecap="round"
-                    style={{ "--len": 450 }}/>
-              <g className="anim-appear" style={{ "--appear-delay": "1350ms" }}
-                 transform={`translate(${B.x - 28}, ${B.y})`}>
-                <polygon points="-16,-10 0,0 -16,10" fill="var(--accent)"/>
-              </g>
-              <text className="anim-fade-2" x={(A.x + B.x)/2} y={A.y - 40} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fill="var(--accent)">
-                arc (i, j) → cost cᵢⱼ = 7.3
-              </text>
+              <g key={animKey}>
+                {/* === All arc bodies first === */}
+                <line x1={A.x + 30} y1={A.y} x2={B.x - 30} y2={B.y}
+                      stroke="var(--accent)" strokeWidth={5} strokeLinecap="round"
+                      style={{ "--len": 450, strokeDasharray: 450, strokeDashoffset: 450,
+                               animation: "drawPath 1200ms both ease-out", animationDelay: "150ms" }}/>
+                <path d={`M ${C.x + 30} ${C.y - 14} Q ${(C.x+D.x)/2} ${C.y - 60} ${D.x - 36} ${D.y - 14}`}
+                      fill="none" stroke="var(--accent)" strokeWidth={5} strokeLinecap="round"
+                      style={{ "--len": 520, strokeDasharray: 520, strokeDashoffset: 520,
+                               animation: "drawPath 1200ms both ease-out", animationDelay: "750ms" }}/>
+                <path d={`M ${D.x - 36} ${D.y + 14} Q ${(C.x+D.x)/2} ${D.y + 60} ${C.x + 30} ${C.y + 14}`}
+                      fill="none" stroke="var(--accent-2)" strokeWidth={5} strokeLinecap="round"
+                      style={{ "--len": 520, strokeDasharray: 520, strokeDashoffset: 520,
+                               animation: "drawPath 1200ms both ease-out", animationDelay: "1000ms" }}/>
 
-              {/* Two arcs opposite direction, different costs */}
-              <path className="anim-draw anim-draw-3"
-                    d={`M ${C.x + 30} ${C.y - 14} Q ${(C.x+D.x)/2} ${C.y - 60} ${D.x - 36} ${D.y - 14}`}
-                    fill="none" stroke="var(--accent)" strokeWidth={5} strokeLinecap="round"
-                    style={{ "--len": 520 }}/>
-              <g className="anim-appear" style={{ "--appear-delay": "1950ms" }}
-                 transform={`translate(${D.x - 36}, ${D.y - 14}) rotate(13.3)`}>
-                <polygon points="-16,-10 0,0 -16,10" fill="var(--accent)"/>
-              </g>
-              <text className="anim-fade-2" x={(C.x + D.x)/2} y={C.y - 80} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fill="var(--accent)">
-                (i, j) → cᵢⱼ = 7.3
-              </text>
-
-              <path className="anim-draw anim-draw-4"
-                    d={`M ${D.x - 36} ${D.y + 14} Q ${(C.x+D.x)/2} ${D.y + 60} ${C.x + 30} ${C.y + 14}`}
-                    fill="none" stroke="var(--accent-2)" strokeWidth={5} strokeLinecap="round"
-                    style={{ "--len": 520 }}/>
-              <g className="anim-appear" style={{ "--appear-delay": "2200ms" }}
-                 transform={`translate(${C.x + 30}, ${C.y + 14}) rotate(193.3)`}>
-                <polygon points="-16,-10 0,0 -16,10" fill="var(--accent-2)"/>
-              </g>
-              <text className="anim-fade-3" x={(C.x + D.x)/2} y={C.y + 105} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fill="var(--accent-2)">
-                (j, i) → cⱼᵢ = 9.8 &nbsp; (e.g. one-way street, uphill…)
-              </text>
-
-              {/* Nodes */}
-              {[[A,"i"],[B,"j"],[C,"i"],[D,"j"]].map(([n, l], i) => (
-                <g key={i}>
-                  <circle cx={n.x} cy={n.y} r={28} fill="var(--paper)" stroke="var(--ink)" strokeWidth={3}/>
-                  <text x={n.x} y={n.y + 9} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={24} fontWeight={600} fill="var(--ink)">
-                    {l}
-                  </text>
+                {/* === All arrowheads after all bodies === */}
+                <g transform={`translate(${B.x - 28}, ${B.y})`}>
+                  <g style={{ opacity: 0, animation: "fadeUp 150ms both ease-out", animationDelay: "1350ms" }}>
+                    <polygon points="-16,-10 0,0 -16,10" fill="var(--accent)"/>
+                  </g>
                 </g>
-              ))}
+                <g transform={`translate(${D.x - 36}, ${D.y - 14}) rotate(13.3)`}>
+                  <g style={{ opacity: 0, animation: "fadeUp 150ms both ease-out", animationDelay: "1950ms" }}>
+                    <polygon points="-16,-10 0,0 -16,10" fill="var(--accent)"/>
+                  </g>
+                </g>
+                <g transform={`translate(${C.x + 30}, ${C.y + 14}) rotate(193.3)`}>
+                  <g style={{ opacity: 0, animation: "fadeUp 150ms both ease-out", animationDelay: "2200ms" }}>
+                    <polygon points="-16,-10 0,0 -16,10" fill="var(--accent-2)"/>
+                  </g>
+                </g>
+
+                {/* === Cost labels === */}
+                <text style={{ opacity: 0, animation: "fadeUp 700ms both ease-out", animationDelay: "260ms" }}
+                      x={(A.x + B.x)/2} y={A.y - 40} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fill="var(--accent)">
+                  arc (i, j) → cost cᵢⱼ = 7.3
+                </text>
+                <text style={{ opacity: 0, animation: "fadeUp 700ms both ease-out", animationDelay: "260ms" }}
+                      x={(C.x + D.x)/2} y={C.y - 80} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fill="var(--accent)">
+                  (i, j) → cᵢⱼ = 7.3
+                </text>
+                <text style={{ opacity: 0, animation: "fadeUp 700ms both ease-out", animationDelay: "420ms" }}
+                      x={(C.x + D.x)/2} y={C.y + 105} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fill="var(--accent-2)">
+                  (j, i) → cⱼᵢ = 9.8 &nbsp; (e.g. one-way street, uphill…)
+                </text>
+
+                {/* Nodes — on top of arcs */}
+                {[[A,"i"],[B,"j"],[C,"i"],[D,"j"]].map(([n, l], i) => (
+                  <g key={i}>
+                    <circle cx={n.x} cy={n.y} r={28} fill="var(--paper)" stroke="var(--ink)" strokeWidth={3}/>
+                    <text x={n.x} y={n.y + 9} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={24} fontWeight={600} fill="var(--ink)">
+                      {l}
+                    </text>
+                  </g>
+                ))}
+              </g>
             </svg>
           </div>
 

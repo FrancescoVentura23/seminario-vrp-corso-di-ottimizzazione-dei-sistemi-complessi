@@ -5,8 +5,8 @@
 :root {
   /* Palette — Editorial (default) */
   --ink:        #1a1814;
-  --ink-2:      #2d2a24;
-  --ink-3:      #55504a;
+  --ink-2:      #1a1814;   /* was #2d2a24 — collapsed to --ink for max contrast */
+  --ink-3:      #1a1814;   /* was #55504a — collapsed to --ink for max contrast */
   --muted:      #8a8278;
   --line:       #d9d1c3;
   --line-soft:  #ebe4d4;
@@ -28,7 +28,7 @@
   --customer:   #55504a;
 
   /* Type */
-  --font-display: "Instrument Serif", "Times New Roman", Georgia, serif;
+  --font-display: "Atkinson Hyperlegible", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-body:    "Atkinson Hyperlegible", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono:    "JetBrains Mono", ui-monospace, Menlo, monospace;
 
@@ -52,8 +52,8 @@
 /* Variants via [data-theme] on <deck-stage> */
 deck-stage[data-theme="blueprint"] {
   --ink:       #0b2e4a;
-  --ink-2:     #123b5b;
-  --ink-3:     #3b5d7d;
+  --ink-2:     #0b2e4a;   /* collapsed to --ink */
+  --ink-3:     #0b2e4a;   /* collapsed to --ink */
   --muted:     #6a87a4;
   --line:      #bcd2e4;
   --line-soft: #d7e5f0;
@@ -74,8 +74,8 @@ deck-stage[data-theme="blueprint"] {
 
 deck-stage[data-theme="midnight"] {
   --ink:       #f0ece1;
-  --ink-2:     #d9d3c3;
-  --ink-3:     #a8a094;
+  --ink-2:     #f0ece1;   /* collapsed to --ink */
+  --ink-3:     #f0ece1;   /* collapsed to --ink */
   --muted:     #6e695f;
   --line:      #2f2c27;
   --line-soft: #232120;
@@ -193,6 +193,18 @@ section.slide {
 .body.small { font-size: var(--fs-small); line-height: 1.4; }
 
 .mono { font-family: var(--font-mono); }
+
+/* High-readability italic: any italicized text across the deck — bodies, titles,
+   <em>/<i>, SVG math labels — is routed to Atkinson Hyperlegible italic so the
+   italics stay as readable as the upright body copy. Uses !important to beat
+   inline fontFamily:"var(--font-display)" on italic spans. */
+section.slide em,
+section.slide i,
+section.slide [style*="italic"],
+section.slide text[font-style="italic"] {
+  font-family: var(--font-body) !important;
+  font-style: italic;
+}
 
 /* Section divider slides — always black background, cream text */
 section.section-slide {

@@ -38,7 +38,7 @@ function SlideNode() {
         <div className="tag">Graph theory · Vertex (node)</div>
         <h2 className="title" style={{ marginTop: 28 }}>A <em style={{ color: "var(--accent)" }}>vertex</em> is an element of the graph.</h2>
 
-        <div style={{ marginTop: 50, display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 80, flex: 1, alignItems: "stretch" }}>
+        <div style={{ marginTop: 28, display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 80, flex: 1, alignItems: "stretch" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 24, justifyContent: "center" }}>
             <div className="lede" style={{ fontSize: 38, lineHeight: 1.22 }}>
               A graph <em>G</em> has a finite, non-empty <em>vertex set</em> <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)" }}>V(G)</span> — its elements are called <em>vertices</em> (or, informally, <em>nodes</em>).
@@ -202,9 +202,9 @@ function SlideNodeAttributes() {
           Each node carries its own <em style={{ color: "var(--accent)" }}>attributes</em>.
         </h2>
 
-        <div style={{ marginTop: 50, display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 80, flex: 1, alignItems: "stretch" }}>
+        <div style={{ marginTop: 28, display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 80, flex: 1, alignItems: "stretch" }}>
           {/* Left — list of attributes */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 20, justifyContent: "space-between" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 28, justifyContent: "center" }}>
             <div className="lede" style={{ fontSize: 30, lineHeight: 1.25, color: "var(--ink-2)" }}>
               In a VRP instance, every customer carries application-specific data. The four most common attributes:
             </div>
@@ -376,12 +376,12 @@ function SlideEdge() {
 function SlideSimpleGraph() {
   // Bad example (top-right): two vertices with a loop on v₁ and two parallel edges between v₁–v₂.
   // Coordinates live inside a viewBox 1000×460.
-  const BAD = { A: { x: 330, y: 290 }, B: { x: 720, y: 290 } };
+  const BAD = { A: { x: 220, y: 265 }, B: { x: 820, y: 265 } };
   // Good example (bottom-right): triangle inside viewBox 1000×460.
   const GOOD = {
-    A: { x: 260, y: 160 },
-    B: { x: 740, y: 160 },
-    C: { x: 500, y: 370 },
+    A: { x: 210, y: 140 },
+    B: { x: 790, y: 140 },
+    C: { x: 500, y: 380 },
   };
   return (
     <section className="slide" data-label="Graph concepts — Simple graph">
@@ -464,8 +464,8 @@ function SlideSimpleGraph() {
                 {/* Nodes on top of edges */}
                 {[[BAD.A, "v₁"], [BAD.B, "v₂"]].map(([n, l], i) => (
                   <g key={i}>
-                    <circle cx={n.x} cy={n.y} r={28} fill="var(--paper)" stroke="var(--ink)" strokeWidth={3}/>
-                    <text x={n.x} y={n.y + 9} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fontWeight={600} fill="var(--ink)">
+                    <circle cx={n.x} cy={n.y} r={36} fill="var(--paper)" stroke="var(--ink)" strokeWidth={3}/>
+                    <text x={n.x} y={n.y + 11} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={27} fontWeight={600} fill="var(--ink)">
                       {l}
                     </text>
                   </g>
@@ -500,8 +500,8 @@ function SlideSimpleGraph() {
                 {/* Nodes */}
                 {[[GOOD.A, "v₁"], [GOOD.B, "v₂"], [GOOD.C, "v₃"]].map(([n, l], i) => (
                   <g key={i}>
-                    <circle cx={n.x} cy={n.y} r={28} fill="var(--paper)" stroke="var(--ink)" strokeWidth={3}/>
-                    <text x={n.x} y={n.y + 9} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fontWeight={600} fill="var(--ink)">
+                    <circle cx={n.x} cy={n.y} r={36} fill="var(--paper)" stroke="var(--ink)" strokeWidth={3}/>
+                    <text x={n.x} y={n.y + 11} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={27} fontWeight={600} fill="var(--ink)">
                       {l}
                     </text>
                   </g>
@@ -533,7 +533,7 @@ function SlideDirectedArc() {
   return (
     <section className="slide" data-label="Graph concepts — Directed arc">
       <SlideFrame>
-        <div className="tag">Graph theory · Digraph · Arc</div>
+        <div className="tag">Graph theory · Arc</div>
         <h2 className="title" style={{ marginTop: 28 }}>A <em style={{ color: "var(--accent)" }}>directed arc</em> has a tail, a head, and a direction.</h2>
 
         <div style={{ marginTop: 44, display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 70, flex: 1, alignItems: "center" }}>
@@ -598,14 +598,17 @@ function SlideDirectedArc() {
 
           <div style={{ display: "flex", flexDirection: "column", gap: 24, justifyContent: "center" }}>
             <div className="lede" style={{ fontSize: 32, lineHeight: 1.22 }}>
-              An <em>arc</em> is an <em>ordered pair</em> <span style={{ fontFamily: "var(--font-mono)" }}>a = (i, j)</span>: <em>i</em> is the <em>tail</em>, <em>j</em> is the <em>head</em>. A graph whose links are arcs is a <em>directed graph</em> — or <em>digraph</em>. The set of all arcs is written <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)" }}>A(G)</span>, and replaces <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)" }}>E(G)</span>: the difference is that here order matters — <span style={{ fontFamily: "var(--font-mono)" }}>(i, j)</span> and <span style={{ fontFamily: "var(--font-mono)" }}>(j, i)</span> are two distinct arcs.
+              An <em>arc</em> is an <em>ordered pair</em> <span style={{ fontFamily: "var(--font-mono)" }}>a = (i, j)</span>: <em>i</em> is the <em>tail</em> (origin) and <em>j</em> is the <em>head</em> (destination). Unlike an undirected edge, <em>order matters</em>: <span style={{ fontFamily: "var(--font-mono)" }}>(i, j)</span> and <span style={{ fontFamily: "var(--font-mono)" }}>(j, i)</span> are two distinct arcs — and their traversal costs are generally different.
             </div>
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "20px 24px" }}>
               <div className="kicker" style={{ fontSize: 22, marginBottom: 8 }}>Notation</div>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 24, lineHeight: 1.55 }}>
-                A(G) ⊆ V × V &nbsp;<span style={{ color: "var(--ink-3)" }}>(ordered pairs)</span><br/>
+                a = (i, j) &nbsp;<span style={{ color: "var(--ink-3)" }}>— tail i, head j</span><br/>
                 (i, j) ≠ (j, i) &nbsp;<span style={{ color: "var(--ink-3)" }}>and in general</span> cᵢⱼ ≠ cⱼᵢ
               </div>
+            </div>
+            <div className="body" style={{ fontSize: 26, lineHeight: 1.35, color: "var(--ink-2)" }}>
+              Real-world asymmetry: a one-way street, an uphill vs downhill road, or a river current all make <span style={{ fontFamily: "var(--font-mono)" }}>cᵢⱼ ≠ cⱼᵢ</span>.
             </div>
           </div>
         </div>
@@ -686,14 +689,23 @@ function SlideDigraph() {
       <SlideFrame>
         <div className="tag">Graph theory · Digraph</div>
         <h2 className="title" style={{ marginTop: 28 }}>
-          A <em style={{ color: "var(--accent)" }}>digraph</em> models asymmetric travel costs.
+          A <em style={{ color: "var(--accent)" }}>digraph</em> is a graph whose links are directed arcs.
         </h2>
 
         <div style={{ marginTop: 44, display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 70, flex: 1, alignItems: "center" }}>
           {/* Left — definition */}
           <div style={{ display: "flex", flexDirection: "column", gap: 24, justifyContent: "center" }}>
             <div className="lede" style={{ fontSize: 33, lineHeight: 1.25 }}>
-              A <em>directed graph</em> — or <em>digraph</em> — replaces edges with arcs. The arc set <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)" }}>A(G)</span> collects ordered pairs: going from i to j is a different arc than going from j to i, and the two costs need not be equal.
+              A <em>directed graph</em> — or <em>digraph</em> — is a pair <span style={{ fontFamily: "var(--font-mono)" }}>G = (V, A)</span> where <em>V</em> is the vertex set and <em>A</em> is a set of ordered pairs called <em>arcs</em>. The arc set <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)" }}>A(G)</span> replaces the edge set <span style={{ fontFamily: "var(--font-mono)" }}>E(G)</span>.
+            </div>
+
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "18px 24px" }}>
+              <div className="kicker" style={{ fontSize: 20, marginBottom: 8 }}>Notation</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 22, lineHeight: 1.7, color: "var(--ink)" }}>
+                G = (V, A)<br/>
+                A(G) ⊆ V × V<span style={{ color: "var(--ink-3)" }}> — ordered pairs</span><br/>
+                |A(G)| ≤ n(n − 1)<span style={{ color: "var(--ink-3)" }}> — at most one arc per direction</span>
+              </div>
             </div>
 
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "18px 24px" }}>
@@ -703,10 +715,6 @@ function SlideDigraph() {
                 <li style={{ fontSize: 24, color: "var(--ink-2)", lineHeight: 1.35 }}><em>Asymmetric road times</em> — uphill vs. downhill, traffic direction.</li>
                 <li style={{ fontSize: 24, color: "var(--ink-2)", lineHeight: 1.35 }}><em>Pickup-and-delivery</em> — precedence forces a specific arc direction.</li>
               </ul>
-            </div>
-
-            <div className="body small" style={{ color: "var(--ink-3)", fontSize: 22, lineHeight: 1.35 }}>
-              When cᵢⱼ = cⱼᵢ for all pairs the digraph reduces to an undirected graph — the two representations are equivalent.
             </div>
           </div>
 

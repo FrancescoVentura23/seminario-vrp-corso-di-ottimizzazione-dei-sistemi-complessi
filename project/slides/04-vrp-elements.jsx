@@ -168,18 +168,18 @@ function Slide07() {
   }, []);
 
   const roadNodes = [
-    { x: 400, y: 170 },  // 0  C₁
-    { x: 560, y: 115 },  // 1  junction
-    { x: 730, y: 155 },  // 2  C₂
-    { x: 900, y: 130 },  // 3  junction
-    { x: 990, y: 265 },  // 4  C₃
-    { x: 1060, y: 390 }, // 5  junction
-    { x: 910, y: 480 },  // 6  C₄
-    { x: 720, y: 520 },  // 7  junction
-    { x: 535, y: 490 },  // 8  C₅
-    { x: 360, y: 375 },  // 9  junction
-    { x: 510, y: 285 },  // 10 junction
-    { x: 740, y: 330 },  // 11 junction
+    { x: 400, y: 130 },  // 0  C₁
+    { x: 560, y:  75 },  // 1  junction
+    { x: 730, y: 115 },  // 2  C₂
+    { x: 900, y:  90 },  // 3  junction
+    { x: 990, y: 225 },  // 4  C₃
+    { x: 1060, y: 350 }, // 5  junction
+    { x: 910, y: 440 },  // 6  C₄
+    { x: 720, y: 480 },  // 7  junction
+    { x: 535, y: 450 },  // 8  C₅
+    { x: 360, y: 335 },  // 9  junction
+    { x: 510, y: 245 },  // 10 junction
+    { x: 740, y: 290 },  // 11 junction
   ];
   const roadEdges = [
     [0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,0],
@@ -234,12 +234,22 @@ function Slide07() {
       <SlideFrame>
         <div className="tag">VRP elements</div>
         <h2 className="title" style={{ marginTop: 20 }}>From the road network to a complete graph.</h2>
-        <div className="body" style={{ marginTop: 14, color: "var(--ink-3)", maxWidth: 1500, fontSize: 28 }}>
-          Roads are sparse — you can't drive directly between any two customers. VRP needs the travel cost for <em>every</em> pair.
-          A shortest-path computation collapses the network: junctions disappear and only customers remain, connected by a <em>complete graph</em> whose edge weights are the minimum road distances.
+        <div style={{ marginTop: 12, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 28 }}>
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", borderTop: "3px solid var(--accent)", padding: "18px 22px" }}>
+            <div className="kicker" style={{ fontSize: 19, marginBottom: 8 }}>① Snapshot</div>
+            <div style={{ fontSize: 25, lineHeight: 1.4 }}>All costs and travel times are <em>fixed</em> at solve time — the model captures one instant.</div>
+          </div>
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", borderTop: "3px solid var(--accent)", padding: "18px 22px" }}>
+            <div className="kicker" style={{ fontSize: 19, marginBottom: 8 }}>② Fixed shortest path</div>
+            <div style={{ fontSize: 25, lineHeight: 1.4 }}>Since parameters never change, a rational agent <em>always</em> takes the same <em>shortest path</em> between any two nodes.</div>
+          </div>
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", borderTop: "3px solid var(--accent)", padding: "18px 22px" }}>
+            <div className="kicker" style={{ fontSize: 19, marginBottom: 8 }}>③ Network collapse</div>
+            <div style={{ fontSize: 25, lineHeight: 1.4 }}>Pre-compute one cost per pair → junctions disappear, only customers remain in a <em>complete graph</em>.</div>
+          </div>
         </div>
 
-        <div style={{ marginTop: 20, flex: 1, position: "relative", background: "var(--paper-2)", border: "1px solid var(--line)", padding: 20 }}>
+        <div style={{ marginTop: 20, position: "relative", background: "var(--paper-2)", border: "1px solid var(--line)", padding: 20 }}>
           {/* Always in DOM so btnRef stays stable; hidden once animation starts */}
           <button ref={btnRef} style={{
             position: "absolute", top: 20, right: 20, zIndex: 10,
@@ -250,13 +260,13 @@ function Slide07() {
             visibility: phase === 0 ? "visible" : "hidden"
           }}>Network collapsing →</button>
 
-          <svg viewBox="0 0 1400 540" style={{ width: "100%", height: "100%", display: "block" }}>
+          <svg viewBox="0 0 1400 500" style={{ width: "100%", height: "auto", display: "block" }}>
             <defs>
               <pattern id="dotgrid-s07" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
                 <circle cx="1" cy="1" r="1" fill="var(--line)"/>
               </pattern>
             </defs>
-            <rect width={1400} height={540} fill="url(#dotgrid-s07)" opacity={0.5}/>
+            <rect width={1400} height={500} fill="url(#dotgrid-s07)" opacity={0.5}/>
 
             {phase === 0 ? (
               /* ── Static road network ── */
@@ -380,7 +390,7 @@ function Slide07() {
             )}
 
             {/* Legend */}
-            <g transform="translate(30,516)">
+            <g transform="translate(30,476)">
               <circle cx={8} cy={-2} r={7} fill="var(--ink-3)" opacity={0.5}/>
               <text x={24} y={4} fontFamily="var(--font-mono)" fontSize={13} fill="var(--ink-3)">junction (disappears)</text>
               <circle cx={230} cy={-2} r={10} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>

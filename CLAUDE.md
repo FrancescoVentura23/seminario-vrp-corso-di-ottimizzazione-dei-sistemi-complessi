@@ -4,28 +4,25 @@ Deck HTML/CSS/JS esportato da Claude Design. **53 slide** gestite dal web compon
 
 ## Istruzioni per Claude Dispatch
 
-Quando si usa Claude Dispatch dal telefono per modificare la presentazione, inviare questo messaggio (sostituendo la parte tra parentesi quadre):
+Quando si usa Claude Dispatch dal telefono, inviare questo messaggio come **primo messaggio** per preparare il contesto:
 
 ```
 Lavora nella cartella:
 ~/Documents/GitHub/seminario-vrp-corso-di-ottimizzazione-dei-sistemi-complessi/
 
-Leggi il CLAUDE.md nella root: contiene la struttura completa della presentazione,
-i file coinvolti e i pattern obbligatori da seguire.
+Leggi attentamente il CLAUDE.md nella root: contiene la struttura completa
+della presentazione (53 slide), i file coinvolti, i pattern obbligatori
+da seguire e i gotcha delle animazioni.
 
-[DESCRIVI QUI LA MODIFICA — esempi:
-- "Aggiungi una slide dopo la slide 40 che spiega l'euristica 2-opt"
-- "Nella slide 34 cambia il titolo in X e aggiungi un bullet point su Y"
-- "Rendi la slide 28 più visiva con un grafico a barre"]
-
-Prima di committare, rimuovi eventuali lock stantii:
-find .git -name "*.lock" -delete
-
-Poi committa e pusha:
-git add <file modificati>
-git commit -m "descrizione modifica"
-git push origin main
+Quando hai finito di leggere, confermami che sei pronto per ricevere
+istruzioni di modifica. Ad ogni modifica completata, ricordati di:
+1. Rimuovere lock stantii: find .git -name "*.lock" -delete
+2. git add <file modificati>
+3. git commit -m "descrizione modifica"
+4. git push origin main
 ```
+
+Dopo la conferma, inviare la modifica desiderata in un messaggio separato.
 
 Note operative:
 - Il Mac deve restare **sveglio** con la **Claude Desktop app aperta**

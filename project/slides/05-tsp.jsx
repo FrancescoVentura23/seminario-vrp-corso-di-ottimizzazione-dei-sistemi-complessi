@@ -1327,6 +1327,7 @@ function SlideTSPMinCut() {
   const [animStep, setAnimStep] = React.useState(4);
   const [animKey, setAnimKey] = React.useState(0);
   const [isActive, setIsActive] = React.useState(false);
+  const [animStarted, setAnimStarted] = React.useState(false);
   const btnsRef = React.useRef(null);
   const sectionRef = React.useRef(null);
 
@@ -1338,7 +1339,7 @@ function SlideTSPMinCut() {
     const check = () => {
       const active = el.hasAttribute('data-deck-active');
       setIsActive(active);
-      if (!active) setMode('integer');
+      if (!active) { setMode('integer'); setAnimStarted(false); }
     };
     check();
     const obs = new MutationObserver(check);
@@ -1357,7 +1358,7 @@ function SlideTSPMinCut() {
       if (!btn || !el.contains(btn)) return;
       const m = btn.getAttribute('data-mode');
       setMode(m);
-      if (m === 'integer') setAnimKey(k => k + 1);
+      if (m === 'integer') { setAnimStarted(true); setAnimKey(k => k + 1); }
     };
     el.addEventListener('click', handler);
     return () => el.removeEventListener('click', handler);
@@ -1376,13 +1377,19 @@ function SlideTSPMinCut() {
       setAnimStep(4);
       return;
     }
+    // Show initial state (dashed crossings w=0) without starting timers
+    // until the user explicitly clicks the button.
+    if (!animStarted) {
+      setAnimStep(0);
+      return;
+    }
     setAnimStep(0);
     const timers = [];
     timers.push(setTimeout(() => setAnimStep(1), 1800));
     timers.push(setTimeout(() => setAnimStep(2), 3800));
     timers.push(setTimeout(() => setAnimStep(3), 6200));  // step 2 takes ~2.2s (blink 1s + morph 1.2s)
     return () => timers.forEach(clearTimeout);
-  }, [isActive, mode, animKey]);
+  }, [isActive, mode, animKey, animStarted]);
 
   // Same layout as slide 27 (SlideTSPDFJ): 4 vertices in S, 3 in V\S.
   const V = [

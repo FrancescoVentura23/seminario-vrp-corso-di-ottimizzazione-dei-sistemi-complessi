@@ -1329,6 +1329,11 @@ function SlideTSPMinCut() {
   const [animKey, setAnimKey] = React.useState(0);
   const [isActive, setIsActive] = React.useState(false);
   const [animStarted, setAnimStarted] = React.useState(false);
+  // fracStep: 0 static, 1 callout, 2 crossing↑, 3 degree box, 4 crossing↓, 5 blink+fade, 6 idle
+  const [fracStep, setFracStep] = React.useState(0);
+  const [fracCrossW, setFracCrossW] = React.useState(0.3);
+  const [fracKey, setFracKey] = React.useState(0);
+  const [fracStarted, setFracStarted] = React.useState(false);
   const btnsRef = React.useRef(null);
   const sectionRef = React.useRef(null);
 
@@ -1340,7 +1345,7 @@ function SlideTSPMinCut() {
     const check = () => {
       const active = el.hasAttribute('data-deck-active');
       setIsActive(active);
-      if (!active) { setMode('integer'); setAnimStarted(false); }
+      if (!active) { setMode('integer'); setAnimStarted(false); setFracStarted(false); }
     };
     check();
     const obs = new MutationObserver(check);
@@ -1359,7 +1364,8 @@ function SlideTSPMinCut() {
       if (!btn || !el.contains(btn)) return;
       const m = btn.getAttribute('data-mode');
       setMode(m);
-      if (m === 'integer') { setAnimStarted(true); setAnimKey(k => k + 1); }
+      if (m === 'integer')    { setAnimStarted(true); setAnimKey(k => k + 1); }
+      if (m === 'fractional') { setFracStarted(true); setFracKey(k => k + 1); }
     };
     el.addEventListener('click', handler);
     return () => el.removeEventListener('click', handler);
@@ -1390,6 +1396,51 @@ function SlideTSPMinCut() {
     timers.push(setTimeout(() => setAnimStep(5), 8300));  // 1.5 s pause → old arcs blink+fade
     return () => timers.forEach(clearTimeout);
   }, [isActive, mode, animKey, animStarted]);
+
+  // Fractional animation — steps 0→1→2 via timers; steps 3→4→5 driven by
+  // the weight-animation effect below (setInterval / setTimeout).
+  React.useLayoutEffect(() => {
+    if (!isActive || mode !== 'fractional') {
+      setFracStep(0); setFracCrossW(0.3);
+      return;
+    }
+    if (!fracStarted) { setFracStep(0); setFracCrossW(0.3); return; }
+    setFracStep(0); setFracCrossW(0.3);
+    const timers = [];
+    timers.push(setTimeout(() => setFracStep(1), 1800));  // callout
+    timers.push(setTimeout(() => setFracStep(2), 3800));  // start weight increase
+    return () => timers.forEach(clearTimeout);
+  }, [isActive, mode, fracKey, fracStarted]);
+
+  // Drive fracCrossW: 0.3→1.0 at step 2, pause at step 3, 1.0→0.0 at step 4.
+  React.useEffect(() => {
+    if (mode !== 'fractional') return;
+    if (fracStep === 2) {
+      // 0.3 → 1.0 in 7 steps × 285 ms ≈ 2 s
+      let w = 0.3;
+      const ticker = setInterval(() => {
+        w = Math.round((w + 0.1) * 10) / 10;
+        setFracCrossW(Math.min(w, 1.0));
+        if (w >= 1.0) { clearInterval(ticker); setFracStep(3); }
+      }, 285);
+      return () => clearInterval(ticker);
+    }
+    if (fracStep === 3) {
+      // 1.5 s pause, then start decrease
+      const t = setTimeout(() => setFracStep(4), 1500);
+      return () => clearTimeout(t);
+    }
+    if (fracStep === 4) {
+      // 1.0 → 0.0 in 10 steps × 200 ms = 2 s
+      let w = 1.0;
+      const ticker = setInterval(() => {
+        w = Math.round((w - 0.1) * 10) / 10;
+        setFracCrossW(Math.max(w, 0.0));
+        if (w <= 0.0) { clearInterval(ticker); setFracStep(5); }
+      }, 200);
+      return () => clearInterval(ticker);
+    }
+  }, [mode, fracStep]);
 
   // Same layout as slide 27 (SlideTSPDFJ): 4 vertices in S, 3 in V\S.
   const V = [
@@ -1594,6 +1645,34 @@ function SlideTSPMinCut() {
               </div>
             )}
 
+            {/* Fractional callout — shown at steps 1-2 while crossing weights animate */}
+            {isFrac && fracStep >= 1 && fracStep <= 2 && (
+              <div key={`frac-callout-${fracKey}`}
+                   style={{
+                     position: "absolute",
+                     top: 20,
+                     left: "50%",
+                     transform: "translateX(-50%)",
+                     maxWidth: "calc(100% - 52px)",
+                     boxSizing: "border-box",
+                     padding: "10px 20px",
+                     border: "2px solid var(--ink)",
+                     background: "var(--paper)",
+                     color: "var(--ink)",
+                     borderRadius: 3,
+                     fontFamily: "var(--font-mono)",
+                     fontSize: 16,
+                     fontWeight: 600,
+                     textAlign: "center",
+                     lineHeight: 1.5,
+                     zIndex: 3,
+                     animation: "fadeUp 420ms both ease-out",
+                   }}>
+                <TeX>{String.raw`x^*(\delta(S)) = 0.3 + 0.3 = 0.6 < 2`}</TeX>
+                {"  ⇒  there are subtours!"}
+              </div>
+            )}
+
             {/* Degree-constraints box — always in normal flow when integer mode so
                 the SVG never shifts position. Invisible (opacity:0) before step 4,
                 fades in at step 4, stays visible at step 5. */}
@@ -1611,6 +1690,45 @@ function SlideTSPMinCut() {
                      gap: 10,
                      fontFamily: "var(--font-mono)",
                      ...(animStep >= 4 && animStep <= 5
+                       ? { animation: "fadeUp 420ms both ease-out" }
+                       : { opacity: 0, pointerEvents: "none" }
+                     ),
+                   }}>
+                <div style={{ fontSize: 16, color: "var(--ink-3)", letterSpacing: "0.08em" }}>
+                  DEGREE CONSTRAINTS STILL HOLD
+                </div>
+                <div style={{ display: "flex", gap: 52, alignItems: "center" }}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                    <div style={{ fontSize: 13, color: "var(--ink-3)", letterSpacing: "0.06em" }}>OUT-DEGREE</div>
+                    <div style={{ fontSize: 32 }}>
+                      <TeX>{String.raw`\sum_{\substack{j \in V \\ j \neq i}} x_{ij} = 1`}</TeX>
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                    <div style={{ fontSize: 13, color: "var(--ink-3)", letterSpacing: "0.06em" }}>IN-DEGREE</div>
+                    <div style={{ fontSize: 32 }}>
+                      <TeX>{String.raw`\sum_{\substack{i \in V \\ i \neq j}} x_{ij} = 1`}</TeX>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Fractional degree box — same structure as integer, visible at steps 3-5 */}
+            {isFrac && (
+              <div key={`frac-deg-box-${fracKey}`}
+                   style={{
+                     background: "var(--paper)",
+                     border: "2px solid var(--ink)",
+                     borderRadius: 6,
+                     padding: "12px 24px",
+                     marginBottom: 12,
+                     display: "flex",
+                     flexDirection: "column",
+                     alignItems: "center",
+                     gap: 10,
+                     fontFamily: "var(--font-mono)",
+                     ...(fracStep >= 3 && fracStep <= 5
                        ? { animation: "fadeUp 420ms both ease-out" }
                        : { opacity: 0, pointerEvents: "none" }
                      ),
@@ -1759,20 +1877,28 @@ function SlideTSPMinCut() {
                       </g>
                     );
                   })}
-                  {/* Fractional — crossing arcs (δ(S)) */}
+                  {/* Fractional — crossing arcs: weight follows fracCrossW (0.3→1.0→0.0);
+                      blink+fade at fracStep 5, hidden at fracStep 6. */}
                   {FRACTIONAL.cross.map((e, i) => {
+                    if (fracStep >= 6) return null;
                     const va = byId[e.from], vb = byId[e.to];
                     const seg = segment(va, vb);
                     const awayFrom = e.from === 'v1' ? { x: 595, y: 600 } : { x: 620, y: 100 };
                     const lp = labelPos(va, vb, awayFrom, 34);
+                    const isFading = fracStep === 5;
+                    const crossStyle = isFading ? {
+                      animation: "blink 500ms ease-in-out 0ms 3, fadeOut 500ms ease-out 1500ms forwards",
+                    } : undefined;
                     return (
-                      <g key={`frac-ce-${i}`}>
+                      <g key={`frac-ce-${i}-${fracKey}-${isFading ? 'f' : 'n'}`}>
                         <line {...seg} stroke="var(--ink)" strokeWidth={4.5}
-                              strokeLinecap="butt" markerEnd="url(#arrow-ink)"/>
+                              strokeLinecap="butt" markerEnd="url(#arrow-ink)"
+                              style={crossStyle}/>
                         <text x={lp.x} y={lp.y + 8} textAnchor="middle"
                               fontFamily="var(--font-mono)" fontSize={28}
-                              fontWeight={700} fill="var(--ink)">
-                          {fmt(e.w)}
+                              fontWeight={700} fill="var(--ink)"
+                              style={crossStyle}>
+                          {fracCrossW.toFixed(1)}
                         </text>
                       </g>
                     );

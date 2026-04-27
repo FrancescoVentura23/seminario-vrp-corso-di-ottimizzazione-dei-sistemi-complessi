@@ -1573,6 +1573,8 @@ function SlideTSPMinCut() {
                      top: 20,
                      left: "50%",
                      transform: "translateX(-50%)",
+                     maxWidth: "calc(100% - 52px)",
+                     boxSizing: "border-box",
                      padding: "10px 20px",
                      border: `2px solid ${animStep >= 3 ? "var(--accent)" : "var(--ink)"}`,
                      background: animStep >= 3 ? "var(--accent)" : "var(--paper)",
@@ -1581,13 +1583,22 @@ function SlideTSPMinCut() {
                      fontFamily: "var(--font-mono)",
                      fontSize: 16,
                      fontWeight: 600,
-                     whiteSpace: "nowrap",
+                     textAlign: "center",
+                     lineHeight: 1.5,
                      zIndex: 3,
                      animation: "fadeUp 420ms both ease-out",
                    }}>
-                {animStep >= 3
-                  ? "x(δ(S)) = 1 + 1 = 2  ⇒  Hamiltonian tour"
-                  : "x(δ(S)) = 0 + 0 = 0 < 2  ⇒  there are subtours!"}
+                {animStep >= 3 ? (
+                  <>
+                    <TeX>{String.raw`x(\delta(S)) = 1 + 1 = 2`}</TeX>
+                    {"  ⇒  Hamiltonian tour"}
+                  </>
+                ) : (
+                  <>
+                    <TeX>{String.raw`x(\delta(S)) = 0 + 0 = 0 < 2`}</TeX>
+                    {"  ⇒  there are subtours!"}
+                  </>
+                )}
               </div>
             )}
 

@@ -1321,11 +1321,11 @@ function SlideTSPLazy() {
 function SlideTSPMinCut() {
   const r = 30;
   const [mode, setMode] = React.useState('integer');
-  // animStep: 0 subtours, 1 callout, 2 crosses blink (dashed w=0), 3 snap solid (w=1),
-  //           4 old arcs fade, 5 idle
+  // animStep: 0 subtours, 1 callout (subtour), 2 crosses blink (dashed w=0),
+  //           3 snap solid (w=1), 4 degree-constraints box, 5 old arcs blink+fade, 6 idle
   // (idle = post-animation / slide not yet active; disappearing arcs are simply not
   // rendered so no stale CSS animations are kicked off on mount)
-  const [animStep, setAnimStep] = React.useState(5);
+  const [animStep, setAnimStep] = React.useState(6);
   const [animKey, setAnimKey] = React.useState(0);
   const [isActive, setIsActive] = React.useState(false);
   const [animStarted, setAnimStarted] = React.useState(false);
@@ -1365,17 +1365,14 @@ function SlideTSPMinCut() {
     return () => el.removeEventListener('click', handler);
   }, []);
 
-  // Integer animation: 0 → 1 → 2 → 3 with setTimeout. Only fires when the
-  // slide is active and mode is integer. When not animating, we park at
-  // step 4 (idle): disappearing arcs render as nothing at all, which
-  // prevents the fade animation from being re-kicked on every remount.
+  // Integer animation: steps 0–5, parked at idle (6) between animations.
   //
   // useLayoutEffect (not useEffect) so that the animStep reset happens
   // synchronously before the browser paints — otherwise the transition
   // from idle → active briefly shows the final-state scene.
   React.useLayoutEffect(() => {
     if (!isActive || mode !== 'integer') {
-      setAnimStep(5);
+      setAnimStep(6);
       return;
     }
     // Show initial state (dashed crossings w=0) without starting timers
@@ -1389,7 +1386,8 @@ function SlideTSPMinCut() {
     timers.push(setTimeout(() => setAnimStep(1), 1800));
     timers.push(setTimeout(() => setAnimStep(2), 3800));
     timers.push(setTimeout(() => setAnimStep(3), 4800));  // snap after 1 s blink
-    timers.push(setTimeout(() => setAnimStep(4), 6200));  // fade disappearing arcs
+    timers.push(setTimeout(() => setAnimStep(4), 6800));  // 2 s pause → degree-constraints box
+    timers.push(setTimeout(() => setAnimStep(5), 8300));  // 1.5 s pause → old arcs blink+fade
     return () => timers.forEach(clearTimeout);
   }, [isActive, mode, animKey, animStarted]);
 
@@ -1428,8 +1426,8 @@ function SlideTSPMinCut() {
   // Map animation step + arc kind → weight, dash flag, and the active
   // transition: `blinking` for appearing arcs at step 2 (blink 1s, dashed w=0),
   // then at step 3 they snap to solid w=1 with no animation; `fading` for
-  // disappearing arcs at step 4 (blink 3×, then fade out).
-  // At idle (step 5) the disappearing arcs are simply not rendered via
+  // disappearing arcs at step 5 (blink 1.5 s, then fade out).
+  // At idle (step 6) the disappearing arcs are simply not rendered via
   // the `hidden` flag — avoids kicking off stale CSS animations on mount.
   const arcState = (kind, step) => {
     if (kind === 'appearing') {
@@ -1438,8 +1436,8 @@ function SlideTSPMinCut() {
       return            { w: 1, dashed: false, blinking: false, fading: false };
     }
     if (kind === 'disappearing') {
-      if (step === 4) return { w: 0, dashed: false, blinking: false, fading: true  };
-      if (step >= 5)  return { hidden: true };
+      if (step === 5) return { w: 0, dashed: false, blinking: false, fading: true  };
+      if (step >= 6)  return { hidden: true };
       return            { w: 1, dashed: false, blinking: false, fading: false };
     }
     return { w: 1, dashed: false, blinking: false, fading: false };
@@ -1569,8 +1567,8 @@ function SlideTSPMinCut() {
                 flips to "Hamiltonian tour" headline at step 3. Rendered as an
                 absolutely-positioned HTML overlay so it sits crisply above the
                 SVG without competing with its scaling. */}
-            {isInt && animStep >= 1 && animStep <= 4 && (
-              <div key={`callout-${animStep >= 3 ? 'tour' : 'sub'}-${animKey}`}
+            {isInt && animStep >= 1 && animStep <= 2 && (
+              <div key={`callout-sub-${animKey}`}
                    style={{
                      position: "absolute",
                      top: 20,
@@ -1579,9 +1577,9 @@ function SlideTSPMinCut() {
                      maxWidth: "calc(100% - 52px)",
                      boxSizing: "border-box",
                      padding: "10px 20px",
-                     border: `2px solid ${animStep >= 3 ? "var(--accent)" : "var(--ink)"}`,
-                     background: animStep >= 3 ? "var(--accent)" : "var(--paper)",
-                     color: animStep >= 3 ? "var(--paper)" : "var(--ink)",
+                     border: "2px solid var(--ink)",
+                     background: "var(--paper)",
+                     color: "var(--ink)",
                      borderRadius: 3,
                      fontFamily: "var(--font-mono)",
                      fontSize: 16,
@@ -1591,17 +1589,51 @@ function SlideTSPMinCut() {
                      zIndex: 3,
                      animation: "fadeUp 420ms both ease-out",
                    }}>
-                {animStep >= 3 ? (
-                  <>
-                    <TeX>{String.raw`x(\delta(S)) = 1 + 1 = 2`}</TeX>
-                    {"  ⇒  Hamiltonian tour"}
-                  </>
-                ) : (
-                  <>
-                    <TeX>{String.raw`x(\delta(S)) = 0 + 0 = 0 < 2`}</TeX>
-                    {"  ⇒  there are subtours!"}
-                  </>
-                )}
+                <TeX>{String.raw`x(\delta(S)) = 0 + 0 = 0 < 2`}</TeX>
+                {"  ⇒  there are subtours!"}
+              </div>
+            )}
+
+            {/* Degree-constraints box — appears at step 4 (after 2 s pause post-snap),
+                stays visible during step 5 while the old arcs fade out. */}
+            {isInt && animStep >= 4 && animStep <= 5 && (
+              <div key={`deg-box-${animKey}`}
+                   style={{
+                     position: "absolute",
+                     top: "50%",
+                     left: "50%",
+                     transform: "translate(-50%, -50%)",
+                     zIndex: 4,
+                     background: "var(--paper-2)",
+                     border: "2px solid var(--ink)",
+                     borderRadius: 6,
+                     padding: "16px 28px",
+                     boxSizing: "border-box",
+                     display: "flex",
+                     flexDirection: "column",
+                     alignItems: "center",
+                     justifyContent: "center",
+                     gap: 14,
+                     fontFamily: "var(--font-mono)",
+                     animation: "fadeUp 420ms both ease-out",
+                   }}>
+                <div style={{ fontSize: 17, color: "var(--ink-3)", letterSpacing: "0.08em" }}>
+                  DEGREE CONSTRAINTS STILL HOLD
+                </div>
+                <div style={{ display: "flex", gap: 56, alignItems: "center" }}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                    <div style={{ fontSize: 14, color: "var(--ink-3)", letterSpacing: "0.06em" }}>OUT-DEGREE</div>
+                    <div style={{ fontSize: 34 }}>
+                      <TeX>{String.raw`\sum_{\substack{j \in V \\ j \neq i}} x_{ij} = 1`}</TeX>
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                    <div style={{ fontSize: 14, color: "var(--ink-3)", letterSpacing: "0.06em" }}>IN-DEGREE</div>
+                    <div style={{ fontSize: 34 }}>
+                      <TeX>{String.raw`\sum_{\substack{i \in V \\ i \neq j}} x_{ij} = 1`}</TeX>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -1670,7 +1702,7 @@ function SlideTSPMinCut() {
                 // for 1 s (w=0); at step 3 they snap to solid w=1 with no animation.
                 // `fading` at step 4 blinks 3× then fades out.
                 const animStyle = state.fading ? {
-                  animation: "blink 400ms ease-in-out 0ms 3, fadeOut 500ms ease-out 1400ms both",
+                  animation: "blink 500ms ease-in-out 0ms 3, fadeOut 500ms ease-out 1500ms both",
                 } : state.blinking ? {
                   animation: "blink 500ms ease-in-out 0ms 2",
                 } : undefined;
@@ -1769,7 +1801,7 @@ function SlideTSPMinCut() {
                 and with animation step. */}
             <div style={{ marginTop: 14, fontFamily: "var(--font-mono)", fontSize: 17, color: "var(--ink-3)", lineHeight: 1.55 }}>
               {isInt ? (
-                animStep >= 4 ? (
+                animStep >= 6 ? (
                   <>
                     FIG. — integer Hamiltonian tour; every x_ij ∈ {"{0, 1}"}, in-deg = out-deg = 1.
                     <br/>

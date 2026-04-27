@@ -19,7 +19,7 @@ istruzioni di modifica. Ad ogni modifica completata, ricordati di:
 1. Rimuovere lock stantii: find .git -name "*.lock" -delete
 2. git add <file modificati>
 3. git commit -m "descrizione modifica"
-4. git push origin main
+(il push lo fa l'utente manualmente)
 ```
 
 Dopo la conferma, inviare la modifica desiderata in un messaggio separato.
@@ -276,8 +276,8 @@ Il repo può accumulare file `.lock` stantii in `.git/` (lasciati da sessioni in
 find .git -name "*.lock" -delete
 git add <files>
 git commit -m "..."
-git push origin main
 ```
+(il push lo fa l'utente manualmente)
 
 Nota: VS Code git integration è abilitata (`"git.enabled": true`). Per evitare conflitti di lock, **tenere VS Code chiuso quando si usa Claude Dispatch**.
 
@@ -323,6 +323,22 @@ const pts = `${x2},${y2} ${bx - uy*aw},${by + ux*aw} ${bx + uy*aw},${by - ux*aw}
 
 Esempio funzionante: `SlideTSPHamiltonian` (slide 23) e `SlideTSPSubtourProblem` (slide 26) in [slides/05-tsp.jsx](project/slides/05-tsp.jsx).
 
-### 11. Modifiche locali non visibili su GitHub Pages finché non si fa push
+### 11. Animazioni multiple sulla stessa proprietà: `both` sovrascrive quelle precedenti
+
+Quando si concatenano due animazioni CSS sulla stessa proprietà (es. `opacity`), quella listata **per ultima** ha la priorità. Se la seconda usa `fill-mode: both`, la sua **backward fill** (stato `from`) viene applicata anche **durante il delay**, sovrascrivendo l'animazione precedente ancora in corso.
+
+Esempio problematico — `blink` non lampeggia perché `fadeOut ... both` mantiene `opacity: 1` durante il delay di 1500ms:
+```js
+animation: "blink 500ms ease-in-out 0ms 3, fadeOut 500ms ease-out 1500ms both"
+```
+
+Fix: usare `forwards` invece di `both` — così la backward fill non interferisce durante il delay, e `blink` controlla `opacity` liberamente:
+```js
+animation: "blink 500ms ease-in-out 0ms 3, fadeOut 500ms ease-out 1500ms forwards"
+```
+
+Regola generale: in una catena `blink + fadeOut`, usare sempre `forwards` su `fadeOut` (mantiene opacity 0 dopo la fine) e **mai** `both` (bloccherebbe il lampeggio).
+
+### 12. Modifiche locali non visibili su GitHub Pages finché non si fa push
 
 Le modifiche ai file locali sono visibili subito su `http://localhost:8000` ma **non** su GitHub Pages finché non si esegue `git push origin main`. Se si testa su GitHub Pages e le modifiche sembrano non applicate, verificare prima se il push è stato fatto.

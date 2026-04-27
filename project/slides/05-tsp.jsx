@@ -1436,7 +1436,7 @@ function SlideTSPMinCut() {
       return            { w: 1, dashed: false, blinking: false, fading: false };
     }
     if (kind === 'disappearing') {
-      if (step === 5) return { w: 0, dashed: false, blinking: false, fading: true  };
+      if (step === 5) return { w: 1, dashed: false, blinking: false, fading: true  };
       if (step >= 6)  return { hidden: true };
       return            { w: 1, dashed: false, blinking: false, fading: false };
     }

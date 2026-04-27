@@ -1700,7 +1700,7 @@ function SlideTSPMinCut() {
                 // for 1 s (w=0); at step 3 they snap to solid w=1 with no animation.
                 // `fading` at step 4 blinks 3× then fades out.
                 const animStyle = state.fading ? {
-                  animation: "blink 500ms ease-in-out 0ms 3, fadeOut 500ms ease-out 1500ms both",
+                  animation: "blink 500ms ease-in-out 0ms 3, fadeOut 500ms ease-out 1500ms forwards",
                 } : state.blinking ? {
                   animation: "blink 500ms ease-in-out 0ms 2",
                 } : undefined;

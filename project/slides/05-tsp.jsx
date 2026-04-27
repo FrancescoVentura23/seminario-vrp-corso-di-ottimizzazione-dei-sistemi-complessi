@@ -1594,9 +1594,10 @@ function SlideTSPMinCut() {
               </div>
             )}
 
-            {/* Degree-constraints box — normal-flow element, sits above the SVG
-                at steps 4-5, which automatically pushes the SVG downward. */}
-            {isInt && animStep >= 4 && animStep <= 5 && (
+            {/* Degree-constraints box — always in normal flow when integer mode so
+                the SVG never shifts position. Invisible (opacity:0) before step 4,
+                fades in at step 4, stays visible at step 5. */}
+            {isInt && (
               <div key={`deg-box-${animKey}`}
                    style={{
                      background: "var(--paper)",
@@ -1609,7 +1610,10 @@ function SlideTSPMinCut() {
                      alignItems: "center",
                      gap: 10,
                      fontFamily: "var(--font-mono)",
-                     animation: "fadeUp 420ms both ease-out",
+                     ...(animStep >= 4 && animStep <= 5
+                       ? { animation: "fadeUp 420ms both ease-out" }
+                       : { opacity: 0, pointerEvents: "none" }
+                     ),
                    }}>
                 <div style={{ fontSize: 16, color: "var(--ink-3)", letterSpacing: "0.08em" }}>
                   DEGREE CONSTRAINTS STILL HOLD

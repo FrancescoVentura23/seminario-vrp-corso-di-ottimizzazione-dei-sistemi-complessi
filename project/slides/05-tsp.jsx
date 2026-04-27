@@ -1321,10 +1321,11 @@ function SlideTSPLazy() {
 function SlideTSPMinCut() {
   const r = 30;
   const [mode, setMode] = React.useState('integer');
-  // animStep: 0 subtours, 1 callout, 2 crosses picked (blink+morph), 3 old arcs fade, 4 idle
+  // animStep: 0 subtours, 1 callout, 2 crosses blink (dashed w=0), 3 snap solid (w=1),
+  //           4 old arcs fade, 5 idle
   // (idle = post-animation / slide not yet active; disappearing arcs are simply not
   // rendered so no stale CSS animations are kicked off on mount)
-  const [animStep, setAnimStep] = React.useState(4);
+  const [animStep, setAnimStep] = React.useState(5);
   const [animKey, setAnimKey] = React.useState(0);
   const [isActive, setIsActive] = React.useState(false);
   const [animStarted, setAnimStarted] = React.useState(false);
@@ -1374,7 +1375,7 @@ function SlideTSPMinCut() {
   // from idle → active briefly shows the final-state scene.
   React.useLayoutEffect(() => {
     if (!isActive || mode !== 'integer') {
-      setAnimStep(4);
+      setAnimStep(5);
       return;
     }
     // Show initial state (dashed crossings w=0) without starting timers
@@ -1387,7 +1388,8 @@ function SlideTSPMinCut() {
     const timers = [];
     timers.push(setTimeout(() => setAnimStep(1), 1800));
     timers.push(setTimeout(() => setAnimStep(2), 3800));
-    timers.push(setTimeout(() => setAnimStep(3), 6200));  // step 2 takes ~2.2s (blink 1s + morph 1.2s)
+    timers.push(setTimeout(() => setAnimStep(3), 4800));  // snap after 1 s blink
+    timers.push(setTimeout(() => setAnimStep(4), 6200));  // fade disappearing arcs
     return () => timers.forEach(clearTimeout);
   }, [isActive, mode, animKey, animStarted]);
 
@@ -1408,8 +1410,9 @@ function SlideTSPMinCut() {
   // v₀→v₁→v₃→v₄→v₅→v₂→v₆→v₀ is reached only at step 3. Before that:
   //   step 0–1 : v₁→v₂ and v₅→v₃ carry the two subtours (w=1);
   //              v₁→v₃ and v₅→v₂ are pending crosses (w=0, dashed).
-  //   step 2   : crosses are chosen (w=1, solid).
-  //   step 3   : the two subtour-closing arcs flip to 0, blink, disappear.
+  //   step 2   : crosses blink while still dashed (w=0) for 1 s.
+  //   step 3   : crosses snap to solid (w=1) — no morphing animation.
+  //   step 4   : the two subtour-closing arcs flip to 0, blink, disappear.
   const INTEGER_ARCS = [
     { from: 'v0', to: 'v1', group: 'S',     kind: 'static' },
     { from: 'v1', to: 'v2', group: 'S',     kind: 'disappearing' },
@@ -1423,23 +1426,23 @@ function SlideTSPMinCut() {
   ];
 
   // Map animation step + arc kind → weight, dash flag, and the active
-  // transition: `morphing` for appearing arcs at step 2 (blink 1s, then
-  // the dashed body grows into a continuous line), `fading` for
-  // disappearing arcs at step 3 (blink 3×, then fade out).
-  // At idle (step 4) the disappearing arcs are simply not rendered via
+  // transition: `blinking` for appearing arcs at step 2 (blink 1s, dashed w=0),
+  // then at step 3 they snap to solid w=1 with no animation; `fading` for
+  // disappearing arcs at step 4 (blink 3×, then fade out).
+  // At idle (step 5) the disappearing arcs are simply not rendered via
   // the `hidden` flag — avoids kicking off stale CSS animations on mount.
   const arcState = (kind, step) => {
     if (kind === 'appearing') {
-      if (step < 2)   return { w: 0, dashed: true,  morphing: false, fading: false };
-      if (step === 2) return { w: 1, dashed: true,  morphing: true,  fading: false };
-      return            { w: 1, dashed: false, morphing: false, fading: false };
+      if (step < 2)   return { w: 0, dashed: true,  blinking: false, fading: false };
+      if (step === 2) return { w: 0, dashed: true,  blinking: true,  fading: false };
+      return            { w: 1, dashed: false, blinking: false, fading: false };
     }
     if (kind === 'disappearing') {
-      if (step === 3) return { w: 0, dashed: false, morphing: false, fading: true  };
-      if (step >= 4)  return { hidden: true };
-      return            { w: 1, dashed: false, morphing: false, fading: false };
+      if (step === 4) return { w: 0, dashed: false, blinking: false, fading: true  };
+      if (step >= 5)  return { hidden: true };
+      return            { w: 1, dashed: false, blinking: false, fading: false };
     }
-    return { w: 1, dashed: false, morphing: false, fading: false };
+    return { w: 1, dashed: false, blinking: false, fading: false };
   };
 
   // Fractional x* with in-deg = out-deg = 1 at every vertex, but v₁ and v₅
@@ -1465,8 +1468,8 @@ function SlideTSPMinCut() {
   const fmt = (w) => mode === 'integer' ? `${w}` : w.toFixed(1);
   const isInt = mode === 'integer';
   const isFrac = mode === 'fractional';
-  // Integer cut total during the animation: 0 before step 2, 2 after.
-  const intCutSum = animStep >= 2 ? 2 : 0;
+  // Integer cut total during the animation: 0 before snap (step 3), 2 after.
+  const intCutSum = animStep >= 3 ? 2 : 0;
   const fracCutSum = 0.6;
 
   const btnStyle = (active) => ({
@@ -1566,7 +1569,7 @@ function SlideTSPMinCut() {
                 flips to "Hamiltonian tour" headline at step 3. Rendered as an
                 absolutely-positioned HTML overlay so it sits crisply above the
                 SVG without competing with its scaling. */}
-            {isInt && animStep >= 1 && animStep <= 3 && (
+            {isInt && animStep >= 1 && animStep <= 4 && (
               <div key={`callout-${animStep >= 3 ? 'tour' : 'sub'}-${animKey}`}
                    style={{
                      position: "absolute",
@@ -1663,16 +1666,16 @@ function SlideTSPMinCut() {
                              : arc.group === 'T' ? CENTER_T
                              : (arc.from === 'v1' ? { x: 595, y: 600 } : { x: 620, y: 100 });
                 const lp = labelPos(va, vb, center, isCross ? 34 : 38);
-                // Per-arc animation: `morphing` at step 2 blinks the freshly
-                // picked crosses for 1 s then grows their dashed body into a
-                // continuous line; `fading` at step 3 blinks 3× and fades out.
+                // Per-arc animation: `blinking` at step 2 blinks the dashed crosses
+                // for 1 s (w=0); at step 3 they snap to solid w=1 with no animation.
+                // `fading` at step 4 blinks 3× then fades out.
                 const animStyle = state.fading ? {
                   animation: "blink 400ms ease-in-out 0ms 3, fadeOut 500ms ease-out 1400ms both",
-                } : state.morphing ? {
-                  animation: "blink 500ms ease-in-out 0ms 2, dashToSolid 1200ms ease-out 1000ms both",
+                } : state.blinking ? {
+                  animation: "blink 500ms ease-in-out 0ms 2",
                 } : undefined;
                 return (
-                  <g key={`int-${i}-${animKey}-${state.fading ? 'f' : state.morphing ? 'm' : 'n'}`}>
+                  <g key={`int-${i}-${animKey}-${state.fading ? 'f' : state.blinking ? 'b' : 'n'}`}>
                     <line {...seg}
                           stroke={stroke}
                           strokeWidth={isCross ? 4.5 : 4}
@@ -1766,7 +1769,7 @@ function SlideTSPMinCut() {
                 and with animation step. */}
             <div style={{ marginTop: 14, fontFamily: "var(--font-mono)", fontSize: 17, color: "var(--ink-3)", lineHeight: 1.55 }}>
               {isInt ? (
-                animStep >= 3 ? (
+                animStep >= 4 ? (
                   <>
                     FIG. — integer Hamiltonian tour; every x_ij ∈ {"{0, 1}"}, in-deg = out-deg = 1.
                     <br/>

@@ -1594,42 +1594,36 @@ function SlideTSPMinCut() {
               </div>
             )}
 
-            {/* Degree-constraints box — appears at step 4 (after 2 s pause post-snap),
-                stays visible during step 5 while the old arcs fade out. */}
+            {/* Degree-constraints box — normal-flow element, sits above the SVG
+                at steps 4-5, which automatically pushes the SVG downward. */}
             {isInt && animStep >= 4 && animStep <= 5 && (
               <div key={`deg-box-${animKey}`}
                    style={{
-                     position: "absolute",
-                     top: "50%",
-                     left: "50%",
-                     transform: "translate(-50%, -50%)",
-                     zIndex: 4,
-                     background: "var(--paper-2)",
+                     background: "var(--paper)",
                      border: "2px solid var(--ink)",
                      borderRadius: 6,
-                     padding: "16px 28px",
-                     boxSizing: "border-box",
+                     padding: "12px 24px",
+                     marginBottom: 12,
                      display: "flex",
                      flexDirection: "column",
                      alignItems: "center",
-                     justifyContent: "center",
-                     gap: 14,
+                     gap: 10,
                      fontFamily: "var(--font-mono)",
                      animation: "fadeUp 420ms both ease-out",
                    }}>
-                <div style={{ fontSize: 17, color: "var(--ink-3)", letterSpacing: "0.08em" }}>
+                <div style={{ fontSize: 16, color: "var(--ink-3)", letterSpacing: "0.08em" }}>
                   DEGREE CONSTRAINTS STILL HOLD
                 </div>
-                <div style={{ display: "flex", gap: 56, alignItems: "center" }}>
-                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-                    <div style={{ fontSize: 14, color: "var(--ink-3)", letterSpacing: "0.06em" }}>OUT-DEGREE</div>
-                    <div style={{ fontSize: 34 }}>
+                <div style={{ display: "flex", gap: 52, alignItems: "center" }}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                    <div style={{ fontSize: 13, color: "var(--ink-3)", letterSpacing: "0.06em" }}>OUT-DEGREE</div>
+                    <div style={{ fontSize: 32 }}>
                       <TeX>{String.raw`\sum_{\substack{j \in V \\ j \neq i}} x_{ij} = 1`}</TeX>
                     </div>
                   </div>
-                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-                    <div style={{ fontSize: 14, color: "var(--ink-3)", letterSpacing: "0.06em" }}>IN-DEGREE</div>
-                    <div style={{ fontSize: 34 }}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                    <div style={{ fontSize: 13, color: "var(--ink-3)", letterSpacing: "0.06em" }}>IN-DEGREE</div>
+                    <div style={{ fontSize: 32 }}>
                       <TeX>{String.raw`\sum_{\substack{i \in V \\ i \neq j}} x_{ij} = 1`}</TeX>
                     </div>
                   </div>

@@ -29,9 +29,9 @@ function TeX({ children, display = false, className = "" }) {
   }, [children, display]);
 
   if (html === null) {
-    return <span className={className}>{String(children)}</span>;
+    return <span className={className} data-tex-source={String(children)}>{String(children)}</span>;
   }
-  return <span className={className} dangerouslySetInnerHTML={{ __html: html }} />;
+  return <span className={className} data-tex-source={String(children)} dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
 // -----------------------------------------------------------

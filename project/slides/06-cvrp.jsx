@@ -72,15 +72,15 @@ function Slide14() {
           {/* Right — ILP formulation, each row tagged with its logical constraint */}
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "32px 40px", fontFamily: "var(--font-mono)", fontSize: 24, lineHeight: 1.6 }}>
             <div style={{ fontFamily: "var(--font-display)", fontSize: 30, marginBottom: 18 }}>
-              <TeX display>{String.raw`\min \sum_{i \in V} \sum_{j \in V} c_{ij}\, x_{ij}`}</TeX>
+              <TeX display>{"\\min \\sum_{i \\in V} \\sum_{j \\in V} c_{ij}\\, x_{ij}"}</TeX>
             </div>
             <div style={{ color: "var(--ink-3)", marginBottom: 6 }}>subject to</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr auto", rowGap: 10, columnGap: 16 }}>
-              <div><TeX>{String.raw`\sum_{i \in V} x_{ij} = 1`}</TeX> &nbsp; ∀ j ∈ V\{0}</div><div style={{ color: "var(--ink-3)" }}>(ii) in-degree</div>
-              <div><TeX>{String.raw`\sum_{j \in V} x_{ij} = 1`}</TeX> &nbsp; ∀ i ∈ V\{0}</div><div style={{ color: "var(--ink-3)" }}>(ii) out-degree</div>
-              <div><TeX>{String.raw`\sum_{j \in V} x_{0j} = K`}</TeX></div><div style={{ color: "var(--ink-3)" }}>(i) K vehicles leave</div>
-              <div><TeX>{String.raw`\sum_{i \in V} x_{i0} = K`}</TeX></div><div style={{ color: "var(--ink-3)" }}>(i) K vehicles return</div>
-              <div style={{ color: "var(--accent)" }}><TeX>{String.raw`\sum_{i \in V \setminus S}\sum_{j \in S} x_{ij} \;\geq\; \mathbf{r(S)}`}</TeX> &nbsp; ∀ S ⊆ V\{0}</div><div style={{ color: "var(--accent)" }}>(iii) capacity-cut</div>
+              <div><TeX>{"\\sum_{i \\in V} x_{ij} = 1"}</TeX> &nbsp; ∀ j ∈ V\{0}</div><div style={{ color: "var(--ink-3)" }}>(ii) in-degree</div>
+              <div><TeX>{"\\sum_{j \\in V} x_{ij} = 1"}</TeX> &nbsp; ∀ i ∈ V\{0}</div><div style={{ color: "var(--ink-3)" }}>(ii) out-degree</div>
+              <div><TeX>{"\\sum_{j \\in V} x_{0j} = K"}</TeX></div><div style={{ color: "var(--ink-3)" }}>(i) K vehicles leave</div>
+              <div><TeX>{"\\sum_{i \\in V} x_{i0} = K"}</TeX></div><div style={{ color: "var(--ink-3)" }}>(i) K vehicles return</div>
+              <div style={{ color: "var(--accent)" }}><TeX>{"\\sum_{i \\in V \\setminus S}\\sum_{j \\in S} x_{ij} \\;\\geq\\; \\mathbf{r(S)} \\quad \\forall\\, S \\subseteq V \\setminus \\{0\\}"}</TeX></div><div style={{ color: "var(--accent)" }}>(iii) capacity-cut</div>
               <div>xᵢⱼ ∈ {"{"}0, 1{"}"}</div><div style={{ color: "var(--ink-3)" }}>(integrality)</div>
             </div>
           </div>

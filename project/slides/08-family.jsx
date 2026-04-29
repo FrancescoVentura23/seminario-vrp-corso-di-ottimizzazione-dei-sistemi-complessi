@@ -9,7 +9,7 @@ function Slide19() {
     <section className="slide section-slide" data-label="Part V — VRP family">
       <div style={{ position: "absolute", top: 80, left: 120, right: 120, display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 31, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--paper-deep)" }}>
         <div>Part VII of IX</div>
-        <div>Slides 31 — 34</div>
+        <div>Slides 42 — 45</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Seven</div>

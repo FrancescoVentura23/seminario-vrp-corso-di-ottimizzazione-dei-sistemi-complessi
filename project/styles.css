@@ -41,7 +41,7 @@
   --fs-micro:    20px;
 
   /* Spacing */
-  --pad-x:       120px;
+  --pad-x:       80px;
   --pad-y:       5px;
   --gap-1:       16px;
   --gap-2:       32px;
@@ -312,6 +312,13 @@ section.section-slide .tag    { color: var(--paper-deep); }
 [data-deck-active] .anim-draw-2 { animation-delay: 450ms; }
 [data-deck-active] .anim-draw-3 { animation-delay: 750ms; }
 [data-deck-active] .anim-draw-4 { animation-delay: 1000ms; }
+
+/* Slow Hamiltonian draw — used in slide 34 (Slide10) for a more readable
+   depot → tour → depot animation. Overrides duration only. */
+[data-deck-active] .hamilton-slow .anim-draw {
+  animation-duration: 4500ms;
+  animation-timing-function: linear;
+}
 
 [data-deck-active] .anim-pulse { animation: pulse 2.2s infinite ease-in-out; }
 [data-deck-active] .anim-blink   { animation: blink 1.4s infinite ease-in-out; }

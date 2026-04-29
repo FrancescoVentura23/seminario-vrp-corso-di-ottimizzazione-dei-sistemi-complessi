@@ -1,6 +1,6 @@
 # Seminario VRP — Guida rapida
 
-Deck HTML/CSS/JS esportato da Claude Design. **53 slide** gestite dal web component `<deck-stage>` in [project/deck-stage.js](project/deck-stage.js), montate da [project/vrp-seminar.html](project/vrp-seminar.html).
+Deck HTML/CSS/JS esportato da Claude Design. **52 slide** gestite dal web component `<deck-stage>` in [project/deck-stage.js](project/deck-stage.js), montate da [project/vrp-seminar.html](project/vrp-seminar.html).
 
 ## Istruzioni per Claude Dispatch
 
@@ -142,12 +142,12 @@ Ogni section header è una slide con `className="section-slide"`. Per modificare
 | 29 | Lazy subtour cuts in branch-and-cut | `SlideTSPLazy` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
 | 30 | Separation = min-cut (animated) | `SlideTSPMinCut` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
 | 31 | Separation oracle — precise algorithm | `SlideTSPMinCutAlgo` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 32 | TSP → VRP | `Slide10` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 32 | Separation oracle — implementation | `SlideTSPMinCutImpl` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
 | 33 | **Part V — CVRP** *(section header)* | `Slide11` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
-| 34 | CVRP informal definition | `Slide12` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
-| 35 | CVRP three constraints | `Slide13` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
-| 36 | Two-index ILP formulation | `Slide14` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
-| 37 | Capacity-cut inequality | `Slide15` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 34 | TSP → CVRP — capacity intro | `Slide10` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 35 | TSP → CVRP — multiple routes | `Slide10B` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 36 | Three constraints + two-index ILP | `Slide14` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 37 | r(S) and capacity-cut inequality | `Slide15` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
 | 38 | **Part VI — Complexity** *(section header)* | `Slide16` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
 | 39 | NP-hardness & explosion | `Slide17` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
 | 40 | Why heuristics | `Slide18` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |

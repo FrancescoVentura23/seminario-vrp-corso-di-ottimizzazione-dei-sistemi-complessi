@@ -82,7 +82,7 @@ const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
     "SlideWhoUsesIt",    // 02-intro.jsx
     "SlideNetwork",      // 03-foundations.jsx
     "Slide08",           // 04-vrp-elements.jsx
-    "Slide10",           // 05-tsp.jsx
+    "Slide10B",          // 05-tsp.jsx
     "Slide15",           // 06-cvrp.jsx
     "Slide18",           // 07-complexity.jsx
     "Slide23",           // 08-family.jsx
@@ -108,8 +108,8 @@ const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
       SlideDirectedArc, SlideDigraph, SlideStarNotation, SlideNetwork,
       SlideVRPElementsSection, Slide06, Slide07, Slide08,                                              // Part III — VRP elements
       SlideTSPSection, Slide09, SlideTSPHamiltonian, SlideTSPFormulation,                              // Part IV — TSP
-      SlideTSPDegree, SlideTSPSubtourProblem, SlideTSPDFJ, SlideTSPExponential, SlideTSPLazy, SlideTSPMinCut, SlideTSPMinCutAlgo, Slide10,
-      Slide11, Slide12, Slide13, Slide14, Slide15,                                                     // Part V — CVRP
+      SlideTSPDegree, SlideTSPSubtourProblem, SlideTSPDFJ, SlideTSPExponential, SlideTSPLazy, SlideTSPMinCut, SlideTSPMinCutAlgo, SlideTSPMinCutImpl,
+      Slide11, Slide10, Slide10B, Slide14, Slide15,                                                    // Part V — CVRP (Slide10 + Slide10B = TSP → CVRP bridge, two slides)
       Slide16, Slide17, Slide18,                                                                       // Part VI — complexity
       Slide19, Slide20, Slide21, Slide22, Slide23,                                                     // Part VII — family
       Slide24, Slide25, Slide26,                                                                       // Part VIII — live demo
@@ -144,7 +144,7 @@ const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
 window.addEventListener('message', (ev) => {
   const d = ev.data || {};
   if (typeof d.slideIndexChanged === 'number') {
-    const total = document.querySelectorAll('deck-stage > section.slide').length || 53;
+    const total = document.querySelectorAll('deck-stage > section.slide').length || 52;
     const n = String(d.slideIndexChanged + 1).padStart(2, '0');
     const t = String(total).padStart(2, '0');
     document.querySelectorAll('[data-chrome-pg]').forEach(el => {

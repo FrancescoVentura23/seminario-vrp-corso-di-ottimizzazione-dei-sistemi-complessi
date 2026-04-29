@@ -10,7 +10,7 @@ function SlideTSPSection() {
     <section className="slide section-slide" data-label="Part IV — TSP">
       <div style={{ position: "absolute", top: 80, left: 120, right: 120, display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 31, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--paper-deep)" }}>
         <div>Part IV of IX</div>
-        <div>Slides 22 — 28</div>
+        <div>Slides 22 — 32</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Four</div>
@@ -384,9 +384,8 @@ function SlideTSPFormulation() {
               </div>
               <div style={{ color: "var(--ink-3)" }}>(in-degree)</div>
 
-              <div style={{ color: "var(--accent)" }}>
-                <TeX>{String.raw`\sum_{i \in S} \sum_{\substack{j \in S \\ j \neq i}} x_{ij} \;\leq\; |S| - 1`}</TeX>
-                <div style={{ color: "var(--accent)", fontSize: 19, marginTop: 4 }}>∀ S ⊊ V, &nbsp; 2 ≤ |S| ≤ n − 1</div>
+              <div style={{ color: "var(--accent)", whiteSpace: "nowrap" }}>
+                <TeX>{String.raw`\sum_{i \in S} \sum_{\substack{j \in S \\ j \neq i}} x_{ij} \;\leq\; |S| - 1`}</TeX> &nbsp; ∀ S ⊊ V, &nbsp; 2 ≤ |S| ≤ n − 1
               </div>
               <div style={{ color: "var(--accent)" }}>(subtour elim.)</div>
 
@@ -621,7 +620,7 @@ function SlideTSPSubtourProblem() {
       <SlideFrame>
         <div className="tag">TSP · The subtour issue</div>
         <h2 className="title" style={{ marginTop: 28, minHeight: 150 }}>
-          Degree constraints alone <em style={{ color: "var(--accent-2)" }}>are not enough</em>.
+          Degree constraints alone <em style={{ color: "#c1272d" }}>are not enough</em>.
         </h2>
 
         <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 60, flex: 1, alignItems: "center" }}>
@@ -700,8 +699,8 @@ function SlideTSPSubtourProblem() {
             <div className="lede" style={{ fontSize: 32, lineHeight: 1.25 }}>
               A solution satisfying all degree equalities can still decompose into <em>two or more disjoint cycles</em>.
             </div>
-            <div style={{ background: "var(--paper-2)", border: "1px solid var(--accent-2)", borderLeft: "4px solid var(--accent-2)", padding: "18px 22px" }}>
-              <div className="kicker" style={{ fontSize: 20, marginBottom: 8, color: "var(--accent-2)" }}>Why it happens</div>
+            <div style={{ background: "var(--paper-2)", border: "1px solid #c1272d", borderLeft: "4px solid #c1272d", padding: "18px 22px" }}>
+              <div className="kicker" style={{ fontSize: 20, marginBottom: 8, color: "#c1272d" }}>Why it happens</div>
               <div style={{ fontSize: 23, color: "var(--ink-2)", lineHeight: 1.4 }}>
                 Degree constraints are <em>local</em>: they see each vertex in isolation. They cannot express the <em>global</em> property that all vertices must lie on a single cycle.
               </div>
@@ -862,12 +861,15 @@ function SlideTSPDFJ() {
                                animation: `fadeOut 450ms ease-out ${fadeDelay}ms both, blink 400ms ease-in-out ${blinkDelay}ms 3`,
                              } : {}}/>;
               })}
-              {/* Cycle 2 — arc v₅→v₃ (index 2) same behaviour as the S₁ arc above */}
+              {/* Cycle 2 — arc v₅→v₃ (index 2):
+                  - on `cut` blinks at 3700ms (before crossings appear);
+                  - on `packing` blinks AFTER the two black crossing arcs are drawn
+                    (last arrow fadeUp ends ~5430ms → blink at 5600ms). */}
               {cycle2.map((e, i) => {
                 const s = segment(group2[e[0]], group2[e[1]]);
                 const animateHide = (isPacking || isCut) && i === 2;
-                const blinkDelay = isPacking ? 1500 : 3700;
-                const fadeDelay  = isPacking ? 2800 : 5000;
+                const blinkDelay = isPacking ? 5600 : 3700;
+                const fadeDelay  = isPacking ? 6900 : 5000;
                 return <line key={`c2-${i}-${animKey}`} {...s}
                              stroke="var(--accent-2)" strokeWidth={4} strokeLinecap="butt"
                              markerEnd="url(#arrow-accent2-dfj)"
@@ -1331,7 +1333,8 @@ function SlideTSPMinCut() {
   const [animStarted, setAnimStarted] = React.useState(false);
   // fracStep: 0 static, 1 callout, 2 crossing↑, 3 degree box, 4 crossing↓, 5 blink+fade, 6 idle
   const [fracStep, setFracStep] = React.useState(0);
-  const [fracCrossW, setFracCrossW] = React.useState(0.3);
+  const [fracCrossW, setFracCrossW] = React.useState(0.3);   // crossing arcs: 0.3→1.0
+  const [fracIntraW, setFracIntraW] = React.useState(0.7);   // intra arcs (v1→v2, v5→v3): 0.7→0.0
   const [fracKey, setFracKey] = React.useState(0);
   const [fracStarted, setFracStarted] = React.useState(false);
   const btnsRef = React.useRef(null);
@@ -1401,11 +1404,11 @@ function SlideTSPMinCut() {
   // the weight-animation effect below (setInterval / setTimeout).
   React.useLayoutEffect(() => {
     if (!isActive || mode !== 'fractional') {
-      setFracStep(0); setFracCrossW(0.3);
+      setFracStep(0); setFracCrossW(0.3); setFracIntraW(0.7);
       return;
     }
-    if (!fracStarted) { setFracStep(0); setFracCrossW(0.3); return; }
-    setFracStep(0); setFracCrossW(0.3);
+    if (!fracStarted) { setFracStep(0); setFracCrossW(0.3); setFracIntraW(0.7); return; }
+    setFracStep(0); setFracCrossW(0.3); setFracIntraW(0.7);
     const timers = [];
     timers.push(setTimeout(() => setFracStep(1), 1800));  // callout
     timers.push(setTimeout(() => setFracStep(2), 3800));  // start weight increase
@@ -1431,13 +1434,13 @@ function SlideTSPMinCut() {
       return () => clearTimeout(t);
     }
     if (fracStep === 4) {
-      // 1.0 → 0.0 in 10 steps × 200 ms = 2 s
-      let w = 1.0;
+      // 0.7 → 0.0 in 7 steps × 285 ms ≈ 2 s (intra arcs v1→v2 and v5→v3)
+      let w = 0.7;
       const ticker = setInterval(() => {
         w = Math.round((w - 0.1) * 10) / 10;
-        setFracCrossW(Math.max(w, 0.0));
+        setFracIntraW(Math.max(w, 0.0));
         if (w <= 0.0) { clearInterval(ticker); setFracStep(5); }
-      }, 200);
+      }, 285);
       return () => clearInterval(ticker);
     }
   }, [mode, fracStep]);
@@ -1569,43 +1572,45 @@ function SlideTSPMinCut() {
           Why a <em style={{ color: "var(--accent)" }}>min-cut</em> finds the violated DFJ cut.
         </h2>
 
-        <div style={{ marginTop: 22, display: "grid", gridTemplateColumns: "1fr 1.05fr", gap: 40, flex: 1, alignItems: "stretch", minHeight: 0 }}>
+        <div style={{ marginTop: 22, display: "grid", gridTemplateColumns: "1.35fr 0.9fr", gap: 28, flex: 1, alignItems: "stretch", minHeight: 0 }}>
 
           {/* -------- Left column: the equivalence -------- */}
-          <div ref={btnsRef} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <div className="lede" style={{ fontSize: 24, lineHeight: 1.35 }}>
+          <div ref={btnsRef} style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+            <div className="lede" style={{ fontSize: 24, lineHeight: 1.3 }}>
               Read <TeX>{String.raw`x^*(\delta(S))`}</TeX> as the <em>total weight</em> on the boundary — the sum <TeX>{String.raw`\sum_{(i,j)\in\delta(S)} x^*_{ij}`}</TeX>, <em>not</em> a count of arcs.
             </div>
 
             {/* Click to show the integer-tour scene on the right. */}
             <div data-mode="integer" style={btnStyle(isInt)}>
-              <div className="kicker" style={{ fontSize: 17, marginBottom: 4, color: isInt ? "var(--accent)" : "var(--ink-3)" }}>Integer tour</div>
-              Every <TeX>{String.raw`x_{ij} \in \{0,1\}`}</TeX>: the tour enters S once and exits once ⇒ exactly one arc in <TeX>{String.raw`\delta^+(S)`}</TeX> and one in <TeX>{String.raw`\delta^-(S)`}</TeX>, giving <TeX>{String.raw`1+1 = 2`}</TeX>. "2 units" = this total weight, which in the integer case happens to be 2 arcs of weight 1.
+              <div className="kicker" style={{ fontSize: 18, marginBottom: 3, color: isInt ? "var(--accent)" : "var(--ink-3)" }}>Integer tour</div>
+              <div style={{ fontSize: 21, lineHeight: 1.4 }}>
+                A <em>Hamiltonian circuit</em> visits every node exactly once, so the path crosses the boundary of S exactly once in each direction: one arc exits (<TeX>{String.raw`\delta^+(S)`}</TeX>) and one enters (<TeX>{String.raw`\delta^-(S)`}</TeX>). Each <TeX>{String.raw`x_{ij}\in\{0,1\}`}</TeX> is the <em>weight</em> of arc <TeX>{String.raw`(i,j)`}</TeX>: 1 if the tour uses it, 0 otherwise. Total boundary weight <TeX>{String.raw`x(\delta(S))=1+1=2`}</TeX>.
+              </div>
             </div>
 
             {/* Click to show the fractional x* scene (DFJ violation). */}
             <div data-mode="fractional" style={btnStyle(isFrac)}>
-              <div className="kicker" style={{ fontSize: 17, marginBottom: 4, color: isFrac ? "var(--accent)" : "var(--ink-3)" }}>Fractional x*</div>
-              Those 2 units can be <em>spread</em> across many boundary arcs with non-integer weights — and the total can <em>fall below 2</em>. A DFJ violation is exactly an S where <TeX>{String.raw`x^*(\delta(S)) < 2`}</TeX>.
+              <div className="kicker" style={{ fontSize: 18, marginBottom: 3, color: isFrac ? "var(--accent)" : "var(--ink-3)" }}>Fractional x*</div>
+              <div style={{ fontSize: 21, lineHeight: 1.4 }}>
+                In the LP relaxation, <TeX>{String.raw`x^*_{ij}\in[0,1]`}</TeX>: each vertex still satisfies deg = 1, but can <em>split</em> its flow. Here v₁ routes 0.7 inside S (v₁→v₂) and only 0.3 across the boundary (v₁→v₃). When <TeX>{String.raw`x^*(\delta(S)) < 2`}</TeX> the DFJ constraint is violated.
+              </div>
             </div>
 
-            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "12px 20px" }}>
-              <div className="kicker" style={{ fontSize: 17, marginBottom: 6 }}>Identity (from in + out = 2)</div>
-              <div style={{ fontSize: 19, lineHeight: 1.45, color: "var(--ink-2)" }}>
-                Summing <TeX>{String.raw`\sum_{j \neq i}(x^*_{ij}+x^*_{ji})=2`}</TeX> over i ∈ S counts each intra-S arc twice and each boundary arc once:
-                <div style={{ margin: "6px 0 0" }}>
-                  <TeX display>{String.raw`2\,x^*(A(S)) \;+\; x^*(\delta(S)) \;=\; 2|S|`}</TeX>
-                </div>
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "10px 18px" }}>
+              <div className="kicker" style={{ fontSize: 18, marginBottom: 6 }}>Key identity</div>
+              <div style={{ fontSize: 21, lineHeight: 1.5, color: "var(--ink-2)", display: "flex", flexDirection: "column", gap: 6 }}>
+                <div>Each vertex i ∈ S satisfies <TeX>{String.raw`\sum_{j \neq i}(x^*_{ij}+x^*_{ji})=2`}</TeX>. Summing over all |S| vertices: arcs <em>internal to S</em> — i.e. <TeX>{String.raw`A(S)=\{(i,j): i,j\in S\}`}</TeX> — are counted <em>twice</em> (both endpoints in S), arcs <em>crossing the boundary</em> <TeX>{String.raw`\delta(S)`}</TeX> are counted <em>once</em>.</div>
+                <TeX display>{String.raw`2\,x^*(A(S)) \;+\; x^*(\delta(S)) \;=\; 2|S|`}</TeX>
               </div>
             </div>
 
             {/* Highlighted equivalence — the punchline */}
-            <div style={{ background: "var(--accent)", color: "var(--paper)", padding: "14px 22px", textAlign: "center" }}>
-              <div style={{ fontSize: 15, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 6, color: "var(--paper-deep)", opacity: 0.9 }}>DFJ ⟺ min-cut</div>
-              <div style={{ fontSize: 22 }}>
+            <div style={{ background: "var(--accent)", color: "var(--paper)", padding: "11px 20px", textAlign: "center" }}>
+              <div style={{ fontSize: 21, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 5, color: "var(--paper-deep)", opacity: 0.9 }}>DFJ ⟺ min-cut</div>
+              <div style={{ fontSize: 21 }}>
                 <TeX display>{String.raw`x^*(A(S)) > |S|-1 \;\Longleftrightarrow\; x^*(\delta(S)) < 2`}</TeX>
               </div>
-              <div style={{ marginTop: 6, fontSize: 15, color: "var(--paper-deep)", fontStyle: "italic", opacity: 0.95 }}>
+              <div style={{ marginTop: 4, fontSize: 21, color: "var(--paper-deep)", fontStyle: "italic", opacity: 0.95 }}>
                 Finding a violated S ⇒ minimize x*(δ(S)) over all S — a global min-cut.
               </div>
             </div>
@@ -1843,61 +1848,72 @@ function SlideTSPMinCut() {
                 );
               }) : (
                 <>
-                  {/* Fractional — intra-S arcs */}
+                  {/* Fractional — intra-S arcs; v1→v2 animates down from 0.7→0.0 then blink+fade */}
                   {FRACTIONAL.intraS.map((e, i) => {
+                    const isAnimArc = e.from === 'v1' && e.to === 'v2';
+                    if (isAnimArc && fracStep >= 6) return null;
+                    const isFading = isAnimArc && fracStep === 5;
+                    const animStyle = isFading ? {
+                      animation: "blink 500ms ease-in-out 0ms 3, fadeOut 500ms ease-out 1500ms forwards",
+                    } : undefined;
+                    const displayW = isAnimArc ? fracIntraW.toFixed(1) : fmt(e.w);
                     const va = byId[e.from], vb = byId[e.to];
                     const seg = segment(va, vb);
                     const lp = labelPos(va, vb, CENTER_S, 38);
                     return (
-                      <g key={`frac-is-${i}`}>
+                      <g key={`frac-is-${i}-${fracKey}-${isFading ? 'f' : 'n'}`}>
                         <line {...seg} stroke="var(--accent)" strokeWidth={4}
-                              strokeLinecap="butt" markerEnd="url(#arrow-accent)"/>
+                              strokeLinecap="butt" markerEnd="url(#arrow-accent)"
+                              style={animStyle}/>
                         <text x={lp.x} y={lp.y + 7} textAnchor="middle"
                               fontFamily="var(--font-mono)" fontSize={22}
-                              fontWeight={500} fill="var(--ink-2)">
-                          {fmt(e.w)}
+                              fontWeight={500} fill="var(--ink-2)"
+                              style={animStyle}>
+                          {displayW}
                         </text>
                       </g>
                     );
                   })}
-                  {/* Fractional — intra-(V\S) arcs */}
+                  {/* Fractional — intra-(V\S) arcs; v5→v3 animates down from 0.7→0.0 then blink+fade */}
                   {FRACTIONAL.intraT.map((e, i) => {
+                    const isAnimArc = e.from === 'v5' && e.to === 'v3';
+                    if (isAnimArc && fracStep >= 6) return null;
+                    const isFading = isAnimArc && fracStep === 5;
+                    const animStyle = isFading ? {
+                      animation: "blink 500ms ease-in-out 0ms 3, fadeOut 500ms ease-out 1500ms forwards",
+                    } : undefined;
+                    const displayW = isAnimArc ? fracIntraW.toFixed(1) : fmt(e.w);
                     const va = byId[e.from], vb = byId[e.to];
                     const seg = segment(va, vb);
                     const lp = labelPos(va, vb, CENTER_T, 38);
                     return (
-                      <g key={`frac-it-${i}`}>
+                      <g key={`frac-it-${i}-${fracKey}-${isFading ? 'f' : 'n'}`}>
                         <line {...seg} stroke="var(--accent-2)" strokeWidth={4}
-                              strokeLinecap="butt" markerEnd="url(#arrow-accent2)"/>
+                              strokeLinecap="butt" markerEnd="url(#arrow-accent2)"
+                              style={animStyle}/>
                         <text x={lp.x} y={lp.y + 7} textAnchor="middle"
                               fontFamily="var(--font-mono)" fontSize={22}
-                              fontWeight={500} fill="var(--ink-2)">
-                          {fmt(e.w)}
+                              fontWeight={500} fill="var(--ink-2)"
+                              style={animStyle}>
+                          {displayW}
                         </text>
                       </g>
                     );
                   })}
-                  {/* Fractional — crossing arcs: weight follows fracCrossW (0.3→1.0→0.0);
-                      blink+fade at fracStep 5, hidden at fracStep 6. */}
+                  {/* Fractional — crossing arcs: weight follows fracCrossW (0.3→1.0);
+                      always visible, no blink/fade. */}
                   {FRACTIONAL.cross.map((e, i) => {
-                    if (fracStep >= 6) return null;
                     const va = byId[e.from], vb = byId[e.to];
                     const seg = segment(va, vb);
                     const awayFrom = e.from === 'v1' ? { x: 595, y: 600 } : { x: 620, y: 100 };
                     const lp = labelPos(va, vb, awayFrom, 34);
-                    const isFading = fracStep === 5;
-                    const crossStyle = isFading ? {
-                      animation: "blink 500ms ease-in-out 0ms 3, fadeOut 500ms ease-out 1500ms forwards",
-                    } : undefined;
                     return (
-                      <g key={`frac-ce-${i}-${fracKey}-${isFading ? 'f' : 'n'}`}>
+                      <g key={`frac-ce-${i}`}>
                         <line {...seg} stroke="var(--ink)" strokeWidth={4.5}
-                              strokeLinecap="butt" markerEnd="url(#arrow-ink)"
-                              style={crossStyle}/>
+                              strokeLinecap="butt" markerEnd="url(#arrow-ink)"/>
                         <text x={lp.x} y={lp.y + 8} textAnchor="middle"
                               fontFamily="var(--font-mono)" fontSize={28}
-                              fontWeight={700} fill="var(--ink)"
-                              style={crossStyle}>
+                              fontWeight={700} fill="var(--ink)">
                           {fracCrossW.toFixed(1)}
                         </text>
                       </g>
@@ -1956,83 +1972,82 @@ function SlideTSPMinCut() {
 
 function SlideTSPMinCutAlgo() {
   return (
-    <section className="slide" data-label="Separation oracle: precise algorithm">
+    <section className="slide" data-label="Separation oracle: step 1 — the procedure">
       <SlideFrame>
-        <div className="tag">TSP · Separation oracle · formulation</div>
+        <div className="tag">TSP · Separation oracle · <strong>step 1 of 2</strong> — the procedure</div>
         <h2 className="title" style={{ marginTop: 24 }}>
           The separation oracle, <em style={{ color: "var(--accent)" }}>step by step</em>.
         </h2>
 
-        <div style={{ marginTop: 26, display: "grid", gridTemplateColumns: "1.15fr 1fr", gap: 40, flex: 1, alignItems: "stretch", minHeight: 0 }}>
+        <div style={{ marginTop: 26, display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 40, flex: 1, alignItems: "start", minHeight: 0 }}>
 
           {/* -------- Left: pseudocode -------- */}
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "18px 22px", display: "flex", flexDirection: "column" }}>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 17, color: "var(--ink-3)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>
-              procedure
-            </div>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 26, fontWeight: 600, color: "var(--accent)", marginBottom: 14 }}>
-              SEPARATE-DFJ(x*)
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "24px 28px", display: "flex", flexDirection: "column", gap: 18 }}>
+            <div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 17, color: "var(--ink-3)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>
+                procedure
+              </div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 30, fontWeight: 600, color: "var(--accent)" }}>
+                SEPARATE-DFJ(x*)
+              </div>
             </div>
 
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 18, color: "var(--ink-3)", lineHeight: 1.5, marginBottom: 14, borderBottom: "1px solid var(--line)", paddingBottom: 12 }}>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 20, color: "var(--ink-3)", lineHeight: 1.6, borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)", padding: "12px 0" }}>
               <div>input :  fractional x* with deg<sub>x*</sub>(i) = 2 for every i ∈ V</div>
-              <div>output:  a violated DFJ cut, or ⊥ (x* is feasible)</div>
+              <div>output:  a violated DFJ cut (S, V\S), or ⊥ if x* is feasible</div>
             </div>
 
-            <div style={{ fontSize: 20, lineHeight: 1.55 }}>
-              <div style={{ marginBottom: 10 }}>
-                <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)", fontWeight: 600, marginRight: 10 }}>1.</span>
-                Build the <em>support graph</em> <TeX>{String.raw`G_{x^*} = (V, E)`}</TeX> with edge capacity
-                <div style={{ marginTop: 4 }}>
+            <div style={{ fontSize: 22, lineHeight: 1.65 }}>
+              <div style={{ marginBottom: 16 }}>
+                <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)", fontWeight: 600, marginRight: 12 }}>1.</span>
+                Build the <em>support graph</em> <TeX>{String.raw`G_{x^*} = (V, E)`}</TeX> with arc capacity
+                <div style={{ marginTop: 6 }}>
                   <TeX display>{String.raw`c_{ij} \;=\; x^*_{ij} \qquad \forall\,(i,j) \in E`}</TeX>
                 </div>
               </div>
 
-              <div style={{ marginBottom: 10 }}>
-                <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)", fontWeight: 600, marginRight: 10 }}>2.</span>
-                Compute the <em>global minimum cut</em> of <TeX>{String.raw`G_{x^*}`}</TeX>:
-                <div style={{ marginTop: 4 }}>
-                  <TeX display>{String.raw`(S^*,\, V \setminus S^*) \;=\; \arg\min_{\emptyset \,\subsetneq\, S \,\subsetneq\, V} \; x^*(\delta(S)) \qquad \mu \;=\; x^*(\delta(S^*))`}</TeX>
+              <div style={{ marginBottom: 16 }}>
+                <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)", fontWeight: 600, marginRight: 12 }}>2.</span>
+                Compute the <em>global minimum cut</em> of <TeX>{String.raw`G_{x^*}`}</TeX> — searching over <em>all</em> subsets S ⊂ V for the one with the smallest boundary weight, i.e. checking whether any DFJ constraint is violated:
+                <div style={{ marginTop: 6 }}>
+                  <TeX display>{String.raw`(S^*,\, V \setminus S^*) \;=\; \arg\min_{\emptyset \,\subsetneq\, S \,\subsetneq\, V} \; x^*(\delta(S))`}</TeX>
+                  <TeX display>{String.raw`\mu \;=\; x^*(\delta(S^*))`}</TeX>
                 </div>
               </div>
 
               <div>
-                <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)", fontWeight: 600, marginRight: 10 }}>3.</span>
-                <span style={{ fontFamily: "var(--font-mono)" }}>if</span> μ &lt; 2 &nbsp;<span style={{ fontFamily: "var(--font-mono)" }}>return</span>&nbsp;<TeX>{String.raw`x(S^*) \leq |S^*| - 1`}</TeX>
-                <div style={{ marginLeft: 34, marginTop: 2 }}>
-                  <span style={{ fontFamily: "var(--font-mono)" }}>else return</span>&nbsp;⊥
+                <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)", fontWeight: 600, marginRight: 12 }}>3.</span>
+                <span style={{ fontFamily: "var(--font-mono)", fontWeight: 600 }}>if</span> <TeX>{String.raw`\mu < 2`}</TeX>
+                <div style={{ marginLeft: 38, marginTop: 6, lineHeight: 1.5 }}>
+                  <span style={{ fontFamily: "var(--font-mono)", fontWeight: 600 }}>return</span> the violated DFJ constraint for S*:
+                  <div style={{ marginTop: 4 }}>
+                    <TeX display>{String.raw`x(A(S^*)) \;\leq\; |S^*| - 1`}</TeX>
+                  </div>
+                  <div style={{ fontSize: 18, color: "var(--ink-3)", marginTop: 2 }}>
+                    violated because <TeX>{String.raw`x^*(A(S^*)) = |S^*| - \mu/2 > |S^*| - 1`}</TeX>
+                  </div>
+                </div>
+                <div style={{ marginLeft: 38, marginTop: 8 }}>
+                  <span style={{ fontFamily: "var(--font-mono)", fontWeight: 600 }}>else return</span>&nbsp;&nbsp;<span style={{ fontFamily: "var(--font-mono)", fontSize: 24 }}>⊥</span>&nbsp;&nbsp;<span style={{ color: "var(--ink-3)", fontSize: 18 }}>(x* is feasible)</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* -------- Right: how step 2 is implemented + bottom-line -------- */}
+          {/* -------- Right: why the constraint is violated -------- */}
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "16px 20px" }}>
-              <div className="kicker" style={{ fontSize: 19, marginBottom: 10 }}>Step 2 — how the min-cut is computed</div>
-              <div style={{ fontSize: 20, lineHeight: 1.4, color: "var(--ink-2)" }}>
-                Global min-cut on an n-vertex capacitated graph is a classical polynomial problem. Three standard choices:
-              </div>
-              <div style={{ marginTop: 12, fontSize: 19, lineHeight: 1.5 }}>
-                <div><em>Ford–Fulkerson / max-flow</em> between a fixed source s and every other vertex t ≠ s — take the minimum.
-                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 17, color: "var(--ink-3)", marginLeft: 16, marginTop: 2 }}>
-                    n − 1 max-flow calls
-                  </div>
-                </div>
-                <div style={{ marginTop: 10 }}><em>Gomory–Hu tree</em> — same n − 1 calls, but stores <em>all</em> pairwise min-cuts in a tree.
-                </div>
-                <div style={{ marginTop: 10 }}><em>Stoer–Wagner</em> — purely combinatorial, no max-flow.
-                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 17, color: "var(--ink-3)", marginLeft: 16, marginTop: 2 }}>
-                    O(nm + n² log n)
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div style={{ background: "var(--ink)", color: "var(--paper)", padding: "16px 20px" }}>
-              <div className="kicker" style={{ fontSize: 19, color: "var(--paper-deep)", marginBottom: 8 }}>Bottom line</div>
-              <div style={{ fontSize: 20, lineHeight: 1.4 }}>
-                One polynomial call to <span style={{ fontFamily: "var(--font-mono)" }}>SEPARATE-DFJ</span> decides in full whether <em>any</em> of the 2ⁿ − n − 2 DFJ cuts is violated — and, if so, returns one. The family is never enumerated.
+              <div className="kicker" style={{ fontSize: 16, marginBottom: 8 }}>Why that constraint is violated</div>
+              <div style={{ fontSize: 17, lineHeight: 1.5, color: "var(--ink-2)", display: "flex", flexDirection: "column", gap: 4 }}>
+                <div>From the degree identity on the previous slide, applied to the optimal cut S*:</div>
+                <TeX display>{String.raw`2\,x^*(A(S^*)) + \mu \;=\; 2|S^*|`}</TeX>
+                <div>where <TeX>{String.raw`\mu = x^*(\delta(S^*))`}</TeX>. Divide every term by 2:</div>
+                <TeX display>{String.raw`\tfrac{2\,x^*(A(S^*))}{2} + \tfrac{\mu}{2} \;=\; \tfrac{2|S^*|}{2} \;\;\Longrightarrow\;\; x^*(A(S^*)) + \tfrac{\mu}{2} \;=\; |S^*|`}</TeX>
+                <div>Isolating <TeX>{String.raw`x^*(A(S^*))`}</TeX> by subtracting <TeX>{String.raw`\tfrac{\mu}{2}`}</TeX> from both sides:</div>
+                <TeX display>{String.raw`x^*(A(S^*)) \;=\; |S^*| - \tfrac{\mu}{2}`}</TeX>
+                <div>The oracle returned <TeX>{String.raw`\mu < 2`}</TeX> (else no violated cut). Dividing by 2 gives <TeX>{String.raw`\tfrac{\mu}{2} < 1`}</TeX>, i.e. <TeX>{String.raw`{-}\tfrac{\mu}{2} > {-}1`}</TeX>. Adding <TeX>{String.raw`|S^*|`}</TeX>:</div>
+                <TeX display>{String.raw`x^*(A(S^*)) \;=\; |S^*| - \tfrac{\mu}{2} \;>\; |S^*| - 1`}</TeX>
+                <div>This <em>directly</em> contradicts DFJ: <TeX>{String.raw`x(A(S^*)) \leq |S^*|-1`}</TeX> — so <TeX>{String.raw`(S^*, V \setminus S^*)`}</TeX> is the violated cut returned.</div>
               </div>
             </div>
           </div>
@@ -2043,34 +2058,186 @@ function SlideTSPMinCutAlgo() {
   );
 }
 
+function SlideTSPMinCutImpl() {
+  const Section = ({ label, children }) => (
+    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, letterSpacing: "0.10em", textTransform: "uppercase", color: "var(--ink-3)" }}>
+        {label}
+      </div>
+      <div style={{ fontSize: 19, lineHeight: 1.5, color: "var(--ink-2)" }}>
+        {children}
+      </div>
+    </div>
+  );
 
-function Slide10() {
+  const Cost = ({ children }) => (
+    <div style={{ marginTop: "auto", paddingTop: 12, borderTop: "1px solid var(--line)", fontFamily: "var(--font-mono)", fontSize: 17, color: "var(--ink-3)", lineHeight: 1.5 }}>
+      <span style={{ letterSpacing: "0.08em", textTransform: "uppercase", marginRight: 8 }}>cost</span>
+      {children}
+    </div>
+  );
+
+  const Card = ({ title, accent, children }) => (
+    <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", borderTop: `3px solid ${accent}`, padding: "18px 20px", display: "flex", flexDirection: "column", gap: 14, minHeight: 0 }}>
+      <div className="kicker" style={{ fontSize: 20, color: accent }}>{title}</div>
+      {children}
+    </div>
+  );
+
   return (
-    <section className="slide" data-label="TSP to VRP">
+    <section className="slide" data-label="Separation oracle: computing the min-cut">
       <SlideFrame>
-        <div className="tag">VRP elements</div>
-        <h2 className="title" style={{ marginTop: 28 }}>From one tour to many — how TSP becomes VRP.</h2>
+        <div className="tag">TSP · Separation oracle · <strong>step 2 of 2</strong> — computing the min-cut</div>
+        <h2 className="title" style={{ marginTop: 20 }}>
+          Step 2 — how the <em style={{ color: "var(--accent)" }}>global min-cut</em> is computed.
+        </h2>
 
-        <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, flex: 1 }}>
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24, display: "flex", flexDirection: "column" }}>
-            <div className="kicker">TSP · one vehicle · no capacity</div>
-            <div style={{ flex: 1 }}>
-              <VRPGraph nodes={EX_NODES} routes={[[1,2,3,4,10,5,6,11,7,8,9]]}
-                        width={900} height={560} routeColors={["var(--ink)"]} strokeWidth={3.6}/>
-            </div>
-            <div className="body small" style={{ color: "var(--ink-3)", marginTop: 10 }}>
-              Hamiltonian circuit. Total demand may exceed any real vehicle's capacity.
+        <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 14, flex: 1, minHeight: 0 }}>
+
+          <div style={{ fontSize: 19, lineHeight: 1.45, color: "var(--ink-2)" }}>
+            On the support graph <TeX>{String.raw`G_{x^*} = (V, E)`}</TeX> with arc capacities <TeX>{String.raw`c_{ij} = x^*_{ij}`}</TeX>, finding the global minimum cut is a <em>polynomial</em> problem. Three classical approaches differ in how they exploit — or avoid — the max-flow / min-cut duality.
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 18, flex: 1, alignItems: "stretch", minHeight: 0 }}>
+
+            {/* ── Ford–Fulkerson ───────────────────────────────────────── */}
+            <Card title="Ford–Fulkerson / max-flow" accent="var(--accent)">
+              <Section label="Idea">
+                The <em>max-flow / min-cut theorem</em> says: for any source s and sink t, the maximum s→t flow equals the capacity of the minimum s-t cut. So a max-flow algorithm is also a min-cut algorithm — for one specific pair (s, t) at a time.
+              </Section>
+              <Section label="Reduction to global min-cut">
+                Fix one vertex s ∈ V arbitrarily. For every other vertex t ∈ V \ {"{s}"}, compute a max-flow from s to t and read off the corresponding min s-t cut. The smallest of these n − 1 cuts is the global minimum cut.
+              </Section>
+              <Section label="Why it works">
+                Any partition (S, V\S) has s on one side. Pick any t on the other side: the s-t min-cut is <em>at most</em> cap(S, V\S). Sweeping t over all V \ {"{s}"} therefore sees every possible S — none escapes.
+              </Section>
+              <Cost>
+                n − 1 max-flow calls; with Edmonds–Karp <TeX>{String.raw`O(n \cdot V E^2)`}</TeX>. Conceptually simplest, computationally redundant — many flows duplicate work.
+              </Cost>
+            </Card>
+
+            {/* ── Gomory–Hu ────────────────────────────────────────────── */}
+            <Card title="Gomory–Hu tree" accent="var(--accent-2)">
+              <Section label="Idea">
+                Build a single weighted tree T on V that simultaneously encodes <em>all</em> <TeX>{String.raw`\binom{n}{2}`}</TeX> pairwise min-cuts. Property: for any u, v ∈ V, the min u-v cut in G equals the <em>lightest edge on the unique u-v path</em> in T.
+              </Section>
+              <Section label="Construction">
+                Still uses n − 1 max-flow calls — one per tree edge — but each call runs on a contracted graph that reuses information from previous flows, avoiding redundant computation across queries.
+              </Section>
+              <Section label="Global min-cut from T">
+                Just pick the lightest edge of T. Removing it splits V into two components: those are exactly S* and V\S*, with cut value equal to that edge's weight.
+              </Section>
+              <Cost>
+                n − 1 max-flow calls, but <em>any</em> later pairwise min-cut query is answered in <TeX>{String.raw`O(n)`}</TeX> by tree traversal — ideal when branch-and-cut calls separation many times on similar relaxations.
+              </Cost>
+            </Card>
+
+            {/* ── Stoer–Wagner ─────────────────────────────────────────── */}
+            <Card title="Stoer–Wagner" accent="var(--ink)">
+              <Section label="Idea">
+                A purely combinatorial algorithm — <em>no max-flow at all</em>. Skips the s-t reduction entirely and works directly on the global cut by repeated graph contraction.
+              </Section>
+              <Section label="One phase">
+                <em>Maximum-adjacency ordering</em>: start from any vertex, then greedily add the vertex most strongly connected to the already-selected set. The last two vertices added — call them s and t — define the <em>cut-of-the-phase</em>: separate t from V \ {"{t}"}, with weight equal to the sum of edges incident to t.
+              </Section>
+              <Section label="Repeat & contract">
+                Record the cut-of-the-phase, then contract s and t into a single supernode and run another phase on the smaller graph. After n − 1 phases, the lightest cut-of-the-phase is the global minimum cut.
+              </Section>
+              <Cost>
+                <TeX>{String.raw`O(nm + n^2 \log n)`}</TeX> with Fibonacci heaps. No augmenting-path machinery, easier to implement than max-flow, very competitive in practice.
+              </Cost>
+            </Card>
+
+          </div>
+
+          <div style={{ background: "var(--ink)", color: "var(--paper)", padding: "14px 22px", flexShrink: 0 }}>
+            <div className="kicker" style={{ fontSize: 16, color: "var(--paper-deep)", marginBottom: 6 }}>Bottom line</div>
+            <div style={{ fontSize: 19, lineHeight: 1.4 }}>
+              One polynomial call to <span style={{ fontFamily: "var(--font-mono)" }}>SEPARATE-DFJ</span> decides whether <em>any</em> of the 2ⁿ − n − 2 DFJ cuts is violated — and returns one if so. The exponential family is <em>never enumerated</em>.
             </div>
           </div>
 
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+function Slide10() {
+  return (
+    <section className="slide" data-label="One tour meets capacity">
+      <SlideFrame>
+        <div className="tag">CVRP · motivation</div>
+        <h2 className="title" style={{ marginTop: 28 }}>One vehicle, one tour — until capacity gets in the way.</h2>
+
+        <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, flex: 1 }}>
+          {/* Left — narrative */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 22, justifyContent: "center" }}>
+            <div className="body" style={{ fontSize: 36, lineHeight: 1.3 }}>
+              The TSP solution is a single <span style={{ color: "var(--accent)" }}>Hamiltonian circuit</span> — one vehicle, no constraint other than visiting every customer once and returning to the depot.
+            </div>
+            <div className="body" style={{ fontSize: 36, lineHeight: 1.3 }}>
+              In real distribution problems each customer <span style={{ fontFamily: "var(--font-mono)" }}>i</span> has a known <span style={{ color: "var(--accent)" }}>demand</span> <span style={{ fontFamily: "var(--font-mono)" }}>d<sub>i</sub> ≥ 0</span>, and every vehicle has a finite <span style={{ color: "var(--accent)" }}>capacity</span> <span style={{ fontFamily: "var(--font-mono)" }}>C</span>.
+            </div>
+            <div className="body" style={{ fontSize: 36, lineHeight: 1.3 }}>
+              When the cumulative demand <span style={{ fontFamily: "var(--font-mono)" }}>d(V) = ∑<sub>i</sub> d<sub>i</sub></span> exceeds <span style={{ fontFamily: "var(--font-mono)" }}>C</span>, the goods simply do not fit on board: a single tour <span style={{ color: "var(--accent)" }}>cannot serve everyone in one run</span>.
+            </div>
+          </div>
+
+          {/* Right — Hamiltonian graph */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24, display: "flex", flexDirection: "column" }}>
+            <div className="kicker">TSP · one vehicle · no capacity</div>
+            <div style={{ flex: 1 }}>
+              <VRPGraph nodes={EX_NODES} routes={[[9,10,1,2,3,4,5,11,12,6,7,8]]}
+                        width={900} height={560} routeColors={["var(--ink)"]} strokeWidth={3.6}
+                        className="hamilton-slow"/>
+            </div>
+            <div className="body small" style={{ color: "var(--ink-3)", marginTop: 10, minHeight: 76 }}>
+              Hamiltonian circuit. Total demand may exceed any real vehicle's capacity.
+            </div>
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
+function Slide10B() {
+  return (
+    <section className="slide" data-label="From one tour to many — CVRP">
+      <SlideFrame>
+        <div className="tag">CVRP · motivation</div>
+        <h2 className="title" style={{ marginTop: 28 }}>From one tour to many — the Capacitated VRP.</h2>
+
+        <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, flex: 1 }}>
+          {/* Left — narrative */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 22, justifyContent: "center" }}>
+            <div className="body" style={{ fontSize: 36, lineHeight: 1.3 }}>
+              We split the customers across a fleet of <span style={{ color: "var(--accent)" }}>K identical vehicles</span>, each with capacity <span style={{ fontFamily: "var(--font-mono)" }}>C</span>, all based at a single depot.
+            </div>
+            <div className="body" style={{ fontSize: 36, lineHeight: 1.3 }}>
+              The solution is a <span style={{ color: "var(--accent)" }}>collection of K simple circuits</span>:
+              <ul style={{ margin: "10px 0 0 0", paddingLeft: 32, listStyleType: "disc" }}>
+                <li style={{ marginTop: 6 }}>every route starts and ends at the depot;</li>
+                <li style={{ marginTop: 6 }}>every customer is visited <span style={{ fontFamily: "var(--font-mono)" }}>exactly once</span>;</li>
+                <li style={{ marginTop: 6 }}>on every route the demand served stays within <span style={{ fontFamily: "var(--font-mono)" }}>C</span>.</li>
+              </ul>
+            </div>
+            <div className="body" style={{ fontSize: 36, lineHeight: 1.3 }}>
+              The objective: <span style={{ color: "var(--accent)" }}>minimise the total cost</span> — sum of arc costs across all K routes. The total distance is larger than the TSP tour, but feasibility is restored.
+            </div>
+          </div>
+
+          {/* Right — K-routes graph (same box, same size, same position as slide A) */}
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24, display: "flex", flexDirection: "column" }}>
             <div className="kicker" style={{ color: "var(--accent)" }}>CVRP · K vehicles · capacity C</div>
             <div style={{ flex: 1 }}>
               <VRPGraph nodes={EX_NODES} routes={EX_ROUTES}
                         width={900} height={560} strokeWidth={3.6}/>
             </div>
-            <div className="body small" style={{ color: "var(--ink-3)", marginTop: 10 }}>
-              Several routes, each depot-to-depot, each respecting capacity. The total distance is larger, but feasibility is restored.
+            <div className="body small" style={{ color: "var(--ink-3)", marginTop: 10, minHeight: 76 }}>
+              Several routes, each depot-to-depot, each respecting capacity.
             </div>
           </div>
         </div>
@@ -2083,5 +2250,5 @@ function Slide10() {
 Object.assign(window, {
   SlideTSPSection, Slide09, SlideTSPHamiltonian, SlideTSPFormulation,
   SlideTSPDegree, SlideTSPSubtourProblem, SlideTSPDFJ, SlideTSPExponential,
-  SlideTSPLazy, SlideTSPMinCut, SlideTSPMinCutAlgo, Slide10,
+  SlideTSPLazy, SlideTSPMinCut, SlideTSPMinCutAlgo, SlideTSPMinCutImpl, Slide10, Slide10B,
 });

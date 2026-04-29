@@ -1,7 +1,7 @@
 /* =========================================================================
    VRP Seminar — Part V: CVRP
-   Slides: section header, informal definition, three constraints,
-           two-index ILP formulation, capacity-cut inequality
+   Slides: section header, two-index ILP (with the three constraints),
+           capacity-cut inequality with r(S)
    ========================================================================= */
 
 function Slide11() {
@@ -9,7 +9,7 @@ function Slide11() {
     <section className="slide section-slide" data-label="Part III — CVRP">
       <div style={{ position: "absolute", top: 80, left: 120, right: 120, display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 31, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--paper-deep)" }}>
         <div>Part V of IX</div>
-        <div>Slides 23 — 26</div>
+        <div>Slides 34 — 37</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Five</div>
@@ -23,120 +23,64 @@ function Slide11() {
 }
 
 
-function Slide12() {
-  return (
-    <section className="slide" data-label="CVRP informal definition">
-      <SlideFrame>
-        <div className="tag">CVRP</div>
-        <h2 className="title" style={{ marginTop: 28 }}>CVRP — informal statement.</h2>
-
-        <div style={{ marginTop: 50, display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 80, flex: 1, alignItems: "center" }}>
-          <div className="lede" style={{ fontSize: 54, lineHeight: 1.12, maxWidth: 1100 }}>
-            Given <span style={{ color: "var(--accent)" }}>n customers</span> with known demand, a depot, and <span style={{ color: "var(--accent)" }}>K identical vehicles</span> of capacity C —
-            design routes that serve every customer exactly once, respect capacity, and minimize total distance.
-          </div>
-
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24 }}>
-            <VRPGraph nodes={EX_NODES} routes={EX_ROUTES} width={800} height={580}
-                      strokeWidth={4} nodeRadius={12} depotRadius={16} showDemand showLabels={false}/>
-            <div className="body small" style={{ color: "var(--ink-3)", marginTop: 10, fontFamily: "var(--font-mono)", fontSize: 25, letterSpacing: "0.05em", textTransform: "uppercase" }}>
-              Numbers inside nodes = demand dᵢ
-            </div>
-          </div>
-        </div>
-      </SlideFrame>
-    </section>
-  );
-}
-
-
-function Slide13() {
-  return (
-    <section className="slide" data-label="The three constraints">
-      <SlideFrame>
-        <div className="tag">CVRP</div>
-        <h2 className="title" style={{ marginTop: 28 }}>Three constraints define the CVRP.</h2>
-
-        <div style={{ marginTop: 60, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 40, flex: 1 }}>
-          {[
-            {
-              num: "i", tag: "Depot closure",
-              text: "Every route starts and ends at the depot — no open paths."
-            },
-            {
-              num: "ii", tag: "Single visit",
-              text: "Every customer is visited exactly once, by exactly one vehicle."
-            },
-            {
-              num: "iii", tag: "Capacity", color: "var(--accent)",
-              text: "On every route, the sum of the demands served never exceeds the vehicle capacity C."
-            },
-          ].map((c, i) => (
-            <div key={i} style={{
-              border: "1px solid var(--line)",
-              background: c.color ? "var(--ink)" : "var(--paper-2)",
-              color: c.color ? "var(--paper)" : "var(--ink)",
-              padding: "40px 36px",
-              display: "flex", flexDirection: "column", justifyContent: "space-between"
-            }}>
-              <div style={{ fontFamily: "var(--font-display)", fontSize: 180, lineHeight: 0.85, color: c.color ? c.color : "var(--ink-3)", fontStyle: "italic" }}>
-                ({c.num})
-              </div>
-              <div>
-                <div className="kicker" style={{ color: c.color ? "var(--paper-deep)" : "var(--ink-3)" }}>{c.tag}</div>
-                <div style={{ fontFamily: "var(--font-display)", fontSize: 40, lineHeight: 1.1, marginTop: 10, textWrap: "balance" }}>
-                  {c.text}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div style={{ marginTop: 30, fontFamily: "var(--font-mono)", fontSize: 28, color: "var(--ink-3)", textAlign: "right" }}>
-          Toth & Vigo, §1.2.1 — definition of CVRP
-        </div>
-      </SlideFrame>
-    </section>
-  );
-}
-
-
 function Slide14() {
+  const constraints = [
+    { num: "i",   tag: "Depot closure", text: "Every route starts and ends at the depot — no open paths." },
+    { num: "ii",  tag: "Single visit",  text: "Every customer is visited exactly once, by exactly one vehicle." },
+    { num: "iii", tag: "Capacity",      text: "On every route, the sum of the demands served never exceeds the vehicle capacity C.", accent: true },
+  ];
   return (
     <section className="slide" data-label="Two-index ILP formulation">
       <SlideFrame>
         <div className="tag">CVRP · Model VRP1</div>
-        <h2 className="title" style={{ marginTop: 28 }}>A two-index integer formulation.</h2>
+        <h2 className="title" style={{ marginTop: 28 }}>The two-index ILP formulation.</h2>
 
-        <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 60, flex: 1 }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 22, justifyContent: "center" }}>
-            <div className="body" style={{ color: "var(--ink-2)" }}>
-              Binary decision variable on each arc:
+        <div style={{ marginTop: 36, display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 56, flex: 1 }}>
+          {/* Left — three constraints + decision variable */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 16, justifyContent: "center" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {constraints.map((c, i) => (
+                <div key={i} style={{
+                  border: "1px solid var(--line)",
+                  background: c.accent ? "var(--ink)" : "var(--paper-2)",
+                  color: c.accent ? "var(--paper)" : "var(--ink)",
+                  padding: "14px 20px",
+                  display: "flex", alignItems: "center", gap: 18,
+                }}>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: 56, lineHeight: 1, color: c.accent ? "var(--accent)" : "var(--ink-3)", fontStyle: "italic", flexShrink: 0, minWidth: 70, textAlign: "center" }}>
+                    ({c.num})
+                  </div>
+                  <div>
+                    <div className="kicker" style={{ color: c.accent ? "var(--paper-deep)" : "var(--ink-3)", fontSize: 22 }}>{c.tag}</div>
+                    <div style={{ fontFamily: "var(--font-display)", fontSize: 26, lineHeight: 1.2, marginTop: 4 }}>
+                      {c.text}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 22, fontFamily: "var(--font-mono)", fontSize: 26, lineHeight: 1.4 }}>
+            <div className="body" style={{ color: "var(--ink-2)", fontSize: 26, marginTop: 6 }}>
+              Encoded with one binary variable on each arc:
+            </div>
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 18, fontFamily: "var(--font-mono)", fontSize: 24, lineHeight: 1.4 }}>
               xᵢⱼ = 1 &nbsp;if arc (i, j) belongs to some route<br/>
               xᵢⱼ = 0 &nbsp;otherwise
             </div>
-            <div className="body small" style={{ color: "var(--ink-3)" }}>
-              The objective sums arc costs over used arcs; the constraints force in/out-degrees, depot usage, and capacity.
-            </div>
           </div>
 
+          {/* Right — ILP formulation, each row tagged with its logical constraint */}
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "32px 40px", fontFamily: "var(--font-mono)", fontSize: 24, lineHeight: 1.6 }}>
             <div style={{ fontFamily: "var(--font-display)", fontSize: 30, marginBottom: 18 }}>
               <TeX display>{String.raw`\min \sum_{i \in V} \sum_{j \in V} c_{ij}\, x_{ij}`}</TeX>
             </div>
             <div style={{ color: "var(--ink-3)", marginBottom: 6 }}>subject to</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr auto", rowGap: 10, columnGap: 16 }}>
-              <div><TeX>{String.raw`\sum_{i \in V} x_{ij} = 1`}</TeX> &nbsp; ∀ j ∈ V\{0}</div><div style={{ color: "var(--ink-3)" }}>(in-degree)</div>
-              <div><TeX>{String.raw`\sum_{j \in V} x_{ij} = 1`}</TeX> &nbsp; ∀ i ∈ V\{0}</div><div style={{ color: "var(--ink-3)" }}>(out-degree)</div>
-              <div><TeX>{String.raw`\sum_{j \in V} x_{0j} = K`}</TeX></div><div style={{ color: "var(--ink-3)" }}>(K vehicles)</div>
-              <div><TeX>{String.raw`\sum_{i \in V} x_{i0} = K`}</TeX></div><div style={{ color: "var(--ink-3)" }}>(return)</div>
-              <div style={{ color: "var(--accent)" }}><TeX>{String.raw`\sum_{i \notin S}\sum_{j \in S} x_{ij} \;\geq\; r(S)`}</TeX> &nbsp; ∀ S ⊆ V\{0}</div><div style={{ color: "var(--accent)" }}>(capacity-cut)</div>
+              <div><TeX>{String.raw`\sum_{i \in V} x_{ij} = 1`}</TeX> &nbsp; ∀ j ∈ V\{0}</div><div style={{ color: "var(--ink-3)" }}>(ii) in-degree</div>
+              <div><TeX>{String.raw`\sum_{j \in V} x_{ij} = 1`}</TeX> &nbsp; ∀ i ∈ V\{0}</div><div style={{ color: "var(--ink-3)" }}>(ii) out-degree</div>
+              <div><TeX>{String.raw`\sum_{j \in V} x_{0j} = K`}</TeX></div><div style={{ color: "var(--ink-3)" }}>(i) K vehicles leave</div>
+              <div><TeX>{String.raw`\sum_{i \in V} x_{i0} = K`}</TeX></div><div style={{ color: "var(--ink-3)" }}>(i) K vehicles return</div>
+              <div style={{ color: "var(--accent)" }}><TeX>{String.raw`\sum_{i \in V \setminus S} \sum_{j \in S} x_{ij} \;\geq\; \mathbf{r(S)}`}</TeX> &nbsp; ∀ S ⊆ V\{0}</div><div style={{ color: "var(--accent)" }}>(iii) capacity-cut</div>
               <div>xᵢⱼ ∈ {"{"}0, 1{"}"}</div><div style={{ color: "var(--ink-3)" }}>(integrality)</div>
-            </div>
-            <div style={{ color: "var(--ink-3)", fontSize: 26, marginTop: 18 }}>
-              r(S) = minimum number of vehicles to serve customers in S (a BPP on demands).
             </div>
           </div>
         </div>
@@ -147,57 +91,112 @@ function Slide14() {
 
 
 function Slide15() {
-  // Visual: a cut separating a subset S
+  // Bin-packing visual: 3 equal-size bins of capacity C, items inside = demands of S
+  const bins = [
+    { items: [5, 4],    load: 9,  full: false },
+    { items: [4, 3, 3], load: 10, full: true  },
+    { items: [3, 2],    load: 5,  full: false },
+  ];
+  const C = 10;
+  const unit = 34;     // px per unit of demand (bin height = C * unit = 340)
+  const binTopY = 110;
+  const binBottomY = binTopY + C * unit;   // 110 + 340 = 450
+  const binWidth = 180;
+  const binXs = [80, 320, 560];
+  const itemColors = ["var(--route-1)", "var(--route-2)", "var(--route-3)", "var(--route-4)", "var(--route-5)"];
+
   return (
-    <section className="slide" data-label="Capacity-cut constraints">
+    <section className="slide" data-label="r(S) — bin packing on demands of S">
       <SlideFrame>
-        <div className="tag">CVRP · Valid inequality</div>
-        <h2 className="title" style={{ marginTop: 28 }}>Capacity cuts forbid over-loaded clusters.</h2>
+        <div className="tag">CVRP · capacity cuts</div>
+        <h2 className="title" style={{ marginTop: 28 }}>What is r(S)? — a bin-packing subproblem.</h2>
 
         <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, flex: 1 }}>
+          {/* Left — bin-packing visual */}
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24, position: "relative" }}>
             <svg viewBox="0 0 820 600" style={{ width: "100%", height: "100%", display: "block" }}>
-              {/* Region S */}
-              <ellipse cx={560} cy={220} rx={190} ry={160}
-                       fill="var(--accent)" fillOpacity={0.08}
-                       stroke="var(--accent)" strokeWidth={2.5} strokeDasharray="8 6"/>
-              <text x={560} y={70} textAnchor="middle" fontFamily="var(--font-display)" fontSize={34} fill="var(--accent)" fontStyle="italic">S</text>
+              {/* r(S) headline */}
+              <text x={410} y={50} textAnchor="middle"
+                    fontFamily="var(--font-display)" fontSize={44} fontStyle="italic"
+                    fill="var(--accent)">r(S) = 3</text>
+              <text x={410} y={82} textAnchor="middle"
+                    fontFamily="var(--font-mono)" fontSize={16}
+                    fill="var(--ink-3)">minimum bins of capacity C to pack all items {`{dᵢ : i ∈ S}`}</text>
 
-              {/* Depot */}
-              <rect x={200-14} y={400-14} width={28} height={28} fill="var(--depot)"/>
-              <text x={200} y={450} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={15} fill="var(--ink-3)">depot 0</text>
+              {/* Capacity scale on the side */}
+              <line x1={50} y1={binTopY} x2={50} y2={binBottomY}
+                    stroke="var(--ink-3)" strokeWidth={1.5} strokeDasharray="4 4"/>
+              <line x1={45} y1={binTopY} x2={55} y2={binTopY} stroke="var(--ink-3)" strokeWidth={1.5}/>
+              <line x1={45} y1={binBottomY} x2={55} y2={binBottomY} stroke="var(--ink-3)" strokeWidth={1.5}/>
+              <text x={42} y={binTopY+5} textAnchor="end" fontFamily="var(--font-mono)" fontSize={16} fill="var(--ink-3)">C</text>
+              <text x={42} y={binBottomY+5} textAnchor="end" fontFamily="var(--font-mono)" fontSize={16} fill="var(--ink-3)">0</text>
 
-              {/* Customers outside S */}
-              {[[260,260],[340,370],[430,460],[180,230]].map(([x,y],i) =>
-                <circle key={i} cx={x} cy={y} r={11} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>
-              )}
-              {/* Customers inside S */}
-              {[[500,160],[580,180],[640,240],[550,280],[680,180]].map(([x,y],i) =>
-                <circle key={i} cx={x} cy={y} r={11} fill="var(--paper)" stroke="var(--accent)" strokeWidth={2.5}/>
-              )}
+              {/* Bins */}
+              {bins.map((bin, bi) => {
+                const bx = binXs[bi];
+                let cursor = binBottomY; // stack from bottom up
+                return (
+                  <g key={bi}>
+                    {/* Bin outline (equal size for all) */}
+                    <rect x={bx} y={binTopY} width={binWidth} height={C*unit}
+                          fill="none" stroke="var(--ink)" strokeWidth={2.5}/>
+                    {/* Stacked items = customer demands in S */}
+                    {bin.items.map((d, ii) => {
+                      const h = d * unit;
+                      cursor -= h;
+                      const yTop = cursor;
+                      const colorIdx = (bi * 3 + ii) % itemColors.length;
+                      return (
+                        <g key={ii}>
+                          <rect x={bx + 3} y={yTop} width={binWidth - 6} height={h}
+                                fill={itemColors[colorIdx]} fillOpacity={0.32}
+                                stroke={itemColors[colorIdx]} strokeWidth={1.8}/>
+                          <text x={bx + binWidth/2} y={yTop + h/2 + 8}
+                                textAnchor="middle"
+                                fontFamily="var(--font-mono)" fontSize={24}
+                                fill={itemColors[colorIdx]}>dᵢ = {d}</text>
+                        </g>
+                      );
+                    })}
+                    {/* Vehicle label */}
+                    <text x={bx + binWidth/2} y={binBottomY + 32} textAnchor="middle"
+                          fontFamily="var(--font-mono)" fontSize={20} fill="var(--ink-2)">
+                      vehicle {bi+1}
+                    </text>
+                    <text x={bx + binWidth/2} y={binBottomY + 56} textAnchor="middle"
+                          fontFamily="var(--font-mono)" fontSize={15} fill="var(--ink-3)">
+                      load = {bin.load}{bin.full ? " (full)" : ""}
+                    </text>
+                  </g>
+                );
+              })}
 
-              {/* Boundary-crossing arcs */}
-              {[[[340,370],[550,280]],[[430,460],[640,240]],[[260,260],[500,160]]].map((pair,i)=>(
-                <line key={i} x1={pair[0][0]} y1={pair[0][1]} x2={pair[1][0]} y2={pair[1][1]}
-                      stroke="var(--accent-2)" strokeWidth={3} markerEnd="url(#arr)"/>
-              ))}
-              <defs>
-                <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                  <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent-2)"/>
-                </marker>
-              </defs>
+              {/* Total demand & lower bound */}
+              <text x={410} y={binBottomY + 110} textAnchor="middle"
+                    fontFamily="var(--font-mono)" fontSize={17} fill="var(--ink-3)">
+                d(S) = 5+4+4+3+3+3+2 = 24,  ⌈d(S)/C⌉ = 3
+              </text>
             </svg>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 28 }}>
-            <div className="lede" style={{ fontSize: 42 }}>
-              At least <em style={{ color: "var(--accent)" }}>r(S)</em> vehicles must <em>enter</em> any subset S of customers.
+          {/* Right — motivation + definition + bound + tail */}
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 22 }}>
+            <div className="body" style={{ fontSize: 30, lineHeight: 1.3 }}>
+              The capacity-cut row of the previous slide reads
+              {" "}<span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)" }}>∑ xᵢⱼ ≥ r(S)</span>{" "}
+              for every <span style={{ fontFamily: "var(--font-mono)" }}>S ⊆ V \ {`{0}`}</span> — but the formulation never says <em>what r(S) is</em>. To enforce capacity feasibility we have to compute, or bound, that quantity.
             </div>
-            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "22px 26px", fontFamily: "var(--font-mono)", fontSize: 24 }}>
-              <TeX display>{String.raw`\sum_{i \notin S}\sum_{j \in S} x_{ij} \;\geq\; r(S) \;\geq\; \left\lceil \frac{d(S)}{C} \right\rceil`}</TeX>
+            <div className="body" style={{ fontSize: 30, lineHeight: 1.3 }}>
+              <em style={{ color: "var(--accent)" }}>r(S)</em> is the <em>minimum number of vehicles</em> needed to serve every customer in S — equivalently, the optimal value of the <em>Bin Packing Problem</em> on items {`{dᵢ : i ∈ S}`} with bin capacity C.
             </div>
-            <div className="body small" style={{ color: "var(--ink-3)" }}>
-              These constraints are exponentially many — in practice they are added lazily during branch-and-cut via a separation oracle.
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "20px 26px", fontFamily: "var(--font-mono)", fontSize: 24 }}>
+              <TeX display>{String.raw`r(S) \;\geq\; \left\lceil \frac{d(S)}{C} \right\rceil, \qquad d(S) = \sum_{i \in S} d_i`}</TeX>
+              <div style={{ color: "var(--ink-3)", fontSize: 22, lineHeight: 1.4, marginTop: 10 }}>
+                BPP is NP-hard, but the trivial lower bound ⌈d(S)/C⌉ is fast and is often used in place of r(S).
+              </div>
+            </div>
+            <div className="body small" style={{ color: "var(--ink-3)", lineHeight: 1.4 }}>
+              For the full instance, <span style={{ fontFamily: "var(--font-mono)" }}>r(V \ {`{0}`}) = K<sub>min</sub></span>, the minimum fleet size. Capacity cuts are exponentially many → added lazily during branch-and-cut by a separation oracle.
             </div>
           </div>
         </div>
@@ -211,5 +210,5 @@ function Slide15() {
 // ---------------------------------------------------------------
 
 Object.assign(window, {
-  Slide11, Slide12, Slide13, Slide14, Slide15,
+  Slide11, Slide14, Slide15,
 });

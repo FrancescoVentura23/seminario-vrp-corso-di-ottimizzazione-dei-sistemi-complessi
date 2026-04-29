@@ -30,13 +30,13 @@ function Slide25() {
         <div className="tag">Clarke–Wright (1964)</div>
         <h2 className="title" style={{ marginTop: 28 }}>The savings idea — merge two round-trips if it shortens the total.</h2>
 
-        <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, flex: 1 }}>
+        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
           {[
             {
               t: "Before merging",
               desc: "Two separate round-trips: 0 → i → 0 and 0 → j → 0.",
               svg: (
-                <svg viewBox="0 0 600 400">
+                <svg viewBox="0 0 600 400" style={{ width: "100%", height: 260, display: "block" }}>
                   <rect x={300-16} y={320-16} width={32} height={32} fill="var(--depot)"/>
                   <polyline points="300,320 150,120 300,320" fill="none" stroke="var(--route-1)" strokeWidth={3.5} strokeDasharray="6 6"/>
                   <polyline points="300,320 470,120 300,320" fill="none" stroke="var(--route-1)" strokeWidth={3.5} strokeDasharray="6 6"/>
@@ -52,7 +52,7 @@ function Slide25() {
               t: "After merging",
               desc: "One single route visiting i then j: 0 → i → j → 0.",
               svg: (
-                <svg viewBox="0 0 600 400">
+                <svg viewBox="0 0 600 400" style={{ width: "100%", height: 260, display: "block" }}>
                   <rect x={300-16} y={320-16} width={32} height={32} fill="var(--depot)"/>
                   <polyline points="300,320 150,120 470,120 300,320" fill="none" stroke="var(--route-2)" strokeWidth={4}/>
                   <circle cx={150} cy={120} r={14} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>
@@ -64,16 +64,16 @@ function Slide25() {
               cost: <>c(0,i) + c(i,j) + c(j,0)</>
             },
           ].map((c, i) => (
-            <div key={i} style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 28, display: "flex", flexDirection: "column", gap: 14 }}>
+            <div key={i} style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24, display: "flex", flexDirection: "column", gap: 12 }}>
               <div className="kicker">{c.t}</div>
-              <div style={{ flex: 1, minHeight: 280 }}>{c.svg}</div>
+              <div>{c.svg}</div>
               <div className="body small" style={{ color: "var(--ink-3)" }}>{c.desc}</div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 29, background: "var(--paper)", border: "1px solid var(--line)", padding: "12px 16px" }}>{c.cost}</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 26, background: "var(--paper)", border: "1px solid var(--line)", padding: "10px 14px" }}>{c.cost}</div>
             </div>
           ))}
         </div>
 
-        <div style={{ marginTop: 24, background: "var(--ink)", color: "var(--paper)", padding: "20px 26px", fontFamily: "var(--font-mono)", fontSize: 28 }}>
+        <div style={{ marginTop: 24, background: "var(--ink)", color: "var(--paper)", padding: "18px 24px", fontFamily: "var(--font-mono)", fontSize: 26 }}>
           savings &nbsp;<span style={{ color: "var(--accent-2)" }}>s(i, j) = c(0, i) + c(0, j) − c(i, j)</span> &nbsp; → merge pair with largest positive saving that remains feasible.
         </div>
       </SlideFrame>

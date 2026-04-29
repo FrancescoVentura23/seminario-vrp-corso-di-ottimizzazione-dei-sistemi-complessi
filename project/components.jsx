@@ -9,18 +9,29 @@ const { useState, useEffect, useRef, useMemo, useCallback } = React;
 // LaTeX rendering via KaTeX (loaded globally from CDN)
 // -----------------------------------------------------------
 function TeX({ children, display = false, className = "" }) {
-  const ref = useRef(null);
-  useEffect(() => {
-    if (!window.katex || !ref.current) return;
+  // Synchronous render via katex.renderToString + dangerouslySetInnerHTML.
+  // The previous useEffect-based approach raced across React 18 roots
+  // (mountDeck creates a fresh root per slide and moves the section into
+  // <deck-stage>): TeX expressions from one slide leaked into the spans of
+  // another. Rendering during React's render phase keeps each TeX bound to
+  // its own JSX tree.
+  const html = useMemo(() => {
+    if (!window.katex) return null;
     try {
-      window.katex.render(String(children), ref.current, {
+      return window.katex.renderToString(String(children), {
         displayMode: display,
         throwOnError: false,
         output: "html",
       });
-    } catch (e) { /* ignore */ }
+    } catch (e) {
+      return null;
+    }
   }, [children, display]);
-  return <span ref={ref} className={className} />;
+
+  if (html === null) {
+    return <span className={className}>{String(children)}</span>;
+  }
+  return <span className={className} dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
 // -----------------------------------------------------------

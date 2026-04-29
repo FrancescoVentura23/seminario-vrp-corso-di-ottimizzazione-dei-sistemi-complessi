@@ -41,9 +41,10 @@ function Slide14() {
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {constraints.map((c, i) => (
                 <div key={i} style={{
-                  border: "1px solid var(--line)",
-                  background: c.accent ? "var(--ink)" : "var(--paper-2)",
-                  color: c.accent ? "var(--paper)" : "var(--ink)",
+                  border: `1px solid ${c.accent ? "var(--accent)" : "var(--line)"}`,
+                  borderLeft: `${c.accent ? 4 : 1}px solid ${c.accent ? "var(--accent)" : "var(--line)"}`,
+                  background: c.accent ? "rgba(107,74,245,0.08)" : "var(--paper-2)",
+                  color: "var(--ink)",
                   padding: "14px 20px",
                   display: "flex", alignItems: "center", gap: 18,
                 }}>
@@ -51,7 +52,7 @@ function Slide14() {
                     ({c.num})
                   </div>
                   <div>
-                    <div className="kicker" style={{ color: c.accent ? "var(--paper-deep)" : "var(--ink-3)", fontSize: 22 }}>{c.tag}</div>
+                    <div className="kicker" style={{ color: c.accent ? "var(--accent)" : "var(--ink-3)", fontSize: 22 }}>{c.tag}</div>
                     <div style={{ fontFamily: "var(--font-display)", fontSize: 26, lineHeight: 1.2, marginTop: 4 }}>
                       {c.text}
                     </div>
@@ -79,7 +80,7 @@ function Slide14() {
               <div><TeX>{String.raw`\sum_{j \in V} x_{ij} = 1`}</TeX> &nbsp; ∀ i ∈ V\{0}</div><div style={{ color: "var(--ink-3)" }}>(ii) out-degree</div>
               <div><TeX>{String.raw`\sum_{j \in V} x_{0j} = K`}</TeX></div><div style={{ color: "var(--ink-3)" }}>(i) K vehicles leave</div>
               <div><TeX>{String.raw`\sum_{i \in V} x_{i0} = K`}</TeX></div><div style={{ color: "var(--ink-3)" }}>(i) K vehicles return</div>
-              <div style={{ color: "var(--accent)" }}><TeX>{String.raw`\sum_{i \in V \setminus S} \sum_{j \in S} x_{ij} \;\geq\; \mathbf{r(S)}`}</TeX> &nbsp; ∀ S ⊆ V\{0}</div><div style={{ color: "var(--accent)" }}>(iii) capacity-cut</div>
+              <div style={{ color: "var(--accent)" }}><TeX>{String.raw`\sum_{i \in V \setminus S}\sum_{j \in S} x_{ij} \;\geq\; \mathbf{r(S)}`}</TeX> &nbsp; ∀ S ⊆ V\{0}</div><div style={{ color: "var(--accent)" }}>(iii) capacity-cut</div>
               <div>xᵢⱼ ∈ {"{"}0, 1{"}"}</div><div style={{ color: "var(--ink-3)" }}>(integrality)</div>
             </div>
           </div>
@@ -91,11 +92,13 @@ function Slide14() {
 
 
 function Slide15() {
-  // Bin-packing visual: 3 equal-size bins of capacity C, items inside = demands of S
+  // Bin-packing visual: 3 equal-size bins of capacity C, items inside = demands of S.
+  // Each item carries its own global index k so subscript and colour are unique
+  // across all bins (otherwise readers misread "dᵢ" as the same customer i).
   const bins = [
-    { items: [5, 4],    load: 9,  full: false },
-    { items: [4, 3, 3], load: 10, full: true  },
-    { items: [3, 2],    load: 5,  full: false },
+    { items: [{ d: 5, k: 0 }, { d: 4, k: 1 }],                       load: 9,  full: false },
+    { items: [{ d: 4, k: 2 }, { d: 3, k: 3 }, { d: 3, k: 4 }],       load: 10, full: true  },
+    { items: [{ d: 3, k: 5 }, { d: 2, k: 6 }],                       load: 5,  full: false },
   ];
   const C = 10;
   const unit = 34;     // px per unit of demand (bin height = C * unit = 340)
@@ -103,7 +106,20 @@ function Slide15() {
   const binBottomY = binTopY + C * unit;   // 110 + 340 = 450
   const binWidth = 180;
   const binXs = [80, 320, 560];
-  const itemColors = ["var(--route-1)", "var(--route-2)", "var(--route-3)", "var(--route-4)", "var(--route-5)"];
+  // 7 distinct hues so no two items share a colour. Items 5 and 7 are
+  // hard-coded (brown / navy) to stay clearly distinct from violet (item 1)
+  // and forest (item 3) — using route-5 (blue) clashed with violet, and a
+  // teal pick clashed with forest.
+  const itemColors = [
+    "var(--route-1)",  // violet — item 1
+    "var(--route-2)",  // amber  — item 2
+    "var(--route-3)",  // forest — item 3
+    "var(--route-4)",  // red    — item 4
+    "#8b4513",         // saddle brown — item 5
+    "#b83280",         // magenta      — item 6
+    "#1e3a8a",         // navy blue    — item 7
+  ];
+  const subs = ["₁","₂","₃","₄","₅","₆","₇"];
 
   return (
     <section className="slide" data-label="r(S) — bin packing on demands of S">
@@ -140,21 +156,21 @@ function Slide15() {
                     {/* Bin outline (equal size for all) */}
                     <rect x={bx} y={binTopY} width={binWidth} height={C*unit}
                           fill="none" stroke="var(--ink)" strokeWidth={2.5}/>
-                    {/* Stacked items = customer demands in S */}
-                    {bin.items.map((d, ii) => {
-                      const h = d * unit;
+                    {/* Stacked items = customer demands in S — each with its own subscript & colour */}
+                    {bin.items.map((item, ii) => {
+                      const h = item.d * unit;
                       cursor -= h;
                       const yTop = cursor;
-                      const colorIdx = (bi * 3 + ii) % itemColors.length;
+                      const color = itemColors[item.k];
                       return (
                         <g key={ii}>
                           <rect x={bx + 3} y={yTop} width={binWidth - 6} height={h}
-                                fill={itemColors[colorIdx]} fillOpacity={0.32}
-                                stroke={itemColors[colorIdx]} strokeWidth={1.8}/>
+                                fill={color} fillOpacity={0.32}
+                                stroke={color} strokeWidth={1.8}/>
                           <text x={bx + binWidth/2} y={yTop + h/2 + 8}
                                 textAnchor="middle"
                                 fontFamily="var(--font-mono)" fontSize={24}
-                                fill={itemColors[colorIdx]}>dᵢ = {d}</text>
+                                fill={color}>d{subs[item.k]} = {item.d}</text>
                         </g>
                       );
                     })}

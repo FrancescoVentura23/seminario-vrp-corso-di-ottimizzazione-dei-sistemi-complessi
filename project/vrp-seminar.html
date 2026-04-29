@@ -116,18 +116,20 @@ const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
       Slide27, Slide28, Slide29, Slide30,                                                              // Part IX — applications
     ];
 
-    // Render each slide's React tree into a detached host <div>, then append
-    // the resulting <section> (which is the component's root element) into
-    // <deck-stage>. flushSync forces React 18 to render synchronously so the
-    // <section> exists immediately — without it, a cold load (no browser/Babel
-    // cache, cold JIT) can append slides before React has produced their DOM,
-    // and those slides silently go missing from the deck.
-    slides.forEach((SlideComp) => {
-      const host = document.createElement("div");
-      const root = ReactDOM.createRoot(host);
-      ReactDOM.flushSync(() => root.render(<SlideComp/>));
-      const section = host.firstElementChild;
-      if (section) stage.appendChild(section);
+    // Mount all slides into a single React root that targets <deck-stage>
+    // directly. The earlier approach used one ReactDOM.createRoot per slide
+    // and moved each <section> out of its host with appendChild. That worked
+    // visually, but with React 18's concurrent reconciler the per-slide roots
+    // could share state across roots: in practice TeX expressions from one
+    // slide's <span> ended up rendered into another slide's <span>. A single
+    // root keeps every slide inside one reconciler tree, eliminating the leak.
+    const root = ReactDOM.createRoot(stage);
+    ReactDOM.flushSync(() => {
+      root.render(
+        <React.Fragment>
+          {slides.map((SlideComp, i) => <SlideComp key={i}/>)}
+        </React.Fragment>
+      );
     });
 
     // Re-apply KaTeX after children settle

@@ -325,7 +325,7 @@ function SlideTSPHamiltonian() {
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "18px 22px" }}>
               <div className="kicker" style={{ fontSize: 20, marginBottom: 8 }}>Cost of a tour</div>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 22 }}>
-                <TeX display>{String.raw`c(\tau) \;=\; \sum_{k=0}^{n} c_{\,\pi(k),\,\pi(k+1)}`}</TeX>
+                <TeX display>{"c(\\tau) \\;=\\; \\sum_{k=0}^{n} c_{\\,\\pi(k),\\,\\pi(k+1)}"}</TeX>
               </div>
               <div style={{ color: "var(--ink-3)", fontSize: 20, marginTop: 4 }}>
                 TSP asks for the circuit of <em>minimum</em> cost.
@@ -370,22 +370,22 @@ function SlideTSPFormulation() {
 
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "30px 38px", fontFamily: "var(--font-mono)", fontSize: 23, lineHeight: 1.55 }}>
             <div style={{ fontFamily: "var(--font-display)", fontSize: 30, marginBottom: 16 }}>
-              <TeX display>{String.raw`\min \; \sum_{i \in V} \sum_{\substack{j \in V \\ j \neq i}} c_{ij}\, x_{ij}`}</TeX>
+              <TeX display>{"\\min \\; \\sum_{i \\in V} \\sum_{\\substack{j \\in V \\\\ j \\neq i}} c_{ij}\\, x_{ij}"}</TeX>
             </div>
             <div style={{ color: "var(--ink-3)", marginBottom: 10 }}>subject to</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr auto", rowGap: 14, columnGap: 18 }}>
               <div>
-                <TeX>{String.raw`\sum_{\substack{j \in V \\ j \neq i}} x_{ij} = 1`}</TeX> &nbsp; ∀ i ∈ V
+                <TeX>{"\\sum_{\\substack{j \\in V \\\\ j \\neq i}} x_{ij} = 1"}</TeX> &nbsp; ∀ i ∈ V
               </div>
               <div style={{ color: "var(--ink-3)" }}>(out-degree)</div>
 
               <div>
-                <TeX>{String.raw`\sum_{\substack{i \in V \\ i \neq j}} x_{ij} = 1`}</TeX> &nbsp; ∀ j ∈ V
+                <TeX>{"\\sum_{\\substack{i \\in V \\\\ i \\neq j}} x_{ij} = 1"}</TeX> &nbsp; ∀ j ∈ V
               </div>
               <div style={{ color: "var(--ink-3)" }}>(in-degree)</div>
 
               <div style={{ color: "var(--accent)", whiteSpace: "nowrap" }}>
-                <TeX>{String.raw`\sum_{i \in S} \sum_{\substack{j \in S \\ j \neq i}} x_{ij} \;\leq\; |S| - 1`}</TeX> &nbsp; ∀ S ⊊ V, &nbsp; 2 ≤ |S| ≤ n − 1
+                <TeX>{"\\sum_{i \\in S} \\sum_{\\substack{j \\in S \\\\ j \\neq i}} x_{ij} \\;\\leq\\; |S| - 1"}</TeX> &nbsp; ∀ S ⊊ V, &nbsp; 2 ≤ |S| ≤ n − 1
               </div>
               <div style={{ color: "var(--accent)" }}>(subtour elim.)</div>
 
@@ -520,7 +520,7 @@ function SlideTSPDegree() {
             </div>
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)",
                           padding: "18px 26px", fontSize: 34 }}>
-              <TeX display>{String.raw`\sum_{\substack{j \in V \\ j \neq i}} x_{ij} = 1 \qquad \forall\, i \in V`}</TeX>
+              <TeX display>{"\\sum_{\\substack{j \\in V \\\\ j \\neq i}} x_{ij} = 1 \\qquad \\forall\\, i \\in V"}</TeX>
             </div>
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)",
                           padding: 10, flex: 1, minHeight: 0, overflow: "hidden" }}>
@@ -536,7 +536,7 @@ function SlideTSPDegree() {
             </div>
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)",
                           padding: "18px 26px", fontSize: 34 }}>
-              <TeX display>{String.raw`\sum_{\substack{i \in V \\ i \neq j}} x_{ij} = 1 \qquad \forall\, j \in V`}</TeX>
+              <TeX display>{"\\sum_{\\substack{i \\in V \\\\ i \\neq j}} x_{ij} = 1 \\qquad \\forall\\, j \\in V"}</TeX>
             </div>
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)",
                           padding: 10, flex: 1, minHeight: 0, overflow: "hidden" }}>
@@ -962,13 +962,13 @@ function SlideTSPDFJ() {
                       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
                         <div style={{ fontSize: 16, color: "var(--ink-3)", letterSpacing: "0.06em" }}>OUT-DEGREE</div>
                         <div style={{ fontSize: 38 }}>
-                          <TeX>{String.raw`\sum_{\substack{j \in V \\ j \neq i}} x_{ij} = 1`}</TeX>
+                          <TeX>{"\\sum_{\\substack{j \\in V \\\\ j \\neq i}} x_{ij} = 1"}</TeX>
                         </div>
                       </div>
                       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
                         <div style={{ fontSize: 16, color: "var(--ink-3)", letterSpacing: "0.06em" }}>IN-DEGREE</div>
                         <div style={{ fontSize: 38 }}>
-                          <TeX>{String.raw`\sum_{\substack{i \in V \\ i \neq j}} x_{ij} = 1`}</TeX>
+                          <TeX>{"\\sum_{\\substack{i \\in V \\\\ i \\neq j}} x_{ij} = 1"}</TeX>
                         </div>
                       </div>
                     </div>
@@ -999,7 +999,7 @@ function SlideTSPDFJ() {
               transition: "all 320ms ease",
             }}>
               <div style={{ color: isPacking ? "var(--accent)" : "var(--ink-3)", fontSize: 18, marginBottom: 4 }}>packing form</div>
-              <TeX display>{String.raw`\sum_{i \in S}\sum_{\substack{j \in S \\ j \neq i}} x_{ij} \;\leq\; |S| - 1`}</TeX>
+              <TeX display>{"\\sum_{i \\in S}\\sum_{\\substack{j \\in S \\\\ j \\neq i}} x_{ij} \\;\\leq\\; |S| - 1"}</TeX>
             </div>
             <div data-constraint="cut" style={{
               background: isCut ? "rgba(107,74,245,0.08)" : "var(--paper-2)",
@@ -1014,7 +1014,7 @@ function SlideTSPDFJ() {
               transition: "all 320ms ease",
             }}>
               <div style={{ color: isCut ? "var(--accent)" : "var(--ink-3)", fontSize: 18, marginBottom: 4 }}>equivalent cut form</div>
-              <TeX display>{String.raw`\sum_{i \notin S}\sum_{j \in S} x_{ij} \;\geq\; 1`}</TeX>
+              <TeX display>{"\\sum_{i \\notin S}\\sum_{j \\in S} x_{ij} \\;\\geq\\; 1"}</TeX>
             </div>
             <div className="body small" style={{ color: "var(--ink-3)", fontSize: 20, lineHeight: 1.35 }}>
               Required for every S ⊊ V with 2 ≤ |S| ≤ n − 1.
@@ -1098,14 +1098,7 @@ function SlideTSPExponential() {
               One DFJ constraint for <em>every</em> proper subset of <span style={{ fontFamily: "var(--font-mono)" }}>V</span> of size between 2 and n − 1:
             </div>
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "20px 24px", fontFamily: "var(--font-mono)", fontSize: 22 }}>
-              <TeX display>{String.raw`\begin{aligned}
-\#\{S \subsetneq V : 2 \leq |S| \leq n-1\}
-  &= \underbrace{2^{n}}_{\text{all subsets of }V}
-   \;-\; \underbrace{1}_{|S|=0}
-   \;-\; \underbrace{n}_{|S|=1}
-   \;-\; \underbrace{1}_{|S|=n} \\[4pt]
-  &= 2^{n} - n - 2
-\end{aligned}`}</TeX>
+              <TeX display>{"\\begin{aligned}\n\\#\\{S \\subsetneq V : 2 \\leq |S| \\leq n-1\\}\n  &= \\underbrace{2^{n}}_{\\text{all subsets of }V}\n   \\;-\\; \\underbrace{1}_{|S|=0}\n   \\;-\\; \\underbrace{n}_{|S|=1}\n   \\;-\\; \\underbrace{1}_{|S|=n} \\\\[4pt]\n  &= 2^{n} - n - 2\n\\end{aligned}"}</TeX>
               <div style={{ marginTop: 10, fontFamily: "var(--font-mono)", fontSize: 18, color: "var(--ink-3)", lineHeight: 1.6, fontVariantLigatures: "none", fontFeatureSettings: '"liga" 0, "calt" 0' }}>
                 <div>|S|=0 → ∅ (empty set)</div>
                 <div>|S|=1 → singletons {"{v}"}, one per vertex (n in total)</div>
@@ -1224,7 +1217,7 @@ function SlideTSPLazy() {
                 It returns either <em>no violation</em> (x* is DFJ-feasible, stop) or one specific <em>violated S</em>:
               </div>
               <div style={{ marginTop: 8, background: "var(--paper)", border: "1px solid var(--line)", padding: "8px 14px", fontSize: 20, textAlign: "center" }}>
-                <TeX>{String.raw`\sum_{i,j \in S} x^*_{ij} \;>\; |S| - 1`}</TeX>
+                <TeX>{"\\sum_{i,j \\in S} x^*_{ij} \\;>\\; |S| - 1"}</TeX>
               </div>
               <div style={{ marginTop: 10, fontSize: 18, color: "var(--ink-3)", lineHeight: 1.35, fontStyle: "italic" }}>
                 Implemented as a min-cut / max-flow computation — polynomial in n, <em>without</em> enumerating the 2ⁿ subsets.
@@ -1577,14 +1570,14 @@ function SlideTSPMinCut() {
           {/* -------- Left column: the equivalence -------- */}
           <div ref={btnsRef} style={{ display: "flex", flexDirection: "column", gap: 9 }}>
             <div className="lede" style={{ fontSize: 24, lineHeight: 1.3 }}>
-              Read <TeX>{String.raw`x^*(\delta(S))`}</TeX> as the <em>total weight</em> on the boundary — the sum <TeX>{String.raw`\sum_{(i,j)\in\delta(S)} x^*_{ij}`}</TeX>, <em>not</em> a count of arcs.
+              Read <TeX>{"x^*(\\delta(S))"}</TeX> as the <em>total weight</em> on the boundary — the sum <TeX>{"\\sum_{(i,j)\\in\\delta(S)} x^*_{ij}"}</TeX>, <em>not</em> a count of arcs.
             </div>
 
             {/* Click to show the integer-tour scene on the right. */}
             <div data-mode="integer" style={btnStyle(isInt)}>
               <div className="kicker" style={{ fontSize: 18, marginBottom: 3, color: isInt ? "var(--accent)" : "var(--ink-3)" }}>Integer tour</div>
               <div style={{ fontSize: 21, lineHeight: 1.4 }}>
-                A <em>Hamiltonian circuit</em> visits every node exactly once, so the path crosses the boundary of S exactly once in each direction: one arc exits (<TeX>{String.raw`\delta^+(S)`}</TeX>) and one enters (<TeX>{String.raw`\delta^-(S)`}</TeX>). Each <TeX>{String.raw`x_{ij}\in\{0,1\}`}</TeX> is the <em>weight</em> of arc <TeX>{String.raw`(i,j)`}</TeX>: 1 if the tour uses it, 0 otherwise. Total boundary weight <TeX>{String.raw`x(\delta(S))=1+1=2`}</TeX>.
+                A <em>Hamiltonian circuit</em> visits every node exactly once, so the path crosses the boundary of S exactly once in each direction: one arc exits (<TeX>{"\\delta^+(S)"}</TeX>) and one enters (<TeX>{"\\delta^-(S)"}</TeX>). Each <TeX>{"x_{ij}\\in\\{0,1\\}"}</TeX> is the <em>weight</em> of arc <TeX>{"(i,j)"}</TeX>: 1 if the tour uses it, 0 otherwise. Total boundary weight <TeX>{"x(\\delta(S))=1+1=2"}</TeX>.
               </div>
             </div>
 
@@ -1592,15 +1585,15 @@ function SlideTSPMinCut() {
             <div data-mode="fractional" style={btnStyle(isFrac)}>
               <div className="kicker" style={{ fontSize: 18, marginBottom: 3, color: isFrac ? "var(--accent)" : "var(--ink-3)" }}>Fractional x*</div>
               <div style={{ fontSize: 21, lineHeight: 1.4 }}>
-                In the LP relaxation, <TeX>{String.raw`x^*_{ij}\in[0,1]`}</TeX>: each vertex still satisfies deg = 1, but can <em>split</em> its flow. Here v₁ routes 0.7 inside S (v₁→v₂) and only 0.3 across the boundary (v₁→v₃). When <TeX>{String.raw`x^*(\delta(S)) < 2`}</TeX> the DFJ constraint is violated.
+                In the LP relaxation, <TeX>{"x^*_{ij}\\in[0,1]"}</TeX>: each vertex still satisfies deg = 1, but can <em>split</em> its flow. Here v₁ routes 0.7 inside S (v₁→v₂) and only 0.3 across the boundary (v₁→v₃). When <TeX>{"x^*(\\delta(S)) < 2"}</TeX> the DFJ constraint is violated.
               </div>
             </div>
 
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "10px 18px" }}>
               <div className="kicker" style={{ fontSize: 18, marginBottom: 6 }}>Key identity</div>
               <div style={{ fontSize: 21, lineHeight: 1.5, color: "var(--ink-2)", display: "flex", flexDirection: "column", gap: 6 }}>
-                <div>Each vertex i ∈ S satisfies <TeX>{String.raw`\sum_{j \neq i}(x^*_{ij}+x^*_{ji})=2`}</TeX>. Summing over all |S| vertices: arcs <em>internal to S</em> — i.e. <TeX>{String.raw`A(S)=\{(i,j): i,j\in S\}`}</TeX> — are counted <em>twice</em> (both endpoints in S), arcs <em>crossing the boundary</em> <TeX>{String.raw`\delta(S)`}</TeX> are counted <em>once</em>.</div>
-                <TeX display>{String.raw`2\,x^*(A(S)) \;+\; x^*(\delta(S)) \;=\; 2|S|`}</TeX>
+                <div>Each vertex i ∈ S satisfies <TeX>{"\\sum_{j \\neq i}(x^*_{ij}+x^*_{ji})=2"}</TeX>. Summing over all |S| vertices: arcs <em>internal to S</em> — i.e. <TeX>{"A(S)=\\{(i,j): i,j\\in S\\}"}</TeX> — are counted <em>twice</em> (both endpoints in S), arcs <em>crossing the boundary</em> <TeX>{"\\delta(S)"}</TeX> are counted <em>once</em>.</div>
+                <TeX display>{"2\\,x^*(A(S)) \\;+\\; x^*(\\delta(S)) \\;=\\; 2|S|"}</TeX>
               </div>
             </div>
 
@@ -1608,7 +1601,7 @@ function SlideTSPMinCut() {
             <div style={{ background: "var(--accent)", color: "var(--paper)", padding: "11px 20px", textAlign: "center" }}>
               <div style={{ fontSize: 21, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 5, color: "var(--paper-deep)", opacity: 0.9 }}>DFJ ⟺ min-cut</div>
               <div style={{ fontSize: 21 }}>
-                <TeX display>{String.raw`x^*(A(S)) > |S|-1 \;\Longleftrightarrow\; x^*(\delta(S)) < 2`}</TeX>
+                <TeX display>{"x^*(A(S)) > |S|-1 \\;\\Longleftrightarrow\\; x^*(\\delta(S)) < 2"}</TeX>
               </div>
               <div style={{ marginTop: 4, fontSize: 21, color: "var(--paper-deep)", fontStyle: "italic", opacity: 0.95 }}>
                 Finding a violated S ⇒ minimize x*(δ(S)) over all S — a global min-cut.
@@ -1645,7 +1638,7 @@ function SlideTSPMinCut() {
                      zIndex: 3,
                      animation: "fadeUp 420ms both ease-out",
                    }}>
-                <TeX>{String.raw`x(\delta(S)) = 0 + 0 = 0 < 2`}</TeX>
+                <TeX>{"x(\\delta(S)) = 0 + 0 = 0 < 2"}</TeX>
                 {"  ⇒  there are subtours!"}
               </div>
             )}
@@ -1673,7 +1666,7 @@ function SlideTSPMinCut() {
                      zIndex: 3,
                      animation: "fadeUp 420ms both ease-out",
                    }}>
-                <TeX>{String.raw`x^*(\delta(S)) = 0.3 + 0.3 = 0.6 < 2`}</TeX>
+                <TeX>{"x^*(\\delta(S)) = 0.3 + 0.3 = 0.6 < 2"}</TeX>
                 {"  ⇒  there are subtours!"}
               </div>
             )}
@@ -1706,13 +1699,13 @@ function SlideTSPMinCut() {
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
                     <div style={{ fontSize: 13, color: "var(--ink-3)", letterSpacing: "0.06em" }}>OUT-DEGREE</div>
                     <div style={{ fontSize: 32 }}>
-                      <TeX>{String.raw`\sum_{\substack{j \in V \\ j \neq i}} x_{ij} = 1`}</TeX>
+                      <TeX>{"\\sum_{\\substack{j \\in V \\\\ j \\neq i}} x_{ij} = 1"}</TeX>
                     </div>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
                     <div style={{ fontSize: 13, color: "var(--ink-3)", letterSpacing: "0.06em" }}>IN-DEGREE</div>
                     <div style={{ fontSize: 32 }}>
-                      <TeX>{String.raw`\sum_{\substack{i \in V \\ i \neq j}} x_{ij} = 1`}</TeX>
+                      <TeX>{"\\sum_{\\substack{i \\in V \\\\ i \\neq j}} x_{ij} = 1"}</TeX>
                     </div>
                   </div>
                 </div>
@@ -1745,13 +1738,13 @@ function SlideTSPMinCut() {
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
                     <div style={{ fontSize: 13, color: "var(--ink-3)", letterSpacing: "0.06em" }}>OUT-DEGREE</div>
                     <div style={{ fontSize: 32 }}>
-                      <TeX>{String.raw`\sum_{\substack{j \in V \\ j \neq i}} x_{ij} = 1`}</TeX>
+                      <TeX>{"\\sum_{\\substack{j \\in V \\\\ j \\neq i}} x_{ij} = 1"}</TeX>
                     </div>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
                     <div style={{ fontSize: 13, color: "var(--ink-3)", letterSpacing: "0.06em" }}>IN-DEGREE</div>
                     <div style={{ fontSize: 32 }}>
-                      <TeX>{String.raw`\sum_{\substack{i \in V \\ i \neq j}} x_{ij} = 1`}</TeX>
+                      <TeX>{"\\sum_{\\substack{i \\in V \\\\ i \\neq j}} x_{ij} = 1"}</TeX>
                     </div>
                   </div>
                 </div>
@@ -2000,31 +1993,31 @@ function SlideTSPMinCutAlgo() {
             <div style={{ fontSize: 22, lineHeight: 1.65 }}>
               <div style={{ marginBottom: 16 }}>
                 <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)", fontWeight: 600, marginRight: 12 }}>1.</span>
-                Build the <em>support graph</em> <TeX>{String.raw`G_{x^*} = (V, E)`}</TeX> with arc capacity
+                Build the <em>support graph</em> <TeX>{"G_{x^*} = (V, E)"}</TeX> with arc capacity
                 <div style={{ marginTop: 6 }}>
-                  <TeX display>{String.raw`c_{ij} \;=\; x^*_{ij} \qquad \forall\,(i,j) \in E`}</TeX>
+                  <TeX display>{"c_{ij} \\;=\\; x^*_{ij} \\qquad \\forall\\,(i,j) \\in E"}</TeX>
                 </div>
               </div>
 
               <div style={{ marginBottom: 16 }}>
                 <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)", fontWeight: 600, marginRight: 12 }}>2.</span>
-                Compute the <em>global minimum cut</em> of <TeX>{String.raw`G_{x^*}`}</TeX> — searching over <em>all</em> subsets S ⊂ V for the one with the smallest boundary weight, i.e. checking whether any DFJ constraint is violated:
+                Compute the <em>global minimum cut</em> of <TeX>{"G_{x^*}"}</TeX> — searching over <em>all</em> subsets S ⊂ V for the one with the smallest boundary weight, i.e. checking whether any DFJ constraint is violated:
                 <div style={{ marginTop: 6 }}>
-                  <TeX display>{String.raw`(S^*,\, V \setminus S^*) \;=\; \arg\min_{\emptyset \,\subsetneq\, S \,\subsetneq\, V} \; x^*(\delta(S))`}</TeX>
-                  <TeX display>{String.raw`\mu \;=\; x^*(\delta(S^*))`}</TeX>
+                  <TeX display>{"(S^*,\\, V \\setminus S^*) \\;=\\; \\arg\\min_{\\emptyset \\,\\subsetneq\\, S \\,\\subsetneq\\, V} \\; x^*(\\delta(S))"}</TeX>
+                  <TeX display>{"\\mu \\;=\\; x^*(\\delta(S^*))"}</TeX>
                 </div>
               </div>
 
               <div>
                 <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)", fontWeight: 600, marginRight: 12 }}>3.</span>
-                <span style={{ fontFamily: "var(--font-mono)", fontWeight: 600 }}>if</span> <TeX>{String.raw`\mu < 2`}</TeX>
+                <span style={{ fontFamily: "var(--font-mono)", fontWeight: 600 }}>if</span> <TeX>{"\\mu < 2"}</TeX>
                 <div style={{ marginLeft: 38, marginTop: 6, lineHeight: 1.5 }}>
                   <span style={{ fontFamily: "var(--font-mono)", fontWeight: 600 }}>return</span> the violated DFJ constraint for S*:
                   <div style={{ marginTop: 4 }}>
-                    <TeX display>{String.raw`x(A(S^*)) \;\leq\; |S^*| - 1`}</TeX>
+                    <TeX display>{"x(A(S^*)) \\;\\leq\\; |S^*| - 1"}</TeX>
                   </div>
                   <div style={{ fontSize: 18, color: "var(--ink-3)", marginTop: 2 }}>
-                    violated because <TeX>{String.raw`x^*(A(S^*)) = |S^*| - \mu/2 > |S^*| - 1`}</TeX>
+                    violated because <TeX>{"x^*(A(S^*)) = |S^*| - \\mu/2 > |S^*| - 1"}</TeX>
                   </div>
                 </div>
                 <div style={{ marginLeft: 38, marginTop: 8 }}>
@@ -2040,14 +2033,14 @@ function SlideTSPMinCutAlgo() {
               <div className="kicker" style={{ fontSize: 16, marginBottom: 8 }}>Why that constraint is violated</div>
               <div style={{ fontSize: 17, lineHeight: 1.5, color: "var(--ink-2)", display: "flex", flexDirection: "column", gap: 4 }}>
                 <div>From the degree identity on the previous slide, applied to the optimal cut S*:</div>
-                <TeX display>{String.raw`2\,x^*(A(S^*)) + \mu \;=\; 2|S^*|`}</TeX>
-                <div>where <TeX>{String.raw`\mu = x^*(\delta(S^*))`}</TeX>. Divide every term by 2:</div>
-                <TeX display>{String.raw`\tfrac{2\,x^*(A(S^*))}{2} + \tfrac{\mu}{2} \;=\; \tfrac{2|S^*|}{2} \;\;\Longrightarrow\;\; x^*(A(S^*)) + \tfrac{\mu}{2} \;=\; |S^*|`}</TeX>
-                <div>Isolating <TeX>{String.raw`x^*(A(S^*))`}</TeX> by subtracting <TeX>{String.raw`\tfrac{\mu}{2}`}</TeX> from both sides:</div>
-                <TeX display>{String.raw`x^*(A(S^*)) \;=\; |S^*| - \tfrac{\mu}{2}`}</TeX>
-                <div>The oracle returned <TeX>{String.raw`\mu < 2`}</TeX> (else no violated cut). Dividing by 2 gives <TeX>{String.raw`\tfrac{\mu}{2} < 1`}</TeX>, i.e. <TeX>{String.raw`{-}\tfrac{\mu}{2} > {-}1`}</TeX>. Adding <TeX>{String.raw`|S^*|`}</TeX>:</div>
-                <TeX display>{String.raw`x^*(A(S^*)) \;=\; |S^*| - \tfrac{\mu}{2} \;>\; |S^*| - 1`}</TeX>
-                <div>This <em>directly</em> contradicts DFJ: <TeX>{String.raw`x(A(S^*)) \leq |S^*|-1`}</TeX> — so <TeX>{String.raw`(S^*, V \setminus S^*)`}</TeX> is the violated cut returned.</div>
+                <TeX display>{"2\\,x^*(A(S^*)) + \\mu \\;=\\; 2|S^*|"}</TeX>
+                <div>where <TeX>{"\\mu = x^*(\\delta(S^*))"}</TeX>. Divide every term by 2:</div>
+                <TeX display>{"\\tfrac{2\\,x^*(A(S^*))}{2} + \\tfrac{\\mu}{2} \\;=\\; \\tfrac{2|S^*|}{2} \\;\\;\\Longrightarrow\\;\\; x^*(A(S^*)) + \\tfrac{\\mu}{2} \\;=\\; |S^*|"}</TeX>
+                <div>Isolating <TeX>{"x^*(A(S^*))"}</TeX> by subtracting <TeX>{"\\tfrac{\\mu}{2}"}</TeX> from both sides:</div>
+                <TeX display>{"x^*(A(S^*)) \\;=\\; |S^*| - \\tfrac{\\mu}{2}"}</TeX>
+                <div>The oracle returned <TeX>{"\\mu < 2"}</TeX> (else no violated cut). Dividing by 2 gives <TeX>{"\\tfrac{\\mu}{2} < 1"}</TeX>, i.e. <TeX>{"{-}\\tfrac{\\mu}{2} > {-}1"}</TeX>. Adding <TeX>{"|S^*|"}</TeX>:</div>
+                <TeX display>{"x^*(A(S^*)) \\;=\\; |S^*| - \\tfrac{\\mu}{2} \\;>\\; |S^*| - 1"}</TeX>
+                <div>This <em>directly</em> contradicts DFJ: <TeX>{"x(A(S^*)) \\leq |S^*|-1"}</TeX> — so <TeX>{"(S^*, V \\setminus S^*)"}</TeX> is the violated cut returned.</div>
               </div>
             </div>
           </div>
@@ -2095,7 +2088,7 @@ function SlideTSPMinCutImpl() {
         <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 14, flex: 1, minHeight: 0 }}>
 
           <div style={{ fontSize: 19, lineHeight: 1.45, color: "var(--ink-2)" }}>
-            On the support graph <TeX>{String.raw`G_{x^*} = (V, E)`}</TeX> with arc capacities <TeX>{String.raw`c_{ij} = x^*_{ij}`}</TeX>, finding the global minimum cut is a <em>polynomial</em> problem. Three classical approaches differ in how they exploit — or avoid — the max-flow / min-cut duality.
+            On the support graph <TeX>{"G_{x^*} = (V, E)"}</TeX> with arc capacities <TeX>{"c_{ij} = x^*_{ij}"}</TeX>, finding the global minimum cut is a <em>polynomial</em> problem. Three classical approaches differ in how they exploit — or avoid — the max-flow / min-cut duality.
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 18, flex: 1, alignItems: "stretch", minHeight: 0 }}>
@@ -2112,14 +2105,14 @@ function SlideTSPMinCutImpl() {
                 Any partition (S, V\S) has s on one side. Pick any t on the other side: the s-t min-cut is <em>at most</em> cap(S, V\S). Sweeping t over all V \ {"{s}"} therefore sees every possible S — none escapes.
               </Section>
               <Cost>
-                n − 1 max-flow calls; with Edmonds–Karp <TeX>{String.raw`O(n \cdot V E^2)`}</TeX>. Conceptually simplest, computationally redundant — many flows duplicate work.
+                n − 1 max-flow calls; with Edmonds–Karp <TeX>{"O(n \\cdot V E^2)"}</TeX>. Conceptually simplest, computationally redundant — many flows duplicate work.
               </Cost>
             </Card>
 
             {/* ── Gomory–Hu ────────────────────────────────────────────── */}
             <Card title="Gomory–Hu tree" accent="var(--accent-2)">
               <Section label="Idea">
-                Build a single weighted tree T on V that simultaneously encodes <em>all</em> <TeX>{String.raw`\binom{n}{2}`}</TeX> pairwise min-cuts. Property: for any u, v ∈ V, the min u-v cut in G equals the <em>lightest edge on the unique u-v path</em> in T.
+                Build a single weighted tree T on V that simultaneously encodes <em>all</em> <TeX>{"\\binom{n}{2}"}</TeX> pairwise min-cuts. Property: for any u, v ∈ V, the min u-v cut in G equals the <em>lightest edge on the unique u-v path</em> in T.
               </Section>
               <Section label="Construction">
                 Still uses n − 1 max-flow calls — one per tree edge — but each call runs on a contracted graph that reuses information from previous flows, avoiding redundant computation across queries.
@@ -2128,7 +2121,7 @@ function SlideTSPMinCutImpl() {
                 Just pick the lightest edge of T. Removing it splits V into two components: those are exactly S* and V\S*, with cut value equal to that edge's weight.
               </Section>
               <Cost>
-                n − 1 max-flow calls, but <em>any</em> later pairwise min-cut query is answered in <TeX>{String.raw`O(n)`}</TeX> by tree traversal — ideal when branch-and-cut calls separation many times on similar relaxations.
+                n − 1 max-flow calls, but <em>any</em> later pairwise min-cut query is answered in <TeX>{"O(n)"}</TeX> by tree traversal — ideal when branch-and-cut calls separation many times on similar relaxations.
               </Cost>
             </Card>
 
@@ -2144,7 +2137,7 @@ function SlideTSPMinCutImpl() {
                 Record the cut-of-the-phase, then contract s and t into a single supernode and run another phase on the smaller graph. After n − 1 phases, the lightest cut-of-the-phase is the global minimum cut.
               </Section>
               <Cost>
-                <TeX>{String.raw`O(nm + n^2 \log n)`}</TeX> with Fibonacci heaps. No augmenting-path machinery, easier to implement than max-flow, very competitive in practice.
+                <TeX>{"O(nm + n^2 \\log n)"}</TeX> with Fibonacci heaps. No augmenting-path machinery, easier to implement than max-flow, very competitive in practice.
               </Cost>
             </Card>
 

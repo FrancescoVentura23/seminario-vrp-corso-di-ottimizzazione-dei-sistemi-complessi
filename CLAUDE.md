@@ -342,3 +342,88 @@ Regola generale: in una catena `blink + fadeOut`, usare sempre `forwards` su `fa
 ### 12. Modifiche locali non visibili su GitHub Pages finché non si fa push
 
 Le modifiche ai file locali sono visibili subito su `http://localhost:8000` ma **non** su GitHub Pages finché non si esegue `git push origin main`. Se si testa su GitHub Pages e le modifiche sembrano non applicate, verificare prima se il push è stato fatto.
+
+### 13. Mai usare `String.raw\`...\`` per le espressioni LaTeX nei `<TeX>`
+
+**Bug verificato**: Babel standalone (vers. 7.29.0 servita da CDN, usata da [vrp-seminar.html](project/vrp-seminar.html)) ha un problema con i tagged template literals quando lo stesso modulo `<script type="text/babel">` è caricato insieme ad altri: l'array di "raw strings" che `String.raw` riceve viene **condiviso (memoizzato globalmente) tra script tag diversi**. Risultato pratico: due `<TeX>{String.raw\`A\`}</TeX>` in slide diverse possono finire per ricevere entrambi la stessa stringa `B` proveniente da una terza slide. KaTeX renderizza correttamente quello che riceve, ma riceve i children sbagliati.
+
+**Sintomo**: una slide mostra equazioni che provengono da una slide completamente diversa (es. la formulazione CVRP che renderizza il vincolo DFJ del TSP).
+
+**Soluzione obbligatoria**: usare **stringhe normali con doppio backslash** anziché `String.raw`:
+
+```jsx
+// SBAGLIATO — può leakare cross-slide
+<TeX>{String.raw`\sum_{i \in V} x_{ij} = 1`}</TeX>
+
+// GIUSTO
+<TeX>{"\\sum_{i \\in V} x_{ij} = 1"}</TeX>
+```
+
+Per espressioni multi-line con `\begin{aligned}…\end{aligned}`, usare `\n` esplicito nella stringa anziché newline reale:
+
+```jsx
+<TeX display>{"\\begin{aligned}\nA &= B \\\\\nC &= D\n\\end{aligned}"}</TeX>
+```
+
+**Diagnosi rapida**: il componente `TeX` in [components.jsx](project/components.jsx) imposta sempre l'attributo `data-tex-source` sullo `<span>`. Click destro su una formula sospetta → Inspect → guarda `data-tex-source`. Se contiene una stringa diversa da quella nel JSX, è quasi sicuramente questo bug.
+
+### 14. Mount del deck: un solo `ReactDOM.createRoot` per tutto, non uno per slide
+
+**Versione precedente** (rotta): per ogni slide creava un root separato e poi spostava la `<section>` con `appendChild`:
+
+```jsx
+slides.forEach((SlideComp) => {
+  const host = document.createElement("div");
+  const root = ReactDOM.createRoot(host);
+  ReactDOM.flushSync(() => root.render(<SlideComp/>));
+  stage.appendChild(host.firstElementChild);   // ← move out of host
+});
+```
+
+Con React 18 (concurrent reconciler) e ~50 root in parallelo + manipolazione DOM imperativa fuori da React, lo stato cross-root non era più isolato.
+
+**Versione corretta** (in [vrp-seminar.html](project/vrp-seminar.html)): un solo root su `<deck-stage>`, tutte le slide come siblings in un Fragment:
+
+```jsx
+const root = ReactDOM.createRoot(stage);
+ReactDOM.flushSync(() => {
+  root.render(
+    <React.Fragment>
+      {slides.map((SlideComp, i) => <SlideComp key={i}/>)}
+    </React.Fragment>
+  );
+});
+```
+
+Tutte le slide vivono in un solo React tree, niente DOM mutation post-render.
+
+### 15. Il componente `TeX` deve renderizzare **sincronamente** durante render-phase
+
+Il componente `TeX` in [components.jsx](project/components.jsx) usa `useMemo` + `katex.renderToString` + `dangerouslySetInnerHTML`, **non** `useRef` + `useEffect` + `katex.render`. Il pattern asincrono (effect-based) crea race condition con il mount delle slide e amplifica eventuali bug del reconciler.
+
+```jsx
+// Pattern corretto in TeX:
+const html = useMemo(() => {
+  if (!window.katex) return null;
+  try { return window.katex.renderToString(String(children), {...}); }
+  catch (e) { return null; }
+}, [children, display]);
+return <span dangerouslySetInnerHTML={{ __html: html }} data-tex-source={String(children)} />;
+```
+
+KaTeX viene caricato con `<script defer>` prima di Babel, quindi `window.katex` è già disponibile quando le slide renderizzano per la prima volta.
+
+### 16. Non committare worktree Claude — `.claude/` deve restare in `.gitignore`
+
+Le worktree Claude (`.claude/worktrees/...`) hanno un proprio `.git` file e, se trackate dalla repo principale, vengono interpretate da git come **submodule** senza URL associato. Conseguenza: il workflow `pages-build-deployment` di GitHub Actions fallisce con:
+
+```
+No url found for submodule path '.claude/worktrees/...' in .gitmodules
+```
+
+Mentre il workflow fallisce, GitHub Pages **non aggiorna** il sito — quindi qualsiasi modifica pushata non si vede live. La cartella `.claude/` è in `.gitignore`. Se per errore qualcuno committa di nuovo qualcosa sotto `.claude/`, fare:
+
+```bash
+git rm --cached -r .claude/
+git commit -m "fix: untrack .claude/"
+```

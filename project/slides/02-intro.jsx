@@ -198,7 +198,7 @@ function SlideORLink() {
               <span><span style={{ display: "inline-block", width: 14, height: 14, background: "var(--accent-3)", marginRight: 8, verticalAlign: "middle" }}/>Route 3</span>
             </div>
             <div style={{ marginTop: 10, color: "var(--ink-3)", fontSize: 26 }}>
-              <TeX display={true}>{String.raw`\min \sum_{i,j} c_{ij}\, x_{ij}`}</TeX>
+              <TeX display={true}>{"\\min \\sum_{i,j} c_{ij}\\, x_{ij}"}</TeX>
             </div>
             <div style={{ marginTop: 2, fontFamily: "var(--font-mono)", fontSize: 20, color: "var(--ink-3)" }}>s.t. flow conservation, capacity, covering</div>
             <div style={{ marginTop: 6, fontFamily: "var(--font-mono)", fontSize: 20, color: "var(--ink-3)" }}>{"xᵢⱼ ∈ {0, 1} — binary decision variables"}</div>

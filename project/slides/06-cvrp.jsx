@@ -206,7 +206,7 @@ function Slide15() {
               <em style={{ color: "var(--accent)" }}>r(S)</em> is the <em>minimum number of vehicles</em> needed to serve every customer in S — equivalently, the optimal value of the <em>Bin Packing Problem</em> on items {`{dᵢ : i ∈ S}`} with bin capacity C.
             </div>
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "20px 26px", fontFamily: "var(--font-mono)", fontSize: 24 }}>
-              <TeX display>{String.raw`r(S) \;\geq\; \left\lceil \frac{d(S)}{C} \right\rceil, \qquad d(S) = \sum_{i \in S} d_i`}</TeX>
+              <TeX display>{"r(S) \\;\\geq\\; \\left\\lceil \\frac{d(S)}{C} \\right\\rceil, \\qquad d(S) = \\sum_{i \\in S} d_i"}</TeX>
               <div style={{ color: "var(--ink-3)", fontSize: 22, lineHeight: 1.4, marginTop: 10 }}>
                 BPP is NP-hard, but the trivial lower bound ⌈d(S)/C⌉ is fast and is often used in place of r(S).
               </div>

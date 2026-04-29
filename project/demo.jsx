@@ -128,7 +128,7 @@ function ClarkeWrightDemo() {
     <div style={{ display: "grid", gridTemplateColumns: "1.55fr 1fr", gap: 40, width: "100%", height: "100%" }}>
       {/* LEFT — graph */}
       <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", position: "relative", display: "flex", flexDirection: "column" }}>
-        <div style={{ padding: "18px 26px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--line)", fontFamily: "var(--font-mono)", fontSize: 28, color: "var(--ink-3)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+        <div style={{ padding: "14px 22px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--line)", fontFamily: "var(--font-mono)", fontSize: 24, color: "var(--ink-3)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
           <span>Capacity C = {CW_CAPACITY}</span>
           <span>Routes: {sim.routes.length}</span>
           <span>Total cost: {cost.toFixed(0)}</span>
@@ -176,22 +176,22 @@ function ClarkeWrightDemo() {
       </div>
 
       {/* RIGHT — savings list & controls */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
         <div>
-          <div className="kicker" style={{ marginBottom: 10 }}>Savings list</div>
-          <div style={{ fontFamily: "var(--font-mono)", fontSize: 31, color: "var(--ink-2)" }}>
+          <div className="kicker" style={{ marginBottom: 8 }}>Savings list</div>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: 24, color: "var(--ink-2)" }}>
             s(i,j) = c(0,i) + c(0,j) − c(i,j)
           </div>
         </div>
 
-        <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 12 }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "var(--font-mono)", fontSize: 31 }}>
+        <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 10 }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "var(--font-mono)", fontSize: 24 }}>
             <thead>
-              <tr style={{ color: "var(--ink-3)", fontSize: 24, textTransform: "uppercase", letterSpacing: "0.08em" }}>
-                <th style={{ textAlign: "left", padding: "8px 12px" }}>#</th>
-                <th style={{ textAlign: "left", padding: "8px 12px" }}>i, j</th>
-                <th style={{ textAlign: "right", padding: "8px 12px" }}>s(i,j)</th>
-                <th style={{ textAlign: "center", padding: "8px 12px" }}>status</th>
+              <tr style={{ color: "var(--ink-3)", fontSize: 19, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                <th style={{ textAlign: "left", padding: "6px 10px" }}>#</th>
+                <th style={{ textAlign: "left", padding: "6px 10px" }}>i, j</th>
+                <th style={{ textAlign: "right", padding: "6px 10px" }}>s(i,j)</th>
+                <th style={{ textAlign: "center", padding: "6px 10px" }}>status</th>
               </tr>
             </thead>
             <tbody>
@@ -204,10 +204,10 @@ function ClarkeWrightDemo() {
                     background: isCur ? "var(--accent)" : "transparent",
                     color: isCur ? "white" : (isDone ? "var(--ink-3)" : "var(--ink)"),
                   }}>
-                    <td style={{ padding: "10px 12px" }}>{String(idx).padStart(2,"0")}</td>
-                    <td style={{ padding: "10px 12px" }}>({row.i}, {row.j})</td>
-                    <td style={{ padding: "10px 12px", textAlign: "right" }}>{row.s.toFixed(1)}</td>
-                    <td style={{ padding: "10px 12px", textAlign: "center" }}>
+                    <td style={{ padding: "7px 10px" }}>{String(idx).padStart(2,"0")}</td>
+                    <td style={{ padding: "7px 10px" }}>({row.i}, {row.j})</td>
+                    <td style={{ padding: "7px 10px", textAlign: "right" }}>{row.s.toFixed(1)}</td>
+                    <td style={{ padding: "7px 10px", textAlign: "center" }}>
                       {isCur ? "▶ eval" : isDone ? "done" : "queued"}
                     </td>
                   </tr>
@@ -218,7 +218,7 @@ function ClarkeWrightDemo() {
         </div>
 
         {/* Controls */}
-        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
           <button onClick={() => setStep(s => Math.max(0, s - 1))}
                   style={cwBtn}>◀ step</button>
           <button onClick={() => setStep(s => Math.min(maxSteps, s + 1))}
@@ -227,13 +227,13 @@ function ClarkeWrightDemo() {
             {playing ? "❚❚ pause" : "▶ auto"}
           </button>
           <button onClick={reset} style={cwBtn}>reset</button>
-          <div style={{ marginLeft: "auto", fontFamily: "var(--font-mono)", fontSize: 28, color: "var(--ink-3)" }}>
+          <div style={{ marginLeft: "auto", fontFamily: "var(--font-mono)", fontSize: 23, color: "var(--ink-3)" }}>
             {step} / {maxSteps}
           </div>
         </div>
 
         {/* Current action */}
-        <div style={{ fontFamily: "var(--font-mono)", fontSize: 29, color: "var(--ink-2)", lineHeight: 1.4, minHeight: 80, borderTop: "1px solid var(--line)", paddingTop: 16 }}>
+        <div style={{ fontFamily: "var(--font-mono)", fontSize: 23, color: "var(--ink-2)", lineHeight: 1.4, minHeight: 64, borderTop: "1px solid var(--line)", paddingTop: 12 }}>
           {step === 0 ? (
             <>Initial state: every customer is served by a dedicated round-trip from the depot.</>
           ) : hl ? (
@@ -253,10 +253,10 @@ const cwBtn = {
   border: "1px solid var(--ink)",
   color: "var(--ink)",
   fontFamily: "var(--font-mono)",
-  fontSize: 28,
+  fontSize: 22,
   letterSpacing: "0.04em",
   textTransform: "uppercase",
-  padding: "10px 16px",
+  padding: "8px 13px",
   cursor: "pointer",
 };
 

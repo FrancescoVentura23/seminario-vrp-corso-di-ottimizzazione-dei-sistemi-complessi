@@ -1,5 +1,5 @@
 /* =========================================================================
-   VRP Seminar — Part IV: TSP
+   VRP Seminar — Part V: TSP
    Slides: section header, informal statement, Hamiltonian circuit,
            ILP formulation, degree constraints, subtour problem,
            DFJ subtour elimination, exponential blow-up, TSP -> VRP
@@ -7,13 +7,13 @@
 
 function SlideTSPSection() {
   return (
-    <section className="slide section-slide" data-label="Part IV — TSP">
+    <section className="slide section-slide" data-label="Part V — TSP">
       <div style={{ position: "absolute", top: 80, left: 120, right: 120, display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 31, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--paper-deep)" }}>
-        <div>Part IV of IX</div>
-        <div>Slides 22 — 32</div>
+        <div>Part V of IX</div>
+        <div>Slides 28 — 38</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-        <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Four</div>
+        <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Five</div>
         <div className="hero" style={{ fontSize: 200 }}>Traveling<br/>Salesman</div>
         <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
           The simplest non-trivial routing problem — one vehicle, no capacity limit, visit everyone exactly once. The ancestor of every VRP.
@@ -811,7 +811,7 @@ function SlideTSPDFJ() {
                 <pattern id="dotgrid-dfj2" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
                   <circle cx="1" cy="1" r="1" fill="var(--line)"/>
                 </pattern>
-                {/* Arrow markers — same pattern as slide 30 (SlideTSPMinCut):
+                {/* Arrow markers — same pattern as slide 36 (SlideTSPMinCut):
                     markerUnits=userSpaceOnUse keeps head size independent of
                     stroke width; refX aligned with tip so it meets the line
                     endpoint (already at the node border via `segment()`). */}

@@ -5,7 +5,7 @@
 
 function Slide27() {
   return (
-    <section className="slide section-slide" data-label="Part VII — Applications">
+    <section className="slide section-slide" data-label="Part IX — Applications">
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Applications</div>
         <div className="hero" style={{ fontSize: 240 }}>In the wild</div>

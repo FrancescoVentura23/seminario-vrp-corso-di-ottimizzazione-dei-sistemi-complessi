@@ -1,6 +1,6 @@
 # Seminario VRP — Guida rapida
 
-Deck HTML/CSS/JS esportato da Claude Design. **52 slide** gestite dal web component `<deck-stage>` in [project/deck-stage.js](project/deck-stage.js), montate da [project/vrp-seminar.html](project/vrp-seminar.html).
+Deck HTML/CSS/JS esportato da Claude Design. **58 slide** gestite dal web component `<deck-stage>` in [project/deck-stage.js](project/deck-stage.js), montate da [project/vrp-seminar.html](project/vrp-seminar.html).
 
 ## Istruzioni per Claude Dispatch
 
@@ -11,7 +11,7 @@ Lavora nella cartella:
 ~/Documents/GitHub/seminario-vrp-corso-di-ottimizzazione-dei-sistemi-complessi/
 
 Leggi attentamente il CLAUDE.md nella root: contiene la struttura completa
-della presentazione (53 slide), i file coinvolti, i pattern obbligatori
+della presentazione (58 slide), i file coinvolti, i pattern obbligatori
 da seguire e i gotcha delle animazioni.
 
 Quando hai finito di leggere, confermami che sei pronto per ricevere
@@ -109,6 +109,8 @@ Ogni file in `slides/` è un `<script type="text/babel">` che definisce le sue f
 
 Ogni section header è una slide con `className="section-slide"`. Per modificare titolo o numerazione di una sezione, cerca la funzione indicata nel file corrispondente.
 
+> **Ordine delle parti** — la **Complexity** (Parte IV) è collocata **prima** del TSP e del CVRP: il deck introduce Big-O, classi P/NP/NP-hard, branch-and-bound/cut e il concetto di lazy constraint **prima** che le slide TSP usino questo vocabolario per la generazione lazy dei vincoli DFJ. La numerazione dei file `.jsx` (`05-tsp.jsx`, `06-cvrp.jsx`, `07-complexity.jsx`) riflette l'ordine *di creazione* dei file, non l'ordine di rendering — l'array `slides[]` in [vrp-seminar.html](project/vrp-seminar.html) è la fonte autoritativa dell'ordine effettivo.
+
 | # | Slide | Funzione | File |
 |---|-------|----------|------|
 | 1 | Cover | `Slide01` | [slides/01-cover.jsx](project/slides/01-cover.jsx) |
@@ -131,38 +133,44 @@ Ogni section header è una slide con `className="section-slide"`. Per modificare
 | 18 | Anatomy of a routing problem | `Slide06` | [slides/04-vrp-elements.jsx](project/slides/04-vrp-elements.jsx) |
 | 19 | Road → complete graph | `Slide07` | [slides/04-vrp-elements.jsx](project/slides/04-vrp-elements.jsx) |
 | 20 | Graph notation | `Slide08` | [slides/04-vrp-elements.jsx](project/slides/04-vrp-elements.jsx) |
-| 21 | **Part IV — TSP** *(section header)* | `SlideTSPSection` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 22 | TSP — informal statement | `Slide09` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 23 | Hamiltonian circuit (animated) | `SlideTSPHamiltonian` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 24 | TSP — ILP formulation | `SlideTSPFormulation` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 25 | Degree constraints | `SlideTSPDegree` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 26 | The subtour problem (animated) | `SlideTSPSubtourProblem` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 27 | DFJ subtour elimination | `SlideTSPDFJ` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 28 | Exponential blow-up (animated) | `SlideTSPExponential` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 29 | Lazy subtour cuts in branch-and-cut | `SlideTSPLazy` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 30 | Separation = min-cut (animated) | `SlideTSPMinCut` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 31 | Separation oracle — precise algorithm | `SlideTSPMinCutAlgo` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 32 | Separation oracle — implementation | `SlideTSPMinCutImpl` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 33 | **Part V — CVRP** *(section header)* | `Slide11` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
-| 34 | TSP → CVRP — capacity intro | `Slide10` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 35 | TSP → CVRP — multiple routes | `Slide10B` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 36 | Three constraints + two-index ILP | `Slide14` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
-| 37 | r(S) and capacity-cut inequality | `Slide15` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
-| 38 | **Part VI — Complexity** *(section header)* | `Slide16` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
-| 39 | NP-hardness & explosion | `Slide17` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
-| 40 | Why heuristics | `Slide18` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
-| 41 | **Part VII — VRP family** *(section header)* | `Slide19` | [slides/08-family.jsx](project/slides/08-family.jsx) |
-| 42 | Taxonomy | `Slide20` | [slides/08-family.jsx](project/slides/08-family.jsx) |
-| 43 | VRPTW | `Slide21` | [slides/08-family.jsx](project/slides/08-family.jsx) |
-| 44 | Backhauls & PD | `Slide22` | [slides/08-family.jsx](project/slides/08-family.jsx) |
-| 45 | Multi-depot & open VRP | `Slide23` | [slides/08-family.jsx](project/slides/08-family.jsx) |
-| 46 | **Part VIII — Live demo** *(section header)* | `Slide24` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
-| 47 | Clarke-Wright idea | `Slide25` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
-| 48 | Interactive demo | `Slide26` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
-| 49 | **Part IX — Applications** *(section header)* | `Slide27` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
-| 50 | Case studies | `Slide28` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
-| 51 | Takeaways | `Slide29` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
-| 52 | Closing / references | `Slide30` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
+| 21 | **Part IV — Complexity** *(section header)* | `Slide16` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
+| 22 | Big-O notation & growth table | `Slide17A` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
+| 23 | Complexity classes — P / NP / NP-hard / NP-complete | `Slide17B` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
+| 24 | Exact algorithms (B&B, B&C, DP) | `Slide17C` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
+| 25 | CVRP is NP-hard | `Slide17` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
+| 26 | Why heuristics | `Slide18` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
+| 27 | **Part V — TSP** *(section header)* | `SlideTSPSection` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 28 | TSP — informal statement | `Slide09` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 29 | Hamiltonian circuit (animated) | `SlideTSPHamiltonian` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 30 | TSP — ILP formulation | `SlideTSPFormulation` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 31 | Degree constraints | `SlideTSPDegree` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 32 | The subtour problem (animated) | `SlideTSPSubtourProblem` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 33 | DFJ subtour elimination | `SlideTSPDFJ` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 34 | Exponential blow-up (animated) | `SlideTSPExponential` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 35 | Lazy subtour cuts in branch-and-cut | `SlideTSPLazy` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 36 | Separation = min-cut (animated) | `SlideTSPMinCut` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 37 | Separation oracle — precise algorithm | `SlideTSPMinCutAlgo` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 38 | Separation oracle — implementation | `SlideTSPMinCutImpl` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 39 | **Part VI — CVRP** *(section header)* | `Slide11` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 40 | TSP → CVRP — capacity intro | `Slide10` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 41 | TSP → CVRP — multiple routes | `Slide10B` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 42 | Three constraints + two-index ILP | `Slide14` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 43 | Depot constraints — K leave / K return | `Slide14B` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 44 | r(S) and capacity-cut inequality | `Slide15` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 45 | Capacity cuts — exponential blow-up | `Slide15B` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 46 | Lazy capacity-cut generation (B&C) | `Slide15C` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 47 | **Part VII — VRP family** *(section header)* | `Slide19` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 48 | Taxonomy | `Slide20` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 49 | VRPTW | `Slide21` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 50 | Backhauls & PD | `Slide22` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 51 | Multi-depot & open VRP | `Slide23` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 52 | **Part VIII — Live demo** *(section header)* | `Slide24` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
+| 53 | Clarke-Wright idea | `Slide25` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
+| 54 | Interactive demo | `Slide26` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
+| 55 | **Part IX — Applications** *(section header)* | `Slide27` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
+| 56 | Case studies | `Slide28` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
+| 57 | Takeaways | `Slide29` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
+| 58 | Closing / references | `Slide30` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
 
 > Per aggiungere una slide: crea la funzione nel file della parte corrispondente, aggiungila all'`Object.assign(window, {...})` in fondo a quel file, poi inseriscila nell'array `slides` dentro [project/vrp-seminar.html](project/vrp-seminar.html).
 

@@ -1,18 +1,18 @@
 /* =========================================================================
-   VRP Seminar — Part V: CVRP
+   VRP Seminar — Part VI: CVRP
    Slides: section header, two-index ILP (with the three constraints),
            capacity-cut inequality with r(S)
    ========================================================================= */
 
 function Slide11() {
   return (
-    <section className="slide section-slide" data-label="Part III — CVRP">
+    <section className="slide section-slide" data-label="Part VI — CVRP">
       <div style={{ position: "absolute", top: 80, left: 120, right: 120, display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 31, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--paper-deep)" }}>
-        <div>Part V of IX</div>
-        <div>Slides 34 — 40</div>
+        <div>Part VI of IX</div>
+        <div>Slides 40 — 46</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-        <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Five</div>
+        <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Six</div>
         <div className="hero" style={{ fontSize: 240 }}>The CVRP</div>
         <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
           The capacitated VRP — the core member of the family, from which all other variants are built.

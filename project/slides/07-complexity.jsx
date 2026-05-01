@@ -1,18 +1,18 @@
 /* =========================================================================
-   VRP Seminar — Part VI: Complexity
+   VRP Seminar — Part IV: Complexity
    Slides: section header, computational complexity intro, problem classes,
            exact algorithms, CVRP is NP-hard, why heuristics
    ========================================================================= */
 
 function Slide16() {
   return (
-    <section className="slide section-slide" data-label="Part VI — Complexity">
+    <section className="slide section-slide" data-label="Part IV — Complexity">
       <div style={{ position: "absolute", top: 80, left: 120, right: 120, display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 31, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--paper-deep)" }}>
-        <div>Part VI of IX</div>
-        <div>Slides 41 — 45</div>
+        <div>Part IV of IX</div>
+        <div>Slides 22 — 26</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-        <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Six</div>
+        <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Four</div>
         <div className="hero" style={{ fontSize: 240 }}>Complexity</div>
         <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
           Why the VRP is hard — and why heuristics matter in practice.
@@ -24,7 +24,7 @@ function Slide16() {
 
 
 // -----------------------------------------------------------------------------
-// Slide 41 — What is computational complexity?
+// Slide 22 — What is computational complexity?
 // -----------------------------------------------------------------------------
 function Slide17A() {
   // Practical reach (number of operations) at ~10⁹ ops/s; "feasible" up to ~10¹⁰.
@@ -106,7 +106,7 @@ function Slide17A() {
 
 
 // -----------------------------------------------------------------------------
-// Slide 42 — Classes of problems: P, NP, NP-hard, NP-complete
+// Slide 23 — Classes of problems: P, NP, NP-hard, NP-complete
 // -----------------------------------------------------------------------------
 function Slide17B() {
   const classes = [
@@ -231,7 +231,7 @@ function Slide17B() {
 
 
 // -----------------------------------------------------------------------------
-// Slide 43 — Exact algorithms
+// Slide 24 — Exact algorithms
 // -----------------------------------------------------------------------------
 function Slide17C() {
   const methods = [
@@ -314,7 +314,7 @@ function Slide17C() {
 
 
 // -----------------------------------------------------------------------------
-// Slide 44 — CVRP is NP-hard (the conclusion)
+// Slide 25 — CVRP is NP-hard (the conclusion)
 // -----------------------------------------------------------------------------
 function Slide17() {
   const rows = [
@@ -334,7 +334,7 @@ function Slide17() {
 
           <div style={{ display: "flex", flexDirection: "column", gap: 22, justifyContent: "center" }}>
             <div className="lede" style={{ fontSize: 28, lineHeight: 1.3 }}>
-              The CVRP is <em style={{ color: "var(--accent)" }}>NP-hard in the strong sense</em> — it generalises both the <em>Traveling Salesman Problem</em> and the <em>Bin Packing Problem</em>, each NP-hard on its own.
+              The CVRP is <em style={{ color: "var(--accent)" }}>NP-hard in the strong sense</em> — it generalises both the <em>Traveling Salesman Problem</em> (covered next, in Part V) and the <em>Bin Packing Problem</em>, each NP-hard on its own.
             </div>
 
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "18px 24px" }}>
@@ -389,7 +389,7 @@ function Slide17() {
 
 
 // -----------------------------------------------------------------------------
-// Slide 45 — Why heuristics
+// Slide 26 — Why heuristics
 // -----------------------------------------------------------------------------
 function Slide18() {
   return (

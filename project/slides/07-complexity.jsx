@@ -57,7 +57,24 @@ function Slide17A() {
               <div style={{ fontSize: 22, lineHeight: 1.35 }}>
                 We write <span style={{ fontFamily: "var(--font-mono)" }}>T(n) = O(f(n))</span> when the running time T(n) grows <em>no faster than</em> f(n), up to constants, as n → ∞.
               </div>
-              <div style={{ fontSize: 19, lineHeight: 1.4, color: "var(--ink-3)", marginTop: 10, fontStyle: "italic" }}>
+              {/* Legend — what each symbol means */}
+              <div style={{
+                marginTop: 12, paddingTop: 10,
+                borderTop: "1px dashed var(--line)",
+                display: "grid", gridTemplateColumns: "auto 1fr",
+                columnGap: 14, rowGap: 5,
+                fontSize: 17, lineHeight: 1.35,
+              }}>
+                <div style={{ fontFamily: "var(--font-mono)", color: "var(--ink)", fontWeight: 600 }}>n</div>
+                <div style={{ color: "var(--ink-2)" }}>input size of the problem (e.g. for VRP / TSP, the number of nodes)</div>
+
+                <div style={{ fontFamily: "var(--font-mono)", color: "var(--ink)", fontWeight: 600 }}>T(n)</div>
+                <div style={{ color: "var(--ink-2)" }}>number of operations (or running time) the algorithm performs as a function of n</div>
+
+                <div style={{ fontFamily: "var(--font-mono)", color: "var(--ink)", fontWeight: 600 }}>f(n)</div>
+                <div style={{ color: "var(--ink-2)" }}>comparison curve — the asymptotic upper bound we measure T(n) against (e.g. n, n², n log n, 2ⁿ)</div>
+              </div>
+              <div style={{ fontSize: 19, lineHeight: 1.4, color: "var(--ink-3)", marginTop: 12, fontStyle: "italic" }}>
                 Constants and lower-order terms are ignored — what matters is the asymptotic shape of the curve.
               </div>
             </div>

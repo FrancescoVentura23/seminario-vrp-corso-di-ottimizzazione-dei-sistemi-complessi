@@ -9,7 +9,7 @@ function Slide11() {
     <section className="slide section-slide" data-label="Part III — CVRP">
       <div style={{ position: "absolute", top: 80, left: 120, right: 120, display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 31, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--paper-deep)" }}>
         <div>Part V of IX</div>
-        <div>Slides 34 — 37</div>
+        <div>Slides 34 — 40</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Five</div>
@@ -84,6 +84,187 @@ function Slide14() {
               <div>xᵢⱼ ∈ {"{"}0, 1{"}"}</div><div style={{ color: "var(--ink-3)" }}>(integrality)</div>
             </div>
           </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
+function Slide14B() {
+  // Coordinates aligned with EX_NODES (components.jsx) so the depot sits roughly
+  // at the centre of the box plot, with 12 customers around it.
+  const depot = { x: 420, y: 300 };
+  const custs = [
+    { x: 220, y: 170 }, { x: 330, y: 110 },
+    { x: 540, y: 110 }, { x: 680, y: 180 },
+    { x: 730, y: 330 }, { x: 640, y: 470 },
+    { x: 460, y: 510 }, { x: 240, y: 480 },
+    { x: 140, y: 350 }, { x: 290, y: 260 },
+    { x: 570, y: 260 }, { x: 520, y: 420 },
+  ];
+
+  // Three vehicles → three colours (matching slide 35 / Slide10B route palette).
+  const colors = ["var(--route-1)", "var(--route-2)", "var(--route-3)"];
+  // Pick three customers spread across the perimeter so the active arcs are
+  // visually well separated (top, right, bottom-left).
+  const activeIdx = [1, 4, 7];
+
+  const depotHalf = 22;   // half-side of the black depot square
+  const nodeR     = 12;   // customer circle radius
+
+  // Arrow polygon — tip at (tx,ty), pointing along unit vector (ux,uy)
+  const arrowPts = (tx, ty, ux, uy, aw, al) => {
+    const bx = tx - ux * al, by = ty - uy * al;
+    return `${tx},${ty} ${bx - uy * aw},${by + ux * aw} ${bx + uy * aw},${by - ux * aw}`;
+  };
+
+  // Distance from a square's centre to its edge along direction (ux,uy)
+  const squareEdgeDist = (h, ux, uy) => h / Math.max(Math.abs(ux), Math.abs(uy));
+
+  // One arc between depot and a customer, oriented according to `direction`
+  const renderArc = (i, direction, isActive, ki) => {
+    const c = custs[i];
+    const fromX = direction === "out" ? depot.x : c.x;
+    const fromY = direction === "out" ? depot.y : c.y;
+    const toX   = direction === "out" ? c.x : depot.x;
+    const toY   = direction === "out" ? c.y : depot.y;
+
+    const dx = toX - fromX, dy = toY - fromY;
+    const L  = Math.hypot(dx, dy);
+    const ux = dx / L, uy = dy / L;
+
+    // Retract endpoints from the node boundaries so the arrow tip and line
+    // don't overlap the depot square or the customer circle.
+    const fromIsDepot = direction === "out";
+    const toIsDepot   = direction === "in";
+    const retractFrom = fromIsDepot ? squareEdgeDist(depotHalf, ux, uy) : nodeR;
+    const retractTo   = (toIsDepot   ? squareEdgeDist(depotHalf, ux, uy) : nodeR) + 6;
+    const fx = fromX + ux * retractFrom;
+    const fy = fromY + uy * retractFrom;
+    const tx = toX   - ux * retractTo;
+    const ty = toY   - uy * retractTo;
+
+    const color = isActive ? colors[ki] : "var(--ink-3)";
+    const sw    = isActive ? 4.5 : 1.8;
+    const dash  = isActive ? null : "6 6";
+    const op    = isActive ? 1   : 0.55;
+    const aw    = isActive ? 8   : 5;
+    const al    = isActive ? 14  : 9;
+
+    return (
+      <g key={`${direction}-${i}`} opacity={op}>
+        <line x1={fx} y1={fy} x2={tx} y2={ty}
+              stroke={color} strokeWidth={sw}
+              strokeDasharray={dash || undefined}
+              strokeLinecap="round"/>
+        <polygon points={arrowPts(tx, ty, ux, uy, aw, al)} fill={color}/>
+      </g>
+    );
+  };
+
+  const Star = ({ direction }) => (
+    <svg viewBox="80 60 740 500"
+         preserveAspectRatio="xMidYMid meet"
+         style={{ width: "100%", height: "100%", display: "block", overflow: "visible" }}>
+      {/* Dashed (unused) arcs first, so the active ones paint on top */}
+      {custs.map((_, i) => activeIdx.includes(i) ? null : renderArc(i, direction, false, -1))}
+      {activeIdx.map((i, k) => renderArc(i, direction, true, k))}
+
+      {/* Customers — drawn after the arcs so the lines don't bleed through */}
+      {custs.map((c, i) => (
+        <circle key={`n-${i}`} cx={c.x} cy={c.y} r={nodeR}
+                fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.2}/>
+      ))}
+
+      {/* Depot — black square (the user explicitly asked for square + black,
+          regardless of theme) */}
+      <rect x={depot.x - depotHalf - 4} y={depot.y - depotHalf - 4}
+            width={(depotHalf + 4) * 2} height={(depotHalf + 4) * 2}
+            fill="none" stroke="#000" strokeWidth={1.5} rx={2}/>
+      <rect x={depot.x - depotHalf} y={depot.y - depotHalf}
+            width={depotHalf * 2} height={depotHalf * 2}
+            fill="#000" rx={2}/>
+      <text x={depot.x} y={depot.y + 7} textAnchor="middle"
+            fontFamily="var(--font-mono)" fontSize={20}
+            fill="#fff" fontWeight={700}>0</text>
+    </svg>
+  );
+
+  return (
+    <section className="slide" data-label="Depot constraints — K leave, K return">
+      <SlideFrame>
+        <div className="tag">CVRP · depot constraints</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          K vehicles leave, K vehicles return — closing the depot.
+        </h2>
+
+        <div style={{ marginTop: 26, display: "flex", flexDirection: "column", gap: 22, flex: 1, minHeight: 0 }}>
+
+          {/* Top — two constraint boxes */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32 }}>
+
+            <div style={{
+              border: "1px solid var(--accent)",
+              borderLeft: "4px solid var(--accent)",
+              background: "rgba(107,74,245,0.08)",
+              padding: "16px 22px",
+            }}>
+              <div className="kicker" style={{ color: "var(--accent)", fontSize: 22 }}>(i) K vehicles leave</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 22, marginTop: 10 }}>
+                <div style={{ flex: 1, fontFamily: "var(--font-display)", fontSize: 24, lineHeight: 1.3 }}>
+                  Exactly K arcs in the <em>out-star</em> δ⁺(0) of the depot — one outgoing arc per departing vehicle.
+                </div>
+                <div style={{ background: "var(--paper)", border: "1px solid var(--line)", padding: "10px 18px", fontSize: 26, flexShrink: 0 }}>
+                  <TeX>{"\\sum_{j \\in V} x_{0j} = K"}</TeX>
+                </div>
+              </div>
+            </div>
+
+            <div style={{
+              border: "1px solid var(--accent)",
+              borderLeft: "4px solid var(--accent)",
+              background: "rgba(107,74,245,0.08)",
+              padding: "16px 22px",
+            }}>
+              <div className="kicker" style={{ color: "var(--accent)", fontSize: 22 }}>(i) K vehicles return</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 22, marginTop: 10 }}>
+                <div style={{ flex: 1, fontFamily: "var(--font-display)", fontSize: 24, lineHeight: 1.3 }}>
+                  Exactly K arcs in the <em>in-star</em> δ⁻(0) of the depot — one incoming arc per returning vehicle.
+                </div>
+                <div style={{ background: "var(--paper)", border: "1px solid var(--line)", padding: "10px 18px", fontSize: 26, flexShrink: 0 }}>
+                  <TeX>{"\\sum_{i \\in V} x_{i0} = K"}</TeX>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Bottom — two box plots, depot at the centre, K = 3 vehicles */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32, flex: 1, minHeight: 0 }}>
+
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 20, display: "flex", flexDirection: "column", minHeight: 0 }}>
+              <div className="kicker" style={{ color: "var(--accent)" }}>K = 3 vehicles · out-star δ⁺(0)</div>
+              <div style={{ flex: 1, minHeight: 0, marginTop: 8 }}>
+                <Star direction="out"/>
+              </div>
+              <div className="body small" style={{ color: "var(--ink-3)", marginTop: 6, lineHeight: 1.3 }}>
+                Three coloured arcs leave the depot — one per vehicle. The other arcs (dashed) belong to the complete graph but are not selected.
+              </div>
+            </div>
+
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 20, display: "flex", flexDirection: "column", minHeight: 0 }}>
+              <div className="kicker" style={{ color: "var(--accent)" }}>K = 3 vehicles · in-star δ⁻(0)</div>
+              <div style={{ flex: 1, minHeight: 0, marginTop: 8 }}>
+                <Star direction="in"/>
+              </div>
+              <div className="body small" style={{ color: "var(--ink-3)", marginTop: 6, lineHeight: 1.3 }}>
+                Three coloured arcs return to the depot — one per vehicle. The other arcs (dashed) belong to the complete graph but are not selected.
+              </div>
+            </div>
+
+          </div>
+
         </div>
       </SlideFrame>
     </section>
@@ -487,5 +668,5 @@ function Slide15C() {
 // ---------------------------------------------------------------
 
 Object.assign(window, {
-  Slide11, Slide14, Slide15, Slide15B, Slide15C,
+  Slide11, Slide14, Slide14B, Slide15, Slide15B, Slide15C,
 });

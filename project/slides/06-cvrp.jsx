@@ -96,7 +96,7 @@ function Slide14B() {
   // every depot↔customer arc has the same length and the visual emphasis
   // stays on which arcs are selected, not on their distance.
   const depot = { x: 420, y: 300 };
-  const N = 12;
+  const N = 6;            // 6 customers total → 3 active + 3 dashed per star
   const R = 210;
   const custs = Array.from({ length: N }, (_, i) => {
     // Start at the top (12 o'clock), go clockwise.
@@ -109,9 +109,13 @@ function Slide14B() {
 
   // Three vehicles → three colours (matching slide 35 / Slide10B route palette).
   const colors = ["var(--route-1)", "var(--route-2)", "var(--route-3)"];
-  // Active customers evenly spaced on the circle (120° apart) so the three
-  // coloured arcs form a clean equilateral pattern.
-  const activeIdx = [0, 4, 8];
+  // Different active customers for the two stars: out-star uses the "even"
+  // positions (top, 4 o'clock, 8 o'clock — triangle pointing up), in-star
+  // uses the "odd" positions (2 o'clock, bottom, 10 o'clock — triangle
+  // pointing down). This makes the K = 3 selected destinations clearly
+  // distinct from the K = 3 selected origins.
+  const activeOut = [0, 2, 4];
+  const activeIn  = [1, 3, 5];
 
   const depotHalf = 22;   // half-side of the black depot square
   const nodeR     = 12;   // customer circle radius
@@ -166,7 +170,9 @@ function Slide14B() {
     );
   };
 
-  const Star = ({ direction }) => (
+  const Star = ({ direction }) => {
+    const activeIdx = direction === "out" ? activeOut : activeIn;
+    return (
     <svg viewBox="50 50 740 500"
          preserveAspectRatio="xMidYMid meet"
          style={{ width: "100%", height: "100%", display: "block", overflow: "visible" }}>
@@ -192,7 +198,8 @@ function Slide14B() {
             fontFamily="var(--font-mono)" fontSize={20}
             fill="#fff" fontWeight={700}>0</text>
     </svg>
-  );
+    );
+  };
 
   return (
     <section className="slide" data-label="Depot constraints — K leave, K return">

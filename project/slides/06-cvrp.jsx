@@ -92,23 +92,26 @@ function Slide14() {
 
 
 function Slide14B() {
-  // Coordinates aligned with EX_NODES (components.jsx) so the depot sits roughly
-  // at the centre of the box plot, with 12 customers around it.
+  // Customers are placed on a circle of constant radius around the depot, so
+  // every depot↔customer arc has the same length and the visual emphasis
+  // stays on which arcs are selected, not on their distance.
   const depot = { x: 420, y: 300 };
-  const custs = [
-    { x: 220, y: 170 }, { x: 330, y: 110 },
-    { x: 540, y: 110 }, { x: 680, y: 180 },
-    { x: 730, y: 330 }, { x: 640, y: 470 },
-    { x: 460, y: 510 }, { x: 240, y: 480 },
-    { x: 140, y: 350 }, { x: 290, y: 260 },
-    { x: 570, y: 260 }, { x: 520, y: 420 },
-  ];
+  const N = 12;
+  const R = 210;
+  const custs = Array.from({ length: N }, (_, i) => {
+    // Start at the top (12 o'clock), go clockwise.
+    const theta = -Math.PI / 2 + (2 * Math.PI * i) / N;
+    return {
+      x: depot.x + R * Math.cos(theta),
+      y: depot.y + R * Math.sin(theta),
+    };
+  });
 
   // Three vehicles → three colours (matching slide 35 / Slide10B route palette).
   const colors = ["var(--route-1)", "var(--route-2)", "var(--route-3)"];
-  // Pick three customers spread across the perimeter so the active arcs are
-  // visually well separated (top, right, bottom-left).
-  const activeIdx = [1, 4, 7];
+  // Active customers evenly spaced on the circle (120° apart) so the three
+  // coloured arcs form a clean equilateral pattern.
+  const activeIdx = [0, 4, 8];
 
   const depotHalf = 22;   // half-side of the black depot square
   const nodeR     = 12;   // customer circle radius
@@ -164,7 +167,7 @@ function Slide14B() {
   };
 
   const Star = ({ direction }) => (
-    <svg viewBox="80 60 740 500"
+    <svg viewBox="50 50 740 500"
          preserveAspectRatio="xMidYMid meet"
          style={{ width: "100%", height: "100%", display: "block", overflow: "visible" }}>
       {/* Dashed (unused) arcs first, so the active ones paint on top */}
@@ -201,38 +204,28 @@ function Slide14B() {
 
         <div style={{ marginTop: 26, display: "flex", flexDirection: "column", gap: 22, flex: 1, minHeight: 0 }}>
 
-          {/* Top — two constraint boxes */}
+          {/* Top — two constraint blocks (plain, no accent / no background) */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32 }}>
 
-            <div style={{
-              border: "1px solid var(--accent)",
-              borderLeft: "4px solid var(--accent)",
-              background: "rgba(107,74,245,0.08)",
-              padding: "16px 22px",
-            }}>
-              <div className="kicker" style={{ color: "var(--accent)", fontSize: 22 }}>(i) K vehicles leave</div>
+            <div style={{ padding: "8px 4px" }}>
+              <div className="kicker" style={{ color: "var(--ink-3)", fontSize: 22 }}>(i) K vehicles leave</div>
               <div style={{ display: "flex", alignItems: "center", gap: 22, marginTop: 10 }}>
                 <div style={{ flex: 1, fontFamily: "var(--font-display)", fontSize: 24, lineHeight: 1.3 }}>
                   Exactly K arcs in the <em>out-star</em> δ⁺(0) of the depot — one outgoing arc per departing vehicle.
                 </div>
-                <div style={{ background: "var(--paper)", border: "1px solid var(--line)", padding: "10px 18px", fontSize: 26, flexShrink: 0 }}>
+                <div style={{ fontSize: 26, flexShrink: 0 }}>
                   <TeX>{"\\sum_{j \\in V} x_{0j} = K"}</TeX>
                 </div>
               </div>
             </div>
 
-            <div style={{
-              border: "1px solid var(--accent)",
-              borderLeft: "4px solid var(--accent)",
-              background: "rgba(107,74,245,0.08)",
-              padding: "16px 22px",
-            }}>
-              <div className="kicker" style={{ color: "var(--accent)", fontSize: 22 }}>(i) K vehicles return</div>
+            <div style={{ padding: "8px 4px" }}>
+              <div className="kicker" style={{ color: "var(--ink-3)", fontSize: 22 }}>(i) K vehicles return</div>
               <div style={{ display: "flex", alignItems: "center", gap: 22, marginTop: 10 }}>
                 <div style={{ flex: 1, fontFamily: "var(--font-display)", fontSize: 24, lineHeight: 1.3 }}>
                   Exactly K arcs in the <em>in-star</em> δ⁻(0) of the depot — one incoming arc per returning vehicle.
                 </div>
-                <div style={{ background: "var(--paper)", border: "1px solid var(--line)", padding: "10px 18px", fontSize: 26, flexShrink: 0 }}>
+                <div style={{ fontSize: 26, flexShrink: 0 }}>
                   <TeX>{"\\sum_{i \\in V} x_{i0} = K"}</TeX>
                 </div>
               </div>

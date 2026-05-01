@@ -115,7 +115,10 @@ function Slide17A() {
             <div className="kicker" style={{ color: "var(--accent)", marginBottom: 10 }}>Asymptotic upper bound — visual</div>
             <svg viewBox="0 0 400 280" preserveAspectRatio="xMidYMid meet"
                  style={{ width: "100%", height: "auto", display: "block" }}>
-              {/* Shaded region (n ≥ n₀, c·f(n) ≥ T(n)) */}
+              {/* Left zone (n < n₀) — neutral grey wash: bound may fail here */}
+              <rect x={60} y={20} width={n0X - 60} height={210}
+                    fill="var(--ink-3)" fillOpacity={0.07}/>
+              {/* Right-zone shaded region (n ≥ n₀, c·f(n) ≥ T(n)) */}
               <polygon points={shadePts} fill="var(--accent)" fillOpacity={0.10}/>
 
               {/* Axes */}
@@ -139,13 +142,22 @@ function Slide17A() {
               <polyline points={tPath} fill="none" stroke="var(--route-1)" strokeWidth={2.6}
                         strokeLinejoin="round" strokeLinecap="round"/>
 
-              {/* Legend (top-right corner) */}
-              <g transform="translate(238, 28)">
-                <rect x={0} y={0} width={140} height={52} fill="var(--paper)" stroke="var(--line)" strokeWidth={1} rx={3}/>
-                <line x1={10} y1={18} x2={36} y2={18} stroke="var(--route-1)" strokeWidth={2.6}/>
-                <text x={44} y={22} fontFamily="var(--font-mono)" fontSize={13} fill="var(--ink)">T(n)</text>
-                <line x1={10} y1={38} x2={36} y2={38} stroke="var(--ink-2)"   strokeWidth={2.2} strokeDasharray="4 3"/>
-                <text x={44} y={42} fontFamily="var(--font-mono)" fontSize={13} fill="var(--ink)">c · f(n)</text>
+              {/* Zone annotations — what the two regions mean */}
+              <text x={(60 + n0X) / 2} y={34} textAnchor="middle"
+                    fontFamily="var(--font-display)" fontSize={11} fontStyle="italic"
+                    fill="var(--ink-3)">small n — bound may not hold</text>
+              <text x={(n0X + 380) / 2} y={34} textAnchor="middle"
+                    fontFamily="var(--font-display)" fontSize={11} fontWeight={500}
+                    fill="var(--accent)">n ≥ n₀ — T ≤ c · f forever</text>
+
+              {/* Legend (moved to bottom-right of the plot to leave the top
+                  free for the zone annotations) */}
+              <g transform="translate(238, 180)">
+                <rect x={0} y={0} width={140} height={42} fill="var(--paper)" stroke="var(--line)" strokeWidth={1} rx={3}/>
+                <line x1={10} y1={14} x2={36} y2={14} stroke="var(--route-1)" strokeWidth={2.6}/>
+                <text x={44} y={18} fontFamily="var(--font-mono)" fontSize={13} fill="var(--ink)">T(n)</text>
+                <line x1={10} y1={32} x2={36} y2={32} stroke="var(--ink-2)"   strokeWidth={2.2} strokeDasharray="4 3"/>
+                <text x={44} y={36} fontFamily="var(--font-mono)" fontSize={13} fill="var(--ink)">c · f(n)</text>
               </g>
             </svg>
             <div style={{ fontSize: 16, color: "var(--ink-3)", marginTop: 10, fontStyle: "italic", lineHeight: 1.35 }}>

@@ -204,28 +204,38 @@ function Slide14B() {
 
         <div style={{ marginTop: 26, display: "flex", flexDirection: "column", gap: 22, flex: 1, minHeight: 0 }}>
 
-          {/* Top — two constraint blocks (plain, no accent / no background) */}
+          {/* Top — two constraint cards (neutral border + soft fill, no accent) */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32 }}>
 
-            <div style={{ padding: "8px 4px" }}>
+            <div style={{
+              border: "1px solid var(--line)",
+              background: "var(--paper-2)",
+              padding: "16px 22px",
+              borderRadius: 6,
+            }}>
               <div className="kicker" style={{ color: "var(--ink-3)", fontSize: 22 }}>(i) K vehicles leave</div>
               <div style={{ display: "flex", alignItems: "center", gap: 22, marginTop: 10 }}>
                 <div style={{ flex: 1, fontFamily: "var(--font-display)", fontSize: 24, lineHeight: 1.3 }}>
                   Exactly K arcs in the <em>out-star</em> δ⁺(0) of the depot — one outgoing arc per departing vehicle.
                 </div>
-                <div style={{ fontSize: 26, flexShrink: 0 }}>
+                <div style={{ background: "var(--paper)", border: "1px solid var(--line)", borderRadius: 4, padding: "10px 18px", fontSize: 26, flexShrink: 0 }}>
                   <TeX>{"\\sum_{j \\in V} x_{0j} = K"}</TeX>
                 </div>
               </div>
             </div>
 
-            <div style={{ padding: "8px 4px" }}>
+            <div style={{
+              border: "1px solid var(--line)",
+              background: "var(--paper-2)",
+              padding: "16px 22px",
+              borderRadius: 6,
+            }}>
               <div className="kicker" style={{ color: "var(--ink-3)", fontSize: 22 }}>(i) K vehicles return</div>
               <div style={{ display: "flex", alignItems: "center", gap: 22, marginTop: 10 }}>
                 <div style={{ flex: 1, fontFamily: "var(--font-display)", fontSize: 24, lineHeight: 1.3 }}>
                   Exactly K arcs in the <em>in-star</em> δ⁻(0) of the depot — one incoming arc per returning vehicle.
                 </div>
-                <div style={{ fontSize: 26, flexShrink: 0 }}>
+                <div style={{ background: "var(--paper)", border: "1px solid var(--line)", borderRadius: 4, padding: "10px 18px", fontSize: 26, flexShrink: 0 }}>
                   <TeX>{"\\sum_{i \\in V} x_{i0} = K"}</TeX>
                 </div>
               </div>

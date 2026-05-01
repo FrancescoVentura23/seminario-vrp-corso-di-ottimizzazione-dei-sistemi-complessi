@@ -990,30 +990,30 @@ function SlideTSPDFJ() {
               background: isPacking ? "rgba(107,74,245,0.08)" : "var(--paper-2)",
               border: `1px solid ${isPacking ? "var(--accent)" : "var(--line)"}`,
               borderLeft: `${isPacking ? 4 : 1}px solid ${isPacking ? "var(--accent)" : "var(--line)"}`,
-              padding: "18px 22px",
+              padding: "22px 28px",
               fontFamily: "var(--font-mono)",
-              fontSize: 22,
+              fontSize: 30,
               cursor: "pointer",
               userSelect: "none",
               transform: isPacking ? "translateX(6px)" : "translateX(0)",
               transition: "all 320ms ease",
             }}>
-              <div style={{ color: isPacking ? "var(--accent)" : "var(--ink-3)", fontSize: 18, marginBottom: 4 }}>packing form</div>
+              <div style={{ color: isPacking ? "var(--accent)" : "var(--ink-3)", fontSize: 22, marginBottom: 6 }}>packing form</div>
               <TeX display>{"\\sum_{i \\in S}\\sum_{\\substack{j \\in S \\\\ j \\neq i}} x_{ij} \\;\\leq\\; |S| - 1"}</TeX>
             </div>
             <div data-constraint="cut" style={{
               background: isCut ? "rgba(107,74,245,0.08)" : "var(--paper-2)",
               border: `1px solid ${isCut ? "var(--accent)" : "var(--line)"}`,
               borderLeft: `${isCut ? 4 : 1}px solid ${isCut ? "var(--accent)" : "var(--line)"}`,
-              padding: "18px 22px",
+              padding: "22px 28px",
               fontFamily: "var(--font-mono)",
-              fontSize: 22,
+              fontSize: 30,
               cursor: "pointer",
               userSelect: "none",
               transform: isCut ? "translateX(6px)" : "translateX(0)",
               transition: "all 320ms ease",
             }}>
-              <div style={{ color: isCut ? "var(--accent)" : "var(--ink-3)", fontSize: 18, marginBottom: 4 }}>equivalent cut form</div>
+              <div style={{ color: isCut ? "var(--accent)" : "var(--ink-3)", fontSize: 22, marginBottom: 6 }}>equivalent cut form</div>
               <TeX display>{"\\sum_{i \\notin S}\\sum_{j \\in S} x_{ij} \\;\\geq\\; 1"}</TeX>
             </div>
             <div className="body small" style={{ color: "var(--ink-3)", fontSize: 20, lineHeight: 1.35 }}>
@@ -1569,29 +1569,29 @@ function SlideTSPMinCut() {
 
           {/* -------- Left column: the equivalence -------- */}
           <div ref={btnsRef} style={{ display: "flex", flexDirection: "column", gap: 9 }}>
-            <div className="lede" style={{ fontSize: 24, lineHeight: 1.3 }}>
+            <div className="lede" style={{ fontSize: 28, lineHeight: 1.3 }}>
               Read <TeX>{"x^*(\\delta(S))"}</TeX> as the <em>total weight</em> on the boundary — the sum <TeX>{"\\sum_{(i,j)\\in\\delta(S)} x^*_{ij}"}</TeX>, <em>not</em> a count of arcs.
             </div>
 
             {/* Click to show the integer-tour scene on the right. */}
             <div data-mode="integer" style={btnStyle(isInt)}>
-              <div className="kicker" style={{ fontSize: 18, marginBottom: 3, color: isInt ? "var(--accent)" : "var(--ink-3)" }}>Integer tour</div>
-              <div style={{ fontSize: 21, lineHeight: 1.4 }}>
+              <div className="kicker" style={{ fontSize: 21, marginBottom: 3, color: isInt ? "var(--accent)" : "var(--ink-3)" }}>Integer tour</div>
+              <div style={{ fontSize: 24, lineHeight: 1.4 }}>
                 A <em>Hamiltonian circuit</em> visits every node exactly once, so the path crosses the boundary of S exactly once in each direction: one arc exits (<TeX>{"\\delta^+(S)"}</TeX>) and one enters (<TeX>{"\\delta^-(S)"}</TeX>). Each <TeX>{"x_{ij}\\in\\{0,1\\}"}</TeX> is the <em>weight</em> of arc <TeX>{"(i,j)"}</TeX>: 1 if the tour uses it, 0 otherwise. Total boundary weight <TeX>{"x(\\delta(S))=1+1=2"}</TeX>.
               </div>
             </div>
 
             {/* Click to show the fractional x* scene (DFJ violation). */}
             <div data-mode="fractional" style={btnStyle(isFrac)}>
-              <div className="kicker" style={{ fontSize: 18, marginBottom: 3, color: isFrac ? "var(--accent)" : "var(--ink-3)" }}>Fractional x*</div>
-              <div style={{ fontSize: 21, lineHeight: 1.4 }}>
+              <div className="kicker" style={{ fontSize: 21, marginBottom: 3, color: isFrac ? "var(--accent)" : "var(--ink-3)" }}>Fractional x*</div>
+              <div style={{ fontSize: 24, lineHeight: 1.4 }}>
                 In the LP relaxation, <TeX>{"x^*_{ij}\\in[0,1]"}</TeX>: each vertex still satisfies deg = 1, but can <em>split</em> its flow. Here v₁ routes 0.7 inside S (v₁→v₂) and only 0.3 across the boundary (v₁→v₃). When <TeX>{"x^*(\\delta(S)) < 2"}</TeX> the DFJ constraint is violated.
               </div>
             </div>
 
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "10px 18px" }}>
-              <div className="kicker" style={{ fontSize: 18, marginBottom: 6 }}>Key identity</div>
-              <div style={{ fontSize: 21, lineHeight: 1.5, color: "var(--ink-2)", display: "flex", flexDirection: "column", gap: 6 }}>
+              <div className="kicker" style={{ fontSize: 21, marginBottom: 6 }}>Key identity</div>
+              <div style={{ fontSize: 24, lineHeight: 1.5, color: "var(--ink-2)", display: "flex", flexDirection: "column", gap: 6 }}>
                 <div>Each vertex i ∈ S satisfies <TeX>{"\\sum_{j \\neq i}(x^*_{ij}+x^*_{ji})=2"}</TeX>. Summing over all |S| vertices: arcs <em>internal to S</em> — i.e. <TeX>{"A(S)=\\{(i,j): i,j\\in S\\}"}</TeX> — are counted <em>twice</em> (both endpoints in S), arcs <em>crossing the boundary</em> <TeX>{"\\delta(S)"}</TeX> are counted <em>once</em>.</div>
                 <TeX display>{"2\\,x^*(A(S)) \\;+\\; x^*(\\delta(S)) \\;=\\; 2|S|"}</TeX>
               </div>
@@ -1599,11 +1599,11 @@ function SlideTSPMinCut() {
 
             {/* Highlighted equivalence — the punchline */}
             <div style={{ background: "var(--accent)", color: "var(--paper)", padding: "11px 20px", textAlign: "center" }}>
-              <div style={{ fontSize: 21, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 5, color: "var(--paper-deep)", opacity: 0.9 }}>DFJ ⟺ min-cut</div>
-              <div style={{ fontSize: 21 }}>
+              <div style={{ fontSize: 24, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 5, color: "var(--paper-deep)", opacity: 0.9 }}>DFJ ⟺ min-cut</div>
+              <div style={{ fontSize: 24 }}>
                 <TeX display>{"x^*(A(S)) > |S|-1 \\;\\Longleftrightarrow\\; x^*(\\delta(S)) < 2"}</TeX>
               </div>
-              <div style={{ marginTop: 4, fontSize: 21, color: "var(--paper-deep)", fontStyle: "italic", opacity: 0.95 }}>
+              <div style={{ marginTop: 4, fontSize: 24, color: "var(--paper-deep)", fontStyle: "italic", opacity: 0.95 }}>
                 Finding a violated S ⇒ minimize x*(δ(S)) over all S — a global min-cut.
               </div>
             </div>
@@ -1932,7 +1932,7 @@ function SlideTSPMinCut() {
 
             {/* Figure caption — HTML so it wraps naturally; changes with mode
                 and with animation step. */}
-            <div style={{ marginTop: 14, fontFamily: "var(--font-mono)", fontSize: 17, color: "var(--ink-3)", lineHeight: 1.55 }}>
+            <div style={{ marginTop: 14, fontFamily: "var(--font-mono)", fontSize: 20, color: "var(--ink-3)", lineHeight: 1.55 }}>
               {isInt ? (
                 animStep >= 6 ? (
                   <>
@@ -2029,9 +2029,9 @@ function SlideTSPMinCutAlgo() {
 
           {/* -------- Right: why the constraint is violated -------- */}
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "16px 20px" }}>
-              <div className="kicker" style={{ fontSize: 16, marginBottom: 8 }}>Why that constraint is violated</div>
-              <div style={{ fontSize: 17, lineHeight: 1.5, color: "var(--ink-2)", display: "flex", flexDirection: "column", gap: 4 }}>
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "20px 24px" }}>
+              <div className="kicker" style={{ fontSize: 20, marginBottom: 10 }}>Why that constraint is violated</div>
+              <div style={{ fontSize: 22, lineHeight: 1.55, color: "var(--ink-2)", display: "flex", flexDirection: "column", gap: 6 }}>
                 <div>From the degree identity on the previous slide, applied to the optimal cut S*:</div>
                 <TeX display>{"2\\,x^*(A(S^*)) + \\mu \\;=\\; 2|S^*|"}</TeX>
                 <div>where <TeX>{"\\mu = x^*(\\delta(S^*))"}</TeX>. Divide every term by 2:</div>

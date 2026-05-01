@@ -38,23 +38,53 @@ function Slide17A() {
   ];
   const toneColor = (t) => t === "bad" ? "var(--accent-2)" : t === "warn" ? "var(--accent)" : "var(--ink-3)";
 
+  // ---------------------------------------------------------------------------
+  // Asymptotic upper bound chart — illustrates T(n) = O(f(n)) visually.
+  // T(n) is a slightly noisy quadratic; c·f(n) = c · n² with c chosen so the
+  // two curves cross around n = N0 = 14. For n < N0, T may sit ABOVE c·f(n);
+  // for n ≥ N0 we have T(n) ≤ c·f(n) — that's the formal definition.
+  // ---------------------------------------------------------------------------
+  const T = (n) => 0.4 * n * n + 4 * n + 3 * Math.sin(0.6 * n);
+  const F = (n) => 0.7 * n * n;            // c · f(n) with c = 0.7, f(n) = n²
+  const N0   = 14;
+  const nMax = 30;
+  const yMax = 700;
+  // Plot area inside the 400×280 viewBox: x ∈ [60, 380], y ∈ [20, 230].
+  const xMap = (n) => 60 + (320 / nMax) * n;
+  const yMap = (v) => 230 - (210 / yMax) * v;
+
+  const samples = [];
+  for (let i = 0; i <= 60; i++) samples.push(i * 0.5);   // n = 0, 0.5, …, 30
+
+  const fmt   = (a, b) => `${a.toFixed(1)},${b.toFixed(1)}`;
+  const tPath = samples.map(n => fmt(xMap(n), yMap(T(n)))).join(" ");
+  const fPath = samples.map(n => fmt(xMap(n), yMap(F(n)))).join(" ");
+
+  // Shaded region (n ≥ N0, where c·f(n) ≥ T(n)) — forward along T, back along F.
+  const shadeS   = samples.filter(n => n >= N0);
+  const shadeFwd = shadeS.map(n => fmt(xMap(n), yMap(T(n))));
+  const shadeBwd = [...shadeS].reverse().map(n => fmt(xMap(n), yMap(F(n))));
+  const shadePts = [...shadeFwd, ...shadeBwd].join(" ");
+
+  const n0X = xMap(N0);
+
   return (
     <section className="slide" data-label="Computational complexity — Big-O">
       <SlideFrame>
         <div className="tag">Complexity · concepts</div>
         <h2 className="title" style={{ marginTop: 28 }}>How fast is "fast"? Measuring algorithms with Big-O.</h2>
 
-        <div style={{ marginTop: 30, display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 56, flex: 1 }}>
+        <div style={{ marginTop: 30, display: "grid", gridTemplateColumns: "1fr 1fr 1.2fr", gap: 36, flex: 1 }}>
 
-          {/* Left — definitions */}
+          {/* Col 1 — definitions */}
           <div style={{ display: "flex", flexDirection: "column", gap: 22, justifyContent: "center" }}>
-            <div className="lede" style={{ fontSize: 28, lineHeight: 1.3 }}>
+            <div className="lede" style={{ fontSize: 26, lineHeight: 1.3 }}>
               The <em>computational complexity</em> of an algorithm describes how its running time <em>grows</em> with the size of the input n.
             </div>
 
-            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "18px 24px" }}>
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "18px 22px" }}>
               <div className="kicker" style={{ color: "var(--accent)", marginBottom: 8 }}>Big-O notation</div>
-              <div style={{ fontSize: 22, lineHeight: 1.35 }}>
+              <div style={{ fontSize: 21, lineHeight: 1.35 }}>
                 We write <span style={{ fontFamily: "var(--font-mono)" }}>T(n) = O(f(n))</span> when the running time T(n) grows <em>no faster than</em> f(n), up to constants, as n → ∞.
               </div>
               {/* Legend — what each symbol means */}
@@ -63,7 +93,7 @@ function Slide17A() {
                 borderTop: "1px dashed var(--line)",
                 display: "grid", gridTemplateColumns: "auto 1fr",
                 columnGap: 14, rowGap: 5,
-                fontSize: 17, lineHeight: 1.35,
+                fontSize: 16, lineHeight: 1.35,
               }}>
                 <div style={{ fontFamily: "var(--font-mono)", color: "var(--ink)", fontWeight: 600 }}>n</div>
                 <div style={{ color: "var(--ink-2)" }}>input size of the problem (e.g. for VRP / TSP, the number of nodes)</div>
@@ -74,45 +104,90 @@ function Slide17A() {
                 <div style={{ fontFamily: "var(--font-mono)", color: "var(--ink)", fontWeight: 600 }}>f(n)</div>
                 <div style={{ color: "var(--ink-2)" }}>comparison curve — the asymptotic upper bound we measure T(n) against (e.g. n, n², n log n, 2ⁿ)</div>
               </div>
-              <div style={{ fontSize: 19, lineHeight: 1.4, color: "var(--ink-3)", marginTop: 12, fontStyle: "italic" }}>
+              <div style={{ fontSize: 17, lineHeight: 1.4, color: "var(--ink-3)", marginTop: 12, fontStyle: "italic" }}>
                 Constants and lower-order terms are ignored — what matters is the asymptotic shape of the curve.
-              </div>
-            </div>
-
-            <div style={{ background: "var(--ink)", color: "var(--paper)", padding: "16px 22px" }}>
-              <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 6 }}>Why it matters</div>
-              <div style={{ fontSize: 22, lineHeight: 1.35 }}>
-                A polynomial-time algorithm scales to large instances. An exponential-time algorithm becomes <em>useless</em> beyond ~30–50 inputs — the constant factor cannot save you.
               </div>
             </div>
           </div>
 
-          {/* Right — growth table */}
-          <div style={{ border: "1px solid var(--line)", overflow: "hidden", display: "flex", flexDirection: "column", alignSelf: "center", width: "100%" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1.1fr 0.8fr 0.9fr 0.9fr 0.9fr 1fr", background: "var(--ink)", color: "var(--paper)", fontFamily: "var(--font-mono)", fontSize: 16, letterSpacing: "0.05em", textTransform: "uppercase" }}>
-              <div style={{ padding: "10px 12px" }}>complexity</div>
-              <div style={{ padding: "10px 12px", textAlign: "right" }}>n=10</div>
-              <div style={{ padding: "10px 12px", textAlign: "right" }}>n=50</div>
-              <div style={{ padding: "10px 12px", textAlign: "right" }}>n=100</div>
-              <div style={{ padding: "10px 12px", textAlign: "right" }}>n=1000</div>
-              <div style={{ padding: "10px 12px", textAlign: "right" }}>verdict</div>
+          {/* Col 2 — illustrative chart: asymptotic upper bound */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "18px 22px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+            <div className="kicker" style={{ color: "var(--accent)", marginBottom: 10 }}>Asymptotic upper bound — visual</div>
+            <svg viewBox="0 0 400 280" preserveAspectRatio="xMidYMid meet"
+                 style={{ width: "100%", height: "auto", display: "block" }}>
+              {/* Shaded region (n ≥ n₀, c·f(n) ≥ T(n)) */}
+              <polygon points={shadePts} fill="var(--accent)" fillOpacity={0.10}/>
+
+              {/* Axes */}
+              <line x1={60} y1={230} x2={380} y2={230} stroke="var(--ink-3)" strokeWidth={1.5}/>
+              <line x1={60} y1={20}  x2={60}  y2={230} stroke="var(--ink-3)" strokeWidth={1.5}/>
+              <polygon points="386,230 376,226 376,234" fill="var(--ink-3)"/>
+              <polygon points="60,14 56,24 64,24"       fill="var(--ink-3)"/>
+
+              {/* Axis labels */}
+              <text x={388} y={246} fontFamily="var(--font-mono)" fontSize={15} fill="var(--ink-2)">n</text>
+              <text x={68}  y={18}  fontFamily="var(--font-mono)" fontSize={15} fill="var(--ink-2)">T(n)</text>
+
+              {/* n₀ marker */}
+              <line x1={n0X} y1={20} x2={n0X} y2={230} stroke="var(--ink-3)" strokeWidth={1} strokeDasharray="4 4"/>
+              <text x={n0X} y={250} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={15} fill="var(--ink-2)">n₀</text>
+
+              {/* c·f(n) — dashed grey upper bound */}
+              <polyline points={fPath} fill="none" stroke="var(--ink-2)" strokeWidth={2.2}
+                        strokeDasharray="6 4" strokeLinejoin="round" strokeLinecap="round"/>
+              {/* T(n) — solid coloured curve */}
+              <polyline points={tPath} fill="none" stroke="var(--route-1)" strokeWidth={2.6}
+                        strokeLinejoin="round" strokeLinecap="round"/>
+
+              {/* Legend (top-right corner) */}
+              <g transform="translate(238, 28)">
+                <rect x={0} y={0} width={140} height={52} fill="var(--paper)" stroke="var(--line)" strokeWidth={1} rx={3}/>
+                <line x1={10} y1={18} x2={36} y2={18} stroke="var(--route-1)" strokeWidth={2.6}/>
+                <text x={44} y={22} fontFamily="var(--font-mono)" fontSize={13} fill="var(--ink)">T(n)</text>
+                <line x1={10} y1={38} x2={36} y2={38} stroke="var(--ink-2)"   strokeWidth={2.2} strokeDasharray="4 3"/>
+                <text x={44} y={42} fontFamily="var(--font-mono)" fontSize={13} fill="var(--ink)">c · f(n)</text>
+              </g>
+            </svg>
+            <div style={{ fontSize: 16, color: "var(--ink-3)", marginTop: 10, fontStyle: "italic", lineHeight: 1.35 }}>
+              For all <span style={{ fontFamily: "var(--font-mono)" }}>n ≥ n₀</span>, T(n) ≤ c · f(n) — the dashed curve <em>dominates</em> from there on. The behaviour for small n does not matter.
             </div>
-            {rows.map((r, i) => (
-              <div key={i} style={{
-                display: "grid", gridTemplateColumns: "1.1fr 0.8fr 0.9fr 0.9fr 0.9fr 1fr",
-                background: i % 2 === 0 ? "var(--paper-2)" : "var(--paper)",
-                borderTop: "1px solid var(--line)", fontFamily: "var(--font-mono)", fontSize: 18,
-              }}>
-                <div style={{ padding: "10px 12px", color: toneColor(r.tone), fontWeight: 600 }}>{r.name}</div>
-                <div style={{ padding: "10px 12px", textAlign: "right" }}>{r.n10}</div>
-                <div style={{ padding: "10px 12px", textAlign: "right" }}>{r.n50}</div>
-                <div style={{ padding: "10px 12px", textAlign: "right" }}>{r.n100}</div>
-                <div style={{ padding: "10px 12px", textAlign: "right" }}>{r.n1000}</div>
-                <div style={{ padding: "10px 12px", textAlign: "right", color: toneColor(r.tone), fontStyle: "italic" }}>{r.verdict}</div>
+          </div>
+
+          {/* Col 3 — growth table + Why it matters */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 22, justifyContent: "center" }}>
+            <div style={{ border: "1px solid var(--line)", overflow: "hidden", display: "flex", flexDirection: "column", width: "100%" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1.1fr 0.8fr 0.9fr 0.9fr 0.9fr 1fr", background: "var(--ink)", color: "var(--paper)", fontFamily: "var(--font-mono)", fontSize: 15, letterSpacing: "0.05em", textTransform: "uppercase" }}>
+                <div style={{ padding: "9px 11px" }}>complexity</div>
+                <div style={{ padding: "9px 11px", textAlign: "right" }}>n=10</div>
+                <div style={{ padding: "9px 11px", textAlign: "right" }}>n=50</div>
+                <div style={{ padding: "9px 11px", textAlign: "right" }}>n=100</div>
+                <div style={{ padding: "9px 11px", textAlign: "right" }}>n=1000</div>
+                <div style={{ padding: "9px 11px", textAlign: "right" }}>verdict</div>
               </div>
-            ))}
-            <div style={{ padding: "10px 14px", fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--ink-3)", borderTop: "1px solid var(--line)", background: "var(--paper-2)" }}>
-              number of operations (≈ time at 10⁹ ops/s — feasible up to ~10¹⁰)
+              {rows.map((r, i) => (
+                <div key={i} style={{
+                  display: "grid", gridTemplateColumns: "1.1fr 0.8fr 0.9fr 0.9fr 0.9fr 1fr",
+                  background: i % 2 === 0 ? "var(--paper-2)" : "var(--paper)",
+                  borderTop: "1px solid var(--line)", fontFamily: "var(--font-mono)", fontSize: 17,
+                }}>
+                  <div style={{ padding: "9px 11px", color: toneColor(r.tone), fontWeight: 600 }}>{r.name}</div>
+                  <div style={{ padding: "9px 11px", textAlign: "right" }}>{r.n10}</div>
+                  <div style={{ padding: "9px 11px", textAlign: "right" }}>{r.n50}</div>
+                  <div style={{ padding: "9px 11px", textAlign: "right" }}>{r.n100}</div>
+                  <div style={{ padding: "9px 11px", textAlign: "right" }}>{r.n1000}</div>
+                  <div style={{ padding: "9px 11px", textAlign: "right", color: toneColor(r.tone), fontStyle: "italic" }}>{r.verdict}</div>
+                </div>
+              ))}
+              <div style={{ padding: "9px 12px", fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--ink-3)", borderTop: "1px solid var(--line)", background: "var(--paper-2)" }}>
+                number of operations (≈ time at 10⁹ ops/s — feasible up to ~10¹⁰)
+              </div>
+            </div>
+
+            <div style={{ background: "var(--ink)", color: "var(--paper)", padding: "14px 20px" }}>
+              <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 6 }}>Why it matters</div>
+              <div style={{ fontSize: 20, lineHeight: 1.35 }}>
+                A polynomial-time algorithm scales to large instances. An exponential-time algorithm becomes <em>useless</em> beyond ~30–50 inputs — the constant factor cannot save you.
+              </div>
             </div>
           </div>
         </div>

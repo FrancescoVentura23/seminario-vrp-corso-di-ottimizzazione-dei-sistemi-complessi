@@ -31,9 +31,16 @@ function Slide20() {
         <div className="tag">Family · Fig. 1.1</div>
         <h2 className="title" style={{ marginTop: 28 }}>The basic VRPs and their interconnections.</h2>
 
-        {/* Chart container — explicit height so the figure does not overflow into
-            the slide chrome (page number / footer) at the bottom of every slide. */}
-        <div style={{ marginTop: 28, background: "var(--paper-2)", border: "1px solid var(--line)", padding: 28, height: 600, display: "flex", flexDirection: "column" }}>
+        {/* Explanatory lede — placed ABOVE the diagram so the figure can sit
+            comfortably below it without crowding the slide chrome. */}
+        <div className="lede" style={{ marginTop: 24, fontSize: 30, lineHeight: 1.25, maxWidth: 1700 }}>
+          The <strong>CVRP sits at the centre of the family</strong>: every classical variant adds one extra constraint to the same capacitated core — a time window, a precedence pairing, a second depot.
+        </div>
+
+        {/* Chart container — flex:1 absorbs the remaining vertical space and
+            never overflows into the chrome. Sub-texts inside each node have
+            been bumped from 15 → 22 px so they stay legible in projection. */}
+        <div style={{ marginTop: 24, background: "var(--paper-2)", border: "1px solid var(--line)", padding: 28, flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
           <div style={{ flex: 1, minHeight: 0 }}>
             <svg viewBox="0 0 1600 680" preserveAspectRatio="xMidYMid meet" style={{ width: "100%", height: "100%", display: "block" }}>
               {/* TSP at root */}
@@ -41,8 +48,8 @@ function Slide20() {
                 const box = (x, y, w, h, label, sub, accent) => (
                   <g>
                     <rect x={x} y={y} width={w} height={h} fill={accent ? "var(--ink)" : "var(--paper)"} stroke="var(--ink)" strokeWidth={2}/>
-                    <text x={x + w/2} y={y + 40} textAnchor="middle" fontFamily="var(--font-display)" fontSize={36} fill={accent ? "var(--paper)" : "var(--ink)"}>{label}</text>
-                    <text x={x + w/2} y={y + 68} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={15} fill={accent ? "var(--paper-deep)" : "var(--ink-3)"} letterSpacing="0.05em">{sub}</text>
+                    <text x={x + w/2} y={y + 50} textAnchor="middle" fontFamily="var(--font-display)" fontSize={40} fill={accent ? "var(--paper)" : "var(--ink)"}>{label}</text>
+                    <text x={x + w/2} y={y + 92} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fill={accent ? "var(--paper-deep)" : "var(--ink-3)"}>{sub}</text>
                   </g>
                 );
                 const arrow = (x1, y1, x2, y2) => (
@@ -55,24 +62,25 @@ function Slide20() {
                         <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--ink-3)"/>
                       </marker>
                     </defs>
-                    {/* Top row */}
-                    {box(660, 40, 280, 100, "TSP", "1 vehicle · no capacity", false)}
+                    {/* Top row — TSP and CVRP widened to 360 to fit the bigger sub text */}
+                    {box(620, 40, 360, 120, "TSP", "1 vehicle · no capacity", false)}
 
-                    {/* Second row - CVRP centerpiece */}
-                    {box(660, 260, 280, 100, "CVRP", "+ K vehicles · capacity C", true)}
+                    {/* Second row — CVRP centerpiece */}
+                    {box(620, 240, 360, 120, "CVRP", "+ K vehicles · capacity C", true)}
 
-                    {arrow(800, 140, 800, 260)}
+                    {arrow(800, 160, 800, 240)}
 
-                    {/* Third row - VARIANTS */}
-                    {box(160, 500, 260, 110, "DVRP", "+ distance / time limit", false)}
-                    {box(460, 500, 260, 110, "VRPTW", "+ time windows [aᵢ, bᵢ]", false)}
-                    {box(760, 500, 260, 110, "VRPB", "+ linehauls & backhauls", false)}
-                    {box(1060, 500, 260, 110, "VRPPD", "+ pickup & delivery", false)}
-                    {box(1360, 500, 220, 110, "MDVRP", "+ multi-depot", false)}
+                    {/* Third row — VARIANTS (widths bumped 260→320, last 220→280;
+                        positions recomputed to keep them inside the 1600 viewBox). */}
+                    {box(10,   480, 320, 130, "DVRP",  "+ distance / time limit",   false)}
+                    {box(335,  480, 320, 130, "VRPTW", "+ time windows [aᵢ, bᵢ]",   false)}
+                    {box(660,  480, 320, 130, "VRPB",  "+ linehauls & backhauls",   false)}
+                    {box(985,  480, 320, 130, "VRPPD", "+ pickup & delivery",       false)}
+                    {box(1310, 480, 280, 130, "MDVRP", "+ multi-depot",             false)}
 
-                    {/* Arrows from CVRP */}
-                    {[290, 590, 890, 1190, 1470].map((cx, i) =>
-                      <line key={i} x1={800} y1={360} x2={cx} y2={500} stroke="var(--ink-3)" strokeWidth={2} markerEnd="url(#arrHead)"/>
+                    {/* Arrows from CVRP — targets updated to the new variant centres */}
+                    {[170, 495, 820, 1145, 1450].map((cx, i) =>
+                      <line key={i} x1={800} y1={360} x2={cx} y2={480} stroke="var(--ink-3)" strokeWidth={2} markerEnd="url(#arrHead)"/>
                     )}
                   </g>
                 );
@@ -82,12 +90,6 @@ function Slide20() {
           <div style={{ fontFamily: "var(--font-mono)", fontSize: 22, color: "var(--ink-3)", marginTop: 8 }}>
             An arrow A → B means B is an extension of A (Toth & Vigo, Fig. 1.1).
           </div>
-        </div>
-
-        {/* Explanatory lede — same role as the description block on neighbouring
-            family slides (VRPTW, VRPB, VRPPD). */}
-        <div className="lede" style={{ marginTop: 24, fontSize: 32, lineHeight: 1.25, maxWidth: 1700 }}>
-          The <strong>CVRP sits at the centre of the family</strong>: every classical variant adds one extra constraint to the same capacitated core — a time window, a precedence pairing, a second depot. Read the tree top-down to see the family hierarchy, from the single-vehicle TSP down to the five branches we will explore next.
         </div>
       </SlideFrame>
     </section>

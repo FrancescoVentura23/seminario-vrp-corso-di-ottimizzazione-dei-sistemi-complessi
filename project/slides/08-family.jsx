@@ -114,24 +114,8 @@ function Slide21() {
         <div className="tag">Family</div>
         <h2 className="title" style={{ marginTop: 28 }}>VRP with Time Windows — every customer has a time interval.</h2>
 
-        <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 60, flex: 1 }}>
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24, position: "relative" }}>
-            <svg viewBox="0 0 900 620" style={{ width: "100%", height: "100%", display: "block", overflow: "visible" }}>
-              <rect x={420-16} y={320-16} width={32} height={32} fill="var(--depot)"/>
-              {/* Routes */}
-              <polyline points="420,320 220,170 340,120 540,120 420,320" fill="none" stroke="var(--route-1)" strokeWidth={3.5}/>
-              <polyline points="420,320 680,200 720,340 620,470 420,320" fill="none" stroke="var(--route-2)" strokeWidth={3.5}/>
-              <polyline points="420,320 440,510 240,480 420,320" fill="none" stroke="var(--route-3)" strokeWidth={3.5}/>
-              {tw.map(c => (
-                <g key={c.id}>
-                  <circle cx={c.x} cy={c.y} r={12} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>
-                  <rect x={c.x + 18} y={c.y - 16} width={96} height={32} fill="var(--ink)" rx={2}/>
-                  <text x={c.x + 66} y={c.y + 5} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill="var(--paper)">{c.a}–{c.b}</text>
-                </g>
-              ))}
-            </svg>
-          </div>
-
+        <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1fr 1.1fr", gap: 60, flex: 1 }}>
+          {/* Left — explanatory text */}
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 24 }}>
             <div className="lede">
               Each customer <em>i</em> has a window <em>[aᵢ, bᵢ]</em>. The vehicle must <strong>start service</strong> within it — early arrivals wait.
@@ -144,6 +128,41 @@ function Slide21() {
             <div className="body small" style={{ color: "var(--ink-3)" }}>
               Windows orient routes implicitly: even a symmetric cost matrix becomes effectively asymmetric once you add time.
             </div>
+          </div>
+
+          {/* Right — chart with time-window pills (slide-10 style: white pill, accent border, accent monospace text) */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24, position: "relative" }}>
+            <svg viewBox="0 0 900 620" style={{ width: "100%", height: "100%", display: "block", overflow: "visible" }}>
+              <rect x={420-16} y={320-16} width={32} height={32} fill="var(--depot)"/>
+              {/* Routes */}
+              <polyline points="420,320 220,170 340,120 540,120 420,320" fill="none" stroke="var(--route-1)" strokeWidth={3.5}/>
+              <polyline points="420,320 680,200 720,340 620,470 420,320" fill="none" stroke="var(--route-2)" strokeWidth={3.5}/>
+              <polyline points="420,320 440,510 240,480 420,320" fill="none" stroke="var(--route-3)" strokeWidth={3.5}/>
+              {tw.map(c => {
+                // Pill placed above each customer, mirroring SlideNodeAttributes (slide 10):
+                // white fill, accent border, monospace text in accent color, dashed leader.
+                const pillW = 160, pillH = 42;
+                const pillX = c.x - pillW / 2;
+                const pillY = c.y - 88;
+                return (
+                  <g key={c.id}>
+                    {/* dashed leader from pill bottom to just above node */}
+                    <line x1={c.x} y1={c.y - 46} x2={c.x} y2={c.y - 14}
+                          stroke="var(--accent)" strokeWidth={1.5} strokeDasharray="3 3"/>
+                    {/* customer node */}
+                    <circle cx={c.x} cy={c.y} r={12} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>
+                    {/* time-window pill — identical visual language to slide 10 */}
+                    <rect x={pillX} y={pillY} width={pillW} height={pillH}
+                          fill="var(--paper)" stroke="var(--accent)" strokeWidth={2} rx={6}/>
+                    <text x={c.x} y={pillY + 28} textAnchor="middle"
+                          fontFamily="var(--font-mono)" fontSize={22} fontWeight={600}
+                          fill="var(--accent)">
+                      {c.a}–{c.b}
+                    </text>
+                  </g>
+                );
+              })}
+            </svg>
           </div>
         </div>
       </SlideFrame>

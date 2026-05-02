@@ -221,7 +221,7 @@ function Slide22Intro() {
       <SlideFrame>
         <div className="tag">Family · VRPB primer</div>
         <h2 className="title" style={{ marginTop: 28 }}>
-          Two kinds of customers — <em style={{ color: "var(--accent)" }}>linehauls</em> and <em style={{ color: "var(--accent)" }}>backhauls</em>.
+          Two kinds of customers — <em style={{ color: "var(--accent-3)" }}>linehauls</em> and <em style={{ color: "var(--accent-2)" }}>backhauls</em>.
         </h2>
 
         <div style={{ marginTop: 28, display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 60, flex: 1 }}>
@@ -369,7 +369,7 @@ function Slide22Intro() {
                   <rect x={-30} y={-22} width={50} height={28}
                         fill="#5b6370" stroke="var(--ink)" strokeWidth={1.5} rx={2}/>
                   {/* cargo fill — height & y change via @keyframes (SVG2 attribute animation) */}
-                  <rect x={-29} width={48} fill="var(--accent)"
+                  <rect x={-29} width={48} fill="#7CC9F0"
                         style={{ animation: "cargoFill22Intro 5000ms forwards ease-in-out" }}/>
                   {/* cab — small darker box on the right (truck faces right) */}
                   <polygon points="20,-22 36,-22 40,-12 40,6 20,6"

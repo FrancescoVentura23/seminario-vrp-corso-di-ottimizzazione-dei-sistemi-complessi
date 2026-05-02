@@ -1,6 +1,6 @@
 # Seminario VRP — Guida rapida
 
-Deck HTML/CSS/JS esportato da Claude Design. **58 slide** gestite dal web component `<deck-stage>` in [project/deck-stage.js](project/deck-stage.js), montate da [project/vrp-seminar.html](project/vrp-seminar.html).
+Deck HTML/CSS/JS esportato da Claude Design. **59 slide** gestite dal web component `<deck-stage>` in [project/deck-stage.js](project/deck-stage.js), montate da [project/vrp-seminar.html](project/vrp-seminar.html).
 
 ## Istruzioni per Claude Dispatch
 
@@ -19,7 +19,7 @@ istruzioni di modifica. Ad ogni modifica completata, ricordati di:
 1. Rimuovere lock stantii: find .git -name "*.lock" -delete
 2. git add <file modificati>
 3. git commit -m "descrizione modifica"
-(il push lo fa l'utente manualmente)
+4. git push origin main
 ```
 
 Dopo la conferma, inviare la modifica desiderata in un messaggio separato.
@@ -134,10 +134,10 @@ Ogni section header è una slide con `className="section-slide"`. Per modificare
 | 19 | Road → complete graph | `Slide07` | [slides/04-vrp-elements.jsx](project/slides/04-vrp-elements.jsx) |
 | 20 | Graph notation | `Slide08` | [slides/04-vrp-elements.jsx](project/slides/04-vrp-elements.jsx) |
 | 21 | **Part IV — Complexity** *(section header)* | `Slide16` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
-| 22 | Big-O notation & growth table | `Slide17A` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
-| 23 | Complexity classes — P / NP / NP-hard / NP-complete | `Slide17B` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
-| 24 | Exact algorithms (B&B, B&C, DP) | `Slide17C` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
-| 25 | CVRP is NP-hard | `Slide17` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
+| 22 | Big-O notation | `Slide17A` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
+| 23 | Growth rates table (log n → n!) | `Slide17AGrowth` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
+| 24 | Complexity classes — P / NP / NP-hard / NP-complete | `Slide17B` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
+| 25 | Exact algorithms (B&B, B&C, DP) | `Slide17C` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
 | 26 | Why heuristics | `Slide18` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
 | 27 | **Part V — TSP** *(section header)* | `SlideTSPSection` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
 | 28 | TSP — informal statement | `Slide09` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
@@ -152,25 +152,26 @@ Ogni section header è una slide con `className="section-slide"`. Per modificare
 | 37 | Separation oracle — precise algorithm | `SlideTSPMinCutAlgo` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
 | 38 | Separation oracle — implementation | `SlideTSPMinCutImpl` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
 | 39 | **Part VI — CVRP** *(section header)* | `Slide11` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
-| 40 | TSP → CVRP — capacity intro | `Slide10` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 41 | TSP → CVRP — multiple routes | `Slide10B` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 42 | Three constraints + two-index ILP | `Slide14` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
-| 43 | Depot constraints — K leave / K return | `Slide14B` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
-| 44 | r(S) and capacity-cut inequality | `Slide15` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
-| 45 | Capacity cuts — exponential blow-up | `Slide15B` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
-| 46 | Lazy capacity-cut generation (B&C) | `Slide15C` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
-| 47 | **Part VII — VRP family** *(section header)* | `Slide19` | [slides/08-family.jsx](project/slides/08-family.jsx) |
-| 48 | Taxonomy | `Slide20` | [slides/08-family.jsx](project/slides/08-family.jsx) |
-| 49 | VRPTW | `Slide21` | [slides/08-family.jsx](project/slides/08-family.jsx) |
-| 50 | Backhauls & PD | `Slide22` | [slides/08-family.jsx](project/slides/08-family.jsx) |
-| 51 | Multi-depot & open VRP | `Slide23` | [slides/08-family.jsx](project/slides/08-family.jsx) |
-| 52 | **Part VIII — Live demo** *(section header)* | `Slide24` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
-| 53 | Clarke-Wright idea | `Slide25` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
-| 54 | Interactive demo | `Slide26` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
-| 55 | **Part IX — Applications** *(section header)* | `Slide27` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
-| 56 | Case studies | `Slide28` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
-| 57 | Takeaways | `Slide29` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
-| 58 | Closing / references | `Slide30` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
+| 40 | CVRP is NP-hard | `Slide17` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
+| 41 | TSP → CVRP — capacity intro | `Slide10` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 42 | TSP → CVRP — multiple routes | `Slide10B` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 43 | Three constraints + two-index ILP | `Slide14` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 44 | Depot constraints — K leave / K return | `Slide14B` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 45 | r(S) and capacity-cut inequality | `Slide15` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 46 | Capacity cuts — exponential blow-up | `Slide15B` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 47 | Lazy capacity-cut generation (B&C) | `Slide15C` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 48 | **Part VII — VRP family** *(section header)* | `Slide19` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 49 | Taxonomy | `Slide20` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 50 | VRPTW | `Slide21` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 51 | Backhauls & PD | `Slide22` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 52 | Multi-depot & open VRP | `Slide23` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 53 | **Part VIII — Live demo** *(section header)* | `Slide24` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
+| 54 | Clarke-Wright idea | `Slide25` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
+| 55 | Interactive demo | `Slide26` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
+| 56 | **Part IX — Applications** *(section header)* | `Slide27` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
+| 57 | Case studies | `Slide28` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
+| 58 | Takeaways | `Slide29` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
+| 59 | Closing / references | `Slide30` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
 
 > Per aggiungere una slide: crea la funzione nel file della parte corrispondente, aggiungila all'`Object.assign(window, {...})` in fondo a quel file, poi inseriscila nell'array `slides` dentro [project/vrp-seminar.html](project/vrp-seminar.html).
 
@@ -284,8 +285,8 @@ Il repo può accumulare file `.lock` stantii in `.git/` (lasciati da sessioni in
 find .git -name "*.lock" -delete
 git add <files>
 git commit -m "..."
+git push origin main
 ```
-(il push lo fa l'utente manualmente)
 
 Nota: VS Code git integration è abilitata (`"git.enabled": true`). Per evitare conflitti di lock, **tenere VS Code chiuso quando si usa Claude Dispatch**.
 

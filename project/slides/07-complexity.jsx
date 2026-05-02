@@ -323,11 +323,11 @@ function Slide17B() {
                       stroke="#38a169" strokeWidth={2.5}/>
 
               {/* Labels */}
-              <text x={200} y={105} textAnchor="middle"
+              <text x={200} y={140} textAnchor="middle"
                     fontFamily="var(--font-display)" fontSize={32} fontWeight="bold"
                     fill="var(--accent)">NP</text>
-              <text x={510} y={105} textAnchor="middle"
-                    fontFamily="var(--font-display)" fontSize={32} fontWeight="bold"
+              <text x={505} y={140} textAnchor="middle"
+                    fontFamily="var(--font-display)" fontSize={28} fontWeight="bold"
                     fill="var(--accent-2)">NP-hard</text>
               <text x={95} y={227} textAnchor="middle"
                     fontFamily="var(--font-display)" fontSize={36} fontWeight="bold"

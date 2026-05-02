@@ -9,7 +9,7 @@ function Slide19() {
     <section className="slide section-slide" data-label="Part VII — VRP family">
       <div style={{ position: "absolute", top: 80, left: 120, right: 120, display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 31, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--paper-deep)" }}>
         <div>Part VII of IX</div>
-        <div>Slides 48 — 51</div>
+        <div>Slides 48 — 53</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Seven</div>
@@ -171,6 +171,227 @@ function Slide21() {
 }
 
 
+
+// ==========================================================
+// VRPB INTRO — define linehaul vs backhaul with an animated
+// truck demo: cargo full at depot, unloads at the green
+// linehaul, then loads at the amber backhaul.
+// Pattern follows Slide09 (TSP) for replay button + animKey
+// reset, plus inline @keyframes for truck movement and
+// cargo-fill height.
+
+function Slide22Intro() {
+  const [animKey, setAnimKey] = React.useState(0);
+  const sectionRef = React.useRef(null);
+  const btnRef = React.useRef(null);
+
+  // Auto-restart whenever the slide becomes active
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (el.hasAttribute('data-deck-active')) {
+        setAnimKey(k => k + 1);
+      }
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
+    return () => obs.disconnect();
+  }, []);
+
+  // Replay button — native click listener (React's delegation breaks once
+  // <section> is moved into <deck-stage>).
+  React.useEffect(() => {
+    const btn = btnRef.current;
+    if (!btn) return;
+    const handler = () => setAnimKey(k => k + 1);
+    btn.addEventListener("click", handler);
+    return () => btn.removeEventListener("click", handler);
+  }, []);
+
+  // Geometry
+  const depot    = { x: 90,  y: 230 };
+  const linehaul = { x: 410, y: 230 };
+  const backhaul = { x: 720, y: 230 };
+  const truckY   = 140;          // truck sits above the stops
+  const seg1Len  = Math.abs(linehaul.x - depot.x);
+  const seg2Len  = Math.abs(backhaul.x - linehaul.x);
+
+  return (
+    <section ref={sectionRef} className="slide" data-label="Linehauls and backhauls">
+      <SlideFrame>
+        <div className="tag">Family · VRPB primer</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          Two kinds of customers — <em style={{ color: "var(--accent)" }}>linehauls</em> and <em style={{ color: "var(--accent)" }}>backhauls</em>.
+        </h2>
+
+        <div style={{ marginTop: 28, display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 60, flex: 1 }}>
+          {/* Left — definitions */}
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 22 }}>
+            <div className="lede">
+              Before the rule, the vocabulary. A <em>linehaul</em> is a customer that <em>receives</em> goods; a <em>backhaul</em> is one whose goods are <em>collected</em> back to the depot.
+            </div>
+
+            {/* Two definition cards — same colour code as the chart on the right */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+              <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "14px 16px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                  <span style={{ display: "inline-flex", width: 30, height: 30, borderRadius: "50%", background: "var(--accent-3)", border: "1.5px solid var(--ink)", color: "var(--paper)", fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 16, alignItems: "center", justifyContent: "center" }}>L</span>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: 26 }}>Linehaul</div>
+                </div>
+                <div style={{ fontSize: 21, color: "var(--ink-2)", lineHeight: 1.3 }}>
+                  Customer that <em>receives</em> goods from the depot — a delivery on the outbound leg.
+                </div>
+              </div>
+              <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "14px 16px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                  <span style={{ display: "inline-flex", width: 30, height: 30, borderRadius: "50%", background: "var(--accent-2)", border: "1.5px solid var(--ink)", color: "var(--ink)", fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 16, alignItems: "center", justifyContent: "center" }}>B</span>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: 26 }}>Backhaul</div>
+                </div>
+                <div style={{ fontSize: 21, color: "var(--ink-2)", lineHeight: 1.3 }}>
+                  Customer from which goods are <em>collected</em> back to the depot — a pickup.
+                </div>
+              </div>
+            </div>
+
+            <div className="body small" style={{ color: "var(--ink-3)" }}>
+              Watch the truck on the right: it leaves the depot full, <em>unloads</em> at the green linehaul, then <em>loads</em> at the amber backhaul.
+            </div>
+          </div>
+
+          {/* Right — animated demo */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24, position: "relative" }}>
+            <button
+              ref={btnRef}
+              style={{
+                position: "absolute",
+                top: 16,
+                right: 16,
+                zIndex: 10,
+                fontFamily: "var(--font-mono)",
+                fontSize: 14,
+                letterSpacing: "0.07em",
+                textTransform: "uppercase",
+                padding: "8px 18px",
+                background: "var(--accent)",
+                color: "#ffffff",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              ↻ Replay
+            </button>
+
+            {/* Inline keyframes — depend on the (x,y) of the three stops, so
+                we can not move them to styles.css. */}
+            <style dangerouslySetInnerHTML={{ __html: `
+              @keyframes truckMove22Intro {
+                0%, 18%   { transform: translate(${depot.x}px,    ${truckY}px); }
+                40%, 58%  { transform: translate(${linehaul.x}px, ${truckY}px); }
+                82%, 100% { transform: translate(${backhaul.x}px, ${truckY}px); }
+              }
+              @keyframes cargoFill22Intro {
+                0%, 40%   { y: -22px; height: 28px; }   /* full from start until at linehaul */
+                58%, 82%  { y: 6px;   height: 0px;  }   /* unloaded; stays empty until at backhaul */
+                100%      { y: -22px; height: 28px; }   /* loaded again at backhaul */
+              }
+              @keyframes labelUnloading22 {
+                0%, 40%   { opacity: 0; }
+                46%, 58%  { opacity: 1; }
+                66%, 100% { opacity: 0; }
+              }
+              @keyframes labelLoading22 {
+                0%, 82%   { opacity: 0; }
+                88%, 100% { opacity: 1; }
+              }
+            ` }}/>
+
+            <svg viewBox="0 0 820 360" style={{ width: "100%", height: "100%", display: "block", overflow: "visible" }}>
+              {/* Single keyed group so every animation restarts together when animKey changes */}
+              <g key={animKey}>
+                {/* Route 1: depot -> linehaul (delivery leg, drawn while truck moves) */}
+                <line x1={depot.x} y1={depot.y} x2={linehaul.x} y2={linehaul.y}
+                      stroke="var(--accent-3)" strokeWidth={3} strokeLinecap="round"
+                      style={{
+                        "--len": seg1Len,
+                        strokeDasharray: seg1Len,
+                        strokeDashoffset: seg1Len,
+                        animation: "drawPath 1100ms both ease-in-out",
+                        animationDelay: "900ms",
+                      }}/>
+                {/* Route 2: linehaul -> backhaul (pickup leg) */}
+                <line x1={linehaul.x} y1={linehaul.y} x2={backhaul.x} y2={backhaul.y}
+                      stroke="var(--accent-2)" strokeWidth={3} strokeLinecap="round"
+                      style={{
+                        "--len": seg2Len,
+                        strokeDasharray: seg2Len,
+                        strokeDashoffset: seg2Len,
+                        animation: "drawPath 1200ms both ease-in-out",
+                        animationDelay: "2900ms",
+                      }}/>
+
+                {/* Depot — black square */}
+                <rect x={depot.x - 18} y={depot.y - 18} width={36} height={36} fill="#000"/>
+                <text x={depot.x} y={depot.y + 7} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={22} fill="#fff" fontWeight={700}>0</text>
+                <text x={depot.x} y={depot.y + 56} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={15} fill="var(--ink-3)"
+                      letterSpacing="0.12em">DEPOT</text>
+
+                {/* Linehaul */}
+                <circle cx={linehaul.x} cy={linehaul.y} r={28}
+                        fill="var(--accent-3)" stroke="var(--ink)" strokeWidth={2.5}/>
+                <text x={linehaul.x} y={linehaul.y + 8} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={22} fill="var(--paper)" fontWeight={700}>L</text>
+                <text x={linehaul.x} y={linehaul.y + 60} textAnchor="middle"
+                      fontFamily="var(--font-display)" fontSize={20} fill="var(--ink)">linehaul</text>
+                <text x={linehaul.x} y={linehaul.y + 84} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={15} fill="var(--accent-3)" fontWeight={700}
+                      style={{ opacity: 0, animation: "labelUnloading22 5000ms forwards ease-in-out" }}>
+                  ↓ unloading
+                </text>
+
+                {/* Backhaul */}
+                <circle cx={backhaul.x} cy={backhaul.y} r={28}
+                        fill="var(--accent-2)" stroke="var(--ink)" strokeWidth={2.5}/>
+                <text x={backhaul.x} y={backhaul.y + 8} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={22} fill="var(--ink)" fontWeight={700}>B</text>
+                <text x={backhaul.x} y={backhaul.y + 60} textAnchor="middle"
+                      fontFamily="var(--font-display)" fontSize={20} fill="var(--ink)">backhaul</text>
+                <text x={backhaul.x} y={backhaul.y + 84} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={15} fill="#a86b16" fontWeight={700}
+                      style={{ opacity: 0, animation: "labelLoading22 5000ms forwards ease-in-out" }}>
+                  ↑ loading
+                </text>
+
+                {/* Truck — translates between the three stops via @keyframes */}
+                <g style={{ animation: "truckMove22Intro 5000ms forwards ease-in-out" }}>
+                  {/* cargo box (frame) */}
+                  <rect x={-30} y={-22} width={50} height={28}
+                        fill="#5b6370" stroke="var(--ink)" strokeWidth={1.5} rx={2}/>
+                  {/* cargo fill — height & y change via @keyframes (SVG2 attribute animation) */}
+                  <rect x={-29} width={48} fill="var(--accent)"
+                        style={{ animation: "cargoFill22Intro 5000ms forwards ease-in-out" }}/>
+                  {/* cab — small darker box on the right (truck faces right) */}
+                  <polygon points="20,-22 36,-22 40,-12 40,6 20,6"
+                           fill="#3a414b" stroke="var(--ink)" strokeWidth={1.5}/>
+                  {/* windshield */}
+                  <polygon points="23,-19 33,-19 36,-11 23,-11"
+                           fill="rgba(180,230,255,0.6)"
+                           stroke="rgba(120,180,220,0.5)" strokeWidth={0.5}/>
+                  {/* wheels */}
+                  <circle cx={-16} cy={10} r={5} fill="var(--ink)"/>
+                  <circle cx={28}  cy={10} r={5} fill="var(--ink)"/>
+                </g>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
 function Slide22() {
   return (
     <section className="slide" data-label="VRPB">
@@ -212,35 +433,13 @@ function Slide22() {
             </div>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 20 }}>
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 24 }}>
             <div className="lede">
-              The customer set splits into two disjoint groups: linehauls <TeX>{"L"}</TeX> and backhauls <TeX>{"B"}</TeX>.
+              The customer set splits into two disjoint groups — linehauls <TeX>{"L"}</TeX> and backhauls <TeX>{"B"}</TeX> (see the previous slide). VRPB now adds a precedence constraint on every mixed route.
             </div>
 
-            {/* Two definition cards — colored badge = same colour code used for the nodes in the chart */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-              <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "14px 16px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-                  <span style={{ display: "inline-flex", width: 30, height: 30, borderRadius: "50%", background: "var(--accent-3)", border: "1.5px solid var(--ink)", color: "var(--paper)", fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 16, alignItems: "center", justifyContent: "center" }}>L</span>
-                  <div style={{ fontFamily: "var(--font-display)", fontSize: 26 }}>Linehaul</div>
-                </div>
-                <div style={{ fontSize: 21, color: "var(--ink-2)", lineHeight: 1.3 }}>
-                  Customer that <em>receives</em> goods from the depot — a delivery on the outbound leg of the route.
-                </div>
-              </div>
-              <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "14px 16px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-                  <span style={{ display: "inline-flex", width: 30, height: 30, borderRadius: "50%", background: "var(--accent-2)", border: "1.5px solid var(--ink)", color: "var(--ink)", fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 16, alignItems: "center", justifyContent: "center" }}>B</span>
-                  <div style={{ fontFamily: "var(--font-display)", fontSize: 26 }}>Backhaul</div>
-                </div>
-                <div style={{ fontSize: 21, color: "var(--ink-2)", lineHeight: 1.3 }}>
-                  Customer from which goods are <em>picked up</em> — a collection performed on the return leg.
-                </div>
-              </div>
-            </div>
-
-            {/* Precedence rule */}
-            <div style={{ fontSize: 23, background: "var(--paper-2)", border: "1px solid var(--line)", borderLeft: "4px solid var(--accent)", padding: "14px 18px", lineHeight: 1.4 }}>
+            {/* Precedence rule — the heart of VRPB */}
+            <div style={{ fontSize: 26, background: "var(--paper-2)", border: "1px solid var(--line)", borderLeft: "4px solid var(--accent)", padding: "18px 22px", lineHeight: 1.45 }}>
               <strong>VRPB rule:</strong> on any mixed route, every customer in <TeX>{"L"}</TeX> is served <em>before</em> any customer in <TeX>{"B"}</TeX>.
             </div>
 
@@ -308,5 +507,5 @@ function Slide23() {
 
 
 Object.assign(window, {
-  Slide19, Slide20, Slide21, Slide22, Slide23,
+  Slide19, Slide20, Slide21, Slide22Intro, Slide22, Slide23,
 });

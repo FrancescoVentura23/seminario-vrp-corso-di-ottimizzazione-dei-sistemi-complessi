@@ -31,53 +31,63 @@ function Slide20() {
         <div className="tag">Family · Fig. 1.1</div>
         <h2 className="title" style={{ marginTop: 28 }}>The basic VRPs and their interconnections.</h2>
 
-        <div style={{ marginTop: 40, flex: 1, background: "var(--paper-2)", border: "1px solid var(--line)", padding: 40 }}>
-          <svg viewBox="0 0 1600 680" style={{ width: "100%", height: "100%", display: "block" }}>
-            {/* TSP at root */}
-            {(() => {
-              const box = (x, y, w, h, label, sub, accent) => (
-                <g>
-                  <rect x={x} y={y} width={w} height={h} fill={accent ? "var(--ink)" : "var(--paper)"} stroke="var(--ink)" strokeWidth={2}/>
-                  <text x={x + w/2} y={y + 40} textAnchor="middle" fontFamily="var(--font-display)" fontSize={36} fill={accent ? "var(--paper)" : "var(--ink)"}>{label}</text>
-                  <text x={x + w/2} y={y + 68} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={15} fill={accent ? "var(--paper-deep)" : "var(--ink-3)"} letterSpacing="0.05em">{sub}</text>
-                </g>
-              );
-              const arrow = (x1, y1, x2, y2) => (
-                <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="var(--ink-3)" strokeWidth={2} markerEnd="url(#arrHead)"/>
-              );
-              return (
-                <g>
-                  <defs>
-                    <marker id="arrHead" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                      <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--ink-3)"/>
-                    </marker>
-                  </defs>
-                  {/* Top row */}
-                  {box(660, 40, 280, 100, "TSP", "1 vehicle · no capacity", false)}
+        {/* Chart container — explicit height so the figure does not overflow into
+            the slide chrome (page number / footer) at the bottom of every slide. */}
+        <div style={{ marginTop: 28, background: "var(--paper-2)", border: "1px solid var(--line)", padding: 28, height: 600, display: "flex", flexDirection: "column" }}>
+          <div style={{ flex: 1, minHeight: 0 }}>
+            <svg viewBox="0 0 1600 680" preserveAspectRatio="xMidYMid meet" style={{ width: "100%", height: "100%", display: "block" }}>
+              {/* TSP at root */}
+              {(() => {
+                const box = (x, y, w, h, label, sub, accent) => (
+                  <g>
+                    <rect x={x} y={y} width={w} height={h} fill={accent ? "var(--ink)" : "var(--paper)"} stroke="var(--ink)" strokeWidth={2}/>
+                    <text x={x + w/2} y={y + 40} textAnchor="middle" fontFamily="var(--font-display)" fontSize={36} fill={accent ? "var(--paper)" : "var(--ink)"}>{label}</text>
+                    <text x={x + w/2} y={y + 68} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={15} fill={accent ? "var(--paper-deep)" : "var(--ink-3)"} letterSpacing="0.05em">{sub}</text>
+                  </g>
+                );
+                const arrow = (x1, y1, x2, y2) => (
+                  <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="var(--ink-3)" strokeWidth={2} markerEnd="url(#arrHead)"/>
+                );
+                return (
+                  <g>
+                    <defs>
+                      <marker id="arrHead" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--ink-3)"/>
+                      </marker>
+                    </defs>
+                    {/* Top row */}
+                    {box(660, 40, 280, 100, "TSP", "1 vehicle · no capacity", false)}
 
-                  {/* Second row - CVRP centerpiece */}
-                  {box(660, 260, 280, 100, "CVRP", "+ K vehicles · capacity C", true)}
+                    {/* Second row - CVRP centerpiece */}
+                    {box(660, 260, 280, 100, "CVRP", "+ K vehicles · capacity C", true)}
 
-                  {arrow(800, 140, 800, 260)}
+                    {arrow(800, 140, 800, 260)}
 
-                  {/* Third row - VARIANTS */}
-                  {box(160, 500, 260, 110, "DVRP", "+ distance / time limit", false)}
-                  {box(460, 500, 260, 110, "VRPTW", "+ time windows [aᵢ, bᵢ]", false)}
-                  {box(760, 500, 260, 110, "VRPB", "+ linehauls & backhauls", false)}
-                  {box(1060, 500, 260, 110, "VRPPD", "+ pickup & delivery", false)}
-                  {box(1360, 500, 220, 110, "MDVRP", "+ multi-depot", false)}
+                    {/* Third row - VARIANTS */}
+                    {box(160, 500, 260, 110, "DVRP", "+ distance / time limit", false)}
+                    {box(460, 500, 260, 110, "VRPTW", "+ time windows [aᵢ, bᵢ]", false)}
+                    {box(760, 500, 260, 110, "VRPB", "+ linehauls & backhauls", false)}
+                    {box(1060, 500, 260, 110, "VRPPD", "+ pickup & delivery", false)}
+                    {box(1360, 500, 220, 110, "MDVRP", "+ multi-depot", false)}
 
-                  {/* Arrows from CVRP */}
-                  {[290, 590, 890, 1190, 1470].map((cx, i) =>
-                    <line key={i} x1={800} y1={360} x2={cx} y2={500} stroke="var(--ink-3)" strokeWidth={2} markerEnd="url(#arrHead)"/>
-                  )}
-                </g>
-              );
-            })()}
-          </svg>
-          <div style={{ fontFamily: "var(--font-mono)", fontSize: 25, color: "var(--ink-3)", marginTop: 10 }}>
+                    {/* Arrows from CVRP */}
+                    {[290, 590, 890, 1190, 1470].map((cx, i) =>
+                      <line key={i} x1={800} y1={360} x2={cx} y2={500} stroke="var(--ink-3)" strokeWidth={2} markerEnd="url(#arrHead)"/>
+                    )}
+                  </g>
+                );
+              })()}
+            </svg>
+          </div>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: 22, color: "var(--ink-3)", marginTop: 8 }}>
             An arrow A → B means B is an extension of A (Toth & Vigo, Fig. 1.1).
           </div>
+        </div>
+
+        {/* Explanatory lede — same role as the description block on neighbouring
+            family slides (VRPTW, VRPB, VRPPD). */}
+        <div className="lede" style={{ marginTop: 24, fontSize: 32, lineHeight: 1.25, maxWidth: 1700 }}>
+          The <strong>CVRP sits at the centre of the family</strong>: every classical variant adds one extra constraint to the same capacitated core — a time window, a precedence pairing, a second depot. Read the tree top-down to see the family hierarchy, from the single-vehicle TSP down to the five branches we will explore next.
         </div>
       </SlideFrame>
     </section>

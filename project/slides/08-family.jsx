@@ -118,12 +118,12 @@ function Slide21() {
           {/* Left — explanatory text */}
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 24 }}>
             <div className="lede">
-              Each customer <em>i</em> has a window <em>[aᵢ, bᵢ]</em>. The vehicle must <strong>start service</strong> within it — early arrivals wait.
+              Each customer <TeX>{"i"}</TeX> has a window <TeX>{"[a_i,\\, b_i]"}</TeX>. The vehicle must <strong>start service</strong> within it — early arrivals wait.
             </div>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 34, background: "var(--paper-2)", border: "1px solid var(--line)", padding: "18px 22px", lineHeight: 1.5 }}>
-              service at i starts at τᵢ<br/>
-              with <span style={{ color: "var(--accent)" }}>aᵢ ≤ τᵢ ≤ bᵢ</span><br/>
-              vehicle waits sᵢ time units
+            <div style={{ fontSize: 28, background: "var(--paper-2)", border: "1px solid var(--line)", padding: "18px 22px", lineHeight: 1.7 }}>
+              service at <TeX>{"i"}</TeX> starts at <TeX>{"\\tau_i"}</TeX><br/>
+              with <span style={{ color: "var(--accent)" }}><TeX>{"a_i \\le \\tau_i \\le b_i"}</TeX></span><br/>
+              vehicle waits <TeX>{"s_i"}</TeX> time units
             </div>
             <div className="body small" style={{ color: "var(--ink-3)" }}>
               Windows orient routes implicitly: even a symmetric cost matrix becomes effectively asymmetric once you add time.

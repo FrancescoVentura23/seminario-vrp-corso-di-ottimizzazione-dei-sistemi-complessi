@@ -212,10 +212,38 @@ function Slide22() {
             </div>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 24 }}>
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 20 }}>
             <div className="lede">
-              The customer set splits into linehaul <em>L</em> and backhaul <em>B</em>. On any mixed route, <strong>all deliveries finish before any pickup</strong>.
+              The customer set splits into two disjoint groups: linehauls <TeX>{"L"}</TeX> and backhauls <TeX>{"B"}</TeX>.
             </div>
+
+            {/* Two definition cards — colored badge = same colour code used for the nodes in the chart */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+              <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "14px 16px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                  <span style={{ display: "inline-flex", width: 30, height: 30, borderRadius: "50%", background: "var(--accent-3)", border: "1.5px solid var(--ink)", color: "var(--paper)", fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 16, alignItems: "center", justifyContent: "center" }}>L</span>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: 26 }}>Linehaul</div>
+                </div>
+                <div style={{ fontSize: 21, color: "var(--ink-2)", lineHeight: 1.3 }}>
+                  Customer that <em>receives</em> goods from the depot — a delivery on the outbound leg of the route.
+                </div>
+              </div>
+              <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "14px 16px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                  <span style={{ display: "inline-flex", width: 30, height: 30, borderRadius: "50%", background: "var(--accent-2)", border: "1.5px solid var(--ink)", color: "var(--ink)", fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 16, alignItems: "center", justifyContent: "center" }}>B</span>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: 26 }}>Backhaul</div>
+                </div>
+                <div style={{ fontSize: 21, color: "var(--ink-2)", lineHeight: 1.3 }}>
+                  Customer from which goods are <em>picked up</em> — a collection performed on the return leg.
+                </div>
+              </div>
+            </div>
+
+            {/* Precedence rule */}
+            <div style={{ fontSize: 23, background: "var(--paper-2)", border: "1px solid var(--line)", borderLeft: "4px solid var(--accent)", padding: "14px 18px", lineHeight: 1.4 }}>
+              <strong>VRPB rule:</strong> on any mixed route, every customer in <TeX>{"L"}</TeX> is served <em>before</em> any customer in <TeX>{"B"}</TeX>.
+            </div>
+
             <div className="body small" style={{ color: "var(--ink-3)" }}>
               The precedence reflects physical loading constraints: rearranging the cargo mid-route is costly or impossible.
             </div>

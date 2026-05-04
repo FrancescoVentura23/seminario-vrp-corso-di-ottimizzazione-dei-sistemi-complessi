@@ -1593,8 +1593,86 @@ function Slide23() {
 }
 
 
+function Slide23B() {
+  const cases = [
+    {
+      icon: "🚖",
+      title: "Ride-sharing & taxi dispatch",
+      body: "Each ride request pairs a passenger pickup location with a drop-off. The vehicle must visit the origin before the destination — the canonical VRPPD structure.",
+      tag: "Mobility as a service",
+      color: "var(--accent)",
+    },
+    {
+      icon: "📦",
+      title: "Courier same-day delivery",
+      body: "A parcel is collected from sender A and delivered to recipient B. Multiple requests are batched on a single vehicle route, with pickup always before delivery.",
+      tag: "Courier / express",
+      color: "#0ea5e9",
+    },
+    {
+      icon: "🏥",
+      title: "Dial-a-Ride (DARP)",
+      body: "Non-emergency medical transport: patients are picked up at home and brought to clinics, then collected again after their appointment. Time windows tighten the pairing.",
+      tag: "Healthcare transport",
+      color: "#e05c5c",
+    },
+    {
+      icon: "🚛",
+      title: "Less-than-truckload (LTL) freight",
+      body: "Partial loads from multiple shippers are consolidated on one truck. Each shipment has a pickup terminal and a delivery terminal — multiple O-D pairs per tour.",
+      tag: "Freight / logistics",
+      color: "#ca8a04",
+    },
+    {
+      icon: "♻️",
+      title: "Container repositioning",
+      body: "Empty shipping containers are picked up at surplus depots and delivered to ports or warehouses with shortages. The pairing constraint links each surplus to a deficit.",
+      tag: "Port / intermodal",
+      color: "#16a34a",
+    },
+    {
+      icon: "🛵",
+      title: "Food delivery platforms",
+      body: "Each order is picked up at a restaurant and delivered to a customer address. Batching multiple orders on one courier creates a small VRPPD instance in real time.",
+      tag: "On-demand food",
+      color: "#8b5cf6",
+    },
+  ];
+
+  return (
+    <section className="slide" data-label="VRPPD — real cases">
+      <SlideFrame>
+        <div className="tag">Family · VRPPD</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          Pickup-and-delivery arises wherever origin and destination are paired.
+        </h2>
+
+        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, flex: 1 }}>
+          {cases.map((c, i) => (
+            <div key={i} style={{
+              background: "var(--paper-2)",
+              border: "1px solid var(--line)",
+              borderTop: `4px solid ${c.color}`,
+              padding: "22px 26px",
+              display: "flex", flexDirection: "column", gap: 12,
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <span style={{ fontSize: 36 }}>{c.icon}</span>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: 28, lineHeight: 1.2 }}>{c.title}</div>
+              </div>
+              <div style={{ fontSize: 24, color: "var(--ink-2)", lineHeight: 1.55, flex: 1 }}>{c.body}</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 16, color: c.color, letterSpacing: "0.07em", textTransform: "uppercase" }}>{c.tag}</div>
+            </div>
+          ))}
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
 Object.assign(window, {
   Slide19, Slide20, Slide21, Slide21B,
   Slide22Intro, Slide22Load, Slide22, Slide22B,
-  Slide23Intro, Slide23Load, Slide23,
+  Slide23Intro, Slide23Load, Slide23, Slide23B,
 });

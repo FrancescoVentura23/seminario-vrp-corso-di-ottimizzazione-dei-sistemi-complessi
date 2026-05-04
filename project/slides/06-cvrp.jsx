@@ -583,7 +583,7 @@ function Slide15B() {
                                 color: r.exp ? "var(--accent)" : "var(--ink)",
                                 display: "flex", alignItems: "center", gap: 12 }}>
                     <span>{r.val}</span>
-                    {r.exp && <span style={{ fontSize: 15, color: "var(--accent)", opacity: 0.85 }}>{r.exp}</span>}
+                    {r.exp && <span style={{ fontSize: 15, color: "var(--accent)", opacity: 0.85 }}>{renderNum(r.exp)}</span>}
                   </div>
                 </div>
               ))}

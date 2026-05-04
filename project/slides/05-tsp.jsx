@@ -1134,7 +1134,7 @@ function SlideTSPExponential() {
                     <line x1={75} y1={y} x2={80} y2={y} stroke="var(--ink)" strokeWidth={1.5}/>
                     <line x1={80} y1={y} x2={860} y2={y} stroke="var(--line)" strokeWidth={1} strokeDasharray="3 5"/>
                     <text x={65} y={y + 5} textAnchor="end" fontFamily="var(--font-mono)" fontSize={16} fill="var(--ink-3)">
-                      10{v === 0 ? "⁰" : v === 10 ? "¹⁰" : v === 20 ? "²⁰" : "³⁰"}
+                      <tspan>10</tspan><tspan dy="-5" fontSize="11">{v === 0 ? "0" : String(v)}</tspan><tspan dy="5"/>
                     </text>
                   </g>
                 );
@@ -1164,7 +1164,7 @@ function SlideTSPExponential() {
                             textAnchor="middle" fontFamily="var(--font-mono)"
                             fontSize={19} fontWeight={600} fill={color}
                             style={{ opacity: 0, animation: "fadeUp 500ms both ease-out", animationDelay: `${delay + 700}ms` }}>
-                        {d.label}
+                        {renderNumSVG(d.label, 13, -6)}
                       </text>
                       {/* n label below */}
                       <text x={xCenter} y={chartY0 + 28}
@@ -1232,7 +1232,7 @@ function SlideTSPLazy() {
             </div>
 
             <div className="body small" style={{ fontSize: 20, color: "var(--ink-3)", lineHeight: 1.35 }}>
-              Typical 100-city run: a few dozen cuts are added in total, not 10³⁰.
+              Typical 100-city run: a few dozen cuts are added in total, not 10<sup>30</sup>.
             </div>
           </div>
 

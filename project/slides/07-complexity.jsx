@@ -165,23 +165,6 @@ function Slide17A() {
 // Slide 23 — Growth rates in practice
 // -----------------------------------------------------------------------------
 function Slide17AGrowth() {
-  // Unicode superscript chars come from two different blocks (Latin-1 vs Number Forms)
-  // and have different baselines in monospace fonts, making multi-digit exponents look
-  // misaligned (e.g. "10¹⁵" shows ¹ higher than ⁵).  Convert every run of superscript
-  // chars to a real HTML <sup> tag so the browser renders them at a uniform baseline.
-  const renderNum = (s) => {
-    const sup = {'⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9','ⁿ':'n'};
-    const out = [];
-    let base = '', exp = '';
-    for (const ch of s) {
-      if (ch in sup) { if (base) { out.push(base); base = ''; } exp += sup[ch]; }
-      else           { if (exp)  { out.push(<sup key={out.length}>{exp}</sup>); exp = ''; } base += ch; }
-    }
-    if (exp)  out.push(<sup key={out.length}>{exp}</sup>);
-    if (base) out.push(base);
-    return out.length ? out : s;
-  };
-
   const rows = [
     { name: "O(log n)",  n10: "3",       n50: "6",        n100: "7",        n1000: "10",        verdict: "trivial",  color: "#16a34a" },
     { name: "O(n)",      n10: "10",      n50: "50",       n100: "100",      n1000: "10³",        verdict: "fast",     color: "#65a30d" },
@@ -208,7 +191,7 @@ function Slide17AGrowth() {
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "22px 28px" }}>
               <div className="kicker" style={{ color: "var(--accent)", marginBottom: 10 }}>Reading the table</div>
               <div style={{ fontSize: 26, lineHeight: 1.4 }}>
-                At <span style={{ fontFamily: "var(--font-mono)" }}>10⁹</span> operations per second, anything up to <span style={{ fontFamily: "var(--font-mono)" }}>~10¹⁰</span> is feasible in seconds. Beyond that, no hardware upgrade can save you — the problem is in the growth rate itself.
+                At <span style={{ fontFamily: "var(--font-mono)" }}>10<sup>9</sup></span> operations per second, anything up to <span style={{ fontFamily: "var(--font-mono)" }}>~10<sup>10</sup></span> is feasible in seconds. Beyond that, no hardware upgrade can save you — the problem is in the growth rate itself.
               </div>
             </div>
 
@@ -247,7 +230,7 @@ function Slide17AGrowth() {
                 </div>
               ))}
               <div style={{ padding: "10px 16px", fontFamily: "var(--font-mono)", fontSize: 17, color: "var(--ink-3)", borderTop: "1px solid var(--line)", background: "var(--paper-2)" }}>
-                number of operations (≈ time at 10⁹ ops/s — feasible up to ~10¹⁰)
+                number of operations (≈ time at 10<sup>9</sup> ops/s — feasible up to ~10<sup>10</sup>)
               </div>
             </div>
           </div>
@@ -529,7 +512,7 @@ function Slide17() {
                 {rows.map((r, i) => (
                   <tr key={i} style={{ borderTop: "1px solid var(--line)" }}>
                     <td style={{ padding: "14px 20px", color: "var(--ink)", borderLeft: `4px solid ${rowColors[i]}` }}>{r[0]}</td>
-                    <td style={{ padding: "14px 20px", textAlign: "right" }}>{r[1]}</td>
+                    <td style={{ padding: "14px 20px", textAlign: "right" }}>{renderNum(r[1])}</td>
                     <td style={{ padding: "14px 20px", textAlign: "right", color: rowColors[i], fontWeight: 600 }}>{r[2]}</td>
                   </tr>
                 ))}

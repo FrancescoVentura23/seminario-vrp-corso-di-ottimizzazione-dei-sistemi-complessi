@@ -231,9 +231,51 @@ const EX_ROUTES = [
 ];
 
 // -----------------------------------------------------------
+// Superscript rendering helpers
+// -----------------------------------------------------------
+// Unicode superscript chars come from two different Unicode blocks:
+//   ¹²³  → Latin-1 Supplement (U+00B9/B2/B3)
+//   ⁰⁴–⁹ → Number Forms (U+2070–2079)
+// In monospace fonts these blocks have different baselines, so a
+// multi-digit exponent like "10¹⁵" shows ¹ higher than ⁵.
+// These helpers convert every consecutive run of superscript chars
+// into a real <sup> (HTML) or <tspan dy> (SVG) element.
+
+const _SUP_MAP = {'⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9','ⁿ':'n'};
+
+// HTML version — wraps exponent runs in <sup>.
+// Safe to call on strings with no superscript chars (returns original).
+function renderNum(s) {
+  const out = [];
+  let base = '', exp = '', key = 0;
+  for (const ch of String(s)) {
+    if (ch in _SUP_MAP) { if (base) { out.push(base); base = ''; } exp += _SUP_MAP[ch]; }
+    else                { if (exp)  { out.push(<sup key={key++}>{exp}</sup>); exp = ''; } base += ch; }
+  }
+  if (exp)  out.push(<sup key={key++}>{exp}</sup>);
+  if (base) out.push(base);
+  return out.length === 0 ? s : out.length === 1 && typeof out[0] === 'string' ? s : out;
+}
+
+// SVG version — wraps exponent runs in <tspan dy/fontSize>.
+// Use inside SVG <text> elements where <sup> is not valid.
+function renderNumSVG(s, supSize = 11, supDy = -5) {
+  const out = [];
+  let base = '', exp = '', key = 0;
+  for (const ch of String(s)) {
+    if (ch in _SUP_MAP) { if (base) { out.push(<tspan key={key++}>{base}</tspan>); base = ''; } exp += _SUP_MAP[ch]; }
+    else                { if (exp)  { out.push(<tspan key={key++} dy={supDy} fontSize={supSize}>{exp}</tspan>, <tspan key={key++} dy={-supDy}/>); exp = ''; } base += ch; }
+  }
+  if (exp)  { out.push(<tspan key={key++} dy={supDy} fontSize={supSize}>{exp}</tspan>, <tspan key={key++} dy={-supDy}/>); }
+  if (base) out.push(<tspan key={key++}>{base}</tspan>);
+  return out.length === 0 ? s : out;
+}
+
+// -----------------------------------------------------------
 // Export to window
 // -----------------------------------------------------------
 Object.assign(window, {
   TeX, SlideFrame, VRPGraph, BigNumber, makeInstance,
   EX_NODES, EX_ROUTES,
+  renderNum, renderNumSVG,
 });

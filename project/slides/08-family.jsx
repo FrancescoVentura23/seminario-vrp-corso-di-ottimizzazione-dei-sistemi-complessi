@@ -666,19 +666,17 @@ function Slide22() {
               <rect x={depot.x - 24} y={depot.y - 24} width={48} height={48}
                     fill="none" stroke="var(--depot)" strokeWidth={2} rx={2} />
 
-              {/* Nodes */}
+              {/* Nodes — visible immediately, routes animate on top */}
               {nodes.slice(1).map((n, i) => {
                 const isL = n.type === 'L';
                 return (
                   <g key={`n-${i}`}>
                     <circle cx={n.x} cy={n.y} r={22}
                             fill={isL ? "var(--paper)" : "var(--accent-2)"}
-                            stroke="var(--ink)" strokeWidth={2.5}
-                            style={{ opacity: 0, animation: "fadeUp 350ms both ease-out", animationDelay: `${3900 + i * 100}ms` }}/>
+                            stroke="var(--ink)" strokeWidth={2.5}/>
                     <text x={n.x} y={n.y + 6} textAnchor="middle"
                           fontFamily="var(--font-mono)" fontSize={18} fontWeight={700}
-                          fill={isL ? "var(--ink)" : "var(--paper)"}
-                          style={{ opacity: 0, animation: "fadeUp 350ms both ease-out", animationDelay: `${3900 + i * 100}ms` }}>
+                          fill={isL ? "var(--ink)" : "var(--paper)"}>
                       {n.label}
                     </text>
                   </g>

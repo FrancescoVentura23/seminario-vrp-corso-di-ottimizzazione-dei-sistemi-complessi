@@ -142,13 +142,33 @@ function ClarkeWrightDemo() {
                            stroke="var(--ink-3)" strokeWidth={2} strokeDasharray="4 5" opacity={0.55} />;
             })}
 
-            {/* Merged routes — solid colored polyline */}
+            {/* Merged routes — solid colored polyline (bodies first) */}
             {sim.routes.filter(r => r.custs.length > 1).map((r, ri) => {
               const pts = [CW_DEPOT, ...r.custs.map(id => custMap.get(id)), CW_DEPOT]
                 .map(p => `${p.x},${p.y}`).join(" ");
               return <polyline key={`r-${ri}`} points={pts} fill="none"
                                stroke={routeColors[ri % routeColors.length]}
                                strokeWidth={4.2} strokeLinejoin="round" strokeLinecap="round" />;
+            })}
+
+            {/* Arrowheads on merged routes — drawn after every body so they
+                sit on top. Spokes (dashed round-trips for unmerged customers)
+                stay un-arrowed: they are not directional traversals. back=18
+                clears node r=14 and depot half-side=16. */}
+            {sim.routes.filter(r => r.custs.length > 1).flatMap((r, ri) => {
+              const nodes = [CW_DEPOT, ...r.custs.map(id => custMap.get(id)), CW_DEPOT];
+              const color = routeColors[ri % routeColors.length];
+              return nodes.slice(0, -1).map((a, i) => {
+                const b = nodes[i+1];
+                const dx = b.x - a.x, dy = b.y - a.y, L = Math.hypot(dx, dy);
+                if (L < 1) return null;
+                const ux = dx / L, uy = dy / L;
+                const back = 18, aw = 7, al = 14;
+                const tipX = b.x - ux * back, tipY = b.y - uy * back;
+                const bx = tipX - ux * al, by = tipY - uy * al;
+                const pts = `${tipX.toFixed(1)},${tipY.toFixed(1)} ${(bx-uy*aw).toFixed(1)},${(by+ux*aw).toFixed(1)} ${(bx+uy*aw).toFixed(1)},${(by-ux*aw).toFixed(1)}`;
+                return <polygon key={`arr-${ri}-${i}`} points={pts} fill={color}/>;
+              }).filter(Boolean);
             })}
 
             {/* Highlight last merge edge */}

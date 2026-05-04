@@ -9,7 +9,7 @@ function Slide19() {
     <section className="slide section-slide" data-label="Part VII — VRP family">
       <div style={{ position: "absolute", top: 80, left: 120, right: 120, display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 31, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--paper-deep)" }}>
         <div>Part VII of IX</div>
-        <div>Slides 48 — 54</div>
+        <div>Slides 50 — 57</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Seven</div>
@@ -108,6 +108,26 @@ function Slide21() {
     { id: 7, a: "11:00", b: "13:00", x: 440, y: 510 },
     { id: 8, a: "09:00", b: "11:00", x: 240, y: 480 },
   ];
+
+  // Routes as arrays of [x,y] vertices so we can compute per-segment arrowheads.
+  // Backoff = 18 px clears both circle nodes (r=12) and the depot rect (half-side=16).
+  const routes21 = [
+    { pts: [[420,320],[220,170],[340,120],[540,120],[420,320]], color: "var(--route-1)" },
+    { pts: [[420,320],[680,200],[720,340],[620,470],[420,320]], color: "var(--route-2)" },
+    { pts: [[420,320],[440,510],[240,480],[420,320]],           color: "var(--route-3)" },
+  ];
+  const arrows21 = [];
+  routes21.forEach((r, ri) => r.pts.slice(0, -1).forEach((p, i) => {
+    const [x1,y1] = p, [x2,y2] = r.pts[i+1];
+    const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy);
+    const ux = dx / L, uy = dy / L;
+    const back = 18, aw = 6, al = 12;
+    const tipX = x2 - ux * back, tipY = y2 - uy * back;
+    const bx = tipX - ux * al, by = tipY - uy * al;
+    const pts = `${tipX},${tipY} ${bx - uy*aw},${by + ux*aw} ${bx + uy*aw},${by - ux*aw}`;
+    arrows21.push({ key: `${ri}-${i}`, pts, color: r.color });
+  }));
+
   return (
     <section className="slide" data-label="VRPTW">
       <SlideFrame>
@@ -134,10 +154,17 @@ function Slide21() {
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24, position: "relative" }}>
             <svg viewBox="0 0 900 620" style={{ width: "100%", height: "100%", display: "block", overflow: "visible" }}>
               <rect x={420-16} y={320-16} width={32} height={32} fill="var(--depot)"/>
-              {/* Routes */}
-              <polyline points="420,320 220,170 340,120 540,120 420,320" fill="none" stroke="var(--route-1)" strokeWidth={3.5}/>
-              <polyline points="420,320 680,200 720,340 620,470 420,320" fill="none" stroke="var(--route-2)" strokeWidth={3.5}/>
-              <polyline points="420,320 440,510 240,480 420,320" fill="none" stroke="var(--route-3)" strokeWidth={3.5}/>
+              {/* Route bodies — drawn first so arrowheads can sit on top */}
+              {routes21.map((r, ri) => (
+                <polyline key={`body-${ri}`}
+                          points={r.pts.map(p => p.join(",")).join(" ")}
+                          fill="none" stroke={r.color} strokeWidth={3.5}
+                          strokeLinejoin="round" strokeLinecap="round"/>
+              ))}
+              {/* Arrowheads — rendered after all bodies (gotcha #10) */}
+              {arrows21.map(a => (
+                <polygon key={`arr-${a.key}`} points={a.pts} fill={a.color}/>
+              ))}
               {tw.map(c => {
                 // Pill placed above each customer, mirroring SlideNodeAttributes (slide 10):
                 // white fill, accent border, monospace text in accent color, dashed leader.
@@ -360,6 +387,26 @@ function Slide22Intro() {
                         animation: "drawPath 1200ms both ease-in-out",
                         animationDelay: "5005ms",
                       }}/>
+
+                {/* Arrowheads — one per arc, fadeUp ~end of each body's drawPath.
+                    Two horizontal lines (route 1 and 2) point right; route 3 is a
+                    quadratic Bezier so its tangent at the end is computed from
+                    control point (405,430) towards the depot endpoint (90,230). */}
+                {(() => {
+                  // r1: depot -> linehaul, ux=1 uy=0, ends at L (r=28); back=30, aw=6, al=12
+                  // r2: linehaul -> backhaul, ux=1 uy=0, ends at B (r=28); back=30
+                  // r3: curve end direction = (depot-(405,430))/|...| ≈ (-0.844,-0.536); ends at depot rect (half=18); back=22
+                  return (
+                    <>
+                      <polygon points="380,230 368,236 368,224" fill="var(--accent-3)"
+                               style={{ opacity: 0, animation: "fadeUp 200ms both ease-out", animationDelay: "1965ms" }}/>
+                      <polygon points="690,230 678,236 678,224" fill="var(--accent-2)"
+                               style={{ opacity: 0, animation: "fadeUp 200ms both ease-out", animationDelay: "4075ms" }}/>
+                      <polygon points="108.6,241.8 121.9,243.2 115.5,253.3" fill="var(--ink-3)"
+                               style={{ opacity: 0, animation: "fadeUp 200ms both ease-out", animationDelay: "6155ms" }}/>
+                    </>
+                  );
+                })()}
 
                 {/* Depot — black square */}
                 <rect x={depot.x - 18} y={depot.y - 18} width={36} height={36} fill="#000"/>
@@ -621,17 +668,38 @@ function Slide22() {
     { x: 200, y: 380, id: 10, type: 'B', label: 'B₅' },
   ];
 
-  // Route 1: depot → L₁ → L₂ → B₁ → B₂ → depot (mixed: L then B)
-  const route1 = "600,400 280,150 450,80 900,650 600,750 600,400";
-  const len1 = 1983;
-
-  // Route 2: depot → L₃ → L₄ → L₅ → B₃ → B₄ → depot (mixed: L then B)
-  const route2 = "600,400 750,120 950,280 1000,500 300,700 150,550 600,400";
-  const len2 = 2214;
-
-  // Route 3: depot → B₅ → depot (backhauls only)
-  const route3 = "600,400 200,380 600,400";
-  const len3 = 801;
+  // Routes as vertex arrays so we can compute per-segment arrowheads with
+  // cumulative-length-based fadeUp timing. The polyline body still uses one
+  // drawPath animation per route — arrows pop in along the way.
+  const routes22 = [
+    { pts: [[600,400],[280,150],[450,80],[900,650],[600,750],[600,400]],            color: "var(--route-1)", startMs: 0,    durMs: 1200 },
+    { pts: [[600,400],[750,120],[950,280],[1000,500],[300,700],[150,550],[600,400]],color: "var(--route-3)", startMs: 1300, durMs: 1500 },
+    { pts: [[600,400],[200,380],[600,400]],                                          color: "var(--route-2)", startMs: 3000, durMs: 800  },
+  ];
+  // Pre-compute segment metadata + arrowhead positions and timing.
+  // Backoff = 26 px clears both circle nodes (r=22, gap 4) and the depot's
+  // outer ring (half-side=24, gap 2). Arrow size aw=10, al=20 matches the
+  // SlideTSPHamiltonian pattern for big-viewbox slides.
+  const polyData22 = routes22.map(r => {
+    const segs = r.pts.slice(0, -1).map((p, i) => {
+      const [x1,y1] = p, [x2,y2] = r.pts[i+1];
+      const dx = x2-x1, dy = y2-y1, L = Math.hypot(dx, dy);
+      return { x1, y1, x2, y2, L, ux: dx/L, uy: dy/L };
+    });
+    return { ...r, segs, totalLen: segs.reduce((s, x) => s + x.L, 0) };
+  });
+  const arrows22 = [];
+  polyData22.forEach((r, ri) => {
+    let cum = 0;
+    r.segs.forEach((s, i) => {
+      cum += s.L;
+      const back = 26, aw = 10, al = 20;
+      const tipX = s.x2 - s.ux * back, tipY = s.y2 - s.uy * back;
+      const bx = tipX - s.ux * al, by = tipY - s.uy * al;
+      const pts = `${tipX.toFixed(1)},${tipY.toFixed(1)} ${(bx - s.uy*aw).toFixed(1)},${(by + s.ux*aw).toFixed(1)} ${(bx + s.uy*aw).toFixed(1)},${(by - s.ux*aw).toFixed(1)}`;
+      arrows22.push({ key: `${ri}-${i}`, pts, color: r.color, delayMs: r.startMs + (cum / r.totalLen) * r.durMs });
+    });
+  });
 
   return (
     <section ref={sectionRef} className="slide" data-label="VRPB">
@@ -642,23 +710,25 @@ function Slide22() {
         <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 60, flex: 1 }}>
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24 }}>
             <svg key={animKey} viewBox="0 0 1200 900" style={{ width: "100%", height: "100%" }}>
-              {/* Route 1: mixed (L + B) — animated */}
-              <polyline points={route1} fill="none" stroke="var(--route-1)" strokeWidth={5.5}
-                        strokeLinejoin="round" strokeLinecap="round"
-                        className="anim-draw"
-                        style={{ "--len": len1, animation: "drawPath 1200ms both ease-out" }}/>
-
-              {/* Route 2: mixed (L + B) — animated with delay */}
-              <polyline points={route2} fill="none" stroke="var(--route-3)" strokeWidth={5.5}
-                        strokeLinejoin="round" strokeLinecap="round"
-                        className="anim-draw"
-                        style={{ "--len": len2, animation: "drawPath 1500ms both ease-out 1300ms" }}/>
-
-              {/* Route 3: backhauls only — animated with longer delay */}
-              <polyline points={route3} fill="none" stroke="var(--route-2)" strokeWidth={5.5}
-                        strokeLinejoin="round" strokeLinecap="round"
-                        className="anim-draw"
-                        style={{ "--len": len3, animation: "drawPath 800ms both ease-out 3000ms" }}/>
+              {/* Route bodies — single polyline per route (preserves the sweep
+                  feel of the original drawPath animation) */}
+              {polyData22.map((r, ri) => (
+                <polyline key={`body-${ri}`}
+                          points={r.pts.map(p => p.join(",")).join(" ")}
+                          fill="none" stroke={r.color} strokeWidth={5.5}
+                          strokeLinejoin="round" strokeLinecap="round"
+                          className="anim-draw"
+                          style={{ "--len": r.totalLen,
+                                   animation: `drawPath ${r.durMs}ms both ease-out ${r.startMs}ms` }}/>
+              ))}
+              {/* Arrowheads — fade in as the polyline draw reaches each
+                  segment endpoint (delay = startMs + cumLen/totalLen * durMs) */}
+              {arrows22.map(a => (
+                <polygon key={`arr-${a.key}`} points={a.pts} fill={a.color}
+                         style={{ opacity: 0,
+                                  animation: "fadeUp 200ms both ease-out",
+                                  animationDelay: `${a.delayMs.toFixed(0)}ms` }}/>
+              ))}
 
               {/* Depot */}
               <rect x={depot.x - 18} y={depot.y - 18} width={36} height={36}
@@ -682,12 +752,30 @@ function Slide22() {
                   </g>
                 );
               })}
+              {/* Legend overlay — top-left of viewBox, rendered last so it
+                  sits above routes. Semi-opaque card so anything underneath
+                  stays faintly visible. Text in var(--ink) for proper contrast
+                  on the paper background (the previous HTML legend used
+                  var(--paper) text on a var(--paper-2) background — illegible). */}
+              <g transform="translate(30, 30)">
+                <rect width={340} height={120} fill="var(--paper)" fillOpacity={0.94}
+                      stroke="var(--line)" strokeWidth={1.5} rx={4}/>
+                {/* L = linehaul */}
+                <circle cx={36} cy={38} r={16}
+                        fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
+                <text x={36} y={45} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={15} fontWeight={700} fill="var(--ink)">L</text>
+                <text x={66} y={45}
+                      fontFamily="var(--font-mono)" fontSize={20} fill="var(--ink)">= linehaul (delivery)</text>
+                {/* B = backhaul */}
+                <circle cx={36} cy={88} r={16}
+                        fill="var(--accent-2)" stroke="var(--ink)" strokeWidth={2.5}/>
+                <text x={36} y={95} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={15} fontWeight={700} fill="var(--paper)">B</text>
+                <text x={66} y={95}
+                      fontFamily="var(--font-mono)" fontSize={20} fill="var(--ink)">= backhaul (pickup)</text>
+              </g>
             </svg>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 20, color: "var(--ink-3)", marginTop: 14 }}>
-              <span style={{ color: "var(--paper)", background: "var(--paper-2)" }}>L = linehaul (delivery, white)</span>
-              {" · "}
-              <span style={{ color: "var(--paper)", background: "var(--accent-2)" }}>B = backhaul (pickup, orange)</span>
-            </div>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 24 }}>
@@ -711,49 +799,635 @@ function Slide22() {
 }
 
 
-function Slide23() {
-  return (
-    <section className="slide" data-label="VRPPD">
-      <SlideFrame>
-        <div className="tag">Family</div>
-        <h2 className="title" style={{ marginTop: 28 }}>VRP with Pickup & Delivery — coupled origin-destination pairs.</h2>
+// ==========================================================
+// VRPPD INTRO — define pickup vs delivery with an animated
+// truck demo: cargo empty at depot, fills at the blue pickup,
+// empties at the white delivery, returns to depot.
+// Mirrors Slide22Intro exactly (same geometry, same 6500ms
+// timeline) but with INVERTED cargo logic — a vehicle in
+// pickup-and-delivery starts EMPTY at the depot.
 
-        <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 60, flex: 1 }}>
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24 }}>
-            <svg viewBox="0 0 900 620" style={{ width: "100%", height: "100%" }}>
-              <rect x={420-16} y={320-16} width={32} height={32} fill="var(--depot)"/>
-              {/* Route visiting P1 -> D1 -> P2 -> D2 -> depot */}
-              <polyline points="420,320 240,200 600,160 520,440 720,380 420,320"
-                        fill="none" stroke="var(--route-4)" strokeWidth={3.5}/>
-              {/* Dashed pair-links */}
-              <line x1={240} y1={200} x2={520} y2={440} stroke="var(--accent-2)" strokeWidth={1.8} strokeDasharray="4 5" opacity={0.7}/>
-              <line x1={600} y1={160} x2={720} y2={380} stroke="var(--accent-2)" strokeWidth={1.8} strokeDasharray="4 5" opacity={0.7}/>
-              {/* P nodes */}
-              {[[240,200,"P₁"],[600,160,"P₂"]].map(([x,y,l],i) =>
-                <g key={`P${i}`}>
-                  <circle cx={x} cy={y} r={16} fill="var(--accent)" stroke="var(--ink)" strokeWidth={2}/>
-                  <text x={x} y={y+5} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill="var(--paper)" fontWeight={700}>{l}</text>
-                </g>
-              )}
-              {/* D nodes */}
-              {[[520,440,"D₁"],[720,380,"D₂"]].map(([x,y,l],i) =>
-                <g key={`D${i}`}>
-                  <circle cx={x} cy={y} r={16} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
-                  <text x={x} y={y+5} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill="var(--ink)" fontWeight={700}>{l}</text>
-                </g>
-              )}
-            </svg>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 25, color: "var(--ink-3)", marginTop: 10 }}>
-              P = pickup · D = delivery · dashed = pairing constraint
+function Slide23Intro() {
+  const [animKey, setAnimKey] = React.useState(0);
+  const sectionRef = React.useRef(null);
+  const btnRef = React.useRef(null);
+
+  // Auto-restart whenever the slide becomes active
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (el.hasAttribute('data-deck-active')) {
+        setAnimKey(k => k + 1);
+      }
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
+    return () => obs.disconnect();
+  }, []);
+
+  // Replay button — native click listener (React's delegation breaks once
+  // <section> is moved into <deck-stage>).
+  React.useEffect(() => {
+    const btn = btnRef.current;
+    if (!btn) return;
+    const handler = () => setAnimKey(k => k + 1);
+    btn.addEventListener("click", handler);
+    return () => btn.removeEventListener("click", handler);
+  }, []);
+
+  // Geometry — identical to Slide22Intro for visual continuity
+  const depot   = { x: 90,  y: 230 };
+  const pickup  = { x: 410, y: 230 };
+  const deliv   = { x: 720, y: 230 };
+  const truckY  = 140;
+  const seg1Len = Math.abs(pickup.x - depot.x);
+  const seg2Len = Math.abs(deliv.x - pickup.x);
+
+  return (
+    <section ref={sectionRef} className="slide" data-label="Pickup and delivery">
+      <SlideFrame>
+        <div className="tag">Family · VRPPD primer</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          Two kinds of customers — <em style={{ color: "var(--accent)" }}>pickups</em> and <em>deliveries</em>.
+        </h2>
+
+        <div style={{ marginTop: 28, display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 60, flex: 1 }}>
+          {/* Left — definitions */}
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 22 }}>
+            <div className="lede">
+              Before the rule, the vocabulary. A <em>pickup</em> <TeX>{"O_i"}</TeX> is a customer where the vehicle <em>collects</em> a load; a <em>delivery</em> <TeX>{"D_i"}</TeX> is where that same load is <em>dropped off</em>.
+            </div>
+
+            {/* Two definition cards — same colour code as the chart on the right */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+              <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "14px 16px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                  <span style={{ display: "inline-flex", width: 30, height: 30, borderRadius: "50%", background: "var(--accent)", border: "1.5px solid var(--ink)", color: "var(--paper)", fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 16, alignItems: "center", justifyContent: "center" }}>P</span>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: 26 }}>Pickup <TeX>{"O_i"}</TeX></div>
+                </div>
+                <div style={{ fontSize: 21, color: "var(--ink-2)", lineHeight: 1.3 }}>
+                  Origin of a request — the load is <em>collected</em> here. Vehicle load rises by <TeX>{"d_i"}</TeX>.
+                </div>
+              </div>
+              <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "14px 16px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                  <span style={{ display: "inline-flex", width: 30, height: 30, borderRadius: "50%", background: "var(--paper)", border: "1.5px solid var(--ink)", color: "var(--ink)", fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 16, alignItems: "center", justifyContent: "center" }}>D</span>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: 26 }}>Delivery <TeX>{"D_i"}</TeX></div>
+                </div>
+                <div style={{ fontSize: 21, color: "var(--ink-2)", lineHeight: 1.3 }}>
+                  Destination of the same request — the load is <em>dropped off</em> here. Vehicle load falls by <TeX>{"d_i"}</TeX>.
+                </div>
+              </div>
+            </div>
+
+            <div className="body small" style={{ color: "var(--ink-3)" }}>
+              Watch the truck on the right: it leaves the depot <em>empty</em>, <em>loads</em> at the blue pickup, <em>unloads</em> at the white delivery, then returns to the depot empty — completing the request.
             </div>
           </div>
 
+          {/* Right — animated demo */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24, position: "relative" }}>
+            <button
+              ref={btnRef}
+              style={{
+                position: "absolute",
+                top: 16,
+                right: 16,
+                zIndex: 10,
+                fontFamily: "var(--font-mono)",
+                fontSize: 14,
+                letterSpacing: "0.07em",
+                textTransform: "uppercase",
+                padding: "8px 18px",
+                background: "var(--accent)",
+                color: "#ffffff",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              ↻ Replay
+            </button>
+
+            {/* Inline keyframes — depend on the (x,y) of the three stops, so
+                we can not move them to styles.css. Cargo fill is INVERTED
+                relative to Slide22Intro: empty at depot, full P→D, empty back. */}
+            <style dangerouslySetInnerHTML={{ __html: `
+              /* Total duration: 6500ms — same timeline as Slide22Intro
+                 0-11%  : depot (pause, empty)
+                 11-31% : depot→P (moving, empty)
+                 31-45% : at P (loading)
+                 45-63% : P→D (moving, full)
+                 63-77% : at D (unloading)
+                 77-95% : D→depot (returning, empty)
+                 95-100%: depot (done) */
+              @keyframes truckMove23Intro {
+                0%, 11%   { transform: translate(${depot.x}px,  ${truckY}px); }
+                31%       { transform: translate(${pickup.x}px, ${truckY}px); }
+                45%       { transform: translate(${pickup.x}px, ${truckY}px); }
+                63%       { transform: translate(${deliv.x}px,  ${truckY}px); }
+                77%       { transform: translate(${deliv.x}px,  ${truckY}px); }
+                95%, 100% { transform: translate(${depot.x}px,  ${truckY}px); }
+              }
+              @keyframes truckFlip23Intro {
+                0%   { transform: scaleX(1);  animation-timing-function: step-end; }
+                77%  { transform: scaleX(-1); }
+                100% { transform: scaleX(-1); }
+              }
+              @keyframes cargoFill23Intro {
+                0%, 31%   { y: 6px;   height: 0px;  }
+                45%       { y: -22px; height: 28px; }
+                63%       { y: -22px; height: 28px; }
+                77%, 100% { y: 6px;   height: 0px;  }
+              }
+              @keyframes labelLoading23 {
+                0%, 33%   { opacity: 0; }
+                37%, 43%  { opacity: 1; }
+                49%, 100% { opacity: 0; }
+              }
+              @keyframes labelUnloading23 {
+                0%, 65%   { opacity: 0; }
+                69%, 75%  { opacity: 1; }
+                81%, 100% { opacity: 0; }
+              }
+            ` }}/>
+
+            <svg viewBox="0 0 820 360" style={{ width: "100%", height: "100%", display: "block", overflow: "visible" }}>
+              <g key={animKey}>
+                {/* Route 1: depot → P (vehicle empty leg) */}
+                <line x1={depot.x} y1={depot.y} x2={pickup.x} y2={pickup.y}
+                      stroke="var(--ink-3)" strokeWidth={2.5} strokeLinecap="round"
+                      style={{
+                        "--len": seg1Len,
+                        strokeDasharray: seg1Len,
+                        strokeDashoffset: seg1Len,
+                        animation: "drawPath 1300ms both ease-in-out",
+                        animationDelay: "715ms",
+                      }}/>
+                {/* Route 2: P → D (carrying the load — accent colour) */}
+                <line x1={pickup.x} y1={pickup.y} x2={deliv.x} y2={deliv.y}
+                      stroke="var(--accent)" strokeWidth={3} strokeLinecap="round"
+                      style={{
+                        "--len": seg2Len,
+                        strokeDasharray: seg2Len,
+                        strokeDashoffset: seg2Len,
+                        animation: "drawPath 1200ms both ease-in-out",
+                        animationDelay: "2925ms",
+                      }}/>
+                {/* Route 3: D → depot (return arc, empty leg) */}
+                <path d={`M ${deliv.x},${deliv.y} Q 405,430 ${depot.x},${depot.y}`}
+                      pathLength="1"
+                      fill="none"
+                      stroke="var(--ink-3)" strokeWidth={2.5} strokeLinecap="round"
+                      style={{
+                        "--len": 1,
+                        strokeDasharray: 1,
+                        strokeDashoffset: 1,
+                        animation: "drawPath 1200ms both ease-in-out",
+                        animationDelay: "5005ms",
+                      }}/>
+
+                {/* Arrowheads — same geometry as Slide22Intro: depot=(90,230),
+                    pickup=(410,230), delivery=(720,230) on the y=230 line, plus
+                    a return curve with end-tangent ≈ (-0.844,-0.536). Colour of
+                    each arrow matches its body. */}
+                <polygon points="380,230 368,236 368,224" fill="var(--ink-3)"
+                         style={{ opacity: 0, animation: "fadeUp 200ms both ease-out", animationDelay: "1965ms" }}/>
+                <polygon points="690,230 678,236 678,224" fill="var(--accent)"
+                         style={{ opacity: 0, animation: "fadeUp 200ms both ease-out", animationDelay: "4075ms" }}/>
+                <polygon points="108.6,241.8 121.9,243.2 115.5,253.3" fill="var(--ink-3)"
+                         style={{ opacity: 0, animation: "fadeUp 200ms both ease-out", animationDelay: "6155ms" }}/>
+
+                {/* Depot — black square */}
+                <rect x={depot.x - 18} y={depot.y - 18} width={36} height={36} fill="#000"/>
+                <text x={depot.x} y={depot.y + 7} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={22} fill="#fff" fontWeight={700}>0</text>
+                <text x={depot.x} y={depot.y + 56} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={15} fill="var(--ink-3)"
+                      letterSpacing="0.12em">DEPOT</text>
+
+                {/* Pickup — blue circle */}
+                <circle cx={pickup.x} cy={pickup.y} r={28}
+                        fill="var(--accent)" stroke="var(--ink)" strokeWidth={2.5}/>
+                <text x={pickup.x} y={pickup.y + 8} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={22} fill="var(--paper)" fontWeight={700}>P</text>
+                <text x={pickup.x} y={pickup.y + 60} textAnchor="middle"
+                      fontFamily="var(--font-display)" fontSize={20} fill="var(--ink)">pickup</text>
+                <text x={pickup.x} y={pickup.y + 84} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={15} fill="var(--accent)" fontWeight={700}
+                      style={{ opacity: 0, animation: "labelLoading23 6500ms forwards ease-in-out" }}>
+                  ↑ loading
+                </text>
+
+                {/* Delivery — white circle */}
+                <circle cx={deliv.x} cy={deliv.y} r={28}
+                        fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
+                <text x={deliv.x} y={deliv.y + 8} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={22} fill="var(--ink)" fontWeight={700}>D</text>
+                <text x={deliv.x} y={deliv.y + 60} textAnchor="middle"
+                      fontFamily="var(--font-display)" fontSize={20} fill="var(--ink)">delivery</text>
+                <text x={deliv.x} y={deliv.y + 84} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={15} fill="var(--ink)" fontWeight={700}
+                      style={{ opacity: 0, animation: "labelUnloading23 6500ms forwards ease-in-out" }}>
+                  ↓ unloading
+                </text>
+
+                {/* Truck — outer g translates; middle g flips at 77%; inner g scales up */}
+                <g style={{ animation: "truckMove23Intro 6500ms forwards ease-in-out" }}>
+                  <g style={{ transformOrigin: "5px -6px", animation: "truckFlip23Intro 6500ms forwards" }}>
+                    <g style={{ transform: "scale(1.6)", transformOrigin: "5px -6px" }}>
+                      {/* cargo box (frame) */}
+                      <rect x={-30} y={-22} width={50} height={28}
+                            fill="#5b6370" stroke="var(--ink)" strokeWidth={1.5} rx={2}/>
+                      {/* cargo fill — height & y change via @keyframes; starts empty */}
+                      <rect x={-29} width={48} fill="#7CC9F0"
+                            style={{ animation: "cargoFill23Intro 6500ms forwards ease-in-out" }}/>
+                      {/* cab — small darker box on the right (truck faces right) */}
+                      <polygon points="20,-22 36,-22 40,-12 40,6 20,6"
+                               fill="#3a414b" stroke="var(--ink)" strokeWidth={1.5}/>
+                      {/* windshield */}
+                      <polygon points="23,-19 33,-19 36,-11 23,-11"
+                               fill="rgba(180,230,255,0.6)"
+                               stroke="rgba(120,180,220,0.5)" strokeWidth={0.5}/>
+                      {/* wheels */}
+                      <circle cx={-16} cy={10} r={5} fill="var(--ink)"/>
+                      <circle cx={28}  cy={10} r={5} fill="var(--ink)"/>
+                    </g>
+                  </g>
+                </g>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
+// ==========================================================
+// VRPPD LOAD PROFILE — step chart of cargo over a sample
+// route depot → P₁ → P₂ → D₂ → D₁ → depot, demonstrating that
+// (i) load = 0 at start AND end, (ii) load may temporarily
+// hold several requests at once (here load peaks at d₁+d₂
+// after both pickups), (iii) capacity must hold on every leg.
+// Mirrors Slide22Load (same chart geometry).
+
+function Slide23Load() {
+  const C    = 10;
+  const dP1  = 4;
+  const dP2  = 3;
+
+  const cb = 250, ct = 30;
+  const toY = (v) => cb - (v / C) * (cb - ct);
+
+  // 6 stops, 5 legs — interleaved P/D demonstrates load fluctuation
+  const stops = [85, 200, 315, 430, 545, 660];
+  const legs  = [0, dP1, dP1 + dP2, dP2, 0]; // load on each leg
+
+  // Coloring rule: load == 0 → ink-3 (dashed empty); pickup-rising legs
+  // (i = 1, 2) → accent; delivery-falling legs (i = 3) → ink-2.
+  const legColor = (i) => {
+    if (legs[i] === 0) return "var(--ink-3)";
+    if (i <= 2) return "var(--accent)";
+    return "var(--ink-2)";
+  };
+
+  return (
+    <section className="slide" data-label="Pickup-delivery load profile">
+      <SlideFrame>
+        <div className="tag">Family · VRPPD primer</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          Load profile — empty at depot, rises at every pickup, falls at every delivery.
+        </h2>
+
+        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 60, flex: 1 }}>
+
+          {/* Left — key rules */}
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 20 }}>
+            <div className="lede">
+              In a pickup-and-delivery route the truck always <strong>starts and ends empty</strong>: every unit loaded along the way must come off before the depot.
+            </div>
+
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "16px 20px", display: "flex", flexDirection: "column", gap: 12 }}>
+              <div style={{ fontSize: 23, lineHeight: 1.55 }}>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--ink-3)", letterSpacing: "0.07em", marginBottom: 4 }}>AT THE DEPOT</div>
+                load <TeX>{"q_0 = 0"}</TeX> — and the load returns to <TeX>{"0"}</TeX> at the end
+              </div>
+              <div style={{ borderTop: "1px solid var(--line)", paddingTop: 10, fontSize: 23, lineHeight: 1.55 }}>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--accent)", letterSpacing: "0.07em", marginBottom: 4 }}>AT EACH PICKUP P_i</div>
+                collects <TeX>{"d_i"}</TeX> → load rises by <TeX>{"d_i"}</TeX>
+              </div>
+              <div style={{ borderTop: "1px solid var(--line)", paddingTop: 10, fontSize: 23, lineHeight: 1.55 }}>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--ink-2)", letterSpacing: "0.07em", marginBottom: 4 }}>AT EACH DELIVERY D_i</div>
+                drops <TeX>{"d_i"}</TeX> → load falls by <TeX>{"d_i"}</TeX>
+              </div>
+              <div style={{ borderTop: "1px solid var(--line)", paddingTop: 10, fontSize: 22, lineHeight: 1.55, color: "var(--ink-2)" }}>
+                On every leg: load <TeX>{"\\leq C"}</TeX>
+              </div>
+            </div>
+
+            <div className="body small" style={{ color: "var(--ink-3)" }}>
+              The previous slide showed the simplest case (1 P + 1 D) where the truck carried one request at a time. The chart on the right shows two requests interleaved: <TeX>{"P_1, P_2, D_2, D_1"}</TeX> — at the peak, both loads coexist on the vehicle.
+            </div>
+          </div>
+
+          {/* Right — step chart */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "20px 24px", display: "flex", flexDirection: "column" }}>
+            <svg viewBox="0 0 700 300" style={{ width: "100%", flex: 1, display: "block" }}>
+
+              {/* C reference line */}
+              <line x1={55} y1={toY(C)} x2={680} y2={toY(C)}
+                    stroke="var(--ink-3)" strokeWidth={1.5} strokeDasharray="5 4"/>
+              <text x={50} y={toY(C) + 5} textAnchor="end"
+                    fontFamily="var(--font-mono)" fontSize={14} fill="var(--ink-3)">C=10</text>
+
+              {/* Filled areas under each non-zero leg */}
+              {legs.map((load, i) => {
+                if (load === 0) return null;
+                return (
+                  <rect key={i} x={stops[i]} y={toY(load)}
+                        width={stops[i+1] - stops[i]} height={cb - toY(load)}
+                        fill={legColor(i)} opacity={0.18}/>
+                );
+              })}
+
+              {/* Horizontal step lines (one per leg) */}
+              {legs.map((load, i) => {
+                const y = load === 0 ? cb : toY(load);
+                return (
+                  <line key={i} x1={stops[i]} y1={y} x2={stops[i+1]} y2={y}
+                        stroke={legColor(i)}
+                        strokeWidth={load === 0 ? 1.5 : 3}
+                        strokeDasharray={load === 0 ? "4 3" : undefined}/>
+                );
+              })}
+
+              {/* Vertical connectors at the four interior stops */}
+              <line x1={stops[1]} y1={cb} x2={stops[1]} y2={toY(legs[1])}
+                    stroke="var(--accent)" strokeWidth={2.5}/>
+              <line x1={stops[2]} y1={toY(legs[1])} x2={stops[2]} y2={toY(legs[2])}
+                    stroke="var(--accent)" strokeWidth={2.5}/>
+              <line x1={stops[3]} y1={toY(legs[2])} x2={stops[3]} y2={toY(legs[3])}
+                    stroke="var(--ink-2)" strokeWidth={2.5}/>
+              <line x1={stops[4]} y1={toY(legs[3])} x2={stops[4]} y2={cb}
+                    stroke="var(--ink-2)" strokeWidth={2.5}/>
+
+              {/* Delta labels */}
+              <text x={stops[1] + 8} y={(cb + toY(legs[1])) / 2 + 5}
+                    fontFamily="var(--font-mono)" fontSize={15} fill="var(--accent)" fontWeight={700}>
+                {"↑ " + dP1}
+              </text>
+              <text x={stops[2] + 8} y={(toY(legs[1]) + toY(legs[2])) / 2 + 5}
+                    fontFamily="var(--font-mono)" fontSize={15} fill="var(--accent)" fontWeight={700}>
+                {"↑ " + dP2}
+              </text>
+              <text x={stops[3] + 8} y={(toY(legs[2]) + toY(legs[3])) / 2 + 5}
+                    fontFamily="var(--font-mono)" fontSize={15} fill="var(--ink-2)" fontWeight={700}>
+                {"↓ " + dP2}
+              </text>
+              <text x={stops[4] + 8} y={(toY(legs[3]) + cb) / 2 + 5}
+                    fontFamily="var(--font-mono)" fontSize={15} fill="var(--ink-2)" fontWeight={700}>
+                {"↓ " + dP1}
+              </text>
+
+              {/* Load value on each leg */}
+              {legs.map((load, i) => {
+                const mx = (stops[i] + stops[i+1]) / 2;
+                const y  = load === 0 ? cb - 10 : toY(load) - 10;
+                return (
+                  <text key={i} x={mx} y={y} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={18} fill={legColor(i)}
+                        fontWeight={load === 0 ? 400 : 700}>
+                    {load}
+                  </text>
+                );
+              })}
+
+              {/* Peak annotation above leg 2 (where both requests coexist) */}
+              <text x={(stops[2] + stops[3]) / 2} y={toY(legs[2]) - 26}
+                    textAnchor="middle" fontFamily="var(--font-mono)" fontSize={13} fill="var(--ink-3)">
+                {"peak = d₁ + d₂ ≤ C"}
+              </text>
+
+              {/* X axis */}
+              <line x1={55} y1={cb} x2={680} y2={cb} stroke="var(--ink-3)" strokeWidth={1.5}/>
+
+              {/* Stop labels */}
+              {["Depot", "P₁", "P₂", "D₂", "D₁", "Depot"].map((lbl, i) => (
+                <g key={i}>
+                  <line x1={stops[i]} y1={cb} x2={stops[i]} y2={cb + 6}
+                        stroke="var(--ink-3)" strokeWidth={1.5}/>
+                  <text x={stops[i]} y={cb + 22} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={16}
+                        fill={i === 0 || i === 5 ? "var(--ink)" : i < 3 ? "var(--accent)" : "var(--ink-2)"}>
+                    {lbl}
+                  </text>
+                </g>
+              ))}
+
+              {/* Y axis */}
+              <line x1={55} y1={ct - 10} x2={55} y2={cb} stroke="var(--ink-3)" strokeWidth={1.5}/>
+              <text x={50} y={cb + 5} textAnchor="end"
+                    fontFamily="var(--font-mono)" fontSize={14} fill="var(--ink-3)">0</text>
+            </svg>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 17, color: "var(--ink-3)", textAlign: "center", marginTop: 8 }}>
+              {"Example: C = 10 · d_{P₁} = " + dP1 + " · d_{P₂} = " + dP2 + " · same demand returns at each Dᵢ"}
+            </div>
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
+function Slide23() {
+  const [animKey, setAnimKey] = React.useState(0);
+  const sectionRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (el.hasAttribute('data-deck-active')) {
+        setAnimKey(k => k + 1);
+      } else {
+        setAnimKey(0);
+      }
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
+    return () => obs.disconnect();
+  }, []);
+
+  // Depot at center, 5 origin–destination pairs distributed around it
+  const depot = { x: 600, y: 450 };
+  const pairs = [
+    { P: { x: 260, y: 200 }, D: { x: 550, y: 330 } },  // pair 1 — upper-left → centre
+    { P: { x: 450, y: 140 }, D: { x: 340, y: 360 } },  // pair 2 — top → mid-left
+    { P: { x: 760, y: 160 }, D: { x: 700, y: 380 } },  // pair 3 — upper-right → centre
+    { P: { x: 970, y: 250 }, D: { x: 940, y: 460 } },  // pair 4 — right corridor
+    { P: { x: 350, y: 720 }, D: { x: 850, y: 750 } },  // pair 5 — bottom span
+  ];
+  const sub = ["₁","₂","₃","₄","₅"];
+
+  // Routes as vertex arrays so we can compute per-segment arrowheads with
+  // cumulative-length-based fadeUp timing.
+  // - Vehicle 1 (route-1) SEQUENTIAL: depot → P₁ → D₁ → P₂ → D₂ → depot
+  //   (peak load = max(d₁,d₂))
+  // - Vehicle 2 (route-3) INTERLEAVED: depot → P₃ → P₄ → D₄ → D₃ → depot
+  //   (peak load = d₃ + d₄, capacity must hold)
+  // - Vehicle 3 (route-2) single-request: depot → P₅ → D₅ → depot
+  // Pacing: each polyline draws over ~2200ms (or ~1800ms for the shorter
+  // single-pair route 3), with ~100ms gaps so the eye finishes one vehicle
+  // before the next starts. Total ≈ 6.4s, ~65% slower than the previous
+  // ~3.9s pass — the arrowhead pop-ins on each segment now have visible
+  // breathing room. Cumulative-length-based fadeUp delays scale automatically
+  // with these durations.
+  const routes23 = [
+    { pts: [[600,450],[260,200],[550,330],[450,140],[340,360],[600,450]], color: "var(--route-1)", startMs: 0,    durMs: 2200 },
+    { pts: [[600,450],[760,160],[970,250],[940,460],[700,380],[600,450]], color: "var(--route-3)", startMs: 2300, durMs: 2200 },
+    { pts: [[600,450],[350,720],[850,750],[600,450]],                     color: "var(--route-2)", startMs: 4600, durMs: 1800 },
+  ];
+  const polyData23 = routes23.map(r => {
+    const segs = r.pts.slice(0, -1).map((p, i) => {
+      const [x1,y1] = p, [x2,y2] = r.pts[i+1];
+      const dx = x2-x1, dy = y2-y1, L = Math.hypot(dx, dy);
+      return { x1, y1, x2, y2, L, ux: dx/L, uy: dy/L };
+    });
+    return { ...r, segs, totalLen: segs.reduce((s, x) => s + x.L, 0) };
+  });
+  const arrows23 = [];
+  polyData23.forEach((r, ri) => {
+    let cum = 0;
+    r.segs.forEach((s, i) => {
+      cum += s.L;
+      const back = 26, aw = 10, al = 20;  // back clears node r=22 and depot outer half=24
+      const tipX = s.x2 - s.ux * back, tipY = s.y2 - s.uy * back;
+      const bx = tipX - s.ux * al, by = tipY - s.uy * al;
+      const pts = `${tipX.toFixed(1)},${tipY.toFixed(1)} ${(bx - s.uy*aw).toFixed(1)},${(by + s.ux*aw).toFixed(1)} ${(bx + s.uy*aw).toFixed(1)},${(by - s.ux*aw).toFixed(1)}`;
+      arrows23.push({ key: `${ri}-${i}`, pts, color: r.color, delayMs: r.startMs + (cum / r.totalLen) * r.durMs });
+    });
+  });
+
+  return (
+    <section ref={sectionRef} className="slide" data-label="VRPPD">
+      <SlideFrame>
+        <div className="tag">Family</div>
+        <h2 className="title" style={{ marginTop: 28 }}>VRP with Pickup &amp; Delivery — coupled origin-destination pairs.</h2>
+
+        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 60, flex: 1 }}>
+
+          {/* LEFT — animated graph: 5 P–D pairs, 3 vehicles, dashed pair-links */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24, display: "flex", flexDirection: "column" }}>
+            <svg key={animKey} viewBox="0 0 1200 900"
+                 style={{ width: "100%", flex: 1, display: "block" }}>
+
+              {/* Pair-link dashed lines — drawn first so routes paint over them.
+                  Low opacity keeps them as a quiet visual layer (the constraint),
+                  while the colourful routes carry the eye. */}
+              {pairs.map((pair, i) => (
+                <line key={`link-${i}`}
+                      x1={pair.P.x} y1={pair.P.y} x2={pair.D.x} y2={pair.D.y}
+                      stroke="var(--accent-2)" strokeWidth={1.8}
+                      strokeDasharray="6 6" opacity={0.4}/>
+              ))}
+
+              {/* Route bodies — staggered drawPath, single polyline per route */}
+              {polyData23.map((r, ri) => (
+                <polyline key={`body-${ri}`}
+                          points={r.pts.map(p => p.join(",")).join(" ")}
+                          fill="none" stroke={r.color} strokeWidth={5.5}
+                          strokeLinejoin="round" strokeLinecap="round"
+                          className="anim-draw"
+                          style={{ "--len": r.totalLen,
+                                   animation: `drawPath ${r.durMs}ms both ease-out ${r.startMs}ms` }}/>
+              ))}
+              {/* Arrowheads — fade in as drawPath reaches each segment endpoint */}
+              {arrows23.map(a => (
+                <polygon key={`arr-${a.key}`} points={a.pts} fill={a.color}
+                         style={{ opacity: 0,
+                                  animation: "fadeUp 200ms both ease-out",
+                                  animationDelay: `${a.delayMs.toFixed(0)}ms` }}/>
+              ))}
+
+              {/* Depot — black square with paper "0" */}
+              <rect x={depot.x - 18} y={depot.y - 18} width={36} height={36}
+                    fill="var(--depot)" rx={2}/>
+              <rect x={depot.x - 24} y={depot.y - 24} width={48} height={48}
+                    fill="none" stroke="var(--depot)" strokeWidth={2} rx={2}/>
+              <text x={depot.x} y={depot.y + 6} textAnchor="middle"
+                    fontFamily="var(--font-mono)" fontSize={18}
+                    fill="var(--paper)" fontWeight={700}>0</text>
+
+              {/* Pickup nodes — accent-filled circles (always visible) */}
+              {pairs.map((pair, i) => (
+                <g key={`P-${i}`}>
+                  <circle cx={pair.P.x} cy={pair.P.y} r={22}
+                          fill="var(--accent)" stroke="var(--ink)" strokeWidth={2.5}/>
+                  <text x={pair.P.x} y={pair.P.y + 6} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={18} fontWeight={700}
+                        fill="var(--paper)">{"P" + sub[i]}</text>
+                </g>
+              ))}
+
+              {/* Delivery nodes — paper-filled circles (always visible) */}
+              {pairs.map((pair, i) => (
+                <g key={`D-${i}`}>
+                  <circle cx={pair.D.x} cy={pair.D.y} r={22}
+                          fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
+                  <text x={pair.D.x} y={pair.D.y + 6} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={18} fontWeight={700}
+                        fill="var(--ink)">{"D" + sub[i]}</text>
+                </g>
+              ))}
+              {/* Legend overlay — top-left of viewBox, rendered last so it
+                  sits above routes and the dashed pair-links. Semi-opaque card
+                  so anything underneath stays faintly visible. */}
+              <g transform="translate(30, 30)">
+                <rect width={420} height={155} fill="var(--paper)" fillOpacity={0.94}
+                      stroke="var(--line)" strokeWidth={1.5} rx={4}/>
+                {/* P = pickup */}
+                <circle cx={36} cy={38} r={16}
+                        fill="var(--accent)" stroke="var(--ink)" strokeWidth={2.5}/>
+                <text x={36} y={45} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={15} fontWeight={700} fill="var(--paper)">P</text>
+                <text x={66} y={45}
+                      fontFamily="var(--font-mono)" fontSize={20} fill="var(--ink)">= pickup</text>
+                {/* D = delivery */}
+                <circle cx={36} cy={80} r={16}
+                        fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
+                <text x={36} y={87} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={15} fontWeight={700} fill="var(--ink)">D</text>
+                <text x={66} y={87}
+                      fontFamily="var(--font-mono)" fontSize={20} fill="var(--ink)">= delivery</text>
+                {/* dashed = pairing constraint */}
+                <line x1={20} y1={122} x2={52} y2={122}
+                      stroke="var(--accent-2)" strokeWidth={2.5}
+                      strokeDasharray="6 6" opacity={0.7}/>
+                <text x={66} y={128}
+                      fontFamily="var(--font-mono)" fontSize={20} fill="var(--ink)">= pairing constraint</text>
+              </g>
+              {/* Stats — bottom-right corner of viewBox, kept as a subtle caption */}
+              <text x={1180} y={870} textAnchor="end"
+                    fontFamily="var(--font-mono)" fontSize={18} fill="var(--ink-3)">3 vehicles · 5 requests</text>
+            </svg>
+          </div>
+
+          {/* RIGHT — explanatory column. Definition cards live in the new
+              Slide23Intro (previous slide); here we keep only lede + rule
+              callout + body small, mirroring Slide22's lean layout. */}
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 24 }}>
             <div className="lede">
-              Each request has an <em>origin Oᵢ</em> and a <em>destination Dᵢ</em>: same vehicle, and <strong>Oᵢ visited before Dᵢ</strong>.
+              The customer set splits into <TeX>{"N"}</TeX> origin-destination <em>requests</em>: each request couples a pickup <TeX>{"O_i"}</TeX>, where the load is collected, with a delivery <TeX>{"D_i"}</TeX>, where the same load is dropped off. VRPPD adds a per-request pairing constraint on top of the CVRP core.
             </div>
+
+            {/* The pairing rule — heart of VRPPD */}
+            <div style={{ fontSize: 26, background: "var(--paper-2)", border: "1px solid var(--line)", borderLeft: "4px solid var(--accent)", padding: "18px 22px", lineHeight: 1.45 }}>
+              <strong>Pairing rule:</strong> for every request <TeX>{"i"}</TeX>, the same vehicle visits both <TeX>{"O_i"}</TeX> and <TeX>{"D_i"}</TeX>, with <TeX>{"O_i"}</TeX> served before <TeX>{"D_i"}</TeX>. Capacity must hold on every leg.
+            </div>
+
             <div className="body small" style={{ color: "var(--ink-3)" }}>
-              The archetype of ride-sharing, dial-a-ride, and courier dispatch.
+              Real-world archetypes — courier dispatch, less-than-truckload (LTL) freight, ride-sharing platforms, and the <em>Dial-a-Ride Problem</em> when passengers replace cargo and tight time windows enter the formulation. Unlike VRPB, where the customer set splits into two precedence-ordered classes, here the precedence is <em>per request</em>: a single route can interleave several pickups and several deliveries.
             </div>
           </div>
         </div>
@@ -764,5 +1438,7 @@ function Slide23() {
 
 
 Object.assign(window, {
-  Slide19, Slide20, Slide21, Slide22Intro, Slide22Load, Slide22, Slide23,
+  Slide19, Slide20, Slide21,
+  Slide22Intro, Slide22Load, Slide22,
+  Slide23Intro, Slide23Load, Slide23,
 });

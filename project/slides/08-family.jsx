@@ -9,7 +9,7 @@ function Slide19() {
     <section className="slide section-slide" data-label="Part VII — VRP family">
       <div style={{ position: "absolute", top: 80, left: 120, right: 120, display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 31, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--paper-deep)" }}>
         <div>Part VII of IX</div>
-        <div>Slides 48 — 54</div>
+        <div>Slides 50 — 57</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Seven</div>
@@ -711,6 +711,437 @@ function Slide22() {
 }
 
 
+// ==========================================================
+// VRPPD INTRO — define pickup vs delivery with an animated
+// truck demo: cargo empty at depot, fills at the blue pickup,
+// empties at the white delivery, returns to depot.
+// Mirrors Slide22Intro exactly (same geometry, same 6500ms
+// timeline) but with INVERTED cargo logic — a vehicle in
+// pickup-and-delivery starts EMPTY at the depot.
+
+function Slide23Intro() {
+  const [animKey, setAnimKey] = React.useState(0);
+  const sectionRef = React.useRef(null);
+  const btnRef = React.useRef(null);
+
+  // Auto-restart whenever the slide becomes active
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (el.hasAttribute('data-deck-active')) {
+        setAnimKey(k => k + 1);
+      }
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
+    return () => obs.disconnect();
+  }, []);
+
+  // Replay button — native click listener (React's delegation breaks once
+  // <section> is moved into <deck-stage>).
+  React.useEffect(() => {
+    const btn = btnRef.current;
+    if (!btn) return;
+    const handler = () => setAnimKey(k => k + 1);
+    btn.addEventListener("click", handler);
+    return () => btn.removeEventListener("click", handler);
+  }, []);
+
+  // Geometry — identical to Slide22Intro for visual continuity
+  const depot   = { x: 90,  y: 230 };
+  const pickup  = { x: 410, y: 230 };
+  const deliv   = { x: 720, y: 230 };
+  const truckY  = 140;
+  const seg1Len = Math.abs(pickup.x - depot.x);
+  const seg2Len = Math.abs(deliv.x - pickup.x);
+
+  return (
+    <section ref={sectionRef} className="slide" data-label="Pickup and delivery">
+      <SlideFrame>
+        <div className="tag">Family · VRPPD primer</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          Two kinds of customers — <em style={{ color: "var(--accent)" }}>pickups</em> and <em>deliveries</em>.
+        </h2>
+
+        <div style={{ marginTop: 28, display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 60, flex: 1 }}>
+          {/* Left — definitions */}
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 22 }}>
+            <div className="lede">
+              Before the rule, the vocabulary. A <em>pickup</em> <TeX>{"O_i"}</TeX> is a customer where the vehicle <em>collects</em> a load; a <em>delivery</em> <TeX>{"D_i"}</TeX> is where that same load is <em>dropped off</em>.
+            </div>
+
+            {/* Two definition cards — same colour code as the chart on the right */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+              <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "14px 16px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                  <span style={{ display: "inline-flex", width: 30, height: 30, borderRadius: "50%", background: "var(--accent)", border: "1.5px solid var(--ink)", color: "var(--paper)", fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 16, alignItems: "center", justifyContent: "center" }}>P</span>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: 26 }}>Pickup <TeX>{"O_i"}</TeX></div>
+                </div>
+                <div style={{ fontSize: 21, color: "var(--ink-2)", lineHeight: 1.3 }}>
+                  Origin of a request — the load is <em>collected</em> here. Vehicle load rises by <TeX>{"d_i"}</TeX>.
+                </div>
+              </div>
+              <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "14px 16px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                  <span style={{ display: "inline-flex", width: 30, height: 30, borderRadius: "50%", background: "var(--paper)", border: "1.5px solid var(--ink)", color: "var(--ink)", fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 16, alignItems: "center", justifyContent: "center" }}>D</span>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: 26 }}>Delivery <TeX>{"D_i"}</TeX></div>
+                </div>
+                <div style={{ fontSize: 21, color: "var(--ink-2)", lineHeight: 1.3 }}>
+                  Destination of the same request — the load is <em>dropped off</em> here. Vehicle load falls by <TeX>{"d_i"}</TeX>.
+                </div>
+              </div>
+            </div>
+
+            <div className="body small" style={{ color: "var(--ink-3)" }}>
+              Watch the truck on the right: it leaves the depot <em>empty</em>, <em>loads</em> at the blue pickup, <em>unloads</em> at the white delivery, then returns to the depot empty — completing the request.
+            </div>
+          </div>
+
+          {/* Right — animated demo */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24, position: "relative" }}>
+            <button
+              ref={btnRef}
+              style={{
+                position: "absolute",
+                top: 16,
+                right: 16,
+                zIndex: 10,
+                fontFamily: "var(--font-mono)",
+                fontSize: 14,
+                letterSpacing: "0.07em",
+                textTransform: "uppercase",
+                padding: "8px 18px",
+                background: "var(--accent)",
+                color: "#ffffff",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              ↻ Replay
+            </button>
+
+            {/* Inline keyframes — depend on the (x,y) of the three stops, so
+                we can not move them to styles.css. Cargo fill is INVERTED
+                relative to Slide22Intro: empty at depot, full P→D, empty back. */}
+            <style dangerouslySetInnerHTML={{ __html: `
+              /* Total duration: 6500ms — same timeline as Slide22Intro
+                 0-11%  : depot (pause, empty)
+                 11-31% : depot→P (moving, empty)
+                 31-45% : at P (loading)
+                 45-63% : P→D (moving, full)
+                 63-77% : at D (unloading)
+                 77-95% : D→depot (returning, empty)
+                 95-100%: depot (done) */
+              @keyframes truckMove23Intro {
+                0%, 11%   { transform: translate(${depot.x}px,  ${truckY}px); }
+                31%       { transform: translate(${pickup.x}px, ${truckY}px); }
+                45%       { transform: translate(${pickup.x}px, ${truckY}px); }
+                63%       { transform: translate(${deliv.x}px,  ${truckY}px); }
+                77%       { transform: translate(${deliv.x}px,  ${truckY}px); }
+                95%, 100% { transform: translate(${depot.x}px,  ${truckY}px); }
+              }
+              @keyframes truckFlip23Intro {
+                0%   { transform: scaleX(1);  animation-timing-function: step-end; }
+                77%  { transform: scaleX(-1); }
+                100% { transform: scaleX(-1); }
+              }
+              @keyframes cargoFill23Intro {
+                0%, 31%   { y: 6px;   height: 0px;  }
+                45%       { y: -22px; height: 28px; }
+                63%       { y: -22px; height: 28px; }
+                77%, 100% { y: 6px;   height: 0px;  }
+              }
+              @keyframes labelLoading23 {
+                0%, 33%   { opacity: 0; }
+                37%, 43%  { opacity: 1; }
+                49%, 100% { opacity: 0; }
+              }
+              @keyframes labelUnloading23 {
+                0%, 65%   { opacity: 0; }
+                69%, 75%  { opacity: 1; }
+                81%, 100% { opacity: 0; }
+              }
+            ` }}/>
+
+            <svg viewBox="0 0 820 360" style={{ width: "100%", height: "100%", display: "block", overflow: "visible" }}>
+              <g key={animKey}>
+                {/* Route 1: depot → P (vehicle empty leg) */}
+                <line x1={depot.x} y1={depot.y} x2={pickup.x} y2={pickup.y}
+                      stroke="var(--ink-3)" strokeWidth={2.5} strokeLinecap="round"
+                      style={{
+                        "--len": seg1Len,
+                        strokeDasharray: seg1Len,
+                        strokeDashoffset: seg1Len,
+                        animation: "drawPath 1300ms both ease-in-out",
+                        animationDelay: "715ms",
+                      }}/>
+                {/* Route 2: P → D (carrying the load — accent colour) */}
+                <line x1={pickup.x} y1={pickup.y} x2={deliv.x} y2={deliv.y}
+                      stroke="var(--accent)" strokeWidth={3} strokeLinecap="round"
+                      style={{
+                        "--len": seg2Len,
+                        strokeDasharray: seg2Len,
+                        strokeDashoffset: seg2Len,
+                        animation: "drawPath 1200ms both ease-in-out",
+                        animationDelay: "2925ms",
+                      }}/>
+                {/* Route 3: D → depot (return arc, empty leg) */}
+                <path d={`M ${deliv.x},${deliv.y} Q 405,430 ${depot.x},${depot.y}`}
+                      pathLength="1"
+                      fill="none"
+                      stroke="var(--ink-3)" strokeWidth={2.5} strokeLinecap="round"
+                      style={{
+                        "--len": 1,
+                        strokeDasharray: 1,
+                        strokeDashoffset: 1,
+                        animation: "drawPath 1200ms both ease-in-out",
+                        animationDelay: "5005ms",
+                      }}/>
+
+                {/* Depot — black square */}
+                <rect x={depot.x - 18} y={depot.y - 18} width={36} height={36} fill="#000"/>
+                <text x={depot.x} y={depot.y + 7} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={22} fill="#fff" fontWeight={700}>0</text>
+                <text x={depot.x} y={depot.y + 56} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={15} fill="var(--ink-3)"
+                      letterSpacing="0.12em">DEPOT</text>
+
+                {/* Pickup — blue circle */}
+                <circle cx={pickup.x} cy={pickup.y} r={28}
+                        fill="var(--accent)" stroke="var(--ink)" strokeWidth={2.5}/>
+                <text x={pickup.x} y={pickup.y + 8} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={22} fill="var(--paper)" fontWeight={700}>P</text>
+                <text x={pickup.x} y={pickup.y + 60} textAnchor="middle"
+                      fontFamily="var(--font-display)" fontSize={20} fill="var(--ink)">pickup</text>
+                <text x={pickup.x} y={pickup.y + 84} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={15} fill="var(--accent)" fontWeight={700}
+                      style={{ opacity: 0, animation: "labelLoading23 6500ms forwards ease-in-out" }}>
+                  ↑ loading
+                </text>
+
+                {/* Delivery — white circle */}
+                <circle cx={deliv.x} cy={deliv.y} r={28}
+                        fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
+                <text x={deliv.x} y={deliv.y + 8} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={22} fill="var(--ink)" fontWeight={700}>D</text>
+                <text x={deliv.x} y={deliv.y + 60} textAnchor="middle"
+                      fontFamily="var(--font-display)" fontSize={20} fill="var(--ink)">delivery</text>
+                <text x={deliv.x} y={deliv.y + 84} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={15} fill="var(--ink)" fontWeight={700}
+                      style={{ opacity: 0, animation: "labelUnloading23 6500ms forwards ease-in-out" }}>
+                  ↓ unloading
+                </text>
+
+                {/* Truck — outer g translates; middle g flips at 77%; inner g scales up */}
+                <g style={{ animation: "truckMove23Intro 6500ms forwards ease-in-out" }}>
+                  <g style={{ transformOrigin: "5px -6px", animation: "truckFlip23Intro 6500ms forwards" }}>
+                    <g style={{ transform: "scale(1.6)", transformOrigin: "5px -6px" }}>
+                      {/* cargo box (frame) */}
+                      <rect x={-30} y={-22} width={50} height={28}
+                            fill="#5b6370" stroke="var(--ink)" strokeWidth={1.5} rx={2}/>
+                      {/* cargo fill — height & y change via @keyframes; starts empty */}
+                      <rect x={-29} width={48} fill="#7CC9F0"
+                            style={{ animation: "cargoFill23Intro 6500ms forwards ease-in-out" }}/>
+                      {/* cab — small darker box on the right (truck faces right) */}
+                      <polygon points="20,-22 36,-22 40,-12 40,6 20,6"
+                               fill="#3a414b" stroke="var(--ink)" strokeWidth={1.5}/>
+                      {/* windshield */}
+                      <polygon points="23,-19 33,-19 36,-11 23,-11"
+                               fill="rgba(180,230,255,0.6)"
+                               stroke="rgba(120,180,220,0.5)" strokeWidth={0.5}/>
+                      {/* wheels */}
+                      <circle cx={-16} cy={10} r={5} fill="var(--ink)"/>
+                      <circle cx={28}  cy={10} r={5} fill="var(--ink)"/>
+                    </g>
+                  </g>
+                </g>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
+// ==========================================================
+// VRPPD LOAD PROFILE — step chart of cargo over a sample
+// route depot → P₁ → P₂ → D₂ → D₁ → depot, demonstrating that
+// (i) load = 0 at start AND end, (ii) load may temporarily
+// hold several requests at once (here load peaks at d₁+d₂
+// after both pickups), (iii) capacity must hold on every leg.
+// Mirrors Slide22Load (same chart geometry).
+
+function Slide23Load() {
+  const C    = 10;
+  const dP1  = 4;
+  const dP2  = 3;
+
+  const cb = 250, ct = 30;
+  const toY = (v) => cb - (v / C) * (cb - ct);
+
+  // 6 stops, 5 legs — interleaved P/D demonstrates load fluctuation
+  const stops = [85, 200, 315, 430, 545, 660];
+  const legs  = [0, dP1, dP1 + dP2, dP2, 0]; // load on each leg
+
+  // Coloring rule: load == 0 → ink-3 (dashed empty); pickup-rising legs
+  // (i = 1, 2) → accent; delivery-falling legs (i = 3) → ink-2.
+  const legColor = (i) => {
+    if (legs[i] === 0) return "var(--ink-3)";
+    if (i <= 2) return "var(--accent)";
+    return "var(--ink-2)";
+  };
+
+  return (
+    <section className="slide" data-label="Pickup-delivery load profile">
+      <SlideFrame>
+        <div className="tag">Family · VRPPD primer</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          Load profile — empty at depot, rises at every pickup, falls at every delivery.
+        </h2>
+
+        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 60, flex: 1 }}>
+
+          {/* Left — key rules */}
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 20 }}>
+            <div className="lede">
+              In a pickup-and-delivery route the truck always <strong>starts and ends empty</strong>: every unit loaded along the way must come off before the depot.
+            </div>
+
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "16px 20px", display: "flex", flexDirection: "column", gap: 12 }}>
+              <div style={{ fontSize: 23, lineHeight: 1.55 }}>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--ink-3)", letterSpacing: "0.07em", marginBottom: 4 }}>AT THE DEPOT</div>
+                load <TeX>{"q_0 = 0"}</TeX> — and the load returns to <TeX>{"0"}</TeX> at the end
+              </div>
+              <div style={{ borderTop: "1px solid var(--line)", paddingTop: 10, fontSize: 23, lineHeight: 1.55 }}>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--accent)", letterSpacing: "0.07em", marginBottom: 4 }}>AT EACH PICKUP P_i</div>
+                collects <TeX>{"d_i"}</TeX> → load rises by <TeX>{"d_i"}</TeX>
+              </div>
+              <div style={{ borderTop: "1px solid var(--line)", paddingTop: 10, fontSize: 23, lineHeight: 1.55 }}>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--ink-2)", letterSpacing: "0.07em", marginBottom: 4 }}>AT EACH DELIVERY D_i</div>
+                drops <TeX>{"d_i"}</TeX> → load falls by <TeX>{"d_i"}</TeX>
+              </div>
+              <div style={{ borderTop: "1px solid var(--line)", paddingTop: 10, fontSize: 22, lineHeight: 1.55, color: "var(--ink-2)" }}>
+                On every leg: load <TeX>{"\\leq C"}</TeX>
+              </div>
+            </div>
+
+            <div className="body small" style={{ color: "var(--ink-3)" }}>
+              The previous slide showed the simplest case (1 P + 1 D) where the truck carried one request at a time. The chart on the right shows two requests interleaved: <TeX>{"P_1, P_2, D_2, D_1"}</TeX> — at the peak, both loads coexist on the vehicle.
+            </div>
+          </div>
+
+          {/* Right — step chart */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "20px 24px", display: "flex", flexDirection: "column" }}>
+            <svg viewBox="0 0 700 300" style={{ width: "100%", flex: 1, display: "block" }}>
+
+              {/* C reference line */}
+              <line x1={55} y1={toY(C)} x2={680} y2={toY(C)}
+                    stroke="var(--ink-3)" strokeWidth={1.5} strokeDasharray="5 4"/>
+              <text x={50} y={toY(C) + 5} textAnchor="end"
+                    fontFamily="var(--font-mono)" fontSize={14} fill="var(--ink-3)">C=10</text>
+
+              {/* Filled areas under each non-zero leg */}
+              {legs.map((load, i) => {
+                if (load === 0) return null;
+                return (
+                  <rect key={i} x={stops[i]} y={toY(load)}
+                        width={stops[i+1] - stops[i]} height={cb - toY(load)}
+                        fill={legColor(i)} opacity={0.18}/>
+                );
+              })}
+
+              {/* Horizontal step lines (one per leg) */}
+              {legs.map((load, i) => {
+                const y = load === 0 ? cb : toY(load);
+                return (
+                  <line key={i} x1={stops[i]} y1={y} x2={stops[i+1]} y2={y}
+                        stroke={legColor(i)}
+                        strokeWidth={load === 0 ? 1.5 : 3}
+                        strokeDasharray={load === 0 ? "4 3" : undefined}/>
+                );
+              })}
+
+              {/* Vertical connectors at the four interior stops */}
+              <line x1={stops[1]} y1={cb} x2={stops[1]} y2={toY(legs[1])}
+                    stroke="var(--accent)" strokeWidth={2.5}/>
+              <line x1={stops[2]} y1={toY(legs[1])} x2={stops[2]} y2={toY(legs[2])}
+                    stroke="var(--accent)" strokeWidth={2.5}/>
+              <line x1={stops[3]} y1={toY(legs[2])} x2={stops[3]} y2={toY(legs[3])}
+                    stroke="var(--ink-2)" strokeWidth={2.5}/>
+              <line x1={stops[4]} y1={toY(legs[3])} x2={stops[4]} y2={cb}
+                    stroke="var(--ink-2)" strokeWidth={2.5}/>
+
+              {/* Delta labels */}
+              <text x={stops[1] + 8} y={(cb + toY(legs[1])) / 2 + 5}
+                    fontFamily="var(--font-mono)" fontSize={15} fill="var(--accent)" fontWeight={700}>
+                {"↑ " + dP1}
+              </text>
+              <text x={stops[2] + 8} y={(toY(legs[1]) + toY(legs[2])) / 2 + 5}
+                    fontFamily="var(--font-mono)" fontSize={15} fill="var(--accent)" fontWeight={700}>
+                {"↑ " + dP2}
+              </text>
+              <text x={stops[3] + 8} y={(toY(legs[2]) + toY(legs[3])) / 2 + 5}
+                    fontFamily="var(--font-mono)" fontSize={15} fill="var(--ink-2)" fontWeight={700}>
+                {"↓ " + dP2}
+              </text>
+              <text x={stops[4] + 8} y={(toY(legs[3]) + cb) / 2 + 5}
+                    fontFamily="var(--font-mono)" fontSize={15} fill="var(--ink-2)" fontWeight={700}>
+                {"↓ " + dP1}
+              </text>
+
+              {/* Load value on each leg */}
+              {legs.map((load, i) => {
+                const mx = (stops[i] + stops[i+1]) / 2;
+                const y  = load === 0 ? cb - 10 : toY(load) - 10;
+                return (
+                  <text key={i} x={mx} y={y} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={18} fill={legColor(i)}
+                        fontWeight={load === 0 ? 400 : 700}>
+                    {load}
+                  </text>
+                );
+              })}
+
+              {/* Peak annotation above leg 2 (where both requests coexist) */}
+              <text x={(stops[2] + stops[3]) / 2} y={toY(legs[2]) - 26}
+                    textAnchor="middle" fontFamily="var(--font-mono)" fontSize={13} fill="var(--ink-3)">
+                {"peak = d₁ + d₂ ≤ C"}
+              </text>
+
+              {/* X axis */}
+              <line x1={55} y1={cb} x2={680} y2={cb} stroke="var(--ink-3)" strokeWidth={1.5}/>
+
+              {/* Stop labels */}
+              {["Depot", "P₁", "P₂", "D₂", "D₁", "Depot"].map((lbl, i) => (
+                <g key={i}>
+                  <line x1={stops[i]} y1={cb} x2={stops[i]} y2={cb + 6}
+                        stroke="var(--ink-3)" strokeWidth={1.5}/>
+                  <text x={stops[i]} y={cb + 22} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={16}
+                        fill={i === 0 || i === 5 ? "var(--ink)" : i < 3 ? "var(--accent)" : "var(--ink-2)"}>
+                    {lbl}
+                  </text>
+                </g>
+              ))}
+
+              {/* Y axis */}
+              <line x1={55} y1={ct - 10} x2={55} y2={cb} stroke="var(--ink-3)" strokeWidth={1.5}/>
+              <text x={50} y={cb + 5} textAnchor="end"
+                    fontFamily="var(--font-mono)" fontSize={14} fill="var(--ink-3)">0</text>
+            </svg>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 17, color: "var(--ink-3)", textAlign: "center", marginTop: 8 }}>
+              {"Example: C = 10 · d_{P₁} = " + dP1 + " · d_{P₂} = " + dP2 + " · same demand returns at each Dᵢ"}
+            </div>
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
 function Slide23() {
   const [animKey, setAnimKey] = React.useState(0);
   const sectionRef = React.useRef(null);
@@ -828,41 +1259,21 @@ function Slide23() {
             </div>
           </div>
 
-          {/* RIGHT — explanatory column */}
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 18 }}>
+          {/* RIGHT — explanatory column. Definition cards live in the new
+              Slide23Intro (previous slide); here we keep only lede + rule
+              callout + body small, mirroring Slide22's lean layout. */}
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 24 }}>
             <div className="lede">
-              Every transportation request couples an <em>origin <TeX>{"O_i"}</TeX></em> with a <em>destination <TeX>{"D_i"}</TeX></em>: the load travels between the two on the <strong>same vehicle</strong>, and the pickup is served strictly before the drop-off.
-            </div>
-
-            {/* Two definition cards mirroring the colour code on the chart */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-              <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "12px 16px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-                  <span style={{ display: "inline-flex", width: 30, height: 30, borderRadius: "50%", background: "var(--accent)", border: "1.5px solid var(--ink)", color: "var(--paper)", fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 16, alignItems: "center", justifyContent: "center" }}>P</span>
-                  <div style={{ fontFamily: "var(--font-display)", fontSize: 24 }}>Pickup <TeX>{"O_i"}</TeX></div>
-                </div>
-                <div style={{ fontSize: 20, color: "var(--ink-2)", lineHeight: 1.3 }}>
-                  Where the load is <em>collected</em> — vehicle load rises by <TeX>{"d_i"}</TeX>.
-                </div>
-              </div>
-              <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "12px 16px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-                  <span style={{ display: "inline-flex", width: 30, height: 30, borderRadius: "50%", background: "var(--paper)", border: "1.5px solid var(--ink)", color: "var(--ink)", fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 16, alignItems: "center", justifyContent: "center" }}>D</span>
-                  <div style={{ fontFamily: "var(--font-display)", fontSize: 24 }}>Delivery <TeX>{"D_i"}</TeX></div>
-                </div>
-                <div style={{ fontSize: 20, color: "var(--ink-2)", lineHeight: 1.3 }}>
-                  Where the same load is <em>dropped off</em> — load falls by <TeX>{"d_i"}</TeX>.
-                </div>
-              </div>
+              The customer set splits into <TeX>{"N"}</TeX> origin-destination <em>requests</em> — pickups <TeX>{"O_i"}</TeX> and deliveries <TeX>{"D_i"}</TeX> (see the previous two slides for the vocabulary and the load profile). VRPPD adds a per-request pairing constraint on top of the CVRP core.
             </div>
 
             {/* The pairing rule — heart of VRPPD */}
-            <div style={{ fontSize: 22, background: "var(--paper-2)", border: "1px solid var(--line)", borderLeft: "4px solid var(--accent)", padding: "14px 20px", lineHeight: 1.4 }}>
+            <div style={{ fontSize: 26, background: "var(--paper-2)", border: "1px solid var(--line)", borderLeft: "4px solid var(--accent)", padding: "18px 22px", lineHeight: 1.45 }}>
               <strong>Pairing rule:</strong> for every request <TeX>{"i"}</TeX>, the same vehicle visits both <TeX>{"O_i"}</TeX> and <TeX>{"D_i"}</TeX>, with <TeX>{"O_i"}</TeX> served before <TeX>{"D_i"}</TeX>. Capacity must hold on every leg.
             </div>
 
-            <div className="body small" style={{ color: "var(--ink-3)", lineHeight: 1.4 }}>
-              Real-world archetypes — courier dispatch, less-than-truckload (LTL) freight, ride-sharing platforms, and the <em>Dial-a-Ride Problem</em> when passengers replace cargo and tight time windows enter the formulation. Unlike VRPB, where the customer set splits into two precedence-ordered classes, here the precedence is <em>per request</em>: a single route can interleave several pickups and several deliveries, as long as each <TeX>{"O_i"}</TeX> is visited before its own <TeX>{"D_i"}</TeX>.
+            <div className="body small" style={{ color: "var(--ink-3)" }}>
+              Real-world archetypes — courier dispatch, less-than-truckload (LTL) freight, ride-sharing platforms, and the <em>Dial-a-Ride Problem</em> when passengers replace cargo and tight time windows enter the formulation. Unlike VRPB, where the customer set splits into two precedence-ordered classes, here the precedence is <em>per request</em>: a single route can interleave several pickups and several deliveries.
             </div>
           </div>
         </div>
@@ -873,5 +1284,7 @@ function Slide23() {
 
 
 Object.assign(window, {
-  Slide19, Slide20, Slide21, Slide22Intro, Slide22Load, Slide22, Slide23,
+  Slide19, Slide20, Slide21,
+  Slide22Intro, Slide22Load, Slide22,
+  Slide23Intro, Slide23Load, Slide23,
 });

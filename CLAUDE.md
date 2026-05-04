@@ -1,6 +1,6 @@
 # Seminario VRP — Guida rapida
 
-Deck HTML/CSS/JS esportato da Claude Design. **61 slide** gestite dal web component `<deck-stage>` in [project/deck-stage.js](project/deck-stage.js), montate da [project/vrp-seminar.html](project/vrp-seminar.html).
+Deck HTML/CSS/JS esportato da Claude Design. **63 slide** gestite dal web component `<deck-stage>` in [project/deck-stage.js](project/deck-stage.js), montate da [project/vrp-seminar.html](project/vrp-seminar.html).
 
 ## Istruzioni per Claude Dispatch
 
@@ -11,7 +11,7 @@ Lavora nella cartella:
 ~/Documents/GitHub/seminario-vrp-corso-di-ottimizzazione-dei-sistemi-complessi/
 
 Leggi attentamente il CLAUDE.md nella root: contiene la struttura completa
-della presentazione (61 slide), i file coinvolti, i pattern obbligatori
+della presentazione (63 slide), i file coinvolti, i pattern obbligatori
 da seguire e i gotcha delle animazioni.
 
 Quando hai finito di leggere, confermami che sei pronto per ricevere
@@ -167,14 +167,16 @@ Ogni section header è una slide con `className="section-slide"`. Per modificare
 | 52 | Linehauls vs backhauls (animated demo) | `Slide22Intro` | [slides/08-family.jsx](project/slides/08-family.jsx) |
 | 53 | Partial loads — each customer's own demand | `Slide22Load` | [slides/08-family.jsx](project/slides/08-family.jsx) |
 | 54 | VRPB rule (linehauls before backhauls) | `Slide22` | [slides/08-family.jsx](project/slides/08-family.jsx) |
-| 55 | Multi-depot & open VRP | `Slide23` | [slides/08-family.jsx](project/slides/08-family.jsx) |
-| 56 | **Part VIII — Live demo** *(section header)* | `Slide24` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
-| 57 | Clarke-Wright idea | `Slide25` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
-| 58 | Interactive demo | `Slide26` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
-| 59 | **Part IX — Applications** *(section header)* | `Slide27` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
-| 60 | Case studies | `Slide28` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
-| 61 | Takeaways | `Slide29` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
-| 62 | Closing / references | `Slide30` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
+| 55 | Pickup & delivery primer (animated demo) | `Slide23Intro` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 56 | Pickup & delivery load profile | `Slide23Load` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 57 | VRPPD rule (pairing constraint) | `Slide23` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 58 | **Part VIII — Live demo** *(section header)* | `Slide24` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
+| 59 | Clarke-Wright idea | `Slide25` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
+| 60 | Interactive demo | `Slide26` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
+| 61 | **Part IX — Applications** *(section header)* | `Slide27` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
+| 62 | Case studies | `Slide28` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
+| 63 | Takeaways | `Slide29` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
+| 64 | Closing / references | `Slide30` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
 
 > Per aggiungere una slide: crea la funzione nel file della parte corrispondente, aggiungila all'`Object.assign(window, {...})` in fondo a quel file, poi inseriscila nell'array `slides` dentro [project/vrp-seminar.html](project/vrp-seminar.html).
 

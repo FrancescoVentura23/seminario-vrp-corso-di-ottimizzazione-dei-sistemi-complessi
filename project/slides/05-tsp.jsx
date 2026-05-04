@@ -1430,11 +1430,15 @@ function SlideTSPKeyIdentity() {
                 <div style={{ marginTop: 8, paddingTop: 8, borderTop: "1px solid var(--line)" }}>
                   <div style={{ marginBottom: 8 }}>Summing over all |S| vertices:</div>
                   <div style={{ fontSize: 20, color: "var(--ink-3)", lineHeight: 1.5, marginBottom: 6 }}>
-                    • Arcs <em>internal to S</em> have both endpoints in S — counted <em>twice</em>
+                    • <span style={{ fontFamily: "var(--font-mono)", color: "var(--ink-2)" }}>A(S)</span> — arcs with <em>both</em> endpoints in S — counted <em>twice</em>
                   </div>
                   <div style={{ fontSize: 20, color: "var(--ink-3)", lineHeight: 1.5 }}>
-                    • Arcs <em>crossing the boundary</em> δ(S) have one endpoint outside S — counted <em>once</em>
+                    • <span style={{ fontFamily: "var(--font-mono)", color: "var(--ink-2)" }}>δ(S)</span> — arcs with <em>one</em> endpoint outside S — counted <em>once</em>
                   </div>
+                </div>
+
+                <div style={{ fontSize: 18, color: "var(--ink-3)", fontStyle: "italic", marginTop: 4 }}>
+                  Denoting <TeX>{"x^*(F) = \\sum_{(i,j)\\in F} x^*_{ij}"}</TeX> (total LP weight over arc set F):
                 </div>
 
                 <TeX display>{"2\\,x^*(A(S)) \\;+\\; x^*(\\delta(S)) \\;=\\; 2|S|"}</TeX>

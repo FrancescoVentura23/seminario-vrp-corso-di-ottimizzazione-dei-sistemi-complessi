@@ -215,7 +215,6 @@ function Slide22Intro() {
   const truckY   = 140;          // truck sits above the stops
   const seg1Len  = Math.abs(linehaul.x - depot.x);
   const seg2Len  = Math.abs(backhaul.x - linehaul.x);
-  const seg3Len  = Math.abs(backhaul.x - depot.x);
 
   return (
     <section ref={sectionRef} className="slide" data-label="Linehauls and backhauls">
@@ -347,13 +346,18 @@ function Slide22Intro() {
                         animation: "drawPath 1200ms both ease-in-out",
                         animationDelay: "2925ms",
                       }}/>
-                {/* Route 3: backhaul -> depot (return leg) */}
-                <line x1={backhaul.x} y1={backhaul.y} x2={depot.x} y2={depot.y}
+                {/* Route 3: backhaul -> depot (return arc, curves below to avoid
+                    overlapping the forward route lines at y=230).
+                    Control point Q 405,315 → peak of curve at y≈272, between
+                    node circles (bottom y=258) and label text (y≥290). */}
+                <path d={`M ${backhaul.x},${backhaul.y} Q 405,315 ${depot.x},${depot.y}`}
+                      pathLength="1"
+                      fill="none"
                       stroke="var(--ink-3)" strokeWidth={2.5} strokeLinecap="round"
                       style={{
-                        "--len": seg3Len,
-                        strokeDasharray: seg3Len,
-                        strokeDashoffset: seg3Len,
+                        "--len": 1,
+                        strokeDasharray: 1,
+                        strokeDashoffset: 1,
                         animation: "drawPath 1200ms both ease-in-out",
                         animationDelay: "5005ms",
                       }}/>

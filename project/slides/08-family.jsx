@@ -1277,10 +1277,16 @@ function Slide23() {
   // - Vehicle 2 (route-3) INTERLEAVED: depot → P₃ → P₄ → D₄ → D₃ → depot
   //   (peak load = d₃ + d₄, capacity must hold)
   // - Vehicle 3 (route-2) single-request: depot → P₅ → D₅ → depot
+  // Pacing: each polyline draws over ~2200ms (or ~1800ms for the shorter
+  // single-pair route 3), with ~100ms gaps so the eye finishes one vehicle
+  // before the next starts. Total ≈ 6.4s, ~65% slower than the previous
+  // ~3.9s pass — the arrowhead pop-ins on each segment now have visible
+  // breathing room. Cumulative-length-based fadeUp delays scale automatically
+  // with these durations.
   const routes23 = [
-    { pts: [[600,450],[260,200],[550,330],[450,140],[340,360],[600,450]], color: "var(--route-1)", startMs: 0,    durMs: 1300 },
-    { pts: [[600,450],[760,160],[970,250],[940,460],[700,380],[600,450]], color: "var(--route-3)", startMs: 1400, durMs: 1300 },
-    { pts: [[600,450],[350,720],[850,750],[600,450]],                     color: "var(--route-2)", startMs: 2800, durMs: 1100 },
+    { pts: [[600,450],[260,200],[550,330],[450,140],[340,360],[600,450]], color: "var(--route-1)", startMs: 0,    durMs: 2200 },
+    { pts: [[600,450],[760,160],[970,250],[940,460],[700,380],[600,450]], color: "var(--route-3)", startMs: 2300, durMs: 2200 },
+    { pts: [[600,450],[350,720],[850,750],[600,450]],                     color: "var(--route-2)", startMs: 4600, durMs: 1800 },
   ];
   const polyData23 = routes23.map(r => {
     const segs = r.pts.slice(0, -1).map((p, i) => {

@@ -92,6 +92,30 @@ function Slide14() {
 
 
 function Slide14B() {
+  // Restart the K-arc draw animation when the slide becomes active. Inactive
+  // (dashed) arcs are NOT animated — they represent the complete-graph
+  // background, not a "selected" departure/arrival.
+  const [animKey, setAnimKey] = React.useState(0);
+  const sectionRef = React.useRef(null);
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (el.hasAttribute('data-deck-active')) {
+        setAnimKey(k => k + 1);
+      } else {
+        setAnimKey(0);
+      }
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
+    return () => obs.disconnect();
+  }, []);
+
+  // Animation timing — three active arcs per star, drawn sequentially.
+  const arcDur     = 750;   // ms per arc body
+  const arcStagger = 500;   // ms between successive arc starts
+  const arrowLag   = 100;   // ms before body finish that the arrow starts to fade in
+
   // Customers are placed on a circle of constant radius around the depot, so
   // every depot↔customer arc has the same length and the visual emphasis
   // stays on which arcs are selected, not on their distance.
@@ -159,11 +183,41 @@ function Slide14B() {
     const aw    = isActive ? 8   : 5;
     const al    = isActive ? 14  : 9;
 
+    // Active arcs: drawPath body with --len = retracted segment length, plus
+    // arrow polygon that fadeUp's just before the body finishes (gotcha #10).
+    // The body is rendered before the polygon in DOM order so the polygon
+    // always sits on top while it fades in.
+    if (isActive) {
+      const segLen     = Math.hypot(tx - fx, ty - fy);
+      const startMs    = ki * arcStagger;
+      const arrowDelay = startMs + arcDur - arrowLag;
+      return (
+        <g key={`${direction}-${i}`} opacity={op}>
+          <line x1={fx} y1={fy} x2={tx} y2={ty}
+                stroke={color} strokeWidth={sw}
+                strokeLinecap="round"
+                style={{
+                  "--len": segLen,
+                  strokeDasharray: segLen,
+                  animation: `drawPath ${arcDur}ms both ease-out`,
+                  animationDelay: `${startMs}ms`,
+                }}/>
+          <polygon points={arrowPts(tx, ty, ux, uy, aw, al)} fill={color}
+                   style={{
+                     opacity: 0,
+                     animation: "fadeUp 200ms both ease-out",
+                     animationDelay: `${arrowDelay}ms`,
+                   }}/>
+        </g>
+      );
+    }
+
+    // Inactive arcs (the complete-graph background): static, no animation.
     return (
       <g key={`${direction}-${i}`} opacity={op}>
         <line x1={fx} y1={fy} x2={tx} y2={ty}
               stroke={color} strokeWidth={sw}
-              strokeDasharray={dash || undefined}
+              strokeDasharray={dash}
               strokeLinecap="round"/>
         <polygon points={arrowPts(tx, ty, ux, uy, aw, al)} fill={color}/>
       </g>
@@ -176,33 +230,38 @@ function Slide14B() {
     <svg viewBox="50 50 740 500"
          preserveAspectRatio="xMidYMid meet"
          style={{ width: "100%", height: "100%", display: "block", overflow: "visible" }}>
-      {/* Dashed (unused) arcs first, so the active ones paint on top */}
-      {custs.map((_, i) => activeIdx.includes(i) ? null : renderArc(i, direction, false, -1))}
-      {activeIdx.map((i, k) => renderArc(i, direction, true, k))}
+      {/* Wrapper with key={animKey} so the inner contents remount whenever
+          the slide becomes active again — restarts every drawPath animation
+          on the active arcs from frame 0. */}
+      <g key={animKey}>
+        {/* Dashed (unused) arcs first, so the active ones paint on top */}
+        {custs.map((_, i) => activeIdx.includes(i) ? null : renderArc(i, direction, false, -1))}
+        {activeIdx.map((i, k) => renderArc(i, direction, true, k))}
 
-      {/* Customers — drawn after the arcs so the lines don't bleed through */}
-      {custs.map((c, i) => (
-        <circle key={`n-${i}`} cx={c.x} cy={c.y} r={nodeR}
-                fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.2}/>
-      ))}
+        {/* Customers — drawn after the arcs so the lines don't bleed through */}
+        {custs.map((c, i) => (
+          <circle key={`n-${i}`} cx={c.x} cy={c.y} r={nodeR}
+                  fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.2}/>
+        ))}
 
-      {/* Depot — black square (the user explicitly asked for square + black,
-          regardless of theme) */}
-      <rect x={depot.x - depotHalf - 4} y={depot.y - depotHalf - 4}
-            width={(depotHalf + 4) * 2} height={(depotHalf + 4) * 2}
-            fill="none" stroke="#000" strokeWidth={1.5} rx={2}/>
-      <rect x={depot.x - depotHalf} y={depot.y - depotHalf}
-            width={depotHalf * 2} height={depotHalf * 2}
-            fill="#000" rx={2}/>
-      <text x={depot.x} y={depot.y + 7} textAnchor="middle"
-            fontFamily="var(--font-mono)" fontSize={20}
-            fill="#fff" fontWeight={700}>0</text>
+        {/* Depot — black square (the user explicitly asked for square + black,
+            regardless of theme) */}
+        <rect x={depot.x - depotHalf - 4} y={depot.y - depotHalf - 4}
+              width={(depotHalf + 4) * 2} height={(depotHalf + 4) * 2}
+              fill="none" stroke="#000" strokeWidth={1.5} rx={2}/>
+        <rect x={depot.x - depotHalf} y={depot.y - depotHalf}
+              width={depotHalf * 2} height={depotHalf * 2}
+              fill="#000" rx={2}/>
+        <text x={depot.x} y={depot.y + 7} textAnchor="middle"
+              fontFamily="var(--font-mono)" fontSize={20}
+              fill="#fff" fontWeight={700}>0</text>
+      </g>
     </svg>
     );
   };
 
   return (
-    <section className="slide" data-label="Depot constraints — K leave, K return">
+    <section ref={sectionRef} className="slide" data-label="Depot constraints — K leave, K return">
       <SlideFrame>
         <div className="tag">CVRP · depot constraints</div>
         <h2 className="title" style={{ marginTop: 28 }}>

@@ -461,11 +461,11 @@ function Slide22Load() {
               </div>
               <div style={{ borderTop: "1px solid var(--line)", paddingTop: 10, fontSize: 23, lineHeight: 1.55 }}>
                 <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--accent-3)", letterSpacing: "0.07em", marginBottom: 4 }}>AT EACH LINEHAUL L_i</div>
-                delivers <TeX>{"d_i"}</TeX> — load <TeX>{"- d_i"}</TeX>
+                delivers <TeX>{"d_i"}</TeX> → load drops by <TeX>{"d_i"}</TeX>
               </div>
               <div style={{ borderTop: "1px solid var(--line)", paddingTop: 10, fontSize: 23, lineHeight: 1.55 }}>
                 <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--accent-2)", letterSpacing: "0.07em", marginBottom: 4 }}>AT EACH BACKHAUL B_j</div>
-                collects <TeX>{"d_j"}</TeX> — load <TeX>{"+ d_j"}</TeX>
+                collects <TeX>{"d_j"}</TeX> → load rises by <TeX>{"d_j"}</TeX>
               </div>
               <div style={{ borderTop: "1px solid var(--line)", paddingTop: 10, fontSize: 22, lineHeight: 1.55, color: "var(--ink-2)" }}>
                 At every leg: load <TeX>{"\\leq C"}</TeX>

@@ -877,6 +877,84 @@ function Slide22() {
 }
 
 
+function Slide22B() {
+  const cases = [
+    {
+      icon: "🛒",
+      title: "Supermarket replenishment",
+      body: "Trucks deliver goods to stores (linehaul) and collect unsold or returned items back to the warehouse (backhaul) on the same circuit — cutting empty-leg costs.",
+      tag: "Retail / distribution",
+      color: "var(--accent)",
+    },
+    {
+      icon: "🍺",
+      title: "Beverage distribution",
+      body: "Full kegs and bottles are delivered to bars and restaurants; empty containers are collected on the return trip. A classic VRPB setup: linehauls out, backhauls in.",
+      tag: "Food & beverage",
+      color: "#ca8a04",
+    },
+    {
+      icon: "🏭",
+      title: "Industrial parts & scrap",
+      body: "Finished components ship from factory to assembly plants (linehaul). The same vehicles bring back defective parts, pallets, or scrap metal (backhaul).",
+      tag: "Manufacturing",
+      color: "#0ea5e9",
+    },
+    {
+      icon: "💊",
+      title: "Pharmaceutical returns",
+      body: "Pharmacies receive drug deliveries (linehaul) and hand back expired or recalled stock for proper disposal (backhaul) — regulated reverse logistics on a single tour.",
+      tag: "Healthcare",
+      color: "#e05c5c",
+    },
+    {
+      icon: "📬",
+      title: "Postal services",
+      body: "Letter carriers deliver parcels to addresses (linehaul) and collect outgoing mail and packages from drop-off points (backhaul) during the same daily round.",
+      tag: "Postal / courier",
+      color: "#8b5cf6",
+    },
+    {
+      icon: "🔋",
+      title: "EV battery swap",
+      body: "Logistics vans drop off charged battery packs at swap stations (linehaul) and retrieve depleted packs for recharging at the depot (backhaul) on a shared route.",
+      tag: "Green mobility",
+      color: "#16a34a",
+    },
+  ];
+
+  return (
+    <section className="slide" data-label="VRPB — real cases">
+      <SlideFrame>
+        <div className="tag">Family · VRPB</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          Backhauls arise whenever the return trip can carry load.
+        </h2>
+
+        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, flex: 1 }}>
+          {cases.map((c, i) => (
+            <div key={i} style={{
+              background: "var(--paper-2)",
+              border: "1px solid var(--line)",
+              borderTop: `4px solid ${c.color}`,
+              padding: "22px 26px",
+              display: "flex", flexDirection: "column", gap: 12,
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <span style={{ fontSize: 36 }}>{c.icon}</span>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: 28, lineHeight: 1.2 }}>{c.title}</div>
+              </div>
+              <div style={{ fontSize: 24, color: "var(--ink-2)", lineHeight: 1.55, flex: 1 }}>{c.body}</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 16, color: c.color, letterSpacing: "0.07em", textTransform: "uppercase" }}>{c.tag}</div>
+            </div>
+          ))}
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
 // ==========================================================
 // VRPPD INTRO — define pickup vs delivery with an animated
 // truck demo: cargo empty at depot, fills at the blue pickup,
@@ -1517,6 +1595,6 @@ function Slide23() {
 
 Object.assign(window, {
   Slide19, Slide20, Slide21, Slide21B,
-  Slide22Intro, Slide22Load, Slide22,
+  Slide22Intro, Slide22Load, Slide22, Slide22B,
   Slide23Intro, Slide23Load, Slide23,
 });

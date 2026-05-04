@@ -672,9 +672,9 @@ function Slide22() {
   // cumulative-length-based fadeUp timing. The polyline body still uses one
   // drawPath animation per route — arrows pop in along the way.
   const routes22 = [
-    { pts: [[600,400],[280,150],[450,80],[900,650],[600,750],[600,400]],            color: "var(--route-1)", startMs: 0,    durMs: 1200 },
-    { pts: [[600,400],[750,120],[950,280],[1000,500],[300,700],[150,550],[600,400]],color: "var(--route-3)", startMs: 1300, durMs: 1500 },
-    { pts: [[600,400],[200,380],[600,400]],                                          color: "var(--route-2)", startMs: 3000, durMs: 800  },
+    { pts: [[600,400],[280,150],[450,80],[900,650],[600,750],[600,400]],            color: "var(--route-1)", startMs: 0,    durMs: 2000 },
+    { pts: [[600,400],[750,120],[950,280],[1000,500],[300,700],[150,550],[600,400]],color: "var(--route-3)", startMs: 2200, durMs: 2500 },
+    { pts: [[600,400],[200,380],[600,400]],                                          color: "var(--route-2)", startMs: 5000, durMs: 1300 },
   ];
   // Pre-compute segment metadata + arrowhead positions and timing.
   // Backoff = 26 px clears both circle nodes (r=22, gap 4) and the depot's

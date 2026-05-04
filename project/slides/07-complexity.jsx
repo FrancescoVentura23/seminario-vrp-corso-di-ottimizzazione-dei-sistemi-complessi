@@ -165,6 +165,23 @@ function Slide17A() {
 // Slide 23 — Growth rates in practice
 // -----------------------------------------------------------------------------
 function Slide17AGrowth() {
+  // Unicode superscript chars come from two different blocks (Latin-1 vs Number Forms)
+  // and have different baselines in monospace fonts, making multi-digit exponents look
+  // misaligned (e.g. "10¹⁵" shows ¹ higher than ⁵).  Convert every run of superscript
+  // chars to a real HTML <sup> tag so the browser renders them at a uniform baseline.
+  const renderNum = (s) => {
+    const sup = {'⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9','ⁿ':'n'};
+    const out = [];
+    let base = '', exp = '';
+    for (const ch of s) {
+      if (ch in sup) { if (base) { out.push(base); base = ''; } exp += sup[ch]; }
+      else           { if (exp)  { out.push(<sup key={out.length}>{exp}</sup>); exp = ''; } base += ch; }
+    }
+    if (exp)  out.push(<sup key={out.length}>{exp}</sup>);
+    if (base) out.push(base);
+    return out.length ? out : s;
+  };
+
   const rows = [
     { name: "O(log n)",  n10: "3",       n50: "6",        n100: "7",        n1000: "10",        verdict: "trivial",  color: "#16a34a" },
     { name: "O(n)",      n10: "10",      n50: "50",       n100: "100",      n1000: "10³",        verdict: "fast",     color: "#65a30d" },
@@ -221,11 +238,11 @@ function Slide17AGrowth() {
                   borderTop: "1px solid var(--line)", fontFamily: "var(--font-mono)", fontSize: 26,
                   borderLeft: `4px solid ${r.color}`,
                 }}>
-                  <div style={{ padding: "14px 16px", color: r.color, fontWeight: 600 }}>{r.name}</div>
-                  <div style={{ padding: "14px 16px", textAlign: "right" }}>{r.n10}</div>
-                  <div style={{ padding: "14px 16px", textAlign: "right" }}>{r.n50}</div>
-                  <div style={{ padding: "14px 16px", textAlign: "right" }}>{r.n100}</div>
-                  <div style={{ padding: "14px 16px", textAlign: "right" }}>{r.n1000}</div>
+                  <div style={{ padding: "14px 16px", color: r.color, fontWeight: 600 }}>{renderNum(r.name)}</div>
+                  <div style={{ padding: "14px 16px", textAlign: "right" }}>{renderNum(r.n10)}</div>
+                  <div style={{ padding: "14px 16px", textAlign: "right" }}>{renderNum(r.n50)}</div>
+                  <div style={{ padding: "14px 16px", textAlign: "right" }}>{renderNum(r.n100)}</div>
+                  <div style={{ padding: "14px 16px", textAlign: "right" }}>{renderNum(r.n1000)}</div>
                   <div style={{ padding: "14px 16px", textAlign: "right", color: r.color, fontStyle: "italic" }}>{r.verdict}</div>
                 </div>
               ))}

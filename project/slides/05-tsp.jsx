@@ -1362,6 +1362,16 @@ function SlideTSPKeyIdentity() {
                 <pattern id="dotgrid-key" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
                   <circle cx="1" cy="1" r="1" fill="var(--line)"/>
                 </pattern>
+                <marker id="arrow-accent-key" markerUnits="userSpaceOnUse"
+                        viewBox="0 0 16 12" markerWidth="16" markerHeight="12"
+                        refX="16" refY="6" orient="auto">
+                  <path d="M0,0 L16,6 L0,12 z" fill="var(--accent)"/>
+                </marker>
+                <marker id="arrow-ink-key" markerUnits="userSpaceOnUse"
+                        viewBox="0 0 18 14" markerWidth="18" markerHeight="14"
+                        refX="18" refY="7" orient="auto">
+                  <path d="M0,0 L18,7 L0,14 z" fill="var(--ink)"/>
+                </marker>
               </defs>
 
               <rect width={800} height={600} fill="url(#dotgrid-key)" opacity={0.5}/>
@@ -1403,19 +1413,6 @@ function SlideTSPKeyIdentity() {
               <text x={245} y={235} fontFamily="var(--font-mono)" fontSize={18} fill="var(--accent)" fontWeight={600}>x*ᵢⱼ</text>
               <text x={245} y={335} fontFamily="var(--font-mono)" fontSize={18} fill="var(--accent)" fontWeight={600}>x*ⱼᵢ</text>
               <text x={390} y={260} fontFamily="var(--font-mono)" fontSize={18} fill="var(--ink)" fontWeight={600}>x*ᵢₖ ∈ δ(S)</text>
-
-              <defs>
-                <marker id="arrow-accent-key" markerUnits="userSpaceOnUse"
-                        viewBox="0 0 16 12" markerWidth="16" markerHeight="12"
-                        refX="16" refY="6" orient="auto">
-                  <path d="M0,0 L16,6 L0,12 z" fill="var(--accent)"/>
-                </marker>
-                <marker id="arrow-ink-key" markerUnits="userSpaceOnUse"
-                        viewBox="0 0 18 14" markerWidth="18" markerHeight="14"
-                        refX="18" refY="7" orient="auto">
-                  <path d="M0,0 L18,7 L0,14 z" fill="var(--ink)"/>
-                </marker>
-              </defs>
 
               <text x={400} y={550} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={18} fill="var(--ink-3)">
                 Degree constraints at every vertex sum to reveal the structure of cuts.

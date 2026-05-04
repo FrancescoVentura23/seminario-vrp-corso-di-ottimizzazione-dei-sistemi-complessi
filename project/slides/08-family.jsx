@@ -682,12 +682,30 @@ function Slide22() {
                   </g>
                 );
               })}
+              {/* Legend overlay — top-left of viewBox, rendered last so it
+                  sits above routes. Semi-opaque card so anything underneath
+                  stays faintly visible. Text in var(--ink) for proper contrast
+                  on the paper background (the previous HTML legend used
+                  var(--paper) text on a var(--paper-2) background — illegible). */}
+              <g transform="translate(30, 30)">
+                <rect width={340} height={120} fill="var(--paper)" fillOpacity={0.94}
+                      stroke="var(--line)" strokeWidth={1.5} rx={4}/>
+                {/* L = linehaul */}
+                <circle cx={36} cy={38} r={16}
+                        fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
+                <text x={36} y={45} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={15} fontWeight={700} fill="var(--ink)">L</text>
+                <text x={66} y={45}
+                      fontFamily="var(--font-mono)" fontSize={20} fill="var(--ink)">= linehaul (delivery)</text>
+                {/* B = backhaul */}
+                <circle cx={36} cy={88} r={16}
+                        fill="var(--accent-2)" stroke="var(--ink)" strokeWidth={2.5}/>
+                <text x={36} y={95} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={15} fontWeight={700} fill="var(--paper)">B</text>
+                <text x={66} y={95}
+                      fontFamily="var(--font-mono)" fontSize={20} fill="var(--ink)">= backhaul (pickup)</text>
+              </g>
             </svg>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 20, color: "var(--ink-3)", marginTop: 14 }}>
-              <span style={{ color: "var(--paper)", background: "var(--paper-2)" }}>L = linehaul (delivery, white)</span>
-              {" · "}
-              <span style={{ color: "var(--paper)", background: "var(--accent-2)" }}>B = backhaul (pickup, orange)</span>
-            </div>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 24 }}>
@@ -1253,14 +1271,37 @@ function Slide23() {
                         fill="var(--ink)">{"D" + sub[i]}</text>
                 </g>
               ))}
+              {/* Legend overlay — top-left of viewBox, rendered last so it
+                  sits above routes and the dashed pair-links. Semi-opaque card
+                  so anything underneath stays faintly visible. */}
+              <g transform="translate(30, 30)">
+                <rect width={420} height={155} fill="var(--paper)" fillOpacity={0.94}
+                      stroke="var(--line)" strokeWidth={1.5} rx={4}/>
+                {/* P = pickup */}
+                <circle cx={36} cy={38} r={16}
+                        fill="var(--accent)" stroke="var(--ink)" strokeWidth={2.5}/>
+                <text x={36} y={45} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={15} fontWeight={700} fill="var(--paper)">P</text>
+                <text x={66} y={45}
+                      fontFamily="var(--font-mono)" fontSize={20} fill="var(--ink)">= pickup</text>
+                {/* D = delivery */}
+                <circle cx={36} cy={80} r={16}
+                        fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
+                <text x={36} y={87} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={15} fontWeight={700} fill="var(--ink)">D</text>
+                <text x={66} y={87}
+                      fontFamily="var(--font-mono)" fontSize={20} fill="var(--ink)">= delivery</text>
+                {/* dashed = pairing constraint */}
+                <line x1={20} y1={122} x2={52} y2={122}
+                      stroke="var(--accent-2)" strokeWidth={2.5}
+                      strokeDasharray="6 6" opacity={0.7}/>
+                <text x={66} y={128}
+                      fontFamily="var(--font-mono)" fontSize={20} fill="var(--ink)">= pairing constraint</text>
+              </g>
+              {/* Stats — bottom-right corner of viewBox, kept as a subtle caption */}
+              <text x={1180} y={870} textAnchor="end"
+                    fontFamily="var(--font-mono)" fontSize={18} fill="var(--ink-3)">3 vehicles · 5 requests</text>
             </svg>
-
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 17, color: "var(--ink-3)", marginTop: 12, display: "flex", flexWrap: "wrap", gap: 14, alignItems: "center" }}>
-              <span><span style={{ display: "inline-block", width: 14, height: 14, borderRadius: "50%", background: "var(--accent)", border: "1.5px solid var(--ink)", verticalAlign: "middle", marginRight: 6 }}/>P = pickup</span>
-              <span><span style={{ display: "inline-block", width: 14, height: 14, borderRadius: "50%", background: "var(--paper)", border: "1.5px solid var(--ink)", verticalAlign: "middle", marginRight: 6 }}/>D = delivery</span>
-              <span><span style={{ display: "inline-block", width: 22, height: 0, borderTop: "2px dashed var(--accent-2)", verticalAlign: "middle", marginRight: 6, opacity: 0.7 }}/>pairing constraint</span>
-              <span style={{ marginLeft: "auto", color: "var(--ink-2)" }}>3 vehicles · 5 requests</span>
-            </div>
           </div>
 
           {/* RIGHT — explanatory column. Definition cards live in the new

@@ -201,46 +201,46 @@ function Slide21() {
 function Slide21B() {
   const cases = [
     {
-      icon: "📦",
-      title: "E-commerce last-mile",
-      body: "Couriers (Amazon, UPS, FedEx) negotiate delivery slots with recipients. A missed window triggers a failed delivery — the most expensive event in logistics.",
-      tag: "Retail / e-commerce",
+      icon: "🏭",
+      title: "Just-in-time assembly",
+      body: "Parts must reach the station exactly when the line is free. Arriving 20 minutes early blocks the dock; 10 minutes late halts the whole production line.",
+      tag: "Manufacturing",
       color: "var(--accent)",
     },
     {
-      icon: "🏥",
-      title: "Hospital & pharmacy",
-      body: "Blood bags, drugs, and sterile equipment must arrive within strict time bands. A 2-hour delay can make a product unusable or endanger a patient.",
+      icon: "📰",
+      title: "Morning press delivery",
+      body: "All drops must complete before 6:30 am. A missed window makes the copy worthless — there is no 'deliver later' for a daily newspaper.",
+      tag: "Publishing",
+      color: "#ca8a04",
+    },
+    {
+      icon: "🏧",
+      title: "ATM cash replenishment",
+      body: "Security protocol restricts servicing to a late-night window (01:00–05:00). Arriving outside it triggers a police alert, so every stop must fit inside its slot.",
+      tag: "Banking",
+      color: "#0ea5e9",
+    },
+    {
+      icon: "💉",
+      title: "Clinical medication rounds",
+      body: "Hospital pharmacies deliver dose-packs within exact pharmacological intervals. Administering outside the prescribed window is a clinical error, not just a delay.",
       tag: "Healthcare",
       color: "#e05c5c",
     },
     {
-      icon: "🥗",
-      title: "Food & cold chain",
-      body: "Restaurants and canteens require fresh produce at a precise hour. Delivery too early means blocked storage; too late means service disruption.",
-      tag: "Food industry",
-      color: "#16a34a",
-    },
-    {
-      icon: "🚌",
-      title: "School bus routing",
-      body: "Each student has a pickup window tied to the bell schedule. Both hard windows (school start) and soft windows (parent request) coexist.",
-      tag: "Public transport",
-      color: "var(--accent-2)",
-    },
-    {
-      icon: "🗑️",
-      title: "Urban waste collection",
-      body: "Bins must be emptied before peak traffic hours or before a market opens. Time windows prevent disruption to city life.",
-      tag: "Municipal services",
+      icon: "✈️",
+      title: "Airport passenger shuttle",
+      body: "The departure time is a hard deadline set by the airline. The optimizer must sequence hotel pickups so every passenger clears security before their gate closes.",
+      tag: "Aviation",
       color: "#8b5cf6",
     },
     {
-      icon: "✈️",
-      title: "Airport ground ops",
-      body: "Aircraft turnaround involves catering, fueling, and baggage — each service has a narrow window tied to the flight schedule.",
-      tag: "Aviation",
-      color: "#0ea5e9",
+      icon: "🍱",
+      title: "School canteen delivery",
+      body: "Hot meals must arrive inside the service window. Too early and food cools before the bell; too late and the canteen has nothing to serve — the window is two-sided.",
+      tag: "Catering",
+      color: "#16a34a",
     },
   ];
 
@@ -249,7 +249,7 @@ function Slide21B() {
       <SlideFrame>
         <div className="tag">Family · VRPTW</div>
         <h2 className="title" style={{ marginTop: 28 }}>
-          Time windows appear wherever a missed slot has a real cost.
+          Time windows bind whenever arriving outside an interval has a hard cost.
         </h2>
 
         <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, flex: 1 }}>
@@ -880,46 +880,46 @@ function Slide22() {
 function Slide22B() {
   const cases = [
     {
-      icon: "🛒",
-      title: "Supermarket replenishment",
-      body: "Trucks deliver goods to stores (linehaul) and collect unsold or returned items back to the warehouse (backhaul) on the same circuit — cutting empty-leg costs.",
-      tag: "Retail / distribution",
-      color: "var(--accent)",
-    },
-    {
       icon: "🍺",
-      title: "Beverage distribution",
-      body: "Full kegs and bottles are delivered to bars and restaurants; empty containers are collected on the return trip. A classic VRPB setup: linehauls out, backhauls in.",
-      tag: "Food & beverage",
+      title: "Keg route — stacking constraint",
+      body: "Full kegs load at the rear of the truck; empty kegs stack on top. A backhaul stop mid-route would require unloading the entire stack to reach the fulls — physically impossible without a full road-side re-sort.",
+      tag: "Beverage distribution",
       color: "#ca8a04",
     },
     {
-      icon: "🏭",
-      title: "Industrial parts & scrap",
-      body: "Finished components ship from factory to assembly plants (linehaul). The same vehicles bring back defective parts, pallets, or scrap metal (backhaul).",
-      tag: "Manufacturing",
+      icon: "🧺",
+      title: "Hotel linen service",
+      body: "Clean linen is delivered on sealed trolleys (linehaul). Dirty linen is collected only after the full delivery loop — mixing the two in the hold violates hygiene regulations.",
+      tag: "Hospitality",
+      color: "var(--accent)",
+    },
+    {
+      icon: "⛽",
+      title: "LPG cylinder route",
+      body: "Safety regulation mandates that all full cylinders are unloaded before any empties are loaded onto the same vehicle. A mid-route backhaul creates a pressure-safety violation.",
+      tag: "Industrial gas",
       color: "#0ea5e9",
     },
     {
-      icon: "💊",
-      title: "Pharmaceutical returns",
-      body: "Pharmacies receive drug deliveries (linehaul) and hand back expired or recalled stock for proper disposal (backhaul) — regulated reverse logistics on a single tour.",
-      tag: "Healthcare",
-      color: "#e05c5c",
+      icon: "🥖",
+      title: "Bakery tray logistics",
+      body: "Bread is delivered on food-grade trays (linehaul). Used trays are collected only once every delivery is placed (backhaul). A mixed load contaminates fresh product — unacceptable under food-safety law.",
+      tag: "Food production",
+      color: "#16a34a",
     },
     {
-      icon: "📬",
-      title: "Postal services",
-      body: "Letter carriers deliver parcels to addresses (linehaul) and collect outgoing mail and packages from drop-off points (backhaul) during the same daily round.",
-      tag: "Postal / courier",
+      icon: "🏗️",
+      title: "Construction supply & debris",
+      body: "Materials are delivered to building sites (linehaul) before the truck collects construction waste on the return leg (backhaul). Loading rubble alongside materials risks product damage and regulatory fines.",
+      tag: "Construction",
       color: "#8b5cf6",
     },
     {
-      icon: "🔋",
-      title: "EV battery swap",
-      body: "Logistics vans drop off charged battery packs at swap stations (linehaul) and retrieve depleted packs for recharging at the depot (backhaul) on a shared route.",
-      tag: "Green mobility",
-      color: "#16a34a",
+      icon: "🔧",
+      title: "Spare parts & equipment return",
+      body: "Factory trucks deliver replacement parts to workshops (linehaul), then collect broken machinery for depot repair (backhaul). The precedence mirrors the physical workflow: install first, dismantle after.",
+      tag: "Industrial maintenance",
+      color: "#e05c5c",
     },
   ];
 
@@ -928,7 +928,7 @@ function Slide22B() {
       <SlideFrame>
         <div className="tag">Family · VRPB</div>
         <h2 className="title" style={{ marginTop: 28 }}>
-          Backhauls arise whenever the return trip can carry load.
+          Linehauls-first arises whenever mixing delivery and pickup physically or legally fails.
         </h2>
 
         <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, flex: 1 }}>
@@ -1596,46 +1596,46 @@ function Slide23() {
 function Slide23B() {
   const cases = [
     {
+      icon: "🫀",
+      title: "Organ transplant logistics",
+      body: "An organ is collected from the donor hospital (origin) and must reach the specific recipient hospital (destination) within viability hours. The O-D pairing is medically fixed — no substitution is possible.",
+      tag: "Healthcare",
+      color: "#e05c5c",
+    },
+    {
       icon: "🚖",
-      title: "Ride-sharing & taxi dispatch",
-      body: "Each ride request pairs a passenger pickup location with a drop-off. The vehicle must visit the origin before the destination — the canonical VRPPD structure.",
+      title: "Ride-hailing dispatch",
+      body: "Passenger A must travel from her pickup point to her specific destination. The vehicle cannot drop her at a generic endpoint — the O-D pair is contractually fixed per request.",
       tag: "Mobility as a service",
       color: "var(--accent)",
     },
     {
-      icon: "📦",
-      title: "Courier same-day delivery",
-      body: "A parcel is collected from sender A and delivered to recipient B. Multiple requests are batched on a single vehicle route, with pickup always before delivery.",
-      tag: "Courier / express",
+      icon: "🏠",
+      title: "Moving company",
+      body: "Each piece of furniture moves from the old address (origin) to the new address (destination). The same vehicle handles both ends; no item can be staged at a third-party depot.",
+      tag: "Relocation services",
       color: "#0ea5e9",
     },
     {
-      icon: "🏥",
-      title: "Dial-a-Ride (DARP)",
-      body: "Non-emergency medical transport: patients are picked up at home and brought to clinics, then collected again after their appointment. Time windows tighten the pairing.",
-      tag: "Healthcare transport",
-      color: "#e05c5c",
-    },
-    {
-      icon: "🚛",
-      title: "Less-than-truckload (LTL) freight",
-      body: "Partial loads from multiple shippers are consolidated on one truck. Each shipment has a pickup terminal and a delivery terminal — multiple O-D pairs per tour.",
-      tag: "Freight / logistics",
-      color: "#ca8a04",
-    },
-    {
-      icon: "♻️",
-      title: "Container repositioning",
-      body: "Empty shipping containers are picked up at surplus depots and delivered to ports or warehouses with shortages. The pairing constraint links each surplus to a deficit.",
-      tag: "Port / intermodal",
+      icon: "🛴",
+      title: "Micro-mobility rebalancing",
+      body: "A scooter is moved from an overcrowded station (origin) to an empty one (destination). Each unit has a fixed O-D pair; two units going to the same destination are still two separate requests.",
+      tag: "Urban mobility",
       color: "#16a34a",
     },
     {
-      icon: "🛵",
-      title: "Food delivery platforms",
-      body: "Each order is picked up at a restaurant and delivered to a customer address. Batching multiple orders on one courier creates a small VRPPD instance in real time.",
-      tag: "On-demand food",
+      icon: "📚",
+      title: "Inter-library book loan",
+      body: "A reserved copy travels from the holding branch (origin) to the requesting branch (destination). The pairing is per copy — the same title at a different branch is a different request.",
+      tag: "Public libraries",
       color: "#8b5cf6",
+    },
+    {
+      icon: "📜",
+      title: "Legal document courier",
+      body: "Sealed court documents are collected from the courthouse (origin) and delivered to a specific law firm (destination). Chain-of-custody rules forbid intermediate handling — one vehicle, one O-D pair.",
+      tag: "Legal / judicial",
+      color: "#ca8a04",
     },
   ];
 
@@ -1644,7 +1644,7 @@ function Slide23B() {
       <SlideFrame>
         <div className="tag">Family · VRPPD</div>
         <h2 className="title" style={{ marginTop: 28 }}>
-          Pickup-and-delivery arises wherever origin and destination are paired.
+          Paired O-D requests arise wherever an item or person must reach a specific destination.
         </h2>
 
         <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, flex: 1 }}>

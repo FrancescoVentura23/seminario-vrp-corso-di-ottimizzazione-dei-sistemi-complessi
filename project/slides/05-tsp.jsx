@@ -1314,15 +1314,105 @@ function SlideTSPLazy() {
 
 
 function SlideTSPKeyIdentity() {
+  const [activeVertex, setActiveVertex] = React.useState(null);
+  const [animKey, setAnimKey] = React.useState(0);
+  const btnsRef = React.useRef(null);
+  const sectionRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (!el.hasAttribute('data-deck-active')) setActiveVertex(null);
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
+    return () => obs.disconnect();
+  }, []);
+
+  React.useEffect(() => {
+    const el = btnsRef.current;
+    if (!el) return;
+    const handler = (e) => {
+      const btn = e.target.closest('[data-vertex]');
+      if (!btn || !el.contains(btn)) return;
+      const v = btn.getAttribute('data-vertex');
+      setActiveVertex(prev => prev === v ? null : v);
+      setAnimKey(k => k + 1);
+    };
+    el.addEventListener('click', handler);
+    return () => el.removeEventListener('click', handler);
+  }, []);
+
+  const r = 30;
+
+  // Same positions as SlideTSPDFJ (slide 31)
+  const NS = [
+    { id: 'v0', label: 'v₀', x: 200, y: 230 },
+    { id: 'v1', label: 'v₁', x: 430, y: 160 },
+    { id: 'v2', label: 'v₂', x: 500, y: 360 },
+    { id: 'v6', label: 'v₆', x: 260, y: 410 },
+  ];
+  const NT = [
+    { id: 'v3', label: 'v₃', x: 760, y: 240 },
+    { id: 'v4', label: 'v₄', x: 920, y: 420 },
+    { id: 'v5', label: 'v₅', x: 740, y: 560 },
+  ];
+  const nodeMap = Object.fromEntries([...NS, ...NT].map(n => [n.id, n]));
+
+  const seg = (aId, bId) => {
+    const a = nodeMap[aId], b = nodeMap[bId];
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const len = Math.hypot(dx, dy);
+    const ux = dx / len, uy = dy / len;
+    return { x1: a.x + ux * r, y1: a.y + uy * r, x2: b.x - ux * r, y2: b.y - uy * r };
+  };
+
+  // Post-animation state of SlideTSPDFJ: S/T arcs minus v₁→v₂ and v₅→v₃,
+  // plus the two black crossing arcs v₁→v₃ and v₅→v₂.
+  const ARCS = [
+    { from: 'v0', to: 'v1', color: 'var(--accent)',   markerId: 'ki-acc'  },
+    { from: 'v2', to: 'v6', color: 'var(--accent)',   markerId: 'ki-acc'  },
+    { from: 'v6', to: 'v0', color: 'var(--accent)',   markerId: 'ki-acc'  },
+    { from: 'v3', to: 'v4', color: 'var(--accent-2)', markerId: 'ki-acc2' },
+    { from: 'v4', to: 'v5', color: 'var(--accent-2)', markerId: 'ki-acc2' },
+    { from: 'v1', to: 'v3', color: 'var(--ink)',      markerId: 'ki-ink'  },
+    { from: 'v5', to: 'v2', color: 'var(--ink)',      markerId: 'ki-ink'  },
+  ];
+
+  const incident = (arc, vid) => vid && (arc.from === vid || arc.to === vid);
+
+  const formulaData = {
+    v1: { label: 'i = v₁', tex: "x^*_{v_0,v_1} + x^*_{v_1,v_3} = 1 + 1 = 2" },
+    v0: { label: 'i = v₀', tex: "x^*_{v_0,v_1} + x^*_{v_6,v_0} = 1 + 1 = 2" },
+  };
+
+  const btnStyle = (vid) => ({
+    cursor: 'pointer',
+    userSelect: 'none',
+    flex: 1,
+    padding: '9px 0',
+    textAlign: 'center',
+    border: `2px solid ${activeVertex === vid ? 'var(--accent)' : 'var(--line)'}`,
+    borderRadius: 4,
+    background: activeVertex === vid ? 'rgba(107,74,245,0.1)' : 'var(--paper)',
+    fontFamily: 'var(--font-mono)',
+    fontSize: 21,
+    color: activeVertex === vid ? 'var(--accent)' : 'var(--ink-2)',
+    fontWeight: activeVertex === vid ? 700 : 500,
+    transition: 'all 220ms ease',
+  });
+
   return (
-    <section className="slide" data-label="The key identity: relating cuts to arcs">
+    <section ref={sectionRef} className="slide" data-label="The key identity: relating cuts to arcs">
       <SlideFrame>
         <div className="tag">TSP · Separation oracle foundation</div>
         <h2 className="title" style={{ marginTop: 28 }}>
           The <em style={{ color: "var(--accent)" }}>key identity</em>: relating cuts to arc weights.
         </h2>
 
-        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, flex: 1, alignItems: "center" }}>
+        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, flex: 1, alignItems: "stretch", minHeight: 0 }}>
+
+          {/* ---- Left column: mathematical explanation ---- */}
           <div style={{ display: "flex", flexDirection: "column", gap: 24, justifyContent: "center" }}>
             <div className="lede" style={{ fontSize: 28, lineHeight: 1.35 }}>
               How do degree constraints on every vertex relate to the weights crossing a subset boundary?
@@ -1356,68 +1446,111 @@ function SlideTSPKeyIdentity() {
             </div>
           </div>
 
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 28, display: "flex", flexDirection: "column", gap: 18, justifyContent: "center" }}>
-            <svg viewBox="0 0 800 600" style={{ width: "100%", height: "100%", display: "block" }}>
-              <defs>
-                <pattern id="dotgrid-key" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-                  <circle cx="1" cy="1" r="1" fill="var(--line)"/>
-                </pattern>
-                <marker id="arrow-accent-key" markerUnits="userSpaceOnUse"
-                        viewBox="0 0 16 12" markerWidth="16" markerHeight="12"
-                        refX="16" refY="6" orient="auto">
-                  <path d="M0,0 L16,6 L0,12 z" fill="var(--accent)"/>
-                </marker>
-                <marker id="arrow-ink-key" markerUnits="userSpaceOnUse"
-                        viewBox="0 0 18 14" markerWidth="18" markerHeight="14"
-                        refX="18" refY="7" orient="auto">
-                  <path d="M0,0 L18,7 L0,14 z" fill="var(--ink)"/>
-                </marker>
-              </defs>
+          {/* ---- Right column: interactive graph ---- */}
+          <div ref={btnsRef} style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 18, display: "flex", flexDirection: "column", gap: 10 }}>
 
-              <rect width={800} height={600} fill="url(#dotgrid-key)" opacity={0.5}/>
+            <div style={{ flex: 1, minHeight: 0 }}>
+              <svg viewBox="0 0 1050 720" style={{ width: "100%", height: "100%", display: "block", overflow: "visible" }}>
+                <defs>
+                  <pattern id="dotgrid-ki" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <circle cx="1" cy="1" r="1" fill="var(--line)"/>
+                  </pattern>
+                  <marker id="ki-acc" markerUnits="userSpaceOnUse" viewBox="0 0 16 12"
+                          markerWidth="16" markerHeight="12" refX="16" refY="6" orient="auto">
+                    <path d="M0,0 L16,6 L0,12 z" fill="var(--accent)"/>
+                  </marker>
+                  <marker id="ki-acc2" markerUnits="userSpaceOnUse" viewBox="0 0 16 12"
+                          markerWidth="16" markerHeight="12" refX="16" refY="6" orient="auto">
+                    <path d="M0,0 L16,6 L0,12 z" fill="var(--accent-2)"/>
+                  </marker>
+                  <marker id="ki-ink" markerUnits="userSpaceOnUse" viewBox="0 0 18 14"
+                          markerWidth="18" markerHeight="14" refX="18" refY="7" orient="auto">
+                    <path d="M0,0 L18,7 L0,14 z" fill="var(--ink)"/>
+                  </marker>
+                </defs>
 
-              <ellipse cx={250} cy={300} rx={140} ry={130}
-                       fill="var(--accent)" fillOpacity={0.08}
-                       stroke="var(--accent)" strokeWidth={2.5} strokeDasharray="5 4"/>
-              <text x={120} y={160} fontFamily="var(--font-display)"
-                    fontStyle="italic" fontSize={48} fill="var(--accent)">S</text>
+                <rect width={1050} height={720} fill="url(#dotgrid-ki)" opacity={0.5}/>
 
-              <ellipse cx={550} cy={300} rx={140} ry={130}
-                       fill="var(--accent-2)" fillOpacity={0.08}
-                       stroke="var(--accent-2)" strokeWidth={2.5} strokeDasharray="5 4"/>
-              <text x={700} y={160} textAnchor="end" fontFamily="var(--font-display)"
-                    fontStyle="italic" fontSize={48} fill="var(--accent-2)">V \ S</text>
+                <ellipse cx={350} cy={290} rx={230} ry={175}
+                         fill="var(--accent)" fillOpacity={0.06}
+                         stroke="var(--accent)" strokeWidth={2} strokeDasharray="6 5"/>
+                <text x={150} y={120} fontFamily="var(--font-display)"
+                      fontStyle="italic" fontSize={40} fill="var(--accent)">S</text>
 
-              {/* Arcs first (so they render behind nodes) */}
-              <line x1={200} y1={250} x2={300} y2={300} stroke="var(--accent)" strokeWidth={3} markerEnd="url(#arrow-accent-key)"/>
-              <line x1={300} y1={300} x2={200} y2={250} stroke="var(--accent)" strokeWidth={3} markerEnd="url(#arrow-accent-key)" strokeDasharray="8 5"/>
-              <line x1={200} y1={250} x2={600} y2={280} stroke="var(--ink)" strokeWidth={3.5} markerEnd="url(#arrow-ink-key)"/>
+                <ellipse cx={830} cy={405} rx={200} ry={240}
+                         fill="var(--accent-2)" fillOpacity={0.06}
+                         stroke="var(--accent-2)" strokeWidth={2} strokeDasharray="6 5"/>
+                <text x={1010} y={175} textAnchor="end" fontFamily="var(--font-display)"
+                      fontStyle="italic" fontSize={40} fill="var(--accent-2)">V \ S</text>
 
-              {/* Nodes on top of arcs */}
-              <g>
-                <circle cx={200} cy={250} r={20} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
-                <text x={200} y={260} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={20} fontWeight={600} fill="var(--ink)">i</text>
-              </g>
+                {/* Arcs rendered before nodes so nodes sit on top */}
+                {ARCS.map((arc, i) => {
+                  const s = seg(arc.from, arc.to);
+                  const hi = incident(arc, activeVertex);
+                  const dim = activeVertex && !hi;
+                  return (
+                    <line key={i} x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2}
+                          stroke={arc.color}
+                          strokeLinecap="butt"
+                          markerEnd={`url(#${arc.markerId})`}
+                          style={{
+                            strokeWidth: hi ? 7 : 4,
+                            opacity: dim ? 0.13 : 1,
+                            transition: "opacity 240ms ease, stroke-width 240ms ease",
+                          }}/>
+                  );
+                })}
 
-              <g>
-                <circle cx={300} cy={300} r={20} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
-                <text x={300} y={310} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={20} fontWeight={600} fill="var(--ink)">j</text>
-              </g>
+                {/* Nodes */}
+                {[...NS, ...NT].map((n) => {
+                  const isActive = n.id === activeVertex;
+                  const isAdj = activeVertex && !isActive &&
+                    ARCS.some(a => incident(a, activeVertex) && (a.from === n.id || a.to === n.id));
+                  const dim = activeVertex && !isActive && !isAdj;
+                  return (
+                    <g key={n.id} style={{ opacity: dim ? 0.22 : 1, transition: "opacity 240ms ease" }}>
+                      <circle cx={n.x} cy={n.y} r={r}
+                              fill={isActive ? "rgba(107,74,245,0.22)" : "var(--paper)"}
+                              stroke={isActive ? "var(--accent)" : "var(--ink)"}
+                              strokeWidth={isActive ? 4 : 3}/>
+                      <text x={n.x} y={n.y + 9} textAnchor="middle"
+                            fontFamily="var(--font-mono)" fontSize={22} fontWeight={600}
+                            fill={isActive ? "var(--accent)" : "var(--ink)"}>
+                        {n.label}
+                      </text>
+                    </g>
+                  );
+                })}
+              </svg>
+            </div>
 
-              <g>
-                <circle cx={600} cy={280} r={20} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
-                <text x={600} y={290} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={20} fontWeight={600} fill="var(--ink)">k</text>
-              </g>
+            {/* Vertex selector buttons */}
+            <div style={{ display: "flex", gap: 10 }}>
+              <div data-vertex="v1" style={btnStyle('v1')}>i = v₁</div>
+              <div data-vertex="v0" style={btnStyle('v0')}>i = v₀</div>
+            </div>
 
-              {/* Arc labels */}
-              <text x={245} y={235} fontFamily="var(--font-mono)" fontSize={18} fill="var(--accent)" fontWeight={600}>x*ᵢⱼ</text>
-              <text x={245} y={335} fontFamily="var(--font-mono)" fontSize={18} fill="var(--accent)" fontWeight={600}>x*ⱼᵢ</text>
-              <text x={390} y={260} fontFamily="var(--font-mono)" fontSize={18} fill="var(--ink)" fontWeight={600}>x*ᵢₖ ∈ δ(S)</text>
+            {/* Degree-constraint formula — animates in on click */}
+            {activeVertex && formulaData[activeVertex] && (
+              <div key={`ki-formula-${animKey}`}
+                   style={{
+                     background: "var(--paper)",
+                     border: "2px solid var(--accent)",
+                     borderRadius: 6,
+                     padding: "10px 16px",
+                     textAlign: "center",
+                     animation: "fadeUp 350ms both ease-out",
+                   }}>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--accent)",
+                              letterSpacing: "0.1em", marginBottom: 6 }}>
+                  {formulaData[activeVertex].label} — degree constraint
+                </div>
+                <div style={{ fontSize: 26 }}>
+                  <TeX>{formulaData[activeVertex].tex}</TeX>
+                </div>
+              </div>
+            )}
 
-              <text x={400} y={550} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={18} fill="var(--ink-3)">
-                Degree constraints at every vertex sum to reveal the structure of cuts.
-              </text>
-            </svg>
           </div>
         </div>
       </SlideFrame>

@@ -463,6 +463,8 @@ function Slide17() {
     ["20", "1.2 · 10¹⁷",    "centuries"],
     ["25", "3.1 · 10²²",    "→ heat death"],
   ];
+  // Green → amber → red, matching the gradient used in Slide17AGrowth (slide 23)
+  const rowColors = ["#16a34a", "#65a30d", "#ca8a04", "#ea580c", "#b8322e"];
   return (
     <section className="slide" data-label="CVRP is NP-hard">
       <SlideFrame>
@@ -509,9 +511,9 @@ function Slide17() {
               <tbody>
                 {rows.map((r, i) => (
                   <tr key={i} style={{ borderTop: "1px solid var(--line)" }}>
-                    <td style={{ padding: "14px 20px", color: "var(--ink)" }}>{r[0]}</td>
+                    <td style={{ padding: "14px 20px", color: "var(--ink)", borderLeft: `4px solid ${rowColors[i]}` }}>{r[0]}</td>
                     <td style={{ padding: "14px 20px", textAlign: "right" }}>{r[1]}</td>
-                    <td style={{ padding: "14px 20px", textAlign: "right", color: i >= 3 ? "var(--accent-2)" : "var(--ink-3)" }}>{r[2]}</td>
+                    <td style={{ padding: "14px 20px", textAlign: "right", color: rowColors[i], fontWeight: 600 }}>{r[2]}</td>
                   </tr>
                 ))}
               </tbody>

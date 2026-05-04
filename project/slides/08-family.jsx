@@ -712,48 +712,157 @@ function Slide22() {
 
 
 function Slide23() {
+  const [animKey, setAnimKey] = React.useState(0);
+  const sectionRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (el.hasAttribute('data-deck-active')) {
+        setAnimKey(k => k + 1);
+      } else {
+        setAnimKey(0);
+      }
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
+    return () => obs.disconnect();
+  }, []);
+
+  // Depot at center, 5 origin–destination pairs distributed around it
+  const depot = { x: 600, y: 450 };
+  const pairs = [
+    { P: { x: 260, y: 200 }, D: { x: 550, y: 330 } },  // pair 1 — upper-left → centre
+    { P: { x: 450, y: 140 }, D: { x: 340, y: 360 } },  // pair 2 — top → mid-left
+    { P: { x: 760, y: 160 }, D: { x: 700, y: 380 } },  // pair 3 — upper-right → centre
+    { P: { x: 970, y: 250 }, D: { x: 940, y: 460 } },  // pair 4 — right corridor
+    { P: { x: 350, y: 720 }, D: { x: 850, y: 750 } },  // pair 5 — bottom span
+  ];
+  const sub = ["₁","₂","₃","₄","₅"];
+
+  // Vehicle 1 (route-1) — pairs 1 & 2 interleaved: depot → P₁ → P₂ → D₂ → D₁ → depot
+  const route1 = "600,450 260,200 450,140 340,360 550,330 600,450";
+  const len1 = 1210;
+  // Vehicle 2 (route-3) — pairs 3 & 4 interleaved: depot → P₃ → P₄ → D₄ → D₃ → depot
+  const route2 = "600,450 760,160 970,250 940,460 700,380 600,450";
+  const len2 = 1150;
+  // Vehicle 3 (route-2) — pair 5 alone: depot → P₅ → D₅ → depot
+  const route3 = "600,450 350,720 850,750 600,450";
+  const len3 = 1260;
+
   return (
-    <section className="slide" data-label="VRPPD">
+    <section ref={sectionRef} className="slide" data-label="VRPPD">
       <SlideFrame>
         <div className="tag">Family</div>
-        <h2 className="title" style={{ marginTop: 28 }}>VRP with Pickup & Delivery — coupled origin-destination pairs.</h2>
+        <h2 className="title" style={{ marginTop: 28 }}>VRP with Pickup &amp; Delivery — coupled origin-destination pairs.</h2>
 
-        <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 60, flex: 1 }}>
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24 }}>
-            <svg viewBox="0 0 900 620" style={{ width: "100%", height: "100%" }}>
-              <rect x={420-16} y={320-16} width={32} height={32} fill="var(--depot)"/>
-              {/* Route visiting P1 -> D1 -> P2 -> D2 -> depot */}
-              <polyline points="420,320 240,200 600,160 520,440 720,380 420,320"
-                        fill="none" stroke="var(--route-4)" strokeWidth={3.5}/>
-              {/* Dashed pair-links */}
-              <line x1={240} y1={200} x2={520} y2={440} stroke="var(--accent-2)" strokeWidth={1.8} strokeDasharray="4 5" opacity={0.7}/>
-              <line x1={600} y1={160} x2={720} y2={380} stroke="var(--accent-2)" strokeWidth={1.8} strokeDasharray="4 5" opacity={0.7}/>
-              {/* P nodes */}
-              {[[240,200,"P₁"],[600,160,"P₂"]].map(([x,y,l],i) =>
-                <g key={`P${i}`}>
-                  <circle cx={x} cy={y} r={16} fill="var(--accent)" stroke="var(--ink)" strokeWidth={2}/>
-                  <text x={x} y={y+5} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill="var(--paper)" fontWeight={700}>{l}</text>
+        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 60, flex: 1 }}>
+
+          {/* LEFT — animated graph: 5 P–D pairs, 3 vehicles, dashed pair-links */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24, display: "flex", flexDirection: "column" }}>
+            <svg key={animKey} viewBox="0 0 1200 900"
+                 style={{ width: "100%", flex: 1, display: "block" }}>
+
+              {/* Pair-link dashed lines — drawn first so routes paint over them.
+                  Low opacity keeps them as a quiet visual layer (the constraint),
+                  while the colourful routes carry the eye. */}
+              {pairs.map((pair, i) => (
+                <line key={`link-${i}`}
+                      x1={pair.P.x} y1={pair.P.y} x2={pair.D.x} y2={pair.D.y}
+                      stroke="var(--accent-2)" strokeWidth={1.8}
+                      strokeDasharray="6 6" opacity={0.4}/>
+              ))}
+
+              {/* Routes — animated drawPath, staggered so the eye follows one
+                  vehicle at a time before all three coexist. */}
+              <polyline points={route1} fill="none" stroke="var(--route-1)" strokeWidth={5.5}
+                        strokeLinejoin="round" strokeLinecap="round"
+                        className="anim-draw"
+                        style={{ "--len": len1, animation: "drawPath 1300ms both ease-out" }}/>
+              <polyline points={route2} fill="none" stroke="var(--route-3)" strokeWidth={5.5}
+                        strokeLinejoin="round" strokeLinecap="round"
+                        className="anim-draw"
+                        style={{ "--len": len2, animation: "drawPath 1300ms both ease-out 1400ms" }}/>
+              <polyline points={route3} fill="none" stroke="var(--route-2)" strokeWidth={5.5}
+                        strokeLinejoin="round" strokeLinecap="round"
+                        className="anim-draw"
+                        style={{ "--len": len3, animation: "drawPath 1100ms both ease-out 2800ms" }}/>
+
+              {/* Depot — black square with paper "0" */}
+              <rect x={depot.x - 18} y={depot.y - 18} width={36} height={36}
+                    fill="var(--depot)" rx={2}/>
+              <rect x={depot.x - 24} y={depot.y - 24} width={48} height={48}
+                    fill="none" stroke="var(--depot)" strokeWidth={2} rx={2}/>
+              <text x={depot.x} y={depot.y + 6} textAnchor="middle"
+                    fontFamily="var(--font-mono)" fontSize={18}
+                    fill="var(--paper)" fontWeight={700}>0</text>
+
+              {/* Pickup nodes — accent-filled circles (always visible) */}
+              {pairs.map((pair, i) => (
+                <g key={`P-${i}`}>
+                  <circle cx={pair.P.x} cy={pair.P.y} r={22}
+                          fill="var(--accent)" stroke="var(--ink)" strokeWidth={2.5}/>
+                  <text x={pair.P.x} y={pair.P.y + 6} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={18} fontWeight={700}
+                        fill="var(--paper)">{"P" + sub[i]}</text>
                 </g>
-              )}
-              {/* D nodes */}
-              {[[520,440,"D₁"],[720,380,"D₂"]].map(([x,y,l],i) =>
-                <g key={`D${i}`}>
-                  <circle cx={x} cy={y} r={16} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
-                  <text x={x} y={y+5} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill="var(--ink)" fontWeight={700}>{l}</text>
+              ))}
+
+              {/* Delivery nodes — paper-filled circles (always visible) */}
+              {pairs.map((pair, i) => (
+                <g key={`D-${i}`}>
+                  <circle cx={pair.D.x} cy={pair.D.y} r={22}
+                          fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
+                  <text x={pair.D.x} y={pair.D.y + 6} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={18} fontWeight={700}
+                        fill="var(--ink)">{"D" + sub[i]}</text>
                 </g>
-              )}
+              ))}
             </svg>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 25, color: "var(--ink-3)", marginTop: 10 }}>
-              P = pickup · D = delivery · dashed = pairing constraint
+
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 17, color: "var(--ink-3)", marginTop: 12, display: "flex", flexWrap: "wrap", gap: 14, alignItems: "center" }}>
+              <span><span style={{ display: "inline-block", width: 14, height: 14, borderRadius: "50%", background: "var(--accent)", border: "1.5px solid var(--ink)", verticalAlign: "middle", marginRight: 6 }}/>P = pickup</span>
+              <span><span style={{ display: "inline-block", width: 14, height: 14, borderRadius: "50%", background: "var(--paper)", border: "1.5px solid var(--ink)", verticalAlign: "middle", marginRight: 6 }}/>D = delivery</span>
+              <span><span style={{ display: "inline-block", width: 22, height: 0, borderTop: "2px dashed var(--accent-2)", verticalAlign: "middle", marginRight: 6, opacity: 0.7 }}/>pairing constraint</span>
+              <span style={{ marginLeft: "auto", color: "var(--ink-2)" }}>3 vehicles · 5 requests</span>
             </div>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 24 }}>
+          {/* RIGHT — explanatory column */}
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 18 }}>
             <div className="lede">
-              Each request has an <em>origin Oᵢ</em> and a <em>destination Dᵢ</em>: same vehicle, and <strong>Oᵢ visited before Dᵢ</strong>.
+              Every transportation request couples an <em>origin <TeX>{"O_i"}</TeX></em> with a <em>destination <TeX>{"D_i"}</TeX></em>: the load travels between the two on the <strong>same vehicle</strong>, and the pickup is served strictly before the drop-off.
             </div>
-            <div className="body small" style={{ color: "var(--ink-3)" }}>
-              The archetype of ride-sharing, dial-a-ride, and courier dispatch.
+
+            {/* Two definition cards mirroring the colour code on the chart */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+              <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "12px 16px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                  <span style={{ display: "inline-flex", width: 30, height: 30, borderRadius: "50%", background: "var(--accent)", border: "1.5px solid var(--ink)", color: "var(--paper)", fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 16, alignItems: "center", justifyContent: "center" }}>P</span>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: 24 }}>Pickup <TeX>{"O_i"}</TeX></div>
+                </div>
+                <div style={{ fontSize: 20, color: "var(--ink-2)", lineHeight: 1.3 }}>
+                  Where the load is <em>collected</em> — vehicle load rises by <TeX>{"d_i"}</TeX>.
+                </div>
+              </div>
+              <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "12px 16px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                  <span style={{ display: "inline-flex", width: 30, height: 30, borderRadius: "50%", background: "var(--paper)", border: "1.5px solid var(--ink)", color: "var(--ink)", fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 16, alignItems: "center", justifyContent: "center" }}>D</span>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: 24 }}>Delivery <TeX>{"D_i"}</TeX></div>
+                </div>
+                <div style={{ fontSize: 20, color: "var(--ink-2)", lineHeight: 1.3 }}>
+                  Where the same load is <em>dropped off</em> — load falls by <TeX>{"d_i"}</TeX>.
+                </div>
+              </div>
+            </div>
+
+            {/* The pairing rule — heart of VRPPD */}
+            <div style={{ fontSize: 22, background: "var(--paper-2)", border: "1px solid var(--line)", borderLeft: "4px solid var(--accent)", padding: "14px 20px", lineHeight: 1.4 }}>
+              <strong>Pairing rule:</strong> for every request <TeX>{"i"}</TeX>, the same vehicle visits both <TeX>{"O_i"}</TeX> and <TeX>{"D_i"}</TeX>, with <TeX>{"O_i"}</TeX> served before <TeX>{"D_i"}</TeX>. Capacity must hold on every leg.
+            </div>
+
+            <div className="body small" style={{ color: "var(--ink-3)", lineHeight: 1.4 }}>
+              Real-world archetypes — courier dispatch, less-than-truckload (LTL) freight, ride-sharing platforms, and the <em>Dial-a-Ride Problem</em> when passengers replace cargo and tight time windows enter the formulation. Unlike VRPB, where the customer set splits into two precedence-ordered classes, here the precedence is <em>per request</em>: a single route can interleave several pickups and several deliveries, as long as each <TeX>{"O_i"}</TeX> is visited before its own <TeX>{"D_i"}</TeX>.
             </div>
           </div>
         </div>

@@ -636,7 +636,7 @@ function Slide22() {
             </div>
 
             <div className="body small" style={{ color: "var(--ink-3)" }}>
-              The precedence reflects physical loading constraints: rearranging the cargo mid-route is costly or impossible.
+              The precedence reflects physical loading constraints. The truck departs with all delivery goods stacked at the back of the hold. Backhaul goods are loaded on top as they are collected. Serving a linehaul <em>after</em> a backhaul would require unloading the already-collected goods to reach the deliveries underneath — costly or impossible with standard vehicles.
             </div>
           </div>
         </div>

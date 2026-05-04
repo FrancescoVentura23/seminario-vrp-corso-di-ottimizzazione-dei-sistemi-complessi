@@ -346,11 +346,10 @@ function Slide22Intro() {
                         animation: "drawPath 1200ms both ease-in-out",
                         animationDelay: "2925ms",
                       }}/>
-                {/* Route 3: backhaul -> depot (return arc, curves below to avoid
-                    overlapping the forward route lines at y=230).
-                    Control point Q 405,315 → peak of curve at y≈272, between
-                    node circles (bottom y=258) and label text (y≥290). */}
-                <path d={`M ${backhaul.x},${backhaul.y} Q 405,315 ${depot.x},${depot.y}`}
+                {/* Route 3: backhaul -> depot (return arc).
+                    Control point Q 405,430 → peak of curve at y≈330,
+                    safely below all label text (max y=314). */}
+                <path d={`M ${backhaul.x},${backhaul.y} Q 405,430 ${depot.x},${depot.y}`}
                       pathLength="1"
                       fill="none"
                       stroke="var(--ink-3)" strokeWidth={2.5} strokeLinecap="round"
@@ -396,25 +395,27 @@ function Slide22Intro() {
                   ↑ loading
                 </text>
 
-                {/* Truck — outer g translates; inner g flips at 77% when returning */}
+                {/* Truck — outer g translates; middle g flips at 77%; inner g scales up */}
                 <g style={{ animation: "truckMove22Intro 6500ms forwards ease-in-out" }}>
                   <g style={{ transformOrigin: "5px -6px", animation: "truckFlip22Intro 6500ms forwards" }}>
-                    {/* cargo box (frame) */}
-                    <rect x={-30} y={-22} width={50} height={28}
-                          fill="#5b6370" stroke="var(--ink)" strokeWidth={1.5} rx={2}/>
-                    {/* cargo fill — height & y change via @keyframes */}
-                    <rect x={-29} width={48} fill="#7CC9F0"
-                          style={{ animation: "cargoFill22Intro 6500ms forwards ease-in-out" }}/>
-                    {/* cab — small darker box on the right (truck faces right) */}
-                    <polygon points="20,-22 36,-22 40,-12 40,6 20,6"
-                             fill="#3a414b" stroke="var(--ink)" strokeWidth={1.5}/>
-                    {/* windshield */}
-                    <polygon points="23,-19 33,-19 36,-11 23,-11"
-                             fill="rgba(180,230,255,0.6)"
-                             stroke="rgba(120,180,220,0.5)" strokeWidth={0.5}/>
-                    {/* wheels */}
-                    <circle cx={-16} cy={10} r={5} fill="var(--ink)"/>
-                    <circle cx={28}  cy={10} r={5} fill="var(--ink)"/>
+                    <g style={{ transform: "scale(1.6)", transformOrigin: "5px -6px" }}>
+                      {/* cargo box (frame) */}
+                      <rect x={-30} y={-22} width={50} height={28}
+                            fill="#5b6370" stroke="var(--ink)" strokeWidth={1.5} rx={2}/>
+                      {/* cargo fill — height & y change via @keyframes */}
+                      <rect x={-29} width={48} fill="#7CC9F0"
+                            style={{ animation: "cargoFill22Intro 6500ms forwards ease-in-out" }}/>
+                      {/* cab — small darker box on the right (truck faces right) */}
+                      <polygon points="20,-22 36,-22 40,-12 40,6 20,6"
+                               fill="#3a414b" stroke="var(--ink)" strokeWidth={1.5}/>
+                      {/* windshield */}
+                      <polygon points="23,-19 33,-19 36,-11 23,-11"
+                               fill="rgba(180,230,255,0.6)"
+                               stroke="rgba(120,180,220,0.5)" strokeWidth={0.5}/>
+                      {/* wheels */}
+                      <circle cx={-16} cy={10} r={5} fill="var(--ink)"/>
+                      <circle cx={28}  cy={10} r={5} fill="var(--ink)"/>
+                    </g>
                   </g>
                 </g>
               </g>

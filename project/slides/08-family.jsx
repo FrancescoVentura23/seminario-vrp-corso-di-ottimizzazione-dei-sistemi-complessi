@@ -585,49 +585,99 @@ function Slide22Load() {
 
 
 function Slide22() {
+  const [animKey, setAnimKey] = React.useState(0);
+  const sectionRef = React.useRef(null);
+
+  // Reset animation when slide leaves view
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (!el.hasAttribute('data-deck-active')) {
+        setAnimKey(0);
+      }
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
+    return () => obs.disconnect();
+  }, []);
+
+  // Depot at center + nodes arranged around
+  const depot = { x: 420, y: 300, id: 0 };
+  const nodes = [
+    depot,
+    // Linehauls (deliveries) — white circles
+    { x: 280, y: 170, id: 1, type: 'L', label: 'L₁' },
+    { x: 500, y: 140, id: 2, type: 'L', label: 'L₂' },
+    { x: 240, y: 450, id: 3, type: 'L', label: 'L₃' },
+    // Backhauls (pickups) — orange circles
+    { x: 680, y: 230, id: 4, type: 'B', label: 'B₁' },
+    { x: 620, y: 440, id: 5, type: 'B', label: 'B₂' },
+  ];
+
+  // Route 1: depot → L₁ → L₂ → B₁ → B₂ → depot
+  const route1 = "420,300 280,170 500,140 680,230 620,440 420,300";
+  const len1 = 1200;
+
+  // Route 2: depot → L₃ → depot (linehauls only)
+  const route2 = "420,300 240,450 420,300";
+  const len2 = 600;
+
   return (
-    <section className="slide" data-label="VRPB">
+    <section ref={sectionRef} className="slide" data-label="VRPB">
       <SlideFrame>
         <div className="tag">Family</div>
         <h2 className="title" style={{ marginTop: 28 }}>VRP with Backhauls — linehauls first, then backhauls.</h2>
 
         <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 60, flex: 1 }}>
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24 }}>
-            <svg viewBox="0 0 900 620" style={{ width: "100%", height: "100%" }}>
-              <rect x={420-16} y={320-16} width={32} height={32} fill="var(--depot)"/>
-              {/* Route 1: L -> L -> B -> B -> 0 */}
-              <polyline points="420,320 280,170 500,140 680,230 620,440 420,320" fill="none" stroke="var(--route-1)" strokeWidth={3.5}/>
-              {/* Linehauls (deliveries) — filled solid */}
-              {[[280,170],[500,140]].map(([x,y],i) =>
-                <g key={`L${i}`}>
-                  <circle cx={x} cy={y} r={14} fill="var(--accent-3)" stroke="var(--ink)" strokeWidth={2}/>
-                  <text x={x} y={y+5} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill="var(--paper)" fontWeight={700}>L</text>
-                </g>
-              )}
-              {/* Backhauls (pickups) */}
-              {[[680,230],[620,440]].map(([x,y],i) =>
-                <g key={`B${i}`}>
-                  <circle cx={x} cy={y} r={14} fill="var(--accent-2)" stroke="var(--ink)" strokeWidth={2}/>
-                  <text x={x} y={y+5} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill="var(--ink)" fontWeight={700}>B</text>
-                </g>
-              )}
-              {/* Second route — linehaul only */}
-              <polyline points="420,320 240,450 380,520 420,320" fill="none" stroke="var(--route-3)" strokeWidth={3.5}/>
-              {[[240,450],[380,520]].map(([x,y],i) =>
-                <g key={`L2${i}`}>
-                  <circle cx={x} cy={y} r={14} fill="var(--accent-3)" stroke="var(--ink)" strokeWidth={2}/>
-                  <text x={x} y={y+5} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill="var(--paper)" fontWeight={700}>L</text>
-                </g>
-              )}
+            <svg key={animKey} viewBox="0 0 900 620" style={{ width: "100%", height: "100%" }}>
+              {/* Route 1: mixed (L + B) — animated */}
+              <polyline points={route1} fill="none" stroke="var(--route-1)" strokeWidth={4.5}
+                        strokeLinejoin="round" strokeLinecap="round"
+                        className="anim-draw"
+                        style={{ "--len": len1, animation: "drawPath 1200ms both ease-out" }}/>
+
+              {/* Route 2: linehauls only — animated with delay */}
+              <polyline points={route2} fill="none" stroke="var(--route-3)" strokeWidth={4.5}
+                        strokeLinejoin="round" strokeLinecap="round"
+                        className="anim-draw"
+                        style={{ "--len": len2, animation: "drawPath 800ms both ease-out 1400ms" }}/>
+
+              {/* Depot */}
+              <rect x={depot.x - 16} y={depot.y - 16} width={32} height={32}
+                    fill="var(--depot)" rx={2} />
+              <rect x={depot.x - 20} y={depot.y - 20} width={40} height={40}
+                    fill="none" stroke="var(--depot)" strokeWidth={1.5} rx={2} />
+
+              {/* Nodes */}
+              {nodes.slice(1).map((n, i) => {
+                const isL = n.type === 'L';
+                return (
+                  <g key={`n-${i}`}>
+                    <circle cx={n.x} cy={n.y} r={14}
+                            fill={isL ? "var(--paper)" : "var(--accent-2)"}
+                            stroke="var(--ink)" strokeWidth={2.2}
+                            style={{ opacity: 0, animation: "fadeUp 300ms both ease-out", animationDelay: `${1500 + i * 200}ms` }}/>
+                    <text x={n.x} y={n.y + 5} textAnchor="middle"
+                          fontFamily="var(--font-mono)" fontSize={13} fontWeight={700}
+                          fill={isL ? "var(--ink)" : "var(--paper)"}
+                          style={{ opacity: 0, animation: "fadeUp 300ms both ease-out", animationDelay: `${1500 + i * 200}ms` }}>
+                      {n.label}
+                    </text>
+                  </g>
+                );
+              })}
             </svg>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 25, color: "var(--ink-3)", marginTop: 10 }}>
-              L = linehaul (delivery) · B = backhaul (pickup)
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 20, color: "var(--ink-3)", marginTop: 14 }}>
+              <span style={{ color: "var(--paper)", background: "var(--paper-2)" }}>L = linehaul (delivery, white)</span>
+              {" · "}
+              <span style={{ color: "var(--paper)", background: "var(--accent-2)" }}>B = backhaul (pickup, orange)</span>
             </div>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 24 }}>
             <div className="lede">
-              The customer set splits into two disjoint groups — linehauls <TeX>{"L"}</TeX> and backhauls <TeX>{"B"}</TeX> (see the previous slide). VRPB now adds a precedence constraint on every mixed route.
+              The customer set splits into two disjoint groups — linehauls <TeX>{"L"}</TeX> and backhauls <TeX>{"B"}</TeX> (see the previous slide). VRPB adds a precedence constraint on every mixed route.
             </div>
 
             {/* Precedence rule — the heart of VRPB */}

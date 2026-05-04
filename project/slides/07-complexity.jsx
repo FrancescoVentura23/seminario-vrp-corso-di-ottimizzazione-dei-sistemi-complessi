@@ -494,7 +494,7 @@ function Slide17() {
             </div>
           </div>
 
-          <div style={{ border: "1px solid var(--line)", display: "flex", flexDirection: "column" }}>
+          <div style={{ border: "1px solid var(--line)", display: "flex", flexDirection: "column", alignSelf: "center" }}>
             <div style={{ padding: "14px 20px", background: "var(--ink)", color: "var(--paper)", fontFamily: "var(--font-mono)", fontSize: 16, letterSpacing: "0.06em", textTransform: "uppercase" }}>
               brute-force TSP enumeration
             </div>

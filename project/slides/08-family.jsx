@@ -1171,13 +1171,17 @@ function Slide23() {
   ];
   const sub = ["₁","₂","₃","₄","₅"];
 
-  // Vehicle 1 (route-1) — pairs 1 & 2 interleaved: depot → P₁ → P₂ → D₂ → D₁ → depot
-  const route1 = "600,450 260,200 450,140 340,360 550,330 600,450";
-  const len1 = 1210;
-  // Vehicle 2 (route-3) — pairs 3 & 4 interleaved: depot → P₃ → P₄ → D₄ → D₃ → depot
+  // Vehicle 1 (route-1) — SEQUENTIAL pattern: each request finishes before the
+  // next starts (peak load = max(d₁,d₂)).
+  // depot → P₁ → D₁ → P₂ → D₂ → depot
+  const route1 = "600,450 260,200 550,330 450,140 340,360 600,450";
+  const len1 = 1480;
+  // Vehicle 2 (route-3) — INTERLEAVED pattern: both requests on board at the
+  // peak (peak load = d₃ + d₄, capacity must hold).
+  // depot → P₃ → P₄ → D₄ → D₃ → depot
   const route2 = "600,450 760,160 970,250 940,460 700,380 600,450";
   const len2 = 1150;
-  // Vehicle 3 (route-2) — pair 5 alone: depot → P₅ → D₅ → depot
+  // Vehicle 3 (route-2) — single-request route: depot → P₅ → D₅ → depot
   const route3 = "600,450 350,720 850,750 600,450";
   const len3 = 1260;
 

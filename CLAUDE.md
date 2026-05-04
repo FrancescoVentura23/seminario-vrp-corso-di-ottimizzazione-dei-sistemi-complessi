@@ -153,12 +153,12 @@ Ogni section header è una slide con `className="section-slide"`. Per modificare
 | 38 | Separation oracle — precise algorithm | `SlideTSPMinCutAlgo` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
 | 39 | Separation oracle — implementation | `SlideTSPMinCutImpl` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
 | 40 | **Part VI — CVRP** *(section header)* | `Slide11` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
-| 41 | CVRP is NP-hard | `Slide17` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
-| 42 | TSP → CVRP — capacity intro | `Slide10` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 43 | TSP → CVRP — multiple routes | `Slide10B` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 44 | Three constraints + two-index ILP | `Slide14` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
-| 45 | Depot constraints — K leave / K return | `Slide14B` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
-| 46 | r(S) and capacity-cut inequality | `Slide15` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 41 | TSP → CVRP — capacity intro | `Slide10` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 42 | TSP → CVRP — multiple routes | `Slide10B` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 43 | Three constraints + two-index ILP | `Slide14` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 44 | Depot constraints — K leave / K return | `Slide14B` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 45 | r(S) and capacity-cut inequality | `Slide15` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 46 | CVRP is NP-hard (after the model) | `Slide17` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
 | 47 | Capacity cuts — exponential blow-up | `Slide15B` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
 | 48 | Lazy capacity-cut generation (B&C) | `Slide15C` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
 | 49 | **Part VII — VRP family** *(section header)* | `Slide19` | [slides/08-family.jsx](project/slides/08-family.jsx) |

@@ -473,7 +473,7 @@ function Slide17() {
 
           <div style={{ display: "flex", flexDirection: "column", gap: 22, justifyContent: "center" }}>
             <div className="lede" style={{ fontSize: 28, lineHeight: 1.3 }}>
-              The CVRP is <em style={{ color: "var(--accent)" }}>NP-hard in the strong sense</em> — it generalises both the <em>Traveling Salesman Problem</em> (covered next, in Part V) and the <em>Bin Packing Problem</em>, each NP-hard on its own.
+              The CVRP is <em style={{ color: "var(--accent)" }}>NP-hard in the strong sense</em> — it generalises both the <em>Traveling Salesman Problem</em> (Part V, just covered) and the <em>Bin Packing Problem</em>, each NP-hard on its own.
             </div>
 
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "18px 24px" }}>
@@ -490,7 +490,7 @@ function Slide17() {
             </div>
 
             <div className="body small" style={{ color: "var(--ink-3)", lineHeight: 1.4 }}>
-              Adding capacity, time windows, multiple depots or pickup-and-delivery only makes it worse. Any exact method must therefore have super-polynomial worst-case running time.
+              Adding capacity, time windows, multiple depots or pickup-and-delivery only makes it worse — any exact method has super-polynomial worst-case running time. And as the next slide shows, even just <em>writing down</em> the standard ILP relaxation requires exponentially many capacity-cut constraints.
             </div>
           </div>
 

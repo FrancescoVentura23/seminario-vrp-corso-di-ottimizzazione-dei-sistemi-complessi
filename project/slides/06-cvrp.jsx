@@ -534,7 +534,7 @@ function Slide15B() {
           {/* Right — problem statement */}
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 26 }}>
             <div className="body" style={{ fontSize: 30, lineHeight: 1.35 }}>
-              The capacity-cut constraint must hold for <em>every</em> non-empty subset S ⊆ V \ {"{0}"} — but the number of such subsets <em>doubles</em> with each new customer.
+              Beyond NP-hardness, even the standard formulation is not polynomial-size: the capacity-cut constraint must hold for <em>every</em> non-empty subset S ⊆ V \ {"{0}"}, and the number of such subsets <em>doubles</em> with each new customer.
             </div>
             <div className="body" style={{ fontSize: 30, lineHeight: 1.35 }}>
               Even for a modest instance with <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)" }}>n = 30</span> customers, enforcing all cuts upfront would require adding <em>over a billion constraints</em> to the model before solving even the first LP relaxation.

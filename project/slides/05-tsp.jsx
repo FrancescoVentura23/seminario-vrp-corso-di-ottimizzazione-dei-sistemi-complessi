@@ -1364,19 +1364,27 @@ function SlideTSPKeyIdentity() {
     const dx = b.x - a.x, dy = b.y - a.y;
     const len = Math.hypot(dx, dy);
     const ux = dx / len, uy = dy / len;
-    return { x1: a.x + ux * r, y1: a.y + uy * r, x2: b.x - ux * r, y2: b.y - uy * r };
+    return { x1: a.x + ux * r, y1: a.y + uy * r, x2: b.x - ux * r, y2: b.y - uy * r, ux, uy };
+  };
+
+  // Arrowhead polygon — separate from the line so opacity is inherited correctly
+  // (markerEnd does not inherit CSS opacity from the referencing element).
+  const arrowPts = ({ x2, y2, ux, uy }) => {
+    const aw = 9, al = 18;
+    const bx = x2 - ux * al, by = y2 - uy * al;
+    return `${x2},${y2} ${bx - uy*aw},${by + ux*aw} ${bx + uy*aw},${by - ux*aw}`;
   };
 
   // Post-animation state of SlideTSPDFJ: S/T arcs minus v₁→v₂ and v₅→v₃,
   // plus the two black crossing arcs v₁→v₃ and v₅→v₂.
   const ARCS = [
-    { from: 'v0', to: 'v1', color: 'var(--accent)',   markerId: 'ki-acc'  },
-    { from: 'v2', to: 'v6', color: 'var(--accent)',   markerId: 'ki-acc'  },
-    { from: 'v6', to: 'v0', color: 'var(--accent)',   markerId: 'ki-acc'  },
-    { from: 'v3', to: 'v4', color: 'var(--accent-2)', markerId: 'ki-acc2' },
-    { from: 'v4', to: 'v5', color: 'var(--accent-2)', markerId: 'ki-acc2' },
-    { from: 'v1', to: 'v3', color: 'var(--ink)',      markerId: 'ki-ink'  },
-    { from: 'v5', to: 'v2', color: 'var(--ink)',      markerId: 'ki-ink'  },
+    { from: 'v0', to: 'v1', color: 'var(--accent)'   },
+    { from: 'v2', to: 'v6', color: 'var(--accent)'   },
+    { from: 'v6', to: 'v0', color: 'var(--accent)'   },
+    { from: 'v3', to: 'v4', color: 'var(--accent-2)' },
+    { from: 'v4', to: 'v5', color: 'var(--accent-2)' },
+    { from: 'v1', to: 'v3', color: 'var(--ink)'      },
+    { from: 'v5', to: 'v2', color: 'var(--ink)'      },
   ];
 
   const incident = (arc, vid) => vid && (arc.from === vid || arc.to === vid);
@@ -1459,18 +1467,6 @@ function SlideTSPKeyIdentity() {
                   <pattern id="dotgrid-ki" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
                     <circle cx="1" cy="1" r="1" fill="var(--line)"/>
                   </pattern>
-                  <marker id="ki-acc" markerUnits="userSpaceOnUse" viewBox="0 0 16 12"
-                          markerWidth="16" markerHeight="12" refX="16" refY="6" orient="auto">
-                    <path d="M0,0 L16,6 L0,12 z" fill="var(--accent)"/>
-                  </marker>
-                  <marker id="ki-acc2" markerUnits="userSpaceOnUse" viewBox="0 0 16 12"
-                          markerWidth="16" markerHeight="12" refX="16" refY="6" orient="auto">
-                    <path d="M0,0 L16,6 L0,12 z" fill="var(--accent-2)"/>
-                  </marker>
-                  <marker id="ki-ink" markerUnits="userSpaceOnUse" viewBox="0 0 18 14"
-                          markerWidth="18" markerHeight="14" refX="18" refY="7" orient="auto">
-                    <path d="M0,0 L18,7 L0,14 z" fill="var(--ink)"/>
-                  </marker>
                 </defs>
 
                 <rect width={1050} height={720} fill="url(#dotgrid-ki)" opacity={0.5}/>
@@ -1487,21 +1483,34 @@ function SlideTSPKeyIdentity() {
                 <text x={1010} y={175} textAnchor="end" fontFamily="var(--font-display)"
                       fontStyle="italic" fontSize={40} fill="var(--accent-2)">V \ S</text>
 
-                {/* Arcs rendered before nodes so nodes sit on top */}
+                {/* 1. Arc bodies — all before arrowheads (gotcha #10) */}
                 {ARCS.map((arc, i) => {
                   const s = seg(arc.from, arc.to);
                   const hi = incident(arc, activeVertex);
                   const dim = activeVertex && !hi;
                   return (
-                    <line key={i} x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2}
+                    <line key={`body-${i}`} x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2}
                           stroke={arc.color}
                           strokeLinecap="butt"
-                          markerEnd={`url(#${arc.markerId})`}
                           style={{
                             strokeWidth: hi ? 7 : 4,
                             opacity: dim ? 0.13 : 1,
                             transition: "opacity 240ms ease, stroke-width 240ms ease",
                           }}/>
+                  );
+                })}
+                {/* 2. Arrowhead polygons — after all bodies; separate so opacity matches exactly */}
+                {ARCS.map((arc, i) => {
+                  const s = seg(arc.from, arc.to);
+                  const hi = incident(arc, activeVertex);
+                  const dim = activeVertex && !hi;
+                  return (
+                    <polygon key={`head-${i}`} points={arrowPts(s)}
+                             fill={arc.color}
+                             style={{
+                               opacity: dim ? 0.13 : 1,
+                               transition: "opacity 240ms ease",
+                             }}/>
                   );
                 })}
 

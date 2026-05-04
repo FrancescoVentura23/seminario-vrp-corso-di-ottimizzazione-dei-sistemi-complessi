@@ -198,6 +198,84 @@ function Slide21() {
 }
 
 
+function Slide21B() {
+  const cases = [
+    {
+      icon: "📦",
+      title: "E-commerce last-mile",
+      body: "Couriers (Amazon, UPS, FedEx) negotiate delivery slots with recipients. A missed window triggers a failed delivery — the most expensive event in logistics.",
+      tag: "Retail / e-commerce",
+      color: "var(--accent)",
+    },
+    {
+      icon: "🏥",
+      title: "Hospital & pharmacy",
+      body: "Blood bags, drugs, and sterile equipment must arrive within strict time bands. A 2-hour delay can make a product unusable or endanger a patient.",
+      tag: "Healthcare",
+      color: "#e05c5c",
+    },
+    {
+      icon: "🥗",
+      title: "Food & cold chain",
+      body: "Restaurants and canteens require fresh produce at a precise hour. Delivery too early means blocked storage; too late means service disruption.",
+      tag: "Food industry",
+      color: "#16a34a",
+    },
+    {
+      icon: "🚌",
+      title: "School bus routing",
+      body: "Each student has a pickup window tied to the bell schedule. Both hard windows (school start) and soft windows (parent request) coexist.",
+      tag: "Public transport",
+      color: "var(--accent-2)",
+    },
+    {
+      icon: "🗑️",
+      title: "Urban waste collection",
+      body: "Bins must be emptied before peak traffic hours or before a market opens. Time windows prevent disruption to city life.",
+      tag: "Municipal services",
+      color: "#8b5cf6",
+    },
+    {
+      icon: "✈️",
+      title: "Airport ground ops",
+      body: "Aircraft turnaround involves catering, fueling, and baggage — each service has a narrow window tied to the flight schedule.",
+      tag: "Aviation",
+      color: "#0ea5e9",
+    },
+  ];
+
+  return (
+    <section className="slide" data-label="VRPTW — real cases">
+      <SlideFrame>
+        <div className="tag">Family · VRPTW</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          Time windows appear wherever a missed slot has a real cost.
+        </h2>
+
+        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, flex: 1 }}>
+          {cases.map((c, i) => (
+            <div key={i} style={{
+              background: "var(--paper-2)",
+              border: "1px solid var(--line)",
+              borderTop: `3px solid ${c.color}`,
+              padding: "18px 20px",
+              display: "flex", flexDirection: "column", gap: 8,
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <span style={{ fontSize: 28 }}>{c.icon}</span>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: 22, lineHeight: 1.2 }}>{c.title}</div>
+              </div>
+              <div style={{ fontSize: 19, color: "var(--ink-2)", lineHeight: 1.5, flex: 1 }}>{c.body}</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: c.color, letterSpacing: "0.07em", textTransform: "uppercase" }}>{c.tag}</div>
+            </div>
+          ))}
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
 
 // ==========================================================
 // VRPB INTRO — define linehaul vs backhaul with an animated
@@ -1438,7 +1516,7 @@ function Slide23() {
 
 
 Object.assign(window, {
-  Slide19, Slide20, Slide21,
+  Slide19, Slide20, Slide21, Slide21B,
   Slide22Intro, Slide22Load, Slide22,
   Slide23Intro, Slide23Load, Slide23,
 });

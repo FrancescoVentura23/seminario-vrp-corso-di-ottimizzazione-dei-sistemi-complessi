@@ -780,7 +780,7 @@ function Slide22() {
 
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 24 }}>
             <div className="lede">
-              The customer set splits into two disjoint groups — linehauls <TeX>{"L"}</TeX> and backhauls <TeX>{"B"}</TeX> (see the previous slide). VRPB adds a precedence constraint on every mixed route.
+              The customer set splits into two disjoint groups — linehauls <TeX>{"L"}</TeX> and backhauls <TeX>{"B"}</TeX>. VRPB adds a precedence constraint on every mixed route.
             </div>
 
             {/* Precedence rule — the heart of VRPB */}

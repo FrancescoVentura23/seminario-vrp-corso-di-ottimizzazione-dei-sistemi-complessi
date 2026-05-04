@@ -601,26 +601,35 @@ function Slide22() {
     return () => obs.disconnect();
   }, []);
 
-  // Depot at center + nodes arranged around
-  const depot = { x: 420, y: 300, id: 0 };
+  // Depot at center + nodes arranged in larger layout
+  const depot = { x: 600, y: 400, id: 0 };
   const nodes = [
     depot,
     // Linehauls (deliveries) — white circles
-    { x: 280, y: 170, id: 1, type: 'L', label: 'L₁' },
-    { x: 500, y: 140, id: 2, type: 'L', label: 'L₂' },
-    { x: 240, y: 450, id: 3, type: 'L', label: 'L₃' },
+    { x: 280, y: 150, id: 1, type: 'L', label: 'L₁' },
+    { x: 450, y: 80, id: 2, type: 'L', label: 'L₂' },
+    { x: 750, y: 120, id: 3, type: 'L', label: 'L₃' },
+    { x: 950, y: 280, id: 4, type: 'L', label: 'L₄' },
+    { x: 1000, y: 500, id: 5, type: 'L', label: 'L₅' },
     // Backhauls (pickups) — orange circles
-    { x: 680, y: 230, id: 4, type: 'B', label: 'B₁' },
-    { x: 620, y: 440, id: 5, type: 'B', label: 'B₂' },
+    { x: 900, y: 650, id: 6, type: 'B', label: 'B₁' },
+    { x: 600, y: 750, id: 7, type: 'B', label: 'B₂' },
+    { x: 300, y: 700, id: 8, type: 'B', label: 'B₃' },
+    { x: 150, y: 550, id: 9, type: 'B', label: 'B₄' },
+    { x: 200, y: 380, id: 10, type: 'B', label: 'B₅' },
   ];
 
-  // Route 1: depot → L₁ → L₂ → B₁ → B₂ → depot
-  const route1 = "420,300 280,170 500,140 680,230 620,440 420,300";
-  const len1 = 1200;
+  // Route 1: depot → L₁ → L₂ → B₁ → B₂ → depot (mixed: L then B)
+  const route1 = "600,400 280,150 450,80 900,650 600,750 600,400";
+  const len1 = 1600;
 
-  // Route 2: depot → L₃ → depot (linehauls only)
-  const route2 = "420,300 240,450 420,300";
-  const len2 = 600;
+  // Route 2: depot → L₃ → L₄ → L₅ → B₃ → B₄ → depot (mixed: L then B)
+  const route2 = "600,400 750,120 950,280 1000,500 300,700 150,550 600,400";
+  const len2 = 2000;
+
+  // Route 3: depot → B₅ → depot (backhauls only)
+  const route3 = "600,400 200,380 600,400";
+  const len3 = 800;
 
   return (
     <section ref={sectionRef} className="slide" data-label="VRPB">
@@ -630,38 +639,44 @@ function Slide22() {
 
         <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 60, flex: 1 }}>
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24 }}>
-            <svg key={animKey} viewBox="0 0 900 620" style={{ width: "100%", height: "100%" }}>
+            <svg key={animKey} viewBox="0 0 1200 900" style={{ width: "100%", height: "100%" }}>
               {/* Route 1: mixed (L + B) — animated */}
-              <polyline points={route1} fill="none" stroke="var(--route-1)" strokeWidth={4.5}
+              <polyline points={route1} fill="none" stroke="var(--route-1)" strokeWidth={5.5}
                         strokeLinejoin="round" strokeLinecap="round"
                         className="anim-draw"
-                        style={{ "--len": len1, animation: "drawPath 1200ms both ease-out" }}/>
+                        style={{ "--len": len1, animation: "drawPath 1400ms both ease-out" }}/>
 
-              {/* Route 2: linehauls only — animated with delay */}
-              <polyline points={route2} fill="none" stroke="var(--route-3)" strokeWidth={4.5}
+              {/* Route 2: mixed (L + B) — animated with delay */}
+              <polyline points={route2} fill="none" stroke="var(--route-3)" strokeWidth={5.5}
                         strokeLinejoin="round" strokeLinecap="round"
                         className="anim-draw"
-                        style={{ "--len": len2, animation: "drawPath 800ms both ease-out 1400ms" }}/>
+                        style={{ "--len": len2, animation: "drawPath 1600ms both ease-out 1600ms" }}/>
+
+              {/* Route 3: backhauls only — animated with longer delay */}
+              <polyline points={route3} fill="none" stroke="var(--route-2)" strokeWidth={5.5}
+                        strokeLinejoin="round" strokeLinecap="round"
+                        className="anim-draw"
+                        style={{ "--len": len3, animation: "drawPath 800ms both ease-out 3400ms" }}/>
 
               {/* Depot */}
-              <rect x={depot.x - 16} y={depot.y - 16} width={32} height={32}
+              <rect x={depot.x - 18} y={depot.y - 18} width={36} height={36}
                     fill="var(--depot)" rx={2} />
-              <rect x={depot.x - 20} y={depot.y - 20} width={40} height={40}
-                    fill="none" stroke="var(--depot)" strokeWidth={1.5} rx={2} />
+              <rect x={depot.x - 24} y={depot.y - 24} width={48} height={48}
+                    fill="none" stroke="var(--depot)" strokeWidth={2} rx={2} />
 
               {/* Nodes */}
               {nodes.slice(1).map((n, i) => {
                 const isL = n.type === 'L';
                 return (
                   <g key={`n-${i}`}>
-                    <circle cx={n.x} cy={n.y} r={14}
+                    <circle cx={n.x} cy={n.y} r={22}
                             fill={isL ? "var(--paper)" : "var(--accent-2)"}
-                            stroke="var(--ink)" strokeWidth={2.2}
-                            style={{ opacity: 0, animation: "fadeUp 300ms both ease-out", animationDelay: `${1500 + i * 200}ms` }}/>
-                    <text x={n.x} y={n.y + 5} textAnchor="middle"
-                          fontFamily="var(--font-mono)" fontSize={13} fontWeight={700}
+                            stroke="var(--ink)" strokeWidth={2.5}
+                            style={{ opacity: 0, animation: "fadeUp 350ms both ease-out", animationDelay: `${3300 + i * 120}ms` }}/>
+                    <text x={n.x} y={n.y + 6} textAnchor="middle"
+                          fontFamily="var(--font-mono)" fontSize={18} fontWeight={700}
                           fill={isL ? "var(--ink)" : "var(--paper)"}
-                          style={{ opacity: 0, animation: "fadeUp 300ms both ease-out", animationDelay: `${1500 + i * 200}ms` }}>
+                          style={{ opacity: 0, animation: "fadeUp 350ms both ease-out", animationDelay: `${3300 + i * 120}ms` }}>
                       {n.label}
                     </text>
                   </g>

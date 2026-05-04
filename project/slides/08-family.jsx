@@ -588,12 +588,14 @@ function Slide22() {
   const [animKey, setAnimKey] = React.useState(0);
   const sectionRef = React.useRef(null);
 
-  // Reset animation when slide leaves view
+  // Restart animation when slide becomes active; reset when it leaves
   React.useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
     const obs = new MutationObserver(() => {
-      if (!el.hasAttribute('data-deck-active')) {
+      if (el.hasAttribute('data-deck-active')) {
+        setAnimKey(k => k + 1);
+      } else {
         setAnimKey(0);
       }
     });
@@ -621,15 +623,15 @@ function Slide22() {
 
   // Route 1: depot → L₁ → L₂ → B₁ → B₂ → depot (mixed: L then B)
   const route1 = "600,400 280,150 450,80 900,650 600,750 600,400";
-  const len1 = 1600;
+  const len1 = 1983;
 
   // Route 2: depot → L₃ → L₄ → L₅ → B₃ → B₄ → depot (mixed: L then B)
   const route2 = "600,400 750,120 950,280 1000,500 300,700 150,550 600,400";
-  const len2 = 2000;
+  const len2 = 2214;
 
   // Route 3: depot → B₅ → depot (backhauls only)
   const route3 = "600,400 200,380 600,400";
-  const len3 = 800;
+  const len3 = 801;
 
   return (
     <section ref={sectionRef} className="slide" data-label="VRPB">

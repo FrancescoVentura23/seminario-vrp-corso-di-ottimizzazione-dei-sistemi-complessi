@@ -644,19 +644,19 @@ function Slide22() {
               <polyline points={route1} fill="none" stroke="var(--route-1)" strokeWidth={5.5}
                         strokeLinejoin="round" strokeLinecap="round"
                         className="anim-draw"
-                        style={{ "--len": len1, animation: "drawPath 1400ms both ease-out" }}/>
+                        style={{ "--len": len1, animation: "drawPath 1200ms both ease-out" }}/>
 
               {/* Route 2: mixed (L + B) — animated with delay */}
               <polyline points={route2} fill="none" stroke="var(--route-3)" strokeWidth={5.5}
                         strokeLinejoin="round" strokeLinecap="round"
                         className="anim-draw"
-                        style={{ "--len": len2, animation: "drawPath 1600ms both ease-out 1600ms" }}/>
+                        style={{ "--len": len2, animation: "drawPath 1500ms both ease-out 1300ms" }}/>
 
               {/* Route 3: backhauls only — animated with longer delay */}
               <polyline points={route3} fill="none" stroke="var(--route-2)" strokeWidth={5.5}
                         strokeLinejoin="round" strokeLinecap="round"
                         className="anim-draw"
-                        style={{ "--len": len3, animation: "drawPath 800ms both ease-out 3400ms" }}/>
+                        style={{ "--len": len3, animation: "drawPath 800ms both ease-out 3000ms" }}/>
 
               {/* Depot */}
               <rect x={depot.x - 18} y={depot.y - 18} width={36} height={36}
@@ -672,11 +672,11 @@ function Slide22() {
                     <circle cx={n.x} cy={n.y} r={22}
                             fill={isL ? "var(--paper)" : "var(--accent-2)"}
                             stroke="var(--ink)" strokeWidth={2.5}
-                            style={{ opacity: 0, animation: "fadeUp 350ms both ease-out", animationDelay: `${3300 + i * 120}ms` }}/>
+                            style={{ opacity: 0, animation: "fadeUp 350ms both ease-out", animationDelay: `${3900 + i * 100}ms` }}/>
                     <text x={n.x} y={n.y + 6} textAnchor="middle"
                           fontFamily="var(--font-mono)" fontSize={18} fontWeight={700}
                           fill={isL ? "var(--ink)" : "var(--paper)"}
-                          style={{ opacity: 0, animation: "fadeUp 350ms both ease-out", animationDelay: `${3300 + i * 120}ms` }}>
+                          style={{ opacity: 0, animation: "fadeUp 350ms both ease-out", animationDelay: `${3900 + i * 100}ms` }}>
                       {n.label}
                     </text>
                   </g>

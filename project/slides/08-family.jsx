@@ -215,6 +215,7 @@ function Slide22Intro() {
   const truckY   = 140;          // truck sits above the stops
   const seg1Len  = Math.abs(linehaul.x - depot.x);
   const seg2Len  = Math.abs(backhaul.x - linehaul.x);
+  const seg3Len  = Math.abs(backhaul.x - depot.x);
 
   return (
     <section ref={sectionRef} className="slide" data-label="Linehauls and backhauls">
@@ -254,7 +255,7 @@ function Slide22Intro() {
             </div>
 
             <div className="body small" style={{ color: "var(--ink-3)" }}>
-              Watch the truck on the right: it leaves the depot full, <em>unloads</em> at the green linehaul, then <em>loads</em> at the amber backhaul.
+              Watch the truck on the right: it leaves the depot loaded, <em>unloads</em> at the green linehaul, <em>loads</em> at the amber backhaul, then returns to the depot — completing the Hamiltonian cycle.
             </div>
           </div>
 
@@ -284,24 +285,42 @@ function Slide22Intro() {
             {/* Inline keyframes — depend on the (x,y) of the three stops, so
                 we can not move them to styles.css. */}
             <style dangerouslySetInnerHTML={{ __html: `
+              /* Total duration: 6500ms
+                 0-11%  : depot (pause)
+                 11-31% : depot→L (moving)
+                 31-45% : at L (unloading)
+                 45-63% : L→B (moving)
+                 63-77% : at B (loading)
+                 77-95% : B→depot (returning)
+                 95-100%: depot (done) */
               @keyframes truckMove22Intro {
-                0%, 18%   { transform: translate(${depot.x}px,    ${truckY}px); }
-                40%, 58%  { transform: translate(${linehaul.x}px, ${truckY}px); }
-                82%, 100% { transform: translate(${backhaul.x}px, ${truckY}px); }
+                0%, 11%   { transform: translate(${depot.x}px,    ${truckY}px); }
+                31%       { transform: translate(${linehaul.x}px, ${truckY}px); }
+                45%       { transform: translate(${linehaul.x}px, ${truckY}px); }
+                63%       { transform: translate(${backhaul.x}px, ${truckY}px); }
+                77%       { transform: translate(${backhaul.x}px, ${truckY}px); }
+                95%, 100% { transform: translate(${depot.x}px,    ${truckY}px); }
+              }
+              @keyframes truckFlip22Intro {
+                0%   { transform: scaleX(1);  animation-timing-function: step-end; }
+                77%  { transform: scaleX(-1); }
+                100% { transform: scaleX(-1); }
               }
               @keyframes cargoFill22Intro {
-                0%, 40%   { y: -22px; height: 28px; }   /* full from start until at linehaul */
-                58%, 82%  { y: 6px;   height: 0px;  }   /* unloaded; stays empty until at backhaul */
-                100%      { y: -22px; height: 28px; }   /* loaded again at backhaul */
+                0%, 31%   { y: -22px; height: 28px; }
+                45%       { y: 6px;   height: 0px;  }
+                63%       { y: 6px;   height: 0px;  }
+                77%, 100% { y: -22px; height: 28px; }
               }
               @keyframes labelUnloading22 {
-                0%, 40%   { opacity: 0; }
-                46%, 58%  { opacity: 1; }
-                66%, 100% { opacity: 0; }
+                0%, 33%   { opacity: 0; }
+                37%, 43%  { opacity: 1; }
+                49%, 100% { opacity: 0; }
               }
               @keyframes labelLoading22 {
-                0%, 82%   { opacity: 0; }
-                88%, 100% { opacity: 1; }
+                0%, 65%   { opacity: 0; }
+                69%, 75%  { opacity: 1; }
+                81%, 100% { opacity: 0; }
               }
             ` }}/>
 
@@ -315,8 +334,8 @@ function Slide22Intro() {
                         "--len": seg1Len,
                         strokeDasharray: seg1Len,
                         strokeDashoffset: seg1Len,
-                        animation: "drawPath 1100ms both ease-in-out",
-                        animationDelay: "900ms",
+                        animation: "drawPath 1300ms both ease-in-out",
+                        animationDelay: "715ms",
                       }}/>
                 {/* Route 2: linehaul -> backhaul (pickup leg) */}
                 <line x1={linehaul.x} y1={linehaul.y} x2={backhaul.x} y2={backhaul.y}
@@ -326,7 +345,17 @@ function Slide22Intro() {
                         strokeDasharray: seg2Len,
                         strokeDashoffset: seg2Len,
                         animation: "drawPath 1200ms both ease-in-out",
-                        animationDelay: "2900ms",
+                        animationDelay: "2925ms",
+                      }}/>
+                {/* Route 3: backhaul -> depot (return leg) */}
+                <line x1={backhaul.x} y1={backhaul.y} x2={depot.x} y2={depot.y}
+                      stroke="var(--ink-3)" strokeWidth={2.5} strokeLinecap="round"
+                      style={{
+                        "--len": seg3Len,
+                        strokeDasharray: seg3Len,
+                        strokeDashoffset: seg3Len,
+                        animation: "drawPath 1200ms both ease-in-out",
+                        animationDelay: "5005ms",
                       }}/>
 
                 {/* Depot — black square */}
@@ -346,7 +375,7 @@ function Slide22Intro() {
                       fontFamily="var(--font-display)" fontSize={20} fill="var(--ink)">linehaul</text>
                 <text x={linehaul.x} y={linehaul.y + 84} textAnchor="middle"
                       fontFamily="var(--font-mono)" fontSize={15} fill="var(--accent-3)" fontWeight={700}
-                      style={{ opacity: 0, animation: "labelUnloading22 5000ms forwards ease-in-out" }}>
+                      style={{ opacity: 0, animation: "labelUnloading22 6500ms forwards ease-in-out" }}>
                   ↓ unloading
                 </text>
 
@@ -359,28 +388,30 @@ function Slide22Intro() {
                       fontFamily="var(--font-display)" fontSize={20} fill="var(--ink)">backhaul</text>
                 <text x={backhaul.x} y={backhaul.y + 84} textAnchor="middle"
                       fontFamily="var(--font-mono)" fontSize={15} fill="#a86b16" fontWeight={700}
-                      style={{ opacity: 0, animation: "labelLoading22 5000ms forwards ease-in-out" }}>
+                      style={{ opacity: 0, animation: "labelLoading22 6500ms forwards ease-in-out" }}>
                   ↑ loading
                 </text>
 
-                {/* Truck — translates between the three stops via @keyframes */}
-                <g style={{ animation: "truckMove22Intro 5000ms forwards ease-in-out" }}>
-                  {/* cargo box (frame) */}
-                  <rect x={-30} y={-22} width={50} height={28}
-                        fill="#5b6370" stroke="var(--ink)" strokeWidth={1.5} rx={2}/>
-                  {/* cargo fill — height & y change via @keyframes (SVG2 attribute animation) */}
-                  <rect x={-29} width={48} fill="#7CC9F0"
-                        style={{ animation: "cargoFill22Intro 5000ms forwards ease-in-out" }}/>
-                  {/* cab — small darker box on the right (truck faces right) */}
-                  <polygon points="20,-22 36,-22 40,-12 40,6 20,6"
-                           fill="#3a414b" stroke="var(--ink)" strokeWidth={1.5}/>
-                  {/* windshield */}
-                  <polygon points="23,-19 33,-19 36,-11 23,-11"
-                           fill="rgba(180,230,255,0.6)"
-                           stroke="rgba(120,180,220,0.5)" strokeWidth={0.5}/>
-                  {/* wheels */}
-                  <circle cx={-16} cy={10} r={5} fill="var(--ink)"/>
-                  <circle cx={28}  cy={10} r={5} fill="var(--ink)"/>
+                {/* Truck — outer g translates; inner g flips at 77% when returning */}
+                <g style={{ animation: "truckMove22Intro 6500ms forwards ease-in-out" }}>
+                  <g style={{ transformOrigin: "5px -6px", animation: "truckFlip22Intro 6500ms forwards" }}>
+                    {/* cargo box (frame) */}
+                    <rect x={-30} y={-22} width={50} height={28}
+                          fill="#5b6370" stroke="var(--ink)" strokeWidth={1.5} rx={2}/>
+                    {/* cargo fill — height & y change via @keyframes */}
+                    <rect x={-29} width={48} fill="#7CC9F0"
+                          style={{ animation: "cargoFill22Intro 6500ms forwards ease-in-out" }}/>
+                    {/* cab — small darker box on the right (truck faces right) */}
+                    <polygon points="20,-22 36,-22 40,-12 40,6 20,6"
+                             fill="#3a414b" stroke="var(--ink)" strokeWidth={1.5}/>
+                    {/* windshield */}
+                    <polygon points="23,-19 33,-19 36,-11 23,-11"
+                             fill="rgba(180,230,255,0.6)"
+                             stroke="rgba(120,180,220,0.5)" strokeWidth={0.5}/>
+                    {/* wheels */}
+                    <circle cx={-16} cy={10} r={5} fill="var(--ink)"/>
+                    <circle cx={28}  cy={10} r={5} fill="var(--ink)"/>
+                  </g>
                 </g>
               </g>
             </svg>

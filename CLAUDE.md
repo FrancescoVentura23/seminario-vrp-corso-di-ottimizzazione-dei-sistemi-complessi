@@ -148,32 +148,33 @@ Ogni section header è una slide con `className="section-slide"`. Per modificare
 | 33 | DFJ subtour elimination | `SlideTSPDFJ` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
 | 34 | Exponential blow-up (animated) | `SlideTSPExponential` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
 | 35 | Lazy subtour cuts in branch-and-cut | `SlideTSPLazy` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 36 | Separation = min-cut (animated) | `SlideTSPMinCut` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 37 | Separation oracle — precise algorithm | `SlideTSPMinCutAlgo` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 38 | Separation oracle — implementation | `SlideTSPMinCutImpl` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 39 | **Part VI — CVRP** *(section header)* | `Slide11` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
-| 40 | CVRP is NP-hard | `Slide17` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
-| 41 | TSP → CVRP — capacity intro | `Slide10` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 42 | TSP → CVRP — multiple routes | `Slide10B` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
-| 43 | Three constraints + two-index ILP | `Slide14` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
-| 44 | Depot constraints — K leave / K return | `Slide14B` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
-| 45 | r(S) and capacity-cut inequality | `Slide15` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
-| 46 | Capacity cuts — exponential blow-up | `Slide15B` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
-| 47 | Lazy capacity-cut generation (B&C) | `Slide15C` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
-| 48 | **Part VII — VRP family** *(section header)* | `Slide19` | [slides/08-family.jsx](project/slides/08-family.jsx) |
-| 49 | Taxonomy | `Slide20` | [slides/08-family.jsx](project/slides/08-family.jsx) |
-| 50 | VRPTW | `Slide21` | [slides/08-family.jsx](project/slides/08-family.jsx) |
-| 51 | Linehauls vs backhauls (animated demo) | `Slide22Intro` | [slides/08-family.jsx](project/slides/08-family.jsx) |
-| 52 | Partial loads — each customer's own demand | `Slide22Load` | [slides/08-family.jsx](project/slides/08-family.jsx) |
-| 53 | VRPB rule (linehauls before backhauls) | `Slide22` | [slides/08-family.jsx](project/slides/08-family.jsx) |
-| 54 | Multi-depot & open VRP | `Slide23` | [slides/08-family.jsx](project/slides/08-family.jsx) |
-| 55 | **Part VIII — Live demo** *(section header)* | `Slide24` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
-| 56 | Clarke-Wright idea | `Slide25` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
-| 57 | Interactive demo | `Slide26` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
-| 58 | **Part IX — Applications** *(section header)* | `Slide27` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
-| 59 | Case studies | `Slide28` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
-| 60 | Takeaways | `Slide29` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
-| 61 | Closing / references | `Slide30` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
+| 36 | The key identity: relating cuts to arcs | `SlideTSPKeyIdentity` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 37 | Separation = min-cut (animated) | `SlideTSPMinCut` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 38 | Separation oracle — precise algorithm | `SlideTSPMinCutAlgo` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 39 | Separation oracle — implementation | `SlideTSPMinCutImpl` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 40 | **Part VI — CVRP** *(section header)* | `Slide11` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 41 | CVRP is NP-hard | `Slide17` | [slides/07-complexity.jsx](project/slides/07-complexity.jsx) |
+| 42 | TSP → CVRP — capacity intro | `Slide10` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 43 | TSP → CVRP — multiple routes | `Slide10B` | [slides/05-tsp.jsx](project/slides/05-tsp.jsx) |
+| 44 | Three constraints + two-index ILP | `Slide14` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 45 | Depot constraints — K leave / K return | `Slide14B` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 46 | r(S) and capacity-cut inequality | `Slide15` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 47 | Capacity cuts — exponential blow-up | `Slide15B` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 48 | Lazy capacity-cut generation (B&C) | `Slide15C` | [slides/06-cvrp.jsx](project/slides/06-cvrp.jsx) |
+| 49 | **Part VII — VRP family** *(section header)* | `Slide19` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 50 | Taxonomy | `Slide20` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 51 | VRPTW | `Slide21` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 52 | Linehauls vs backhauls (animated demo) | `Slide22Intro` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 53 | Partial loads — each customer's own demand | `Slide22Load` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 54 | VRPB rule (linehauls before backhauls) | `Slide22` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 55 | Multi-depot & open VRP | `Slide23` | [slides/08-family.jsx](project/slides/08-family.jsx) |
+| 56 | **Part VIII — Live demo** *(section header)* | `Slide24` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
+| 57 | Clarke-Wright idea | `Slide25` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
+| 58 | Interactive demo | `Slide26` | [slides/09-live-demo.jsx](project/slides/09-live-demo.jsx) |
+| 59 | **Part IX — Applications** *(section header)* | `Slide27` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
+| 60 | Case studies | `Slide28` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
+| 61 | Takeaways | `Slide29` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
+| 62 | Closing / references | `Slide30` | [slides/10-applications.jsx](project/slides/10-applications.jsx) |
 
 > Per aggiungere una slide: crea la funzione nel file della parte corrispondente, aggiungila all'`Object.assign(window, {...})` in fondo a quel file, poi inseriscila nell'array `slides` dentro [project/vrp-seminar.html](project/vrp-seminar.html).
 

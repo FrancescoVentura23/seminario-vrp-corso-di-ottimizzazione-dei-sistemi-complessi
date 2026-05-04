@@ -1313,6 +1313,120 @@ function SlideTSPLazy() {
 }
 
 
+function SlideTSPKeyIdentity() {
+  return (
+    <section className="slide" data-label="The key identity: relating cuts to arcs">
+      <SlideFrame>
+        <div className="tag">TSP · Separation oracle foundation</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          The <em style={{ color: "var(--accent)" }}>key identity</em>: relating cuts to arc weights.
+        </h2>
+
+        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, flex: 1, alignItems: "center" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 24, justifyContent: "center" }}>
+            <div className="lede" style={{ fontSize: 28, lineHeight: 1.35 }}>
+              How do degree constraints on every vertex relate to the weights crossing a subset boundary?
+            </div>
+
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "22px 26px", display: "flex", flexDirection: "column", gap: 18 }}>
+              <div style={{ fontSize: 18, color: "var(--ink-3)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                Mathematical foundation
+              </div>
+
+              <div style={{ fontSize: 24, lineHeight: 1.6, color: "var(--ink-2)", display: "flex", flexDirection: "column", gap: 12 }}>
+                <div>Each vertex i ∈ S satisfies the degree constraint</div>
+                <TeX display>{"\\sum_{j \\neq i}\\left(x^*_{ij} + x^*_{ji}\\right) = 2"}</TeX>
+
+                <div style={{ marginTop: 8, paddingTop: 8, borderTop: "1px solid var(--line)" }}>
+                  <div style={{ marginBottom: 8 }}>Summing over all |S| vertices:</div>
+                  <div style={{ fontSize: 20, color: "var(--ink-3)", lineHeight: 1.5, marginBottom: 6 }}>
+                    • Arcs <em>internal to S</em> have both endpoints in S — counted <em>twice</em>
+                  </div>
+                  <div style={{ fontSize: 20, color: "var(--ink-3)", lineHeight: 1.5 }}>
+                    • Arcs <em>crossing the boundary</em> δ(S) have one endpoint outside S — counted <em>once</em>
+                  </div>
+                </div>
+
+                <TeX display>{"2\\,x^*(A(S)) \\;+\\; x^*(\\delta(S)) \\;=\\; 2|S|"}</TeX>
+
+                <div style={{ fontSize: 18, color: "var(--ink-2)", marginTop: 6, fontStyle: "italic" }}>
+                  This is the foundation for why every violated DFJ constraint can be found as a minimum cut.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 28, display: "flex", flexDirection: "column", gap: 18, justifyContent: "center" }}>
+            <svg viewBox="0 0 800 600" style={{ width: "100%", height: "100%", display: "block" }}>
+              <defs>
+                <pattern id="dotgrid-key" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <circle cx="1" cy="1" r="1" fill="var(--line)"/>
+                </pattern>
+              </defs>
+
+              <rect width={800} height={600} fill="url(#dotgrid-key)" opacity={0.5}/>
+
+              <ellipse cx={250} cy={300} rx={140} ry={130}
+                       fill="var(--accent)" fillOpacity={0.08}
+                       stroke="var(--accent)" strokeWidth={2.5} strokeDasharray="5 4"/>
+              <text x={120} y={160} fontFamily="var(--font-display)"
+                    fontStyle="italic" fontSize={48} fill="var(--accent)">S</text>
+
+              <ellipse cx={550} cy={300} rx={140} ry={130}
+                       fill="var(--accent-2)" fillOpacity={0.08}
+                       stroke="var(--accent-2)" strokeWidth={2.5} strokeDasharray="5 4"/>
+              <text x={700} y={160} textAnchor="end" fontFamily="var(--font-display)"
+                    fontStyle="italic" fontSize={48} fill="var(--accent-2)">V \ S</text>
+
+              <g>
+                <circle cx={200} cy={250} r={20} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
+                <text x={200} y={260} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={20} fontWeight={600} fill="var(--ink)">i</text>
+              </g>
+
+              <g>
+                <circle cx={300} cy={300} r={20} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
+                <text x={300} y={310} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={20} fontWeight={600} fill="var(--ink)">j</text>
+              </g>
+
+              <g>
+                <circle cx={600} cy={280} r={20} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
+                <text x={600} y={290} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={20} fontWeight={600} fill="var(--ink)">k</text>
+              </g>
+
+              <line x1={200} y1={250} x2={300} y2={300} stroke="var(--accent)" strokeWidth={3} markerEnd="url(#arrow-accent-key)"/>
+              <line x1={300} y1={300} x2={200} y2={250} stroke="var(--accent)" strokeWidth={3} markerEnd="url(#arrow-accent-key)" strokeDasharray="8 5"/>
+
+              <line x1={200} y1={250} x2={600} y2={280} stroke="var(--ink)" strokeWidth={3.5} markerEnd="url(#arrow-ink-key)"/>
+
+              <text x={245} y={235} fontFamily="var(--font-mono)" fontSize={18} fill="var(--accent)" fontWeight={600}>x*ᵢⱼ</text>
+              <text x={245} y={335} fontFamily="var(--font-mono)" fontSize={18} fill="var(--accent)" fontWeight={600}>x*ⱼᵢ</text>
+              <text x={390} y={260} fontFamily="var(--font-mono)" fontSize={18} fill="var(--ink)" fontWeight={600}>x*ᵢₖ ∈ δ(S)</text>
+
+              <defs>
+                <marker id="arrow-accent-key" markerUnits="userSpaceOnUse"
+                        viewBox="0 0 16 12" markerWidth="16" markerHeight="12"
+                        refX="16" refY="6" orient="auto">
+                  <path d="M0,0 L16,6 L0,12 z" fill="var(--accent)"/>
+                </marker>
+                <marker id="arrow-ink-key" markerUnits="userSpaceOnUse"
+                        viewBox="0 0 18 14" markerWidth="18" markerHeight="14"
+                        refX="18" refY="7" orient="auto">
+                  <path d="M0,0 L18,7 L0,14 z" fill="var(--ink)"/>
+                </marker>
+              </defs>
+
+              <text x={400} y={550} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={18} fill="var(--ink-3)">
+                Degree constraints at every vertex sum to reveal the structure of cuts.
+              </text>
+            </svg>
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
 function SlideTSPMinCut() {
   const r = 30;
   const [mode, setMode] = React.useState('integer');
@@ -1586,14 +1700,6 @@ function SlideTSPMinCut() {
               <div className="kicker" style={{ fontSize: 21, marginBottom: 3, color: isFrac ? "var(--accent)" : "var(--ink-3)" }}>Fractional x*</div>
               <div style={{ fontSize: 24, lineHeight: 1.4 }}>
                 In the LP relaxation, <TeX>{"x^*_{ij}\\in[0,1]"}</TeX>: each vertex still satisfies deg = 1, but can <em>split</em> its flow. Here v₁ routes 0.7 inside S (v₁→v₂) and only 0.3 across the boundary (v₁→v₃). When <TeX>{"x^*(\\delta(S)) < 2"}</TeX> the DFJ constraint is violated.
-              </div>
-            </div>
-
-            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "10px 18px" }}>
-              <div className="kicker" style={{ fontSize: 21, marginBottom: 6 }}>Key identity</div>
-              <div style={{ fontSize: 24, lineHeight: 1.5, color: "var(--ink-2)", display: "flex", flexDirection: "column", gap: 6 }}>
-                <div>Each vertex i ∈ S satisfies <TeX>{"\\sum_{j \\neq i}(x^*_{ij}+x^*_{ji})=2"}</TeX>. Summing over all |S| vertices: arcs <em>internal to S</em> — i.e. <TeX>{"A(S)=\\{(i,j): i,j\\in S\\}"}</TeX> — are counted <em>twice</em> (both endpoints in S), arcs <em>crossing the boundary</em> <TeX>{"\\delta(S)"}</TeX> are counted <em>once</em>.</div>
-                <TeX display>{"2\\,x^*(A(S)) \\;+\\; x^*(\\delta(S)) \\;=\\; 2|S|"}</TeX>
               </div>
             </div>
 
@@ -2243,5 +2349,5 @@ function Slide10B() {
 Object.assign(window, {
   SlideTSPSection, Slide09, SlideTSPHamiltonian, SlideTSPFormulation,
   SlideTSPDegree, SlideTSPSubtourProblem, SlideTSPDFJ, SlideTSPExponential,
-  SlideTSPLazy, SlideTSPMinCut, SlideTSPMinCutAlgo, SlideTSPMinCutImpl, Slide10, Slide10B,
+  SlideTSPLazy, SlideTSPKeyIdentity, SlideTSPMinCut, SlideTSPMinCutAlgo, SlideTSPMinCutImpl, Slide10, Slide10B,
 });

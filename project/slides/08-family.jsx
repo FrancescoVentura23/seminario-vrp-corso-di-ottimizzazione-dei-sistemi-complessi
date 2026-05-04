@@ -1264,7 +1264,7 @@ function Slide23() {
               callout + body small, mirroring Slide22's lean layout. */}
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 24 }}>
             <div className="lede">
-              The customer set splits into <TeX>{"N"}</TeX> origin-destination <em>requests</em> — pickups <TeX>{"O_i"}</TeX> and deliveries <TeX>{"D_i"}</TeX> (see the previous two slides for the vocabulary and the load profile). VRPPD adds a per-request pairing constraint on top of the CVRP core.
+              The customer set splits into <TeX>{"N"}</TeX> origin-destination <em>requests</em>: each request couples a pickup <TeX>{"O_i"}</TeX>, where the load is collected, with a delivery <TeX>{"D_i"}</TeX>, where the same load is dropped off. VRPPD adds a per-request pairing constraint on top of the CVRP core.
             </div>
 
             {/* The pairing rule — heart of VRPPD */}

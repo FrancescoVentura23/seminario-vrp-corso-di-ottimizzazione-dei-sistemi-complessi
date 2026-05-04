@@ -9,7 +9,7 @@ function Slide19() {
     <section className="slide section-slide" data-label="Part VII — VRP family">
       <div style={{ position: "absolute", top: 80, left: 120, right: 120, display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 31, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--paper-deep)" }}>
         <div>Part VII of IX</div>
-        <div>Slides 48 — 53</div>
+        <div>Slides 48 — 54</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Seven</div>
@@ -392,6 +392,162 @@ function Slide22Intro() {
 }
 
 
+function Slide22Load() {
+  const C = 10, dL1 = 4, dL2 = 3, dB1 = 5;
+  const q0 = dL1 + dL2; // 7 — departure load (sum of linehaul demands)
+
+  const cb = 250, ct = 30; // chartBottom, chartTop
+  const toY = (v) => cb - (v / C) * (cb - ct);
+
+  const stops = [85, 215, 345, 475, 615];
+  const legs  = [q0, q0 - dL1, 0, dB1]; // load carried on each leg
+
+  return (
+    <section className="slide" data-label="Cargo profile">
+      <SlideFrame>
+        <div className="tag">Family · VRPB primer</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          Partial loads — each customer handles only their own demand.
+        </h2>
+
+        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 60, flex: 1 }}>
+
+          {/* Left — key rules */}
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 20 }}>
+            <div className="lede">
+              The truck does not need to leave full, and no single customer unloads or loads the entire vehicle.
+            </div>
+
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "16px 20px", display: "flex", flexDirection: "column", gap: 12 }}>
+              <div style={{ fontSize: 23, lineHeight: 1.55 }}>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--ink-3)", letterSpacing: "0.07em", marginBottom: 4 }}>DEPARTURE</div>
+                <TeX>{"q_0 = \\sum_{i \\in L} d_i \\;\\leq\\; C"}</TeX>
+              </div>
+              <div style={{ borderTop: "1px solid var(--line)", paddingTop: 10, fontSize: 23, lineHeight: 1.55 }}>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--accent-3)", letterSpacing: "0.07em", marginBottom: 4 }}>AT EACH LINEHAUL L_i</div>
+                delivers <TeX>{"d_i"}</TeX> — load <TeX>{"- d_i"}</TeX>
+              </div>
+              <div style={{ borderTop: "1px solid var(--line)", paddingTop: 10, fontSize: 23, lineHeight: 1.55 }}>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--accent-2)", letterSpacing: "0.07em", marginBottom: 4 }}>AT EACH BACKHAUL B_j</div>
+                collects <TeX>{"d_j"}</TeX> — load <TeX>{"+ d_j"}</TeX>
+              </div>
+              <div style={{ borderTop: "1px solid var(--line)", paddingTop: 10, fontSize: 22, lineHeight: 1.55, color: "var(--ink-2)" }}>
+                At every leg: load <TeX>{"\\leq C"}</TeX>
+              </div>
+            </div>
+
+            <div className="body small" style={{ color: "var(--ink-3)" }}>
+              The previous slide showed the degenerate case (1 L + 1 B) where the loads happened to fill and empty the truck exactly. The chart on the right shows the general picture with 2 L and 1 B.
+            </div>
+          </div>
+
+          {/* Right — step chart */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "20px 24px", display: "flex", flexDirection: "column" }}>
+            <svg viewBox="0 0 700 300" style={{ width: "100%", flex: 1, display: "block" }}>
+
+              {/* C reference line */}
+              <line x1={55} y1={toY(C)} x2={650} y2={toY(C)}
+                    stroke="var(--ink-3)" strokeWidth={1.5} strokeDasharray="5 4"/>
+              <text x={50} y={toY(C) + 5} textAnchor="end"
+                    fontFamily="var(--font-mono)" fontSize={14} fill="var(--ink-3)">C=10</text>
+
+              {/* Filled areas under each non-zero leg */}
+              {legs.map((load, i) => {
+                if (load === 0) return null;
+                const color = i < 2 ? "var(--accent-3)" : "var(--accent-2)";
+                return (
+                  <rect key={i} x={stops[i]} y={toY(load)}
+                        width={stops[i+1] - stops[i]} height={cb - toY(load)}
+                        fill={color} opacity={0.18}/>
+                );
+              })}
+
+              {/* Horizontal step lines */}
+              {legs.map((load, i) => {
+                const y = load === 0 ? cb : toY(load);
+                const color = i < 2 ? "var(--accent-3)" : i === 3 ? "var(--accent-2)" : "var(--ink-3)";
+                return (
+                  <line key={i} x1={stops[i]} y1={y} x2={stops[i+1]} y2={y}
+                        stroke={color}
+                        strokeWidth={load === 0 ? 1.5 : 3}
+                        strokeDasharray={load === 0 ? "4 3" : undefined}/>
+                );
+              })}
+
+              {/* Vertical connectors at interior stops */}
+              <line x1={stops[1]} y1={toY(legs[0])} x2={stops[1]} y2={toY(legs[1])}
+                    stroke="var(--accent-3)" strokeWidth={2.5}/>
+              <line x1={stops[2]} y1={toY(legs[1])} x2={stops[2]} y2={cb}
+                    stroke="var(--accent-3)" strokeWidth={2.5}/>
+              <line x1={stops[3]} y1={cb} x2={stops[3]} y2={toY(legs[3])}
+                    stroke="var(--accent-2)" strokeWidth={2.5}/>
+
+              {/* Delta labels */}
+              <text x={stops[1] + 8} y={(toY(legs[0]) + toY(legs[1])) / 2 + 5}
+                    fontFamily="var(--font-mono)" fontSize={15} fill="var(--accent-3)" fontWeight={700}>
+                {"↓ " + dL1}
+              </text>
+              <text x={stops[2] + 8} y={(toY(legs[1]) + cb) / 2 + 5}
+                    fontFamily="var(--font-mono)" fontSize={15} fill="var(--accent-3)" fontWeight={700}>
+                {"↓ " + dL2}
+              </text>
+              <text x={stops[3] + 8} y={(cb + toY(legs[3])) / 2 + 5}
+                    fontFamily="var(--font-mono)" fontSize={15} fill="var(--accent-2)" fontWeight={700}>
+                {"↑ " + dB1}
+              </text>
+
+              {/* Load value on each leg */}
+              {legs.map((load, i) => {
+                const mx = (stops[i] + stops[i+1]) / 2;
+                const y  = load === 0 ? cb - 10 : toY(load) - 10;
+                const color = i < 2 ? "var(--accent-3)" : i === 3 ? "var(--accent-2)" : "var(--ink-3)";
+                return (
+                  <text key={i} x={mx} y={y} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={18} fill={color}
+                        fontWeight={load === 0 ? 400 : 700}>
+                    {load}
+                  </text>
+                );
+              })}
+
+              {/* q₀ < C annotation above first leg */}
+              <text x={(stops[0] + stops[1]) / 2} y={toY(legs[0]) - 26}
+                    textAnchor="middle" fontFamily="var(--font-mono)" fontSize={13} fill="var(--ink-3)">
+                {"q₀ = " + q0 + " < C"}
+              </text>
+
+              {/* X axis */}
+              <line x1={55} y1={cb} x2={650} y2={cb} stroke="var(--ink-3)" strokeWidth={1.5}/>
+
+              {/* Stop labels */}
+              {["Depot", "L₁", "L₂", "B₁", "Depot"].map((lbl, i) => (
+                <g key={i}>
+                  <line x1={stops[i]} y1={cb} x2={stops[i]} y2={cb + 6}
+                        stroke="var(--ink-3)" strokeWidth={1.5}/>
+                  <text x={stops[i]} y={cb + 22} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={16}
+                        fill={i === 0 || i === 4 ? "var(--ink)" : i < 3 ? "var(--accent-3)" : "var(--accent-2)"}>
+                    {lbl}
+                  </text>
+                </g>
+              ))}
+
+              {/* Y axis */}
+              <line x1={55} y1={ct - 10} x2={55} y2={cb} stroke="var(--ink-3)" strokeWidth={1.5}/>
+              <text x={50} y={cb + 5} textAnchor="end"
+                    fontFamily="var(--font-mono)" fontSize={14} fill="var(--ink-3)">0</text>
+            </svg>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 17, color: "var(--ink-3)", textAlign: "center", marginTop: 8 }}>
+              {"Example: C = 10 · dₗ₁ = " + dL1 + " · dₗ₂ = " + dL2 + " · dᴮ₁ = " + dB1}
+            </div>
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
 function Slide22() {
   return (
     <section className="slide" data-label="VRPB">
@@ -507,5 +663,5 @@ function Slide23() {
 
 
 Object.assign(window, {
-  Slide19, Slide20, Slide21, Slide22Intro, Slide22, Slide23,
+  Slide19, Slide20, Slide21, Slide22Intro, Slide22Load, Slide22, Slide23,
 });

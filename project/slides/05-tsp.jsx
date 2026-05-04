@@ -1425,7 +1425,7 @@ function SlideTSPKeyIdentity() {
 
               <div style={{ fontSize: 24, lineHeight: 1.6, color: "var(--ink-2)", display: "flex", flexDirection: "column", gap: 12 }}>
                 <div>Each vertex i ∈ S satisfies the degree constraint</div>
-                <TeX display>{"\\sum_{j \\neq i}\\left(x^*_{ij} + x^*_{ji}\\right) = 2"}</TeX>
+                <TeX display>{"\\sum_{j \\neq i}\\left(x^*_{ij} + x^*_{ji}\\right) = 2 \\qquad \\forall\\, i \\in S"}</TeX>
 
                 <div style={{ marginTop: 8, paddingTop: 8, borderTop: "1px solid var(--line)" }}>
                   <div style={{ marginBottom: 8 }}>Summing over all |S| vertices:</div>

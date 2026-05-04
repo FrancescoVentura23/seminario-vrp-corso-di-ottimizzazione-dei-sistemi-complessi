@@ -252,21 +252,21 @@ function Slide21B() {
           Time windows appear wherever a missed slot has a real cost.
         </h2>
 
-        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, flex: 1 }}>
+        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, flex: 1 }}>
           {cases.map((c, i) => (
             <div key={i} style={{
               background: "var(--paper-2)",
               border: "1px solid var(--line)",
-              borderTop: `3px solid ${c.color}`,
-              padding: "18px 20px",
-              display: "flex", flexDirection: "column", gap: 8,
+              borderTop: `4px solid ${c.color}`,
+              padding: "22px 26px",
+              display: "flex", flexDirection: "column", gap: 12,
             }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <span style={{ fontSize: 28 }}>{c.icon}</span>
-                <div style={{ fontFamily: "var(--font-display)", fontSize: 22, lineHeight: 1.2 }}>{c.title}</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <span style={{ fontSize: 36 }}>{c.icon}</span>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: 28, lineHeight: 1.2 }}>{c.title}</div>
               </div>
-              <div style={{ fontSize: 19, color: "var(--ink-2)", lineHeight: 1.5, flex: 1 }}>{c.body}</div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: c.color, letterSpacing: "0.07em", textTransform: "uppercase" }}>{c.tag}</div>
+              <div style={{ fontSize: 24, color: "var(--ink-2)", lineHeight: 1.55, flex: 1 }}>{c.body}</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 16, color: c.color, letterSpacing: "0.07em", textTransform: "uppercase" }}>{c.tag}</div>
             </div>
           ))}
         </div>

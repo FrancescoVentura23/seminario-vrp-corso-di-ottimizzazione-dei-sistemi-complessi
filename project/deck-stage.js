@@ -214,9 +214,31 @@
       min-width: 42px;
       text-align: center;
       font-size: 12px;
+      cursor: pointer;
+      border-radius: 999px;
+      transition: background 140ms ease;
     }
+    .count:hover { background: rgba(255,255,255,0.12); }
     .count .sep { color: rgba(255,255,255,0.45); margin: 0 3px; font-weight: 400; }
     .count .total { color: rgba(255,255,255,0.55); }
+
+    .jump-input {
+      width: 52px;
+      height: 24px;
+      padding: 0 4px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.5);
+      border-radius: 6px;
+      color: #fff;
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+      text-align: center;
+      outline: none;
+      -moz-appearance: textfield;
+    }
+    .jump-input::-webkit-outer-spin-button,
+    .jump-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
     .divider {
       width: 1px;
@@ -388,6 +410,9 @@
       this._overlay = overlay;
       this._countEl = overlay.querySelector('.current');
       this._totalEl = overlay.querySelector('.total');
+      this._countContainer = overlay.querySelector('.count');
+      this._countContainer.setAttribute('title', 'Click to jump to a slide');
+      this._countContainer.addEventListener('click', () => this._openJumpInput());
     }
 
     /** @page must live in the document stylesheet — it's a no-op inside
@@ -594,6 +619,39 @@
         e.preventDefault();
         this._flashOverlay();
       }
+    }
+
+    _openJumpInput() {
+      const container = this._countContainer;
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.className = 'jump-input';
+      input.min = '1';
+      input.max = String(this._slides.length);
+      input.value = String(this._index + 1);
+      container.replaceWith(input);
+
+      const restore = () => {
+        if (input.isConnected) input.replaceWith(container);
+      };
+      const commit = () => {
+        if (!input.isConnected) return; // already dismissed via Escape
+        const n = parseInt(input.value, 10);
+        restore();
+        if (Number.isFinite(n)) this._go(n - 1, 'click');
+      };
+
+      input.addEventListener('keydown', (e) => {
+        e.stopPropagation(); // prevent deck key handler from firing
+        if (e.key === 'Enter') { e.preventDefault(); commit(); }
+        else if (e.key === 'Escape') { restore(); }
+      });
+      input.addEventListener('blur', commit);
+      // Keep overlay visible while the input is focused
+      input.addEventListener('focus', () => {
+        if (this._hideTimer) clearTimeout(this._hideTimer);
+      });
+      requestAnimationFrame(() => { input.select(); input.focus(); });
     }
 
     _go(i, reason = 'api') {

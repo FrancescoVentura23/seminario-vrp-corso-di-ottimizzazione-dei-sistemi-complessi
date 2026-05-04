@@ -1378,6 +1378,12 @@ function SlideTSPKeyIdentity() {
               <text x={700} y={160} textAnchor="end" fontFamily="var(--font-display)"
                     fontStyle="italic" fontSize={48} fill="var(--accent-2)">V \ S</text>
 
+              {/* Arcs first (so they render behind nodes) */}
+              <line x1={200} y1={250} x2={300} y2={300} stroke="var(--accent)" strokeWidth={3} markerEnd="url(#arrow-accent-key)"/>
+              <line x1={300} y1={300} x2={200} y2={250} stroke="var(--accent)" strokeWidth={3} markerEnd="url(#arrow-accent-key)" strokeDasharray="8 5"/>
+              <line x1={200} y1={250} x2={600} y2={280} stroke="var(--ink)" strokeWidth={3.5} markerEnd="url(#arrow-ink-key)"/>
+
+              {/* Nodes on top of arcs */}
               <g>
                 <circle cx={200} cy={250} r={20} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
                 <text x={200} y={260} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={20} fontWeight={600} fill="var(--ink)">i</text>
@@ -1393,11 +1399,7 @@ function SlideTSPKeyIdentity() {
                 <text x={600} y={290} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={20} fontWeight={600} fill="var(--ink)">k</text>
               </g>
 
-              <line x1={200} y1={250} x2={300} y2={300} stroke="var(--accent)" strokeWidth={3} markerEnd="url(#arrow-accent-key)"/>
-              <line x1={300} y1={300} x2={200} y2={250} stroke="var(--accent)" strokeWidth={3} markerEnd="url(#arrow-accent-key)" strokeDasharray="8 5"/>
-
-              <line x1={200} y1={250} x2={600} y2={280} stroke="var(--ink)" strokeWidth={3.5} markerEnd="url(#arrow-ink-key)"/>
-
+              {/* Arc labels */}
               <text x={245} y={235} fontFamily="var(--font-mono)" fontSize={18} fill="var(--accent)" fontWeight={600}>x*ᵢⱼ</text>
               <text x={245} y={335} fontFamily="var(--font-mono)" fontSize={18} fill="var(--accent)" fontWeight={600}>x*ⱼᵢ</text>
               <text x={390} y={260} fontFamily="var(--font-mono)" fontSize={18} fill="var(--ink)" fontWeight={600}>x*ᵢₖ ∈ δ(S)</text>

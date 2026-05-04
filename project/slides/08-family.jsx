@@ -108,6 +108,26 @@ function Slide21() {
     { id: 7, a: "11:00", b: "13:00", x: 440, y: 510 },
     { id: 8, a: "09:00", b: "11:00", x: 240, y: 480 },
   ];
+
+  // Routes as arrays of [x,y] vertices so we can compute per-segment arrowheads.
+  // Backoff = 18 px clears both circle nodes (r=12) and the depot rect (half-side=16).
+  const routes21 = [
+    { pts: [[420,320],[220,170],[340,120],[540,120],[420,320]], color: "var(--route-1)" },
+    { pts: [[420,320],[680,200],[720,340],[620,470],[420,320]], color: "var(--route-2)" },
+    { pts: [[420,320],[440,510],[240,480],[420,320]],           color: "var(--route-3)" },
+  ];
+  const arrows21 = [];
+  routes21.forEach((r, ri) => r.pts.slice(0, -1).forEach((p, i) => {
+    const [x1,y1] = p, [x2,y2] = r.pts[i+1];
+    const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy);
+    const ux = dx / L, uy = dy / L;
+    const back = 18, aw = 6, al = 12;
+    const tipX = x2 - ux * back, tipY = y2 - uy * back;
+    const bx = tipX - ux * al, by = tipY - uy * al;
+    const pts = `${tipX},${tipY} ${bx - uy*aw},${by + ux*aw} ${bx + uy*aw},${by - ux*aw}`;
+    arrows21.push({ key: `${ri}-${i}`, pts, color: r.color });
+  }));
+
   return (
     <section className="slide" data-label="VRPTW">
       <SlideFrame>
@@ -134,10 +154,17 @@ function Slide21() {
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24, position: "relative" }}>
             <svg viewBox="0 0 900 620" style={{ width: "100%", height: "100%", display: "block", overflow: "visible" }}>
               <rect x={420-16} y={320-16} width={32} height={32} fill="var(--depot)"/>
-              {/* Routes */}
-              <polyline points="420,320 220,170 340,120 540,120 420,320" fill="none" stroke="var(--route-1)" strokeWidth={3.5}/>
-              <polyline points="420,320 680,200 720,340 620,470 420,320" fill="none" stroke="var(--route-2)" strokeWidth={3.5}/>
-              <polyline points="420,320 440,510 240,480 420,320" fill="none" stroke="var(--route-3)" strokeWidth={3.5}/>
+              {/* Route bodies — drawn first so arrowheads can sit on top */}
+              {routes21.map((r, ri) => (
+                <polyline key={`body-${ri}`}
+                          points={r.pts.map(p => p.join(",")).join(" ")}
+                          fill="none" stroke={r.color} strokeWidth={3.5}
+                          strokeLinejoin="round" strokeLinecap="round"/>
+              ))}
+              {/* Arrowheads — rendered after all bodies (gotcha #10) */}
+              {arrows21.map(a => (
+                <polygon key={`arr-${a.key}`} points={a.pts} fill={a.color}/>
+              ))}
               {tw.map(c => {
                 // Pill placed above each customer, mirroring SlideNodeAttributes (slide 10):
                 // white fill, accent border, monospace text in accent color, dashed leader.
@@ -360,6 +387,26 @@ function Slide22Intro() {
                         animation: "drawPath 1200ms both ease-in-out",
                         animationDelay: "5005ms",
                       }}/>
+
+                {/* Arrowheads — one per arc, fadeUp ~end of each body's drawPath.
+                    Two horizontal lines (route 1 and 2) point right; route 3 is a
+                    quadratic Bezier so its tangent at the end is computed from
+                    control point (405,430) towards the depot endpoint (90,230). */}
+                {(() => {
+                  // r1: depot -> linehaul, ux=1 uy=0, ends at L (r=28); back=30, aw=6, al=12
+                  // r2: linehaul -> backhaul, ux=1 uy=0, ends at B (r=28); back=30
+                  // r3: curve end direction = (depot-(405,430))/|...| ≈ (-0.844,-0.536); ends at depot rect (half=18); back=22
+                  return (
+                    <>
+                      <polygon points="380,230 368,236 368,224" fill="var(--accent-3)"
+                               style={{ opacity: 0, animation: "fadeUp 200ms both ease-out", animationDelay: "1965ms" }}/>
+                      <polygon points="690,230 678,236 678,224" fill="var(--accent-2)"
+                               style={{ opacity: 0, animation: "fadeUp 200ms both ease-out", animationDelay: "4075ms" }}/>
+                      <polygon points="108.6,241.8 121.9,243.2 115.5,253.3" fill="var(--ink-3)"
+                               style={{ opacity: 0, animation: "fadeUp 200ms both ease-out", animationDelay: "6155ms" }}/>
+                    </>
+                  );
+                })()}
 
                 {/* Depot — black square */}
                 <rect x={depot.x - 18} y={depot.y - 18} width={36} height={36} fill="#000"/>
@@ -621,17 +668,38 @@ function Slide22() {
     { x: 200, y: 380, id: 10, type: 'B', label: 'B₅' },
   ];
 
-  // Route 1: depot → L₁ → L₂ → B₁ → B₂ → depot (mixed: L then B)
-  const route1 = "600,400 280,150 450,80 900,650 600,750 600,400";
-  const len1 = 1983;
-
-  // Route 2: depot → L₃ → L₄ → L₅ → B₃ → B₄ → depot (mixed: L then B)
-  const route2 = "600,400 750,120 950,280 1000,500 300,700 150,550 600,400";
-  const len2 = 2214;
-
-  // Route 3: depot → B₅ → depot (backhauls only)
-  const route3 = "600,400 200,380 600,400";
-  const len3 = 801;
+  // Routes as vertex arrays so we can compute per-segment arrowheads with
+  // cumulative-length-based fadeUp timing. The polyline body still uses one
+  // drawPath animation per route — arrows pop in along the way.
+  const routes22 = [
+    { pts: [[600,400],[280,150],[450,80],[900,650],[600,750],[600,400]],            color: "var(--route-1)", startMs: 0,    durMs: 1200 },
+    { pts: [[600,400],[750,120],[950,280],[1000,500],[300,700],[150,550],[600,400]],color: "var(--route-3)", startMs: 1300, durMs: 1500 },
+    { pts: [[600,400],[200,380],[600,400]],                                          color: "var(--route-2)", startMs: 3000, durMs: 800  },
+  ];
+  // Pre-compute segment metadata + arrowhead positions and timing.
+  // Backoff = 26 px clears both circle nodes (r=22, gap 4) and the depot's
+  // outer ring (half-side=24, gap 2). Arrow size aw=10, al=20 matches the
+  // SlideTSPHamiltonian pattern for big-viewbox slides.
+  const polyData22 = routes22.map(r => {
+    const segs = r.pts.slice(0, -1).map((p, i) => {
+      const [x1,y1] = p, [x2,y2] = r.pts[i+1];
+      const dx = x2-x1, dy = y2-y1, L = Math.hypot(dx, dy);
+      return { x1, y1, x2, y2, L, ux: dx/L, uy: dy/L };
+    });
+    return { ...r, segs, totalLen: segs.reduce((s, x) => s + x.L, 0) };
+  });
+  const arrows22 = [];
+  polyData22.forEach((r, ri) => {
+    let cum = 0;
+    r.segs.forEach((s, i) => {
+      cum += s.L;
+      const back = 26, aw = 10, al = 20;
+      const tipX = s.x2 - s.ux * back, tipY = s.y2 - s.uy * back;
+      const bx = tipX - s.ux * al, by = tipY - s.uy * al;
+      const pts = `${tipX.toFixed(1)},${tipY.toFixed(1)} ${(bx - s.uy*aw).toFixed(1)},${(by + s.ux*aw).toFixed(1)} ${(bx + s.uy*aw).toFixed(1)},${(by - s.ux*aw).toFixed(1)}`;
+      arrows22.push({ key: `${ri}-${i}`, pts, color: r.color, delayMs: r.startMs + (cum / r.totalLen) * r.durMs });
+    });
+  });
 
   return (
     <section ref={sectionRef} className="slide" data-label="VRPB">
@@ -642,23 +710,25 @@ function Slide22() {
         <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 60, flex: 1 }}>
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24 }}>
             <svg key={animKey} viewBox="0 0 1200 900" style={{ width: "100%", height: "100%" }}>
-              {/* Route 1: mixed (L + B) — animated */}
-              <polyline points={route1} fill="none" stroke="var(--route-1)" strokeWidth={5.5}
-                        strokeLinejoin="round" strokeLinecap="round"
-                        className="anim-draw"
-                        style={{ "--len": len1, animation: "drawPath 1200ms both ease-out" }}/>
-
-              {/* Route 2: mixed (L + B) — animated with delay */}
-              <polyline points={route2} fill="none" stroke="var(--route-3)" strokeWidth={5.5}
-                        strokeLinejoin="round" strokeLinecap="round"
-                        className="anim-draw"
-                        style={{ "--len": len2, animation: "drawPath 1500ms both ease-out 1300ms" }}/>
-
-              {/* Route 3: backhauls only — animated with longer delay */}
-              <polyline points={route3} fill="none" stroke="var(--route-2)" strokeWidth={5.5}
-                        strokeLinejoin="round" strokeLinecap="round"
-                        className="anim-draw"
-                        style={{ "--len": len3, animation: "drawPath 800ms both ease-out 3000ms" }}/>
+              {/* Route bodies — single polyline per route (preserves the sweep
+                  feel of the original drawPath animation) */}
+              {polyData22.map((r, ri) => (
+                <polyline key={`body-${ri}`}
+                          points={r.pts.map(p => p.join(",")).join(" ")}
+                          fill="none" stroke={r.color} strokeWidth={5.5}
+                          strokeLinejoin="round" strokeLinecap="round"
+                          className="anim-draw"
+                          style={{ "--len": r.totalLen,
+                                   animation: `drawPath ${r.durMs}ms both ease-out ${r.startMs}ms` }}/>
+              ))}
+              {/* Arrowheads — fade in as the polyline draw reaches each
+                  segment endpoint (delay = startMs + cumLen/totalLen * durMs) */}
+              {arrows22.map(a => (
+                <polygon key={`arr-${a.key}`} points={a.pts} fill={a.color}
+                         style={{ opacity: 0,
+                                  animation: "fadeUp 200ms both ease-out",
+                                  animationDelay: `${a.delayMs.toFixed(0)}ms` }}/>
+              ))}
 
               {/* Depot */}
               <rect x={depot.x - 18} y={depot.y - 18} width={36} height={36}
@@ -915,6 +985,17 @@ function Slide23Intro() {
                         animation: "drawPath 1200ms both ease-in-out",
                         animationDelay: "5005ms",
                       }}/>
+
+                {/* Arrowheads — same geometry as Slide22Intro: depot=(90,230),
+                    pickup=(410,230), delivery=(720,230) on the y=230 line, plus
+                    a return curve with end-tangent ≈ (-0.844,-0.536). Colour of
+                    each arrow matches its body. */}
+                <polygon points="380,230 368,236 368,224" fill="var(--ink-3)"
+                         style={{ opacity: 0, animation: "fadeUp 200ms both ease-out", animationDelay: "1965ms" }}/>
+                <polygon points="690,230 678,236 678,224" fill="var(--accent)"
+                         style={{ opacity: 0, animation: "fadeUp 200ms both ease-out", animationDelay: "4075ms" }}/>
+                <polygon points="108.6,241.8 121.9,243.2 115.5,253.3" fill="var(--ink-3)"
+                         style={{ opacity: 0, animation: "fadeUp 200ms both ease-out", animationDelay: "6155ms" }}/>
 
                 {/* Depot — black square */}
                 <rect x={depot.x - 18} y={depot.y - 18} width={36} height={36} fill="#000"/>
@@ -1189,19 +1270,38 @@ function Slide23() {
   ];
   const sub = ["₁","₂","₃","₄","₅"];
 
-  // Vehicle 1 (route-1) — SEQUENTIAL pattern: each request finishes before the
-  // next starts (peak load = max(d₁,d₂)).
-  // depot → P₁ → D₁ → P₂ → D₂ → depot
-  const route1 = "600,450 260,200 550,330 450,140 340,360 600,450";
-  const len1 = 1480;
-  // Vehicle 2 (route-3) — INTERLEAVED pattern: both requests on board at the
-  // peak (peak load = d₃ + d₄, capacity must hold).
-  // depot → P₃ → P₄ → D₄ → D₃ → depot
-  const route2 = "600,450 760,160 970,250 940,460 700,380 600,450";
-  const len2 = 1150;
-  // Vehicle 3 (route-2) — single-request route: depot → P₅ → D₅ → depot
-  const route3 = "600,450 350,720 850,750 600,450";
-  const len3 = 1260;
+  // Routes as vertex arrays so we can compute per-segment arrowheads with
+  // cumulative-length-based fadeUp timing.
+  // - Vehicle 1 (route-1) SEQUENTIAL: depot → P₁ → D₁ → P₂ → D₂ → depot
+  //   (peak load = max(d₁,d₂))
+  // - Vehicle 2 (route-3) INTERLEAVED: depot → P₃ → P₄ → D₄ → D₃ → depot
+  //   (peak load = d₃ + d₄, capacity must hold)
+  // - Vehicle 3 (route-2) single-request: depot → P₅ → D₅ → depot
+  const routes23 = [
+    { pts: [[600,450],[260,200],[550,330],[450,140],[340,360],[600,450]], color: "var(--route-1)", startMs: 0,    durMs: 1300 },
+    { pts: [[600,450],[760,160],[970,250],[940,460],[700,380],[600,450]], color: "var(--route-3)", startMs: 1400, durMs: 1300 },
+    { pts: [[600,450],[350,720],[850,750],[600,450]],                     color: "var(--route-2)", startMs: 2800, durMs: 1100 },
+  ];
+  const polyData23 = routes23.map(r => {
+    const segs = r.pts.slice(0, -1).map((p, i) => {
+      const [x1,y1] = p, [x2,y2] = r.pts[i+1];
+      const dx = x2-x1, dy = y2-y1, L = Math.hypot(dx, dy);
+      return { x1, y1, x2, y2, L, ux: dx/L, uy: dy/L };
+    });
+    return { ...r, segs, totalLen: segs.reduce((s, x) => s + x.L, 0) };
+  });
+  const arrows23 = [];
+  polyData23.forEach((r, ri) => {
+    let cum = 0;
+    r.segs.forEach((s, i) => {
+      cum += s.L;
+      const back = 26, aw = 10, al = 20;  // back clears node r=22 and depot outer half=24
+      const tipX = s.x2 - s.ux * back, tipY = s.y2 - s.uy * back;
+      const bx = tipX - s.ux * al, by = tipY - s.uy * al;
+      const pts = `${tipX.toFixed(1)},${tipY.toFixed(1)} ${(bx - s.uy*aw).toFixed(1)},${(by + s.ux*aw).toFixed(1)} ${(bx + s.uy*aw).toFixed(1)},${(by - s.ux*aw).toFixed(1)}`;
+      arrows23.push({ key: `${ri}-${i}`, pts, color: r.color, delayMs: r.startMs + (cum / r.totalLen) * r.durMs });
+    });
+  });
 
   return (
     <section ref={sectionRef} className="slide" data-label="VRPPD">
@@ -1226,20 +1326,23 @@ function Slide23() {
                       strokeDasharray="6 6" opacity={0.4}/>
               ))}
 
-              {/* Routes — animated drawPath, staggered so the eye follows one
-                  vehicle at a time before all three coexist. */}
-              <polyline points={route1} fill="none" stroke="var(--route-1)" strokeWidth={5.5}
-                        strokeLinejoin="round" strokeLinecap="round"
-                        className="anim-draw"
-                        style={{ "--len": len1, animation: "drawPath 1300ms both ease-out" }}/>
-              <polyline points={route2} fill="none" stroke="var(--route-3)" strokeWidth={5.5}
-                        strokeLinejoin="round" strokeLinecap="round"
-                        className="anim-draw"
-                        style={{ "--len": len2, animation: "drawPath 1300ms both ease-out 1400ms" }}/>
-              <polyline points={route3} fill="none" stroke="var(--route-2)" strokeWidth={5.5}
-                        strokeLinejoin="round" strokeLinecap="round"
-                        className="anim-draw"
-                        style={{ "--len": len3, animation: "drawPath 1100ms both ease-out 2800ms" }}/>
+              {/* Route bodies — staggered drawPath, single polyline per route */}
+              {polyData23.map((r, ri) => (
+                <polyline key={`body-${ri}`}
+                          points={r.pts.map(p => p.join(",")).join(" ")}
+                          fill="none" stroke={r.color} strokeWidth={5.5}
+                          strokeLinejoin="round" strokeLinecap="round"
+                          className="anim-draw"
+                          style={{ "--len": r.totalLen,
+                                   animation: `drawPath ${r.durMs}ms both ease-out ${r.startMs}ms` }}/>
+              ))}
+              {/* Arrowheads — fade in as drawPath reaches each segment endpoint */}
+              {arrows23.map(a => (
+                <polygon key={`arr-${a.key}`} points={a.pts} fill={a.color}
+                         style={{ opacity: 0,
+                                  animation: "fadeUp 200ms both ease-out",
+                                  animationDelay: `${a.delayMs.toFixed(0)}ms` }}/>
+              ))}
 
               {/* Depot — black square with paper "0" */}
               <rect x={depot.x - 18} y={depot.y - 18} width={36} height={36}

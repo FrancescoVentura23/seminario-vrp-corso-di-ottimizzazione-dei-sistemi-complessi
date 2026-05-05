@@ -27,63 +27,53 @@ function SlideClarkeWrightIntro() {
   const steps = [
     {
       n: "01",
-      h: "Problem",
-      b: "CVRP: serve n customers from one depot with a fleet of capacitated vehicles — minimize total distance.",
+      h: "Setting",
+      b: "CVRP: n customers, one depot. The number of vehicles K is a decision variable — not fixed in advance. The algorithm works for both symmetric and asymmetric distance matrices.",
     },
     {
       n: "02",
-      h: "Starting point — the star solution",
-      b: "Assign every customer its own dedicated round-trip: depot → customer → depot. Feasible, but wasteful: n routes, maximum distance.",
+      h: "Initial solution — n dedicated round-trips",
+      b: "Create one route (0, i, 0) per customer i = 1, …, n. Every customer is served by its own vehicle. Feasible, but maximally wasteful — no shared legs.",
     },
     {
       n: "03",
-      h: "Key question",
-      b: "Can we merge two round-trips into one shared route and travel less? Only if the combined load does not exceed vehicle capacity Q.",
+      h: "Savings — the key quantity",
+      b: "Merging (0, …, i, 0) with (0, j, …, 0) into one route (0, …, i, j, …, 0) eliminates two depot legs and generates a saving s(i, j) = c(i,0) + c(0,j) − c(i,j). Compute all savings, sort in non-increasing order.",
     },
     {
       n: "04",
-      h: "Greedy strategy",
-      b: "Compute a saving s(i, j) for every pair. Sort pairs by saving (largest first). Merge a pair if it is still feasible — repeat until no profitable merge remains.",
+      h: "Greedy merge — parallel version (dominant in practice)",
+      b: "Scan the savings list from the top. For each s(i,j): if the route containing arc (i,0) and the route containing arc (0,j) can be feasibly merged — combined load ≤ Q, both i and j are at depot-adjacent endpoints — merge them by deleting (i,0) and (0,j) and introducing (i,j). Repeat until no feasible merge remains.",
     },
   ];
 
   return (
     <section className="slide" data-label="Clarke-Wright — what and why">
       <SlideFrame>
-        <div className="tag">Clarke–Wright (1964)</div>
-        <h2 className="title" style={{ marginTop: 28 }}>
-          A greedy heuristic that builds CVRP routes by merging round-trips.
+        <div className="tag">Clarke–Wright (1964) · Laporte &amp; Semet in Toth &amp; Vigo §5.2.1</div>
+        <h2 className="title" style={{ marginTop: 20 }}>
+          The savings algorithm — builds CVRP routes by merging round-trips greedily.
         </h2>
 
-        <div style={{
-          marginTop: 14,
-          fontFamily: "var(--font-display)",
-          fontSize: 22,
-          color: "var(--ink-2)",
-          lineHeight: 1.4,
-        }}>
-          Published by G. Clarke &amp; J.W. Wright in 1964 — still the most widely taught constructive heuristic for vehicle routing.
-        </div>
-
-        <div style={{ marginTop: 28, display: "flex", flexDirection: "column", gap: 0, flex: 1 }}>
+        <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 0, flex: 1 }}>
           {steps.map(({ n, h, b }) => (
             <div key={n} style={{
               display: "grid",
-              gridTemplateColumns: "72px 1fr",
-              gap: 28,
-              padding: "18px 0",
+              gridTemplateColumns: "64px 1fr",
+              gap: 24,
+              padding: "14px 0",
               borderTop: "1px solid var(--line)",
               alignItems: "start",
             }}>
               <div style={{
                 fontFamily: "var(--font-display)",
-                fontSize: 52,
+                fontSize: 46,
                 lineHeight: 1,
                 color: "var(--accent)",
               }}>{n}</div>
               <div>
-                <div style={{ fontFamily: "var(--font-display)", fontSize: 30, lineHeight: 1.1 }}>{h}</div>
-                <div style={{ fontSize: 22, color: "var(--ink-2)", marginTop: 6, lineHeight: 1.45 }}>{b}</div>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: 28, lineHeight: 1.1 }}>{h}</div>
+                <div style={{ fontSize: 21, color: "var(--ink-2)", marginTop: 5, lineHeight: 1.45 }}>{b}</div>
               </div>
             </div>
           ))}
@@ -91,16 +81,17 @@ function SlideClarkeWrightIntro() {
         </div>
 
         <div style={{
-          marginTop: 20,
+          marginTop: 16,
           background: "var(--ink)",
           color: "var(--paper)",
-          padding: "14px 22px",
+          padding: "12px 20px",
           fontFamily: "var(--font-mono)",
-          fontSize: 22,
+          fontSize: 20,
           lineHeight: 1.4,
         }}>
-          Complexity: <span style={{ color: "var(--accent-2)" }}>O(n² log n)</span>
-          &nbsp;— feasible on thousands of customers where exact B&amp;C would take days.
+          Step 1 complexity: <span style={{ color: "var(--accent-2)" }}>O(n²)</span> savings to compute
+          &nbsp;+&nbsp;<span style={{ color: "var(--accent-2)" }}>O(n² log n)</span> to sort.
+          &nbsp;·&nbsp; A sequential version also exists — parallel dominates (Toth &amp; Vigo, Table 5.1).
         </div>
 
       </SlideFrame>

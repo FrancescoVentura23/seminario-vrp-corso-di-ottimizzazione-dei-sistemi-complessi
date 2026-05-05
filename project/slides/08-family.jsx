@@ -343,14 +343,20 @@ function Slide21C() {
             </div>
             <div style={{ color: "var(--ink-3)", marginBottom: 10, fontFamily: "var(--font-mono)", fontSize: 20 }}>subject to</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr auto", rowGap: 10, columnGap: 14, alignItems: "center" }}>
-              <div style={{ fontSize: 20 }}><TeX>{"\\sum_{j \\in V} x_{ij} = 1 \\;\\forall\\, i \\in V \\setminus \\{0\\}, \\quad \\sum_{i \\in V} x_{ij} = 1 \\;\\forall\\, j \\in V \\setminus \\{0\\}"}</TeX></div>
-              <div style={{ color: "var(--ink-3)", fontSize: 18 }}>(ii) single visit</div>
+              <div style={{ fontSize: 20 }}><TeX>{"\\sum_{i \\in V} x_{ij} = 1 \\;\\forall\\, j \\in V \\setminus \\{0\\}"}</TeX></div>
+              <div style={{ color: "var(--ink-3)", fontSize: 18 }}>(ii) in-degree</div>
 
-              <div style={{ fontSize: 20 }}><TeX>{"\\textstyle\\sum_{j} x_{0j} = \\sum_{i} x_{i0} = K"}</TeX></div>
-              <div style={{ color: "var(--ink-3)", fontSize: 18 }}>(i) depot flow</div>
+              <div style={{ fontSize: 20 }}><TeX>{"\\sum_{j \\in V} x_{ij} = 1 \\;\\forall\\, i \\in V \\setminus \\{0\\}"}</TeX></div>
+              <div style={{ color: "var(--ink-3)", fontSize: 18 }}>(ii) out-degree</div>
+
+              <div style={{ fontSize: 20 }}><TeX>{"\\sum_{j \\in V} x_{0j} = K"}</TeX></div>
+              <div style={{ color: "var(--ink-3)", fontSize: 18 }}>(i) K vehicles leave</div>
+
+              <div style={{ fontSize: 20 }}><TeX>{"\\sum_{i \\in V} x_{i0} = K"}</TeX></div>
+              <div style={{ color: "var(--ink-3)", fontSize: 18 }}>(i) K vehicles return</div>
 
               <div style={{ fontSize: 20 }}><TeX>{"\\textstyle\\sum_{i \\notin S}\\sum_{j \\in S} x_{ij} \\geq r(S) \\;\\forall\\, S \\subseteq V \\setminus \\{0\\}"}</TeX></div>
-              <div style={{ color: "var(--ink-3)", fontSize: 18 }}>(iii) cap. cut</div>
+              <div style={{ color: "var(--ink-3)", fontSize: 18 }}>(iii) capacity-cut</div>
 
               <div style={{ color: "var(--accent)", fontSize: 20 }}><TeX>{"a_i \\leq \\tau_i \\leq b_i \\quad \\forall\\, i \\in V"}</TeX></div>
               <div style={{ color: "var(--accent)", fontSize: 18 }}>(iv) time window</div>

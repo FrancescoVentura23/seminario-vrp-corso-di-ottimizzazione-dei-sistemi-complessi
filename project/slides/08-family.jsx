@@ -381,6 +381,141 @@ function Slide21C() {
 
 
 // ==========================================================
+// VRPTW — time linking analysis. Two-column derivation that
+// substitutes x_ij = 0 and x_ij = 1 into constraint (v) of
+// the VRPTW formulation introduced in Slide21C, showing that
+// the Big-M term acts as an on/off switch for the ordering.
+
+function Slide21D() {
+  return (
+    <section className="slide" data-label="VRPTW — time-linking Big-M switch">
+      <SlideFrame>
+        <div className="tag">VRPTW · Time linking</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          Time linking — the Big-M switch, case by case.
+        </h2>
+
+        <div style={{
+          marginTop: 18,
+          fontFamily: "var(--font-display)",
+          fontSize: 22,
+          color: "var(--ink-2)",
+          lineHeight: 1.4,
+        }}>
+          Constraint (v) of the VRPTW formulation, evaluated for the two possible values of x<sub>ij</sub>.
+        </div>
+
+        <div style={{ marginTop: 28, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, flex: 1 }}>
+
+          {/* === LEFT COLUMN — x_ij = 0 (constraint OFF) === */}
+          <div style={{
+            border: "1px solid var(--line)",
+            background: "var(--paper-2)",
+            padding: "24px 30px",
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+          }}>
+            <div className="kicker" style={{ color: "var(--ink-3)", fontSize: 22 }}>
+              CASE x<sub>ij</sub> = 0 · arc not used
+            </div>
+
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--ink-3)", letterSpacing: "0.08em", marginTop: 6 }}>
+              GENERAL CONSTRAINT
+            </div>
+            <div style={{ fontSize: 24 }}>
+              <TeX display>{"\\tau_j \\geq \\tau_i + s_i + t_{ij} - M(1 - x_{ij})"}</TeX>
+            </div>
+
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--ink-3)", letterSpacing: "0.08em", marginTop: 4 }}>
+              ↓ SUBSTITUTE x<sub>ij</sub> = 0
+            </div>
+            <div style={{ fontSize: 24 }}>
+              <TeX display>{"\\tau_j \\geq \\tau_i + s_i + t_{ij} - M(1 - 0)"}</TeX>
+            </div>
+
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--ink-3)", letterSpacing: "0.08em", marginTop: 4 }}>
+              ↓ SIMPLIFY
+            </div>
+            <div style={{ fontSize: 26 }}>
+              <TeX display>{"\\tau_j \\geq \\tau_i + s_i + t_{ij} - M"}</TeX>
+            </div>
+
+            <div style={{
+              marginTop: "auto",
+              border: "1px solid var(--line)",
+              background: "var(--paper)",
+              padding: "14px 18px",
+              fontSize: 21,
+              lineHeight: 1.4,
+              color: "var(--ink-2)",
+            }}>
+              For M large enough, the right-hand side is so negative that any feasible <TeX>{"\\tau_j \\geq 0"}</TeX> satisfies the inequality.
+              <div style={{ marginTop: 10, fontFamily: "var(--font-mono)", fontSize: 19, color: "var(--ink-3)", letterSpacing: "0.04em" }}>
+                → constraint OFF · non-binding, no ordering imposed between i and j
+              </div>
+            </div>
+          </div>
+
+          {/* === RIGHT COLUMN — x_ij = 1 (constraint ON) === */}
+          <div style={{
+            border: "1px solid var(--accent)",
+            borderLeft: "4px solid var(--accent)",
+            background: "rgba(107,74,245,0.08)",
+            padding: "24px 30px",
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+          }}>
+            <div className="kicker" style={{ color: "var(--accent)", fontSize: 22 }}>
+              CASE x<sub>ij</sub> = 1 · arc on the route
+            </div>
+
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--ink-3)", letterSpacing: "0.08em", marginTop: 6 }}>
+              GENERAL CONSTRAINT
+            </div>
+            <div style={{ fontSize: 24 }}>
+              <TeX display>{"\\tau_j \\geq \\tau_i + s_i + t_{ij} - M(1 - x_{ij})"}</TeX>
+            </div>
+
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--ink-3)", letterSpacing: "0.08em", marginTop: 4 }}>
+              ↓ SUBSTITUTE x<sub>ij</sub> = 1
+            </div>
+            <div style={{ fontSize: 24 }}>
+              <TeX display>{"\\tau_j \\geq \\tau_i + s_i + t_{ij} - M(1 - 1)"}</TeX>
+            </div>
+
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--ink-3)", letterSpacing: "0.08em", marginTop: 4 }}>
+              ↓ SIMPLIFY
+            </div>
+            <div style={{ fontSize: 26, color: "var(--accent)" }}>
+              <TeX display>{"\\tau_j \\geq \\tau_i + s_i + t_{ij}"}</TeX>
+            </div>
+
+            <div style={{
+              marginTop: "auto",
+              border: "1px solid var(--accent)",
+              background: "var(--paper)",
+              padding: "14px 18px",
+              fontSize: 21,
+              lineHeight: 1.4,
+              color: "var(--ink-2)",
+            }}>
+              Service at j cannot start before the vehicle finishes at i and travels along the arc for t<sub>ij</sub> time units.
+              <div style={{ marginTop: 10, fontFamily: "var(--font-mono)", fontSize: 19, color: "var(--accent)", letterSpacing: "0.04em" }}>
+                → constraint ON · correct time ordering enforced along the route
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
+// ==========================================================
 // VRPB INTRO — define linehaul vs backhaul with an animated
 // truck demo: cargo full at depot, unloads at the green
 // linehaul, then loads at the amber backhaul.
@@ -1782,7 +1917,7 @@ function Slide23B() {
 
 
 Object.assign(window, {
-  Slide19, Slide20, Slide21, Slide21B, Slide21C,
+  Slide19, Slide20, Slide21, Slide21B, Slide21C, Slide21D,
   Slide22Intro, Slide22Load, Slide22, Slide22B,
   Slide23Intro, Slide23Load, Slide23, Slide23B,
 });

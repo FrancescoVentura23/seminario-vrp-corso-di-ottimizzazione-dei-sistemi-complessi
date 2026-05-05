@@ -678,19 +678,24 @@ function Slide22Load() {
 
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "16px 20px", display: "flex", flexDirection: "column", gap: 12 }}>
               <div style={{ fontSize: 23, lineHeight: 1.55 }}>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--ink-3)", letterSpacing: "0.07em", marginBottom: 4 }}>DEPARTURE</div>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--ink-3)", letterSpacing: "0.07em", marginBottom: 4 }}>DEPARTURE FROM DEPOT</div>
                 <TeX>{"q_0 = \\sum_{i \\in L} d_i \\;\\leq\\; C"}</TeX>
+                <div style={{ fontSize: 20, color: "var(--ink-2)", marginTop: 7, lineHeight: 1.5 }}>
+                  <TeX>{"q_0"}</TeX> = carico del camion alla partenza.
+                  &nbsp;<TeX>{"L"}</TeX> = insieme dei clienti linehaul <em>di questa rotta</em>.<br/>
+                  Poiché <strong>tutte le consegne precedono tutti i ritiri</strong>, il camion deve portare fin dalla partenza <em>tutta</em> la merce da consegnare: il carico iniziale è quindi la somma delle domande dei linehaul, e deve stare dentro la capacità C.
+                </div>
               </div>
               <div style={{ borderTop: "1px solid var(--line)", paddingTop: 10, fontSize: 23, lineHeight: 1.55 }}>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--accent-3)", letterSpacing: "0.07em", marginBottom: 4 }}>AT EACH LINEHAUL L_i</div>
-                delivers <TeX>{"d_i"}</TeX> → load drops by <TeX>{"d_i"}</TeX>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--accent-3)", letterSpacing: "0.07em", marginBottom: 4 }}>AT EACH LINEHAUL Lᵢ</div>
+                consegna <TeX>{"d_i"}</TeX> unità → carico scende di <TeX>{"d_i"}</TeX>
               </div>
               <div style={{ borderTop: "1px solid var(--line)", paddingTop: 10, fontSize: 23, lineHeight: 1.55 }}>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--accent-2)", letterSpacing: "0.07em", marginBottom: 4 }}>AT EACH BACKHAUL B_j</div>
-                collects <TeX>{"d_j"}</TeX> → load rises by <TeX>{"d_j"}</TeX>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--accent-2)", letterSpacing: "0.07em", marginBottom: 4 }}>AT EACH BACKHAUL Bⱼ</div>
+                raccoglie <TeX>{"d_j"}</TeX> unità → carico sale di <TeX>{"d_j"}</TeX>
               </div>
               <div style={{ borderTop: "1px solid var(--line)", paddingTop: 10, fontSize: 22, lineHeight: 1.55, color: "var(--ink-2)" }}>
-                At every leg: load <TeX>{"\\leq C"}</TeX>
+                Ad ogni tratto: carico <TeX>{"\\leq C"}</TeX>
               </div>
             </div>
 

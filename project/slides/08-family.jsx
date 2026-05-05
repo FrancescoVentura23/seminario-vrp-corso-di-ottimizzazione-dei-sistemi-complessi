@@ -798,160 +798,183 @@ function Slide22Intro() {
 
 
 function Slide22Load() {
-  const C = 10, dL1 = 4, dL2 = 3, dB1 = 5;
-  const q0 = dL1 + dL2; // 7 — departure load (sum of linehaul demands)
-
-  const cb = 250, ct = 30; // chartBottom, chartTop
-  const toY = (v) => cb - (v / C) * (cb - ct);
-
-  const stops = [85, 215, 345, 475, 615];
-  const legs  = [q0, q0 - dL1, 0, dB1]; // load carried on each leg
-
   return (
-    <section className="slide" data-label="Cargo profile">
+    <section className="slide" data-label="Cargo profile — rules">
       <SlideFrame>
         <div className="tag">Family · VRPB primer</div>
         <h2 className="title" style={{ marginTop: 28 }}>
           Partial loads — each customer handles only their own demand.
         </h2>
 
-        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 60, flex: 1 }}>
+        <div className="lede" style={{ marginTop: 18 }}>
+          The truck does not need to leave full, and no single customer unloads or loads the entire vehicle.
+        </div>
 
-          {/* Left — key rules */}
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 20 }}>
-            <div className="lede">
-              The truck does not need to leave full, and no single customer unloads or loads the entire vehicle.
+        <div style={{ marginTop: 28, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 28, flex: 1 }}>
+
+          {/* Column 1 — Departure */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "24px 28px", display: "flex", flexDirection: "column", gap: 16 }}>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--ink-3)", letterSpacing: "0.07em" }}>DEPARTURE FROM DEPOT</div>
+            <div style={{ fontSize: 36 }}>
+              <TeX>{"q_0 = \\sum_{i \\in L} d_i \\;\\leq\\; C"}</TeX>
             </div>
-
-            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "16px 20px", display: "flex", flexDirection: "column", gap: 12 }}>
-              <div style={{ fontSize: 23, lineHeight: 1.55 }}>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--ink-3)", letterSpacing: "0.07em", marginBottom: 4 }}>DEPARTURE FROM DEPOT</div>
-                <div style={{ fontSize: 30 }}>
-                  <TeX>{"q_0 = \\sum_{i \\in L} d_i \\;\\leq\\; C"}</TeX>
-                </div>
-                <div style={{ fontSize: 20, color: "var(--ink-2)", marginTop: 7, lineHeight: 1.5 }}>
-                  <TeX>{"q_0"}</TeX> = carico del camion alla partenza.
-                  &nbsp;<TeX>{"L"}</TeX> = insieme dei clienti linehaul <em>di questa rotta</em>.<br/>
-                  Poiché <strong>tutte le consegne precedono tutti i ritiri</strong>, il camion deve portare fin dalla partenza <em>tutta</em> la merce da consegnare: il carico iniziale è quindi la somma delle domande dei linehaul, e deve stare dentro la capacità C.
-                </div>
-              </div>
-              <div style={{ borderTop: "1px solid var(--line)", paddingTop: 10, fontSize: 23, lineHeight: 1.55 }}>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--accent-3)", letterSpacing: "0.07em", marginBottom: 4 }}>AT EACH LINEHAUL Lᵢ</div>
-                consegna <TeX>{"d_i"}</TeX> unità → carico scende di <TeX>{"d_i"}</TeX>
-              </div>
-              <div style={{ borderTop: "1px solid var(--line)", paddingTop: 10, fontSize: 23, lineHeight: 1.55 }}>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--accent-2)", letterSpacing: "0.07em", marginBottom: 4 }}>AT EACH BACKHAUL Bⱼ</div>
-                raccoglie <TeX>{"d_j"}</TeX> unità → carico sale di <TeX>{"d_j"}</TeX>
-              </div>
-              <div style={{ borderTop: "1px solid var(--line)", paddingTop: 10, fontSize: 22, lineHeight: 1.55, color: "var(--ink-2)" }}>
-                Ad ogni tratto: carico <TeX>{"\\leq C"}</TeX>
-              </div>
-            </div>
-
-            <div className="body small" style={{ color: "var(--ink-3)" }}>
-              The previous slide showed the degenerate case (1 L + 1 B) where the loads happened to fill and empty the truck exactly. The chart on the right shows the general picture with 2 L and 1 B.
+            <div style={{ fontSize: 22, color: "var(--ink-2)", lineHeight: 1.55 }}>
+              <TeX>{"q_0"}</TeX> = truck load at departure.<br/>
+              <TeX>{"L"}</TeX> = linehaul customers on this route.<br/><br/>
+              Since <strong>all deliveries precede all pickups</strong>, the truck must carry <em>all</em> linehaul goods from the start — the departure load equals the sum of linehaul demands.
             </div>
           </div>
 
-          {/* Right — step chart */}
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "20px 24px", display: "flex", flexDirection: "column" }}>
-            <svg viewBox="0 0 700 300" style={{ width: "100%", flex: 1, display: "block" }}>
-
-              {/* C reference line */}
-              <line x1={55} y1={toY(C)} x2={650} y2={toY(C)}
-                    stroke="var(--ink-3)" strokeWidth={1.5} strokeDasharray="5 4"/>
-              <text x={50} y={toY(C) + 5} textAnchor="end"
-                    fontFamily="var(--font-mono)" fontSize={14} fill="var(--ink-3)">C=10</text>
-
-              {/* Filled areas under each non-zero leg */}
-              {legs.map((load, i) => {
-                if (load === 0) return null;
-                const color = i < 2 ? "var(--accent-3)" : "var(--accent-2)";
-                return (
-                  <rect key={i} x={stops[i]} y={toY(load)}
-                        width={stops[i+1] - stops[i]} height={cb - toY(load)}
-                        fill={color} opacity={0.18}/>
-                );
-              })}
-
-              {/* Horizontal step lines */}
-              {legs.map((load, i) => {
-                const y = load === 0 ? cb : toY(load);
-                const color = i < 2 ? "var(--accent-3)" : i === 3 ? "var(--accent-2)" : "var(--ink-3)";
-                return (
-                  <line key={i} x1={stops[i]} y1={y} x2={stops[i+1]} y2={y}
-                        stroke={color}
-                        strokeWidth={load === 0 ? 1.5 : 3}
-                        strokeDasharray={load === 0 ? "4 3" : undefined}/>
-                );
-              })}
-
-              {/* Vertical connectors at interior stops */}
-              <line x1={stops[1]} y1={toY(legs[0])} x2={stops[1]} y2={toY(legs[1])}
-                    stroke="var(--accent-3)" strokeWidth={2.5}/>
-              <line x1={stops[2]} y1={toY(legs[1])} x2={stops[2]} y2={cb}
-                    stroke="var(--accent-3)" strokeWidth={2.5}/>
-              <line x1={stops[3]} y1={cb} x2={stops[3]} y2={toY(legs[3])}
-                    stroke="var(--accent-2)" strokeWidth={2.5}/>
-
-              {/* Delta labels */}
-              <text x={stops[1] + 8} y={(toY(legs[0]) + toY(legs[1])) / 2 + 5}
-                    fontFamily="var(--font-mono)" fontSize={15} fill="var(--accent-3)" fontWeight={700}>
-                {"↓ " + dL1}
-              </text>
-              <text x={stops[2] + 8} y={(toY(legs[1]) + cb) / 2 + 5}
-                    fontFamily="var(--font-mono)" fontSize={15} fill="var(--accent-3)" fontWeight={700}>
-                {"↓ " + dL2}
-              </text>
-              <text x={stops[3] + 8} y={(cb + toY(legs[3])) / 2 + 5}
-                    fontFamily="var(--font-mono)" fontSize={15} fill="var(--accent-2)" fontWeight={700}>
-                {"↑ " + dB1}
-              </text>
-
-              {/* Load value on each leg */}
-              {legs.map((load, i) => {
-                const mx = (stops[i] + stops[i+1]) / 2;
-                const y  = load === 0 ? cb - 10 : toY(load) - 10;
-                const color = i < 2 ? "var(--accent-3)" : i === 3 ? "var(--accent-2)" : "var(--ink-3)";
-                return (
-                  <text key={i} x={mx} y={y} textAnchor="middle"
-                        fontFamily="var(--font-mono)" fontSize={18} fill={color}
-                        fontWeight={load === 0 ? 400 : 700}>
-                    {load}
-                  </text>
-                );
-              })}
-
-              {/* q₀ < C annotation above first leg */}
-              <text x={(stops[0] + stops[1]) / 2} y={toY(legs[0]) - 26}
-                    textAnchor="middle" fontFamily="var(--font-mono)" fontSize={13} fill="var(--ink-3)">
-                {"q₀ = " + q0 + " < C"}
-              </text>
-
-              {/* X axis */}
-              <line x1={55} y1={cb} x2={650} y2={cb} stroke="var(--ink-3)" strokeWidth={1.5}/>
-
-              {/* Stop labels */}
-              {["Depot", "L₁", "L₂", "B₁", "Depot"].map((lbl, i) => (
-                <g key={i}>
-                  <line x1={stops[i]} y1={cb} x2={stops[i]} y2={cb + 6}
-                        stroke="var(--ink-3)" strokeWidth={1.5}/>
-                  <text x={stops[i]} y={cb + 22} textAnchor="middle"
-                        fontFamily="var(--font-mono)" fontSize={16}
-                        fill={i === 0 || i === 4 ? "var(--ink)" : i < 3 ? "var(--accent-3)" : "var(--accent-2)"}>
-                    {lbl}
-                  </text>
-                </g>
-              ))}
-
-              {/* Y axis */}
-              <line x1={55} y1={ct - 10} x2={55} y2={cb} stroke="var(--ink-3)" strokeWidth={1.5}/>
-              <text x={50} y={cb + 5} textAnchor="end"
-                    fontFamily="var(--font-mono)" fontSize={14} fill="var(--ink-3)">0</text>
-            </svg>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 17, color: "var(--ink-3)", textAlign: "center", marginTop: 8 }}>
-              {"Example: C = 10 · dₗ₁ = " + dL1 + " · dₗ₂ = " + dL2 + " · dᴮ₁ = " + dB1}
+          {/* Column 2 — Linehaul */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "24px 28px", display: "flex", flexDirection: "column", gap: 16 }}>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--accent-3)", letterSpacing: "0.07em" }}>AT EACH LINEHAUL Lᵢ</div>
+            <div style={{ fontSize: 36 }}>
+              <TeX>{"q \\;\\mathrel{-{=}}\\; d_i"}</TeX>
             </div>
+            <div style={{ fontSize: 22, color: "var(--ink-2)", lineHeight: 1.55 }}>
+              The truck <strong>delivers</strong> <TeX>{"d_i"}</TeX> units to customer <TeX>{"L_i"}</TeX>.<br/><br/>
+              Load decreases by <TeX>{"d_i"}</TeX> at each linehaul stop — the truck gets lighter as it makes deliveries.
+            </div>
+          </div>
+
+          {/* Column 3 — Backhaul + capacity */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "24px 28px", display: "flex", flexDirection: "column", gap: 16 }}>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--accent-2)", letterSpacing: "0.07em" }}>AT EACH BACKHAUL Bⱼ</div>
+            <div style={{ fontSize: 36 }}>
+              <TeX>{"q \\;\\mathrel{+{=}}\\; d_j"}</TeX>
+            </div>
+            <div style={{ fontSize: 22, color: "var(--ink-2)", lineHeight: 1.55 }}>
+              The truck <strong>picks up</strong> <TeX>{"d_j"}</TeX> units from customer <TeX>{"B_j"}</TeX>.<br/><br/>
+              Load increases by <TeX>{"d_j"}</TeX> at each backhaul stop — the truck fills again on the return leg.
+            </div>
+            <div style={{ marginTop: "auto", borderTop: "1px solid var(--line)", paddingTop: 14, fontSize: 22, color: "var(--ink-2)" }}>
+              At every leg: load <TeX>{"\\leq C"}</TeX>
+            </div>
+          </div>
+
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
+function Slide22LoadB() {
+  const C = 10, dL1 = 4, dL2 = 3, dB1 = 5;
+  const q0 = dL1 + dL2;
+
+  const cb = 380, ct = 40;
+  const toY = (v) => cb - (v / C) * (cb - ct);
+
+  const stops = [80, 250, 440, 630, 820];
+  const legs  = [q0, q0 - dL1, 0, dB1];
+
+  return (
+    <section className="slide" data-label="Cargo profile — chart">
+      <SlideFrame>
+        <div className="tag">Family · VRPB primer</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          Load profile along a VRPB route — 2 linehauls + 1 backhaul.
+        </h2>
+
+        <div style={{ marginTop: 24, flex: 1, background: "var(--paper-2)", border: "1px solid var(--line)", padding: "28px 40px", display: "flex", flexDirection: "column" }}>
+          <svg viewBox="0 0 900 430" style={{ width: "100%", flex: 1, display: "block" }}>
+
+            {/* C reference line */}
+            <line x1={60} y1={toY(C)} x2={860} y2={toY(C)}
+                  stroke="var(--ink-3)" strokeWidth={1.5} strokeDasharray="6 5"/>
+            <text x={54} y={toY(C) + 5} textAnchor="end"
+                  fontFamily="var(--font-mono)" fontSize={18} fill="var(--ink-3)">C=10</text>
+
+            {/* Filled areas */}
+            {legs.map((load, i) => {
+              if (load === 0) return null;
+              const color = i < 2 ? "var(--accent-3)" : "var(--accent-2)";
+              return (
+                <rect key={i} x={stops[i]} y={toY(load)}
+                      width={stops[i+1] - stops[i]} height={cb - toY(load)}
+                      fill={color} opacity={0.18}/>
+              );
+            })}
+
+            {/* Horizontal step lines */}
+            {legs.map((load, i) => {
+              const y = load === 0 ? cb : toY(load);
+              const color = i < 2 ? "var(--accent-3)" : i === 3 ? "var(--accent-2)" : "var(--ink-3)";
+              return (
+                <line key={i} x1={stops[i]} y1={y} x2={stops[i+1]} y2={y}
+                      stroke={color}
+                      strokeWidth={load === 0 ? 2 : 4}
+                      strokeDasharray={load === 0 ? "6 4" : undefined}/>
+              );
+            })}
+
+            {/* Vertical connectors */}
+            <line x1={stops[1]} y1={toY(legs[0])} x2={stops[1]} y2={toY(legs[1])}
+                  stroke="var(--accent-3)" strokeWidth={3}/>
+            <line x1={stops[2]} y1={toY(legs[1])} x2={stops[2]} y2={cb}
+                  stroke="var(--accent-3)" strokeWidth={3}/>
+            <line x1={stops[3]} y1={cb} x2={stops[3]} y2={toY(legs[3])}
+                  stroke="var(--accent-2)" strokeWidth={3}/>
+
+            {/* Delta labels */}
+            <text x={stops[1] + 10} y={(toY(legs[0]) + toY(legs[1])) / 2 + 6}
+                  fontFamily="var(--font-mono)" fontSize={20} fill="var(--accent-3)" fontWeight={700}>
+              {"↓ " + dL1}
+            </text>
+            <text x={stops[2] + 10} y={(toY(legs[1]) + cb) / 2 + 6}
+                  fontFamily="var(--font-mono)" fontSize={20} fill="var(--accent-3)" fontWeight={700}>
+              {"↓ " + dL2}
+            </text>
+            <text x={stops[3] + 10} y={(cb + toY(legs[3])) / 2 + 6}
+                  fontFamily="var(--font-mono)" fontSize={20} fill="var(--accent-2)" fontWeight={700}>
+              {"↑ " + dB1}
+            </text>
+
+            {/* Load values */}
+            {legs.map((load, i) => {
+              const mx = (stops[i] + stops[i+1]) / 2;
+              const y  = load === 0 ? cb - 14 : toY(load) - 14;
+              const color = i < 2 ? "var(--accent-3)" : i === 3 ? "var(--accent-2)" : "var(--ink-3)";
+              return (
+                <text key={i} x={mx} y={y} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={26} fill={color}
+                      fontWeight={load === 0 ? 400 : 700}>
+                  {load}
+                </text>
+              );
+            })}
+
+            {/* q₀ annotation */}
+            <text x={(stops[0] + stops[1]) / 2} y={toY(legs[0]) - 22}
+                  textAnchor="middle" fontFamily="var(--font-mono)" fontSize={18} fill="var(--ink-3)">
+              {"q₀ = " + q0 + " < C"}
+            </text>
+
+            {/* X axis */}
+            <line x1={60} y1={cb} x2={860} y2={cb} stroke="var(--ink-3)" strokeWidth={2}/>
+
+            {/* Stop labels */}
+            {["Depot", "L₁", "L₂", "B₁", "Depot"].map((lbl, i) => (
+              <g key={i}>
+                <line x1={stops[i]} y1={cb} x2={stops[i]} y2={cb + 8}
+                      stroke="var(--ink-3)" strokeWidth={2}/>
+                <text x={stops[i]} y={cb + 30} textAnchor="middle"
+                      fontFamily="var(--font-mono)" fontSize={22}
+                      fill={i === 0 || i === 4 ? "var(--ink)" : i < 3 ? "var(--accent-3)" : "var(--accent-2)"}>
+                  {lbl}
+                </text>
+              </g>
+            ))}
+
+            {/* Y axis */}
+            <line x1={60} y1={ct - 10} x2={60} y2={cb} stroke="var(--ink-3)" strokeWidth={2}/>
+            <text x={54} y={cb + 6} textAnchor="end"
+                  fontFamily="var(--font-mono)" fontSize={18} fill="var(--ink-3)">0</text>
+          </svg>
+
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: 20, color: "var(--ink-3)", textAlign: "center", marginTop: 12 }}>
+            {"Example: C = 10 · d(L₁) = " + dL1 + " · d(L₂) = " + dL2 + " · d(B₁) = " + dB1}
           </div>
         </div>
       </SlideFrame>
@@ -1924,6 +1947,6 @@ function Slide23B() {
 
 Object.assign(window, {
   Slide19, Slide20, Slide21, Slide21B, Slide21C, Slide21D,
-  Slide22Intro, Slide22Load, Slide22, Slide22B,
+  Slide22Intro, Slide22Load, Slide22LoadB, Slide22, Slide22B,
   Slide23Intro, Slide23Load, Slide23, Slide23B,
 });

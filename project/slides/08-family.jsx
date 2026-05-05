@@ -679,7 +679,9 @@ function Slide22Load() {
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "16px 20px", display: "flex", flexDirection: "column", gap: 12 }}>
               <div style={{ fontSize: 23, lineHeight: 1.55 }}>
                 <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--ink-3)", letterSpacing: "0.07em", marginBottom: 4 }}>DEPARTURE FROM DEPOT</div>
-                <TeX>{"q_0 = \\sum_{i \\in L} d_i \\;\\leq\\; C"}</TeX>
+                <div style={{ fontSize: 30 }}>
+                  <TeX>{"q_0 = \\sum_{i \\in L} d_i \\;\\leq\\; C"}</TeX>
+                </div>
                 <div style={{ fontSize: 20, color: "var(--ink-2)", marginTop: 7, lineHeight: 1.5 }}>
                   <TeX>{"q_0"}</TeX> = carico del camion alla partenza.
                   &nbsp;<TeX>{"L"}</TeX> = insieme dei clienti linehaul <em>di questa rotta</em>.<br/>

@@ -727,31 +727,93 @@ function SlideClothingMetaphor() {
 
         </div>
 
-        {/* === DISAMBIGUATOR — full-width, only accent-coloured element on the slide === */}
+      </SlideFrame>
+    </section>
+  );
+}
+
+
+function SlideClothingMetaphorKey() {
+  return (
+    <section className="slide" data-label="Exact vs heuristic — key distinction">
+      <SlideFrame>
+        <div className="tag">Algorithms · Metaphor</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          A word of caution about the metaphor.
+        </h2>
+
         <div style={{
-          marginTop: 22,
+          marginTop: 18,
+          fontFamily: "var(--font-display)",
+          fontSize: 22,
+          color: "var(--ink-2)",
+          lineHeight: 1.4,
+        }}>
+          "Fit" in the clothing metaphor refers to <strong>computational efficiency</strong> — not to solution quality.
+        </div>
+
+        <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, flex: 1 }}>
+
+          <div style={{
+            border: "1px solid var(--line)",
+            background: "var(--paper-2)",
+            padding: "32px 36px",
+            display: "flex",
+            flexDirection: "column",
+            gap: 20,
+          }}>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, letterSpacing: "0.1em", color: "var(--ink-3)" }}>
+              EXACT ALGORITHM — off-the-rack
+            </div>
+            <div style={{ fontFamily: "var(--font-display)", fontSize: 52, lineHeight: 1, color: "var(--ink)" }}>
+              Optimal.
+            </div>
+            <div style={{ fontSize: 22, lineHeight: 1.5, color: "var(--ink-2)" }}>
+              Always returns the <strong>provably best solution</strong> — but may take exponential time on large instances.
+            </div>
+            <div style={{ fontSize: 20, color: "var(--ink-3)", marginTop: 4, lineHeight: 1.4 }}>
+              The "poor fit" is <em>speed</em>, not quality.<br/>
+              When it finishes, you have the global optimum.
+            </div>
+          </div>
+
+          <div style={{
+            border: "1px solid var(--line)",
+            background: "var(--paper-2)",
+            padding: "32px 36px",
+            display: "flex",
+            flexDirection: "column",
+            gap: 20,
+          }}>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, letterSpacing: "0.1em", color: "var(--ink-3)" }}>
+              HEURISTIC — bespoke
+            </div>
+            <div style={{ fontFamily: "var(--font-display)", fontSize: 52, lineHeight: 1, color: "var(--ink)" }}>
+              Fast &amp; good.
+            </div>
+            <div style={{ fontSize: 22, lineHeight: 1.5, color: "var(--ink-2)" }}>
+              Runs fast on the target problem class — but <strong>gives no guarantee</strong> that the solution found is optimal.
+            </div>
+            <div style={{ fontSize: 20, color: "var(--ink-3)", marginTop: 4, lineHeight: 1.4 }}>
+              The "perfect fit" is <em>speed</em>.<br/>
+              Solution quality is good, not certified.
+            </div>
+          </div>
+
+        </div>
+
+        <div style={{
+          marginTop: 36,
           border: "1.5px solid var(--accent)",
           background: "rgba(107,74,245,0.06)",
-          padding: "16px 26px",
-          fontSize: 20,
-          lineHeight: 1.5,
+          padding: "20px 28px",
+          fontSize: 22,
+          lineHeight: 1.55,
           color: "var(--ink)",
         }}>
-          <div style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: 14,
-            letterSpacing: "0.08em",
-            color: "var(--accent)",
-            marginBottom: 4,
-          }}>
-            DISAMBIGUATION
-          </div>
-          <div>
-            <strong>"Fit"</strong> in this metaphor maps to <strong>computational efficiency</strong>, <strong>not</strong> solution quality.
-          </div>
-          <div style={{ marginTop: 4, color: "var(--ink-2)" }}>
-            The exact algorithm still <em>guarantees</em> the optimal solution; the heuristic only finds a good one — fast, but with no proof.
-          </div>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: 14, letterSpacing: "0.08em", color: "var(--accent)", marginRight: 12 }}>KEY POINT</span>
+          Both approaches solve the same problem; they trade <strong>time for certainty</strong>.
+          The exact solver <em>proves</em> optimality; the heuristic <em>approximates</em> it — orders of magnitude faster.
         </div>
 
       </SlideFrame>
@@ -760,4 +822,4 @@ function SlideClothingMetaphor() {
 }
 
 
-Object.assign(window, { Slide16, Slide17A, Slide17AGrowth, Slide17B, Slide17C, Slide17, Slide18, SlideClothingMetaphor });
+Object.assign(window, { Slide16, Slide17A, Slide17AGrowth, Slide17B, Slide17C, Slide17, Slide18, SlideClothingMetaphor, SlideClothingMetaphorKey });

@@ -584,97 +584,31 @@ function Slide18() {
 
 // ==========================================================
 // CLOTHING METAPHOR — exact algorithm vs heuristic, framed as
-// off-the-rack vs bespoke. ISO-7010 / signage-style pictogram
-// silhouettes (woman + man casual on the left, bride + groom
-// on the right). A full-width disambiguator at the bottom is
-// the only place that uses the accent colour, because the
+// off-the-rack vs bespoke. Photographs of full-body subjects
+// (woman + man casual on the left, bride + groom on the
+// right). A full-width disambiguator at the bottom is the
+// only place that uses the accent colour, because the
 // metaphor is dangerously close to inverting the "quality"
 // axis ("fit" must be read as computational efficiency, not
 // as solution quality).
+//
+// Photo sources (all under permissive licences, see commit
+// message for full attribution):
+//   metaphor-woman-casual.jpg — Alina Matveycheva (Pexels)
+//   metaphor-man-casual.jpg   — Fortune Vieyra   (Unsplash)
+//   metaphor-bride.jpg        — Taylor Heery     (Unsplash)
+//   metaphor-groom.jpg        — Ketut Subiyanto  (Pexels)
 
-const PEOPLE_VB = "0 0 100 180";
-
-function PicWomanCasual() {
-  return (
-    <svg viewBox={PEOPLE_VB} width={100} height={180}>
-      <g fill="var(--ink)">
-        {/* head with hair (slightly oval to suggest a bob) */}
-        <ellipse cx={50} cy={22} rx={15} ry={16}/>
-        {/* A-line dress / skirt */}
-        <path d="M 38,38 L 62,38 L 78,150 L 22,150 Z"/>
-        {/* arms */}
-        <polygon points="32,38 38,38 32,90 26,88"/>
-        <polygon points="62,38 68,38 74,88 68,90"/>
-        {/* legs poking below the skirt hem */}
-        <rect x={37} y={150} width={11} height={25}/>
-        <rect x={52} y={150} width={11} height={25}/>
-      </g>
-    </svg>
-  );
-}
-
-function PicManCasual() {
-  return (
-    <svg viewBox={PEOPLE_VB} width={100} height={180}>
-      <g fill="var(--ink)">
-        {/* head */}
-        <circle cx={50} cy={22} r={13}/>
-        {/* rectangular shirt / torso */}
-        <rect x={32} y={38} width={36} height={62}/>
-        {/* arms (a touch wider than woman's, square shoulders) */}
-        <rect x={22} y={38} width={10} height={62}/>
-        <rect x={68} y={38} width={10} height={62}/>
-        {/* trousers — two distinct legs */}
-        <rect x={33} y={100} width={15} height={75}/>
-        <rect x={52} y={100} width={15} height={75}/>
-      </g>
-    </svg>
-  );
-}
-
-function PicBride() {
-  return (
-    <svg viewBox={PEOPLE_VB} width={100} height={180}>
-      {/* veil — drapes from above the head, behind everything else */}
-      <path d="M 30,15 Q 50,-5 70,15 L 90,140 Q 50,150 10,140 Z"
-            fill="var(--ink)" opacity={0.18}/>
-      <g fill="var(--ink)">
-        {/* head */}
-        <circle cx={50} cy={20} r={12}/>
-        {/* fitted bodice */}
-        <path d="M 40,32 L 60,32 L 64,55 L 62,80 L 38,80 L 36,55 Z"/>
-        {/* full ball-gown skirt — markedly wider flare than the casual woman */}
-        <path d="M 38,80 L 62,80 L 92,160 L 8,160 Z"/>
-        {/* bouquet held in front (subtle ink-3 sphere) */}
-        <circle cx={50} cy={90} r={6} fill="var(--ink-3)" stroke="var(--ink)" strokeWidth={1.2}/>
-      </g>
-    </svg>
-  );
-}
-
-function PicGroom() {
-  return (
-    <svg viewBox={PEOPLE_VB} width={100} height={180}>
-      <g fill="var(--ink)">
-        {/* tuxedo tails — coat panel extending behind the legs */}
-        <polygon points="32,90 68,90 60,160 40,160"/>
-        {/* head */}
-        <circle cx={50} cy={20} r={13}/>
-        {/* tuxedo jacket */}
-        <rect x={32} y={38} width={36} height={62}/>
-        {/* arms */}
-        <rect x={22} y={38} width={10} height={62}/>
-        <rect x={68} y={38} width={10} height={62}/>
-        {/* tuxedo trousers — slightly slimmer than casual man */}
-        <rect x={34} y={100} width={13} height={75}/>
-        <rect x={53} y={100} width={13} height={75}/>
-      </g>
-      {/* bow tie — paper-2 fill so it reads as a separate accessory */}
-      <polygon points="44,40 50,43 56,40 56,49 50,46 44,49"
-               fill="var(--paper-2)" stroke="var(--ink)" strokeWidth={1.2}/>
-    </svg>
-  );
-}
+const METAPHOR_PHOTO_STYLE = {
+  width: 140,
+  height: 210,
+  objectFit: "cover",
+  objectPosition: "center 30%",
+  borderRadius: 8,
+  border: "1px solid var(--line)",
+  boxShadow: "0 2px 6px rgba(0,0,0,0.10)",
+  display: "block",
+};
 
 function SlideClothingMetaphor() {
   return (
@@ -715,9 +649,15 @@ function SlideClothingMetaphor() {
               </div>
             </div>
 
-            <div style={{ display: "flex", justifyContent: "space-around", alignItems: "flex-end", padding: "6px 0" }}>
-              <PicWomanCasual/>
-              <PicManCasual/>
+            <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center", padding: "6px 0", gap: 12 }}>
+              {/* Photo by Alina Matveycheva on Pexels — Pexels License */}
+              <img src="assets/metaphor-woman-casual.jpg"
+                   alt="Woman in white tank top and casual jeans, studio portrait — off-the-rack styling"
+                   style={METAPHOR_PHOTO_STYLE}/>
+              {/* Photo by Fortune Vieyra on Unsplash — Unsplash License */}
+              <img src="assets/metaphor-man-casual.jpg"
+                   alt="Man in casual polo shirt and dark trousers — off-the-rack styling"
+                   style={METAPHOR_PHOTO_STYLE}/>
             </div>
 
             <ul style={{ margin: 0, padding: 0, fontSize: 20, lineHeight: 1.4, color: "var(--ink)", listStyle: "none" }}>
@@ -754,9 +694,15 @@ function SlideClothingMetaphor() {
               </div>
             </div>
 
-            <div style={{ display: "flex", justifyContent: "space-around", alignItems: "flex-end", padding: "6px 0" }}>
-              <PicBride/>
-              <PicGroom/>
+            <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center", padding: "6px 0", gap: 12 }}>
+              {/* Photo by Taylor Heery on Unsplash — Unsplash License */}
+              <img src="assets/metaphor-bride.jpg"
+                   alt="Bride in a custom-fitted lace wedding dress — bespoke tailoring"
+                   style={METAPHOR_PHOTO_STYLE}/>
+              {/* Photo by Ketut Subiyanto on Pexels — Pexels License */}
+              <img src="assets/metaphor-groom.jpg"
+                   alt="Groom in a tailored black suit, white shirt, and dark tie — bespoke tailoring"
+                   style={METAPHOR_PHOTO_STYLE}/>
             </div>
 
             <ul style={{ margin: 0, padding: 0, fontSize: 20, lineHeight: 1.4, color: "var(--ink)", listStyle: "none" }}>

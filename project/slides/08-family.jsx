@@ -338,7 +338,7 @@ function Slide21C() {
 
           {/* Right — ILP: CVRP rows in normal ink, VRPTW rows in accent */}
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "28px 36px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-            <div style={{ marginBottom: 16 }}>
+            <div style={{ fontFamily: "var(--font-display)", fontSize: 30, marginBottom: 16 }}>
               <TeX display>{"\\min \\displaystyle\\sum_{i \\in V} \\sum_{j \\in V} c_{ij}\\, x_{ij}"}</TeX>
             </div>
             <div style={{ color: "var(--ink-3)", marginBottom: 10, fontFamily: "var(--font-mono)", fontSize: 20 }}>subject to</div>

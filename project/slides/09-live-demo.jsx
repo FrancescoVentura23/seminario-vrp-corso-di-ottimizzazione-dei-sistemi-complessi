@@ -23,6 +23,92 @@ function Slide24() {
 }
 
 
+function SlideClarkeWrightIntro() {
+  const steps = [
+    {
+      n: "01",
+      h: "Problem",
+      b: "CVRP: serve n customers from one depot with a fleet of capacitated vehicles — minimize total distance.",
+    },
+    {
+      n: "02",
+      h: "Starting point — the star solution",
+      b: "Assign every customer its own dedicated round-trip: depot → customer → depot. Feasible, but wasteful: n routes, maximum distance.",
+    },
+    {
+      n: "03",
+      h: "Key question",
+      b: "Can we merge two round-trips into one shared route and travel less? Only if the combined load does not exceed vehicle capacity Q.",
+    },
+    {
+      n: "04",
+      h: "Greedy strategy",
+      b: "Compute a saving s(i, j) for every pair. Sort pairs by saving (largest first). Merge a pair if it is still feasible — repeat until no profitable merge remains.",
+    },
+  ];
+
+  return (
+    <section className="slide" data-label="Clarke-Wright — what and why">
+      <SlideFrame>
+        <div className="tag">Clarke–Wright (1964)</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          A greedy heuristic that builds CVRP routes by merging round-trips.
+        </h2>
+
+        <div style={{
+          marginTop: 14,
+          fontFamily: "var(--font-display)",
+          fontSize: 22,
+          color: "var(--ink-2)",
+          lineHeight: 1.4,
+        }}>
+          Published by G. Clarke &amp; J.W. Wright in 1964 — still the most widely taught constructive heuristic for vehicle routing.
+        </div>
+
+        <div style={{ marginTop: 28, display: "flex", flexDirection: "column", gap: 0, flex: 1 }}>
+          {steps.map(({ n, h, b }) => (
+            <div key={n} style={{
+              display: "grid",
+              gridTemplateColumns: "72px 1fr",
+              gap: 28,
+              padding: "18px 0",
+              borderTop: "1px solid var(--line)",
+              alignItems: "start",
+            }}>
+              <div style={{
+                fontFamily: "var(--font-display)",
+                fontSize: 52,
+                lineHeight: 1,
+                color: "var(--accent)",
+              }}>{n}</div>
+              <div>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: 30, lineHeight: 1.1 }}>{h}</div>
+                <div style={{ fontSize: 22, color: "var(--ink-2)", marginTop: 6, lineHeight: 1.45 }}>{b}</div>
+              </div>
+            </div>
+          ))}
+          <div style={{ borderTop: "1px solid var(--line)" }}/>
+        </div>
+
+        <div style={{
+          marginTop: 20,
+          background: "var(--ink)",
+          color: "var(--paper)",
+          padding: "14px 22px",
+          fontFamily: "var(--font-mono)",
+          fontSize: 22,
+          lineHeight: 1.4,
+        }}>
+          Complexity: <span style={{ color: "var(--accent-2)" }}>O(n² log n)</span>
+          &nbsp;— feasible on thousands of customers where exact B&amp;C would take days.
+        </div>
+
+      </SlideFrame>
+    </section>
+  );
+}
+
+
 function Slide25() {
   return (
     <section className="slide" data-label="Clarke-Wright idea">
@@ -134,4 +220,4 @@ function Slide26() {
 }
 
 
-Object.assign(window, { Slide24, Slide25, Slide26 });
+Object.assign(window, { Slide24, SlideClarkeWrightIntro, Slide25, Slide26 });

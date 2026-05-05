@@ -600,8 +600,8 @@ function Slide18() {
 //   metaphor-groom.jpg        — Ketut Subiyanto  (Pexels)
 
 const METAPHOR_PHOTO_STYLE = {
-  width: 140,
-  height: 210,
+  width: 220,
+  height: 330,
   objectFit: "cover",
   objectPosition: "center 30%",
   borderRadius: 8,

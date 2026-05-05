@@ -276,6 +276,103 @@ function Slide21B() {
 }
 
 
+function Slide21C() {
+  const newItems = [
+    {
+      num: "iv",
+      tag: "Time window",
+      text: "Service at customer i must begin within the prescribed interval [aᵢ, bᵢ]. Early arrivals wait; late arrivals are infeasible.",
+    },
+    {
+      num: "v",
+      tag: "Time linking (Big-M)",
+      text: "If arc (i,j) is used, the vehicle cannot start serving j before it finishes at i and travels to j.",
+    },
+  ];
+
+  return (
+    <section className="slide" data-label="VRPTW — ILP formulation">
+      <SlideFrame>
+        <div className="tag">VRPTW · Formulation</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          VRPTW = CVRP + a service-start variable <TeX>{"\\tau_i"}</TeX> and two new constraints.
+        </h2>
+
+        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1fr 1.35fr", gap: 52, flex: 1 }}>
+
+          {/* Left — new variables + constraint explanations */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 18, justifyContent: "center" }}>
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "14px 20px", fontSize: 24, lineHeight: 1.6 }}>
+              <div style={{ fontFamily: "var(--font-mono)", marginBottom: 4, color: "var(--ink-3)", fontSize: 20, letterSpacing: "0.05em", textTransform: "uppercase" }}>New variables</div>
+              <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)" }}>τᵢ</span> = start of service at customer <span style={{ fontFamily: "var(--font-mono)" }}>i</span><br/>
+              <span style={{ fontFamily: "var(--font-mono)" }}>sᵢ</span> = service duration at customer <span style={{ fontFamily: "var(--font-mono)" }}>i</span><br/>
+              <span style={{ fontFamily: "var(--font-mono)" }}>tᵢⱼ</span> = travel time on arc <span style={{ fontFamily: "var(--font-mono)" }}>(i, j)</span>
+            </div>
+
+            <div style={{ fontFamily: "var(--font-display)", fontSize: 24, color: "var(--ink-2)" }}>
+              Inherits all CVRP constraints (i–iii); adds:
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {newItems.map((c, i) => (
+                <div key={i} style={{
+                  border: "1px solid var(--accent)",
+                  borderLeft: "4px solid var(--accent)",
+                  background: "rgba(107,74,245,0.08)",
+                  padding: "14px 20px",
+                  display: "flex", alignItems: "center", gap: 18,
+                }}>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: 52, lineHeight: 1, color: "var(--accent)", fontStyle: "italic", flexShrink: 0, minWidth: 66, textAlign: "center" }}>
+                    ({c.num})
+                  </div>
+                  <div>
+                    <div className="kicker" style={{ color: "var(--accent)", fontSize: 20 }}>{c.tag}</div>
+                    <div style={{ fontFamily: "var(--font-display)", fontSize: 24, lineHeight: 1.25, marginTop: 4 }}>
+                      {c.text}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right — ILP: CVRP rows in normal ink, VRPTW rows in accent */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "28px 36px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+            <div style={{ marginBottom: 16 }}>
+              <TeX display>{"\\min \\displaystyle\\sum_{i \\in V} \\sum_{j \\in V} c_{ij}\\, x_{ij}"}</TeX>
+            </div>
+            <div style={{ color: "var(--ink-3)", marginBottom: 10, fontFamily: "var(--font-mono)", fontSize: 20 }}>subject to</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr auto", rowGap: 10, columnGap: 14, alignItems: "center" }}>
+              <div style={{ fontSize: 20 }}><TeX>{"\\sum_{j \\in V} x_{ij} = 1 \\;\\forall\\, i \\in V \\setminus \\{0\\}, \\quad \\sum_{i \\in V} x_{ij} = 1 \\;\\forall\\, j \\in V \\setminus \\{0\\}"}</TeX></div>
+              <div style={{ color: "var(--ink-3)", fontSize: 18 }}>(ii) single visit</div>
+
+              <div style={{ fontSize: 20 }}><TeX>{"\\textstyle\\sum_{j} x_{0j} = \\sum_{i} x_{i0} = K"}</TeX></div>
+              <div style={{ color: "var(--ink-3)", fontSize: 18 }}>(i) depot flow</div>
+
+              <div style={{ fontSize: 20 }}><TeX>{"\\textstyle\\sum_{i \\notin S}\\sum_{j \\in S} x_{ij} \\geq r(S) \\;\\forall\\, S \\subseteq V \\setminus \\{0\\}"}</TeX></div>
+              <div style={{ color: "var(--ink-3)", fontSize: 18 }}>(iii) cap. cut</div>
+
+              <div style={{ color: "var(--accent)", fontSize: 20 }}><TeX>{"a_i \\leq \\tau_i \\leq b_i \\quad \\forall\\, i \\in V"}</TeX></div>
+              <div style={{ color: "var(--accent)", fontSize: 18 }}>(iv) time window</div>
+
+              <div style={{ color: "var(--accent)", fontSize: 20 }}><TeX>{"\\tau_j \\geq \\tau_i + s_i + t_{ij} - M(1 - x_{ij}) \\quad \\forall\\,(i,j) \\in A"}</TeX></div>
+              <div style={{ color: "var(--accent)", fontSize: 18 }}>(v) time linking</div>
+
+              <div style={{ fontSize: 20 }}>xᵢⱼ ∈ {"{"} 0, 1 {"}"} &nbsp;·&nbsp; τᵢ ≥ 0</div>
+              <div style={{ color: "var(--ink-3)", fontSize: 18 }}>(domain)</div>
+            </div>
+
+            <div style={{ marginTop: 18, fontFamily: "var(--font-mono)", fontSize: 18, color: "var(--ink-3)", lineHeight: 1.5 }}>
+              M = large constant; constraint (v) is tight iff x<sub>ij</sub> = 1.<br/>
+              When x<sub>ij</sub> = 0, the right-hand side collapses to <TeX>{"\\tau_i + s_i + t_{ij} - M"}</TeX>, always satisfied.
+            </div>
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
 
 // ==========================================================
 // VRPB INTRO — define linehaul vs backhaul with an animated
@@ -1672,7 +1769,7 @@ function Slide23B() {
 
 
 Object.assign(window, {
-  Slide19, Slide20, Slide21, Slide21B,
+  Slide19, Slide20, Slide21, Slide21B, Slide21C,
   Slide22Intro, Slide22Load, Slide22, Slide22B,
   Slide23Intro, Slide23Load, Slide23, Slide23B,
 });

@@ -437,8 +437,15 @@ function Slide21D() {
             <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--ink-3)", letterSpacing: "0.08em", marginTop: 4 }}>
               ↓ SIMPLIFY
             </div>
-            <div style={{ fontSize: 26 }}>
+            <div style={{ fontSize: 24 }}>
               <TeX display>{"\\tau_j \\geq \\tau_i + s_i + t_{ij} - M"}</TeX>
+            </div>
+
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--ink-3)", letterSpacing: "0.08em", marginTop: 4 }}>
+              ↓ AS M → ∞
+            </div>
+            <div style={{ fontSize: 26 }}>
+              <TeX display>{"\\tau_j \\geq -\\infty"}</TeX>
             </div>
 
             <div style={{
@@ -450,7 +457,7 @@ function Slide21D() {
               lineHeight: 1.4,
               color: "var(--ink-2)",
             }}>
-              For M large enough, the right-hand side is so negative that any feasible <TeX>{"\\tau_j \\geq 0"}</TeX> satisfies the inequality.
+              By the variable's domain <TeX>{"\\tau_j \\geq 0"}</TeX>, so any feasible <TeX>{"\\tau_j"}</TeX> trivially satisfies <TeX>{"\\tau_j \\geq -\\infty"}</TeX> — the inequality always holds.
               <div style={{ marginTop: 10, fontFamily: "var(--font-mono)", fontSize: 19, color: "var(--ink-3)", letterSpacing: "0.04em" }}>
                 → constraint OFF · non-binding, no ordering imposed between i and j
               </div>
@@ -459,15 +466,14 @@ function Slide21D() {
 
           {/* === RIGHT COLUMN — x_ij = 1 (constraint ON) === */}
           <div style={{
-            border: "1px solid var(--accent)",
-            borderLeft: "4px solid var(--accent)",
-            background: "rgba(107,74,245,0.08)",
+            border: "1px solid var(--line)",
+            background: "var(--paper-2)",
             padding: "24px 30px",
             display: "flex",
             flexDirection: "column",
             gap: 12,
           }}>
-            <div className="kicker" style={{ color: "var(--accent)", fontSize: 22 }}>
+            <div className="kicker" style={{ color: "var(--ink-3)", fontSize: 22 }}>
               CASE x<sub>ij</sub> = 1 · arc on the route
             </div>
 
@@ -488,13 +494,13 @@ function Slide21D() {
             <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--ink-3)", letterSpacing: "0.08em", marginTop: 4 }}>
               ↓ SIMPLIFY
             </div>
-            <div style={{ fontSize: 26, color: "var(--accent)" }}>
+            <div style={{ fontSize: 26 }}>
               <TeX display>{"\\tau_j \\geq \\tau_i + s_i + t_{ij}"}</TeX>
             </div>
 
             <div style={{
               marginTop: "auto",
-              border: "1px solid var(--accent)",
+              border: "1px solid var(--line)",
               background: "var(--paper)",
               padding: "14px 18px",
               fontSize: 21,
@@ -502,7 +508,7 @@ function Slide21D() {
               color: "var(--ink-2)",
             }}>
               Service at j cannot start before the vehicle finishes at i and travels along the arc for t<sub>ij</sub> time units.
-              <div style={{ marginTop: 10, fontFamily: "var(--font-mono)", fontSize: 19, color: "var(--accent)", letterSpacing: "0.04em" }}>
+              <div style={{ marginTop: 10, fontFamily: "var(--font-mono)", fontSize: 19, color: "var(--ink-3)", letterSpacing: "0.04em" }}>
                 → constraint ON · correct time ordering enforced along the route
               </div>
             </div>

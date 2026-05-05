@@ -582,4 +582,236 @@ function Slide18() {
 }
 
 
-Object.assign(window, { Slide16, Slide17A, Slide17AGrowth, Slide17B, Slide17C, Slide17, Slide18 });
+// ==========================================================
+// CLOTHING METAPHOR — exact algorithm vs heuristic, framed as
+// off-the-rack vs bespoke. ISO-7010 / signage-style pictogram
+// silhouettes (woman + man casual on the left, bride + groom
+// on the right). A full-width disambiguator at the bottom is
+// the only place that uses the accent colour, because the
+// metaphor is dangerously close to inverting the "quality"
+// axis ("fit" must be read as computational efficiency, not
+// as solution quality).
+
+const PEOPLE_VB = "0 0 100 180";
+
+function PicWomanCasual() {
+  return (
+    <svg viewBox={PEOPLE_VB} width={100} height={180}>
+      <g fill="var(--ink)">
+        {/* head with hair (slightly oval to suggest a bob) */}
+        <ellipse cx={50} cy={22} rx={15} ry={16}/>
+        {/* A-line dress / skirt */}
+        <path d="M 38,38 L 62,38 L 78,150 L 22,150 Z"/>
+        {/* arms */}
+        <polygon points="32,38 38,38 32,90 26,88"/>
+        <polygon points="62,38 68,38 74,88 68,90"/>
+        {/* legs poking below the skirt hem */}
+        <rect x={37} y={150} width={11} height={25}/>
+        <rect x={52} y={150} width={11} height={25}/>
+      </g>
+    </svg>
+  );
+}
+
+function PicManCasual() {
+  return (
+    <svg viewBox={PEOPLE_VB} width={100} height={180}>
+      <g fill="var(--ink)">
+        {/* head */}
+        <circle cx={50} cy={22} r={13}/>
+        {/* rectangular shirt / torso */}
+        <rect x={32} y={38} width={36} height={62}/>
+        {/* arms (a touch wider than woman's, square shoulders) */}
+        <rect x={22} y={38} width={10} height={62}/>
+        <rect x={68} y={38} width={10} height={62}/>
+        {/* trousers — two distinct legs */}
+        <rect x={33} y={100} width={15} height={75}/>
+        <rect x={52} y={100} width={15} height={75}/>
+      </g>
+    </svg>
+  );
+}
+
+function PicBride() {
+  return (
+    <svg viewBox={PEOPLE_VB} width={100} height={180}>
+      {/* veil — drapes from above the head, behind everything else */}
+      <path d="M 30,15 Q 50,-5 70,15 L 90,140 Q 50,150 10,140 Z"
+            fill="var(--ink)" opacity={0.18}/>
+      <g fill="var(--ink)">
+        {/* head */}
+        <circle cx={50} cy={20} r={12}/>
+        {/* fitted bodice */}
+        <path d="M 40,32 L 60,32 L 64,55 L 62,80 L 38,80 L 36,55 Z"/>
+        {/* full ball-gown skirt — markedly wider flare than the casual woman */}
+        <path d="M 38,80 L 62,80 L 92,160 L 8,160 Z"/>
+        {/* bouquet held in front (subtle ink-3 sphere) */}
+        <circle cx={50} cy={90} r={6} fill="var(--ink-3)" stroke="var(--ink)" strokeWidth={1.2}/>
+      </g>
+    </svg>
+  );
+}
+
+function PicGroom() {
+  return (
+    <svg viewBox={PEOPLE_VB} width={100} height={180}>
+      <g fill="var(--ink)">
+        {/* tuxedo tails — coat panel extending behind the legs */}
+        <polygon points="32,90 68,90 60,160 40,160"/>
+        {/* head */}
+        <circle cx={50} cy={20} r={13}/>
+        {/* tuxedo jacket */}
+        <rect x={32} y={38} width={36} height={62}/>
+        {/* arms */}
+        <rect x={22} y={38} width={10} height={62}/>
+        <rect x={68} y={38} width={10} height={62}/>
+        {/* tuxedo trousers — slightly slimmer than casual man */}
+        <rect x={34} y={100} width={13} height={75}/>
+        <rect x={53} y={100} width={13} height={75}/>
+      </g>
+      {/* bow tie — paper-2 fill so it reads as a separate accessory */}
+      <polygon points="44,40 50,43 56,40 56,49 50,46 44,49"
+               fill="var(--paper-2)" stroke="var(--ink)" strokeWidth={1.2}/>
+    </svg>
+  );
+}
+
+function SlideClothingMetaphor() {
+  return (
+    <section className="slide" data-label="Exact vs heuristic — clothing metaphor">
+      <SlideFrame>
+        <div className="tag">Algorithms · Metaphor</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          Off-the-rack vs bespoke — a metaphor for exact vs heuristic.
+        </h2>
+
+        <div style={{
+          marginTop: 14,
+          fontFamily: "var(--font-display)",
+          fontSize: 22,
+          color: "var(--ink-2)",
+          lineHeight: 1.4,
+        }}>
+          Why an exact algorithm is general but slow, and a heuristic is fast but fragile.
+        </div>
+
+        <div style={{ marginTop: 24, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, flex: 1 }}>
+
+          {/* === LEFT — EXACT ALGORITHM (off-the-rack) === */}
+          <div style={{
+            border: "1px solid var(--line)",
+            background: "var(--paper-2)",
+            padding: "22px 28px",
+            display: "flex",
+            flexDirection: "column",
+            gap: 14,
+          }}>
+            <div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 16, letterSpacing: "0.1em", color: "var(--ink-3)" }}>
+                EXACT ALGORITHM
+              </div>
+              <div style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: 22, color: "var(--ink-2)", marginTop: 2 }}>
+                off-the-rack · ready-to-wear
+              </div>
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "space-around", alignItems: "flex-end", padding: "6px 0" }}>
+              <PicWomanCasual/>
+              <PicManCasual/>
+            </div>
+
+            <ul style={{ margin: 0, padding: 0, fontSize: 20, lineHeight: 1.4, color: "var(--ink)", listStyle: "none" }}>
+              <li>
+                <strong>One pattern, many sizes</strong>
+                <div style={{ fontSize: 17, color: "var(--ink-3)", marginTop: 2 }}>↳ one MILP solver, many problem instances</div>
+              </li>
+              <li style={{ marginTop: 10 }}>
+                <strong>Cheap off the shelf</strong>
+                <div style={{ fontSize: 17, color: "var(--ink-3)", marginTop: 2 }}>↳ no R&amp;D per instance — just feed the model</div>
+              </li>
+              <li style={{ marginTop: 10 }}>
+                <strong>Rarely a perfect fit</strong>
+                <div style={{ fontSize: 17, color: "var(--ink-3)", marginTop: 2 }}>↳ exponential worst-case → too slow on big inputs</div>
+              </li>
+            </ul>
+          </div>
+
+          {/* === RIGHT — HEURISTIC (bespoke) === */}
+          <div style={{
+            border: "1px solid var(--line)",
+            background: "var(--paper-2)",
+            padding: "22px 28px",
+            display: "flex",
+            flexDirection: "column",
+            gap: 14,
+          }}>
+            <div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 16, letterSpacing: "0.1em", color: "var(--ink-3)" }}>
+                HEURISTIC
+              </div>
+              <div style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: 22, color: "var(--ink-2)", marginTop: 2 }}>
+                bespoke · made-to-measure
+              </div>
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "space-around", alignItems: "flex-end", padding: "6px 0" }}>
+              <PicBride/>
+              <PicGroom/>
+            </div>
+
+            <ul style={{ margin: 0, padding: 0, fontSize: 20, lineHeight: 1.4, color: "var(--ink)", listStyle: "none" }}>
+              <li>
+                <strong>Tailored for ONE instance</strong>
+                <div style={{ fontSize: 17, color: "var(--ink-3)", marginTop: 2 }}>↳ Clarke-Wright, designed around CVRP structure</div>
+              </li>
+              <li style={{ marginTop: 10 }}>
+                <strong>Expensive to design and tune</strong>
+                <div style={{ fontSize: 17, color: "var(--ink-3)", marginTop: 2 }}>↳ research effort, parameter tuning</div>
+              </li>
+              <li style={{ marginTop: 10 }}>
+                <strong>Perfect for THAT instance</strong>
+                <div style={{ fontSize: 17, color: "var(--ink-3)", marginTop: 2 }}>↳ runs fast on the target problem class</div>
+              </li>
+              <li style={{ marginTop: 10 }}>
+                <strong>Fragile — gain or lose weight, fit broken</strong>
+                <div style={{ fontSize: 17, color: "var(--ink-3)", marginTop: 2 }}>↳ change problem class → heuristic degrades</div>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+
+        {/* === DISAMBIGUATOR — full-width, only accent-coloured element on the slide === */}
+        <div style={{
+          marginTop: 22,
+          border: "1.5px solid var(--accent)",
+          background: "rgba(107,74,245,0.06)",
+          padding: "16px 26px",
+          fontSize: 20,
+          lineHeight: 1.5,
+          color: "var(--ink)",
+        }}>
+          <div style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: 14,
+            letterSpacing: "0.08em",
+            color: "var(--accent)",
+            marginBottom: 4,
+          }}>
+            DISAMBIGUATION
+          </div>
+          <div>
+            <strong>"Fit"</strong> in this metaphor maps to <strong>computational efficiency</strong>, <strong>not</strong> solution quality.
+          </div>
+          <div style={{ marginTop: 4, color: "var(--ink-2)" }}>
+            The exact algorithm still <em>guarantees</em> the optimal solution; the heuristic only finds a good one — fast, but with no proof.
+          </div>
+        </div>
+
+      </SlideFrame>
+    </section>
+  );
+}
+
+
+Object.assign(window, { Slide16, Slide17A, Slide17AGrowth, Slide17B, Slide17C, Slide17, Slide18, SlideClothingMetaphor });

@@ -393,8 +393,8 @@ function Slide25() {
         </div>
 
         <div style={{ marginTop: 16, background: "var(--ink)", color: "var(--paper)", padding: "14px 24px", fontFamily: "var(--font-mono)", fontSize: 21, lineHeight: 1.65 }}>
-          <div>s(i, j) &nbsp;=&nbsp; <span style={{ color: "var(--accent-2)" }}>[2 c(0,i) + 2 c(0,j)]</span> &nbsp;−&nbsp; <span style={{ color: "var(--accent-2)" }}>[c(0,i) + c(i,j) + c(j,0)]</span> &nbsp;=&nbsp; <span style={{ color: "var(--accent-2)" }}>c(0,i) + c(0,j) − c(i,j)</span></div>
-          <div style={{ color: "var(--ink-3)", fontSize: 18 }}>→ merge the pair with the largest positive saving that remains feasible.</div>
+          <div><span style={{ opacity: 0.55 }}>saving&nbsp;&nbsp;</span>s(i, j) &nbsp;=&nbsp; <span style={{ color: "var(--accent-2)" }}>[2 c(0,i) + 2 c(0,j)]</span> &nbsp;−&nbsp; <span style={{ color: "var(--accent-2)" }}>[c(0,i) + c(i,j) + c(j,0)]</span> &nbsp;=&nbsp; <span style={{ color: "var(--accent-2)" }}>c(0,i) + c(0,j) − c(i,j)</span></div>
+          <div style={{ opacity: 0.65, fontSize: 18 }}>→ merge the pair with the largest positive saving that remains feasible.</div>
         </div>
       </SlideFrame>
     </section>

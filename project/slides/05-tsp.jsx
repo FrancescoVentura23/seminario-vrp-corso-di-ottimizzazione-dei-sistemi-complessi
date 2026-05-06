@@ -2552,8 +2552,13 @@ function Slide10CapacityDemo() {
   });
   const blinkSeg = (() => {
     const a = visits[3], b = blinkTo;
-    const L = Math.hypot(b.x - a.x, b.y - a.y);
-    return { a, b, L, pts: arrowPts(a.x, a.y, b.x, b.y, 14) };
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const L = Math.hypot(dx, dy);
+    const ux = dx / L, uy = dy / L;
+    const retract = 16;
+    // tipX/tipY: where the line body STOPS (just outside the node circle r=12)
+    const tipX = b.x - ux * retract, tipY = b.y - uy * retract;
+    return { a, b, L, tipX, tipY, pts: arrowPts(a.x, a.y, b.x, b.y, retract) };
   })();
   const returnSeg = (() => {
     const a = visits[3], b = depot;
@@ -2626,8 +2631,10 @@ function Slide10CapacityDemo() {
           );
         })}
 
-        {/* Blinking red dashed arc 2 -> 3 (the impossible next leg) */}
-        <line x1={blinkSeg.a.x} y1={blinkSeg.a.y} x2={blinkSeg.b.x} y2={blinkSeg.b.y}
+        {/* Blinking red dashed arc 2 -> 3 (the impossible next leg).
+            Line ends at tipX/tipY (just outside the node circle) so the body
+            does not extend past the arrowhead into the destination node. */}
+        <line x1={blinkSeg.a.x} y1={blinkSeg.a.y} x2={blinkSeg.tipX} y2={blinkSeg.tipY}
               stroke="#d33" strokeWidth={3.5} strokeLinecap="round"
               strokeDasharray="9 9"
               style={{
@@ -2662,8 +2669,8 @@ function Slide10CapacityDemo() {
           <g key={`vc-${i}`}>
             <circle cx={v.x} cy={v.y} r={12}
                     fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.4}/>
-            <text x={v.x + 16} y={v.y + 4}
-                  fontFamily="var(--font-mono)" fontSize={13}
+            <text x={v.x + 18} y={v.y + 6}
+                  fontFamily="var(--font-mono)" fontSize={22}
                   fill="var(--accent)" fontWeight={700}>
               d={v.demand}
             </text>
@@ -2696,7 +2703,7 @@ function Slide10CapacityDemo() {
           <circle cx={28}  cy={10} r={5} fill="var(--ink)"/>
           {/* capacity label */}
           <text x={5} y={-30} textAnchor="middle"
-                fontFamily="var(--font-mono)" fontSize={11}
+                fontFamily="var(--font-mono)" fontSize={16}
                 fill="var(--ink-3)" letterSpacing="0.08em">
             C = {C}
           </text>
@@ -2756,30 +2763,29 @@ function Slide10() {
           </div>
 
           {/* Right — graph (Hamiltonian or capacity demo) */}
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24, display: "flex", flexDirection: "column", position: "relative" }}>
-            <button
-              ref={btnRef}
-              style={{
-                position: "absolute",
-                top: 16,
-                right: 16,
-                zIndex: 10,
-                fontFamily: "var(--font-mono)",
-                fontSize: 14,
-                letterSpacing: "0.07em",
-                textTransform: "uppercase",
-                padding: "8px 18px",
-                background: "var(--accent)",
-                color: "#ffffff",
-                border: "none",
-                cursor: "pointer",
-              }}
-            >
-              {mode === 0 ? "Adding demand and capacity →" : "↻ Replay"}
-            </button>
-
-            <div className="kicker">
-              {mode === 0 ? "TSP · one vehicle · no capacity" : "Same tour, but with demand & finite capacity"}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24, display: "flex", flexDirection: "column" }}>
+            {/* Kicker + button on the same row so the button never overlaps the text */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+              <div className="kicker">
+                {mode === 0 ? "TSP · one vehicle · no capacity" : "Same tour — demand & finite capacity"}
+              </div>
+              <button
+                ref={btnRef}
+                style={{
+                  flexShrink: 0,
+                  fontFamily: "var(--font-mono)",
+                  fontSize: 14,
+                  letterSpacing: "0.07em",
+                  textTransform: "uppercase",
+                  padding: "8px 18px",
+                  background: "var(--accent)",
+                  color: "#ffffff",
+                  border: "none",
+                  cursor: "pointer",
+                }}
+              >
+                {mode === 0 ? "Adding demand and capacity →" : "↻ Replay"}
+              </button>
             </div>
 
             <div style={{ flex: 1, minHeight: 0 }}>

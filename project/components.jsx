@@ -86,6 +86,10 @@ function VRPGraph({
   // its endpoint. Default 1200ms matches `.anim-draw` in styles.css;
   // hamilton-slow callers (Slide10) override to 4500ms.
   bodyAnimMs = 1200,
+  // Per-route cascade start delays in ms — must match the CSS anim-draw-N
+  // delays for this graph's className wrapper. Defaults mirror the global
+  // [150, 450, 750, 1000] values in styles.css.
+  cascadeDelays = [150, 450, 750, 1000],
 }) {
   const colors = routeColors || [
     "var(--route-1)", "var(--route-2)", "var(--route-3)",
@@ -160,8 +164,8 @@ function VRPGraph({
           segs.push({ b, dx, dy, L, cum, endIsDepot: ids[i] === 0 });
         }
         const totalLen = cum || 1;
-        // Match the cascading delays of .anim-draw-1..4 in styles.css.
-        const cascadeDelay = animated ? [150, 450, 750, 1000][Math.min(ri, 3)] : 0;
+        // Match the cascading delays of .anim-draw-1..4 (or caller-supplied override).
+        const cascadeDelay = animated ? (cascadeDelays[Math.min(ri, cascadeDelays.length - 1)] ?? 0) : 0;
         const color = colors[ri % colors.length];
         // Arrowhead size scales loosely with strokeWidth so it stays
         // visually proportional across slides.

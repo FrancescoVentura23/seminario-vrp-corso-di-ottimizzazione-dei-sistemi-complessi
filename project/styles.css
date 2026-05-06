@@ -320,6 +320,14 @@ section.section-slide .tag    { color: var(--paper-deep); }
   animation-timing-function: linear;
 }
 
+/* Slow multi-route draw — used in slide 40 (Slide10B) so each CVRP route
+   draws at a readable pace with enough gap between routes. */
+[data-deck-active] .vrp-cvrp .anim-draw    { animation-duration: 2200ms; }
+[data-deck-active] .vrp-cvrp .anim-draw-1  { animation-delay:  200ms; }
+[data-deck-active] .vrp-cvrp .anim-draw-2  { animation-delay: 1200ms; }
+[data-deck-active] .vrp-cvrp .anim-draw-3  { animation-delay: 2200ms; }
+[data-deck-active] .vrp-cvrp .anim-draw-4  { animation-delay: 3200ms; }
+
 [data-deck-active] .anim-pulse { animation: pulse 2.2s infinite ease-in-out; }
 [data-deck-active] .anim-blink   { animation: blink 1.4s infinite ease-in-out; }
 [data-deck-active] .anim-blink-2 { animation: blink 1.4s infinite ease-in-out; animation-delay: 0.7s; }

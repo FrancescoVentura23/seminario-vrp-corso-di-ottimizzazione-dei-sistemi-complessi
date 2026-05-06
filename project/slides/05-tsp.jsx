@@ -2519,7 +2519,10 @@ function Slide10B() {
             <div style={{ flex: 1 }}>
               <VRPGraph nodes={EX_NODES} routes={EX_ROUTES}
                         width={900} height={560} strokeWidth={3.6}
-                        showArrows/>
+                        showArrows
+                        className="vrp-cvrp"
+                        bodyAnimMs={2200}
+                        cascadeDelays={[200, 1200, 2200, 3200]}/>
             </div>
             <div className="body small" style={{ color: "var(--ink-3)", marginTop: 10, minHeight: 76 }}>
               Several routes, each depot-to-depot, each respecting capacity.

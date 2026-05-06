@@ -405,7 +405,9 @@ function Slide15() {
         <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, flex: 1 }}>
           {/* Left — truck visual */}
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24, position: "relative" }}>
-            <svg viewBox="0 0 700 478" style={{ width: "100%", height: "100%", display: "block" }}>
+            <svg viewBox="0 0 700 478"
+                 preserveAspectRatio="xMidYMid meet"
+                 style={{ width: "100%", height: "100%", aspectRatio: "700 / 478", display: "block" }}>
 
               {/* r(S) headline */}
               <text x={350} y={10} textAnchor="middle"

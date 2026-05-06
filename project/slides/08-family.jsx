@@ -152,7 +152,9 @@ function Slide21() {
 
           {/* Right — chart with time-window pills (slide-10 style: white pill, accent border, accent monospace text) */}
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24, position: "relative" }}>
-            <svg viewBox="0 0 900 620" style={{ width: "100%", height: "100%", display: "block", overflow: "visible" }}>
+            <svg viewBox="0 0 900 620"
+                 preserveAspectRatio="xMidYMid meet"
+                 style={{ width: "100%", height: "100%", aspectRatio: "900 / 620", display: "block", overflow: "visible" }}>
               <rect x={420-16} y={320-16} width={32} height={32} fill="var(--depot)"/>
               {/* Route bodies — drawn first so arrowheads can sit on top */}
               {routes21.map((r, ri) => (
@@ -672,7 +674,9 @@ function Slide22Intro() {
               }
             ` }}/>
 
-            <svg viewBox="0 0 820 360" style={{ width: "100%", height: "100%", display: "block", overflow: "visible" }}>
+            <svg viewBox="0 0 820 360"
+                 preserveAspectRatio="xMidYMid meet"
+                 style={{ width: "100%", height: "100%", aspectRatio: "820 / 360", display: "block", overflow: "visible" }}>
               {/* Single keyed group so every animation restarts together when animKey changes */}
               <g key={animKey}>
                 {/* Route 1: depot -> linehaul (delivery leg, drawn while truck moves) */}
@@ -1063,26 +1067,35 @@ function Slide22() {
 
         <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 60, flex: 1 }}>
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24 }}>
-            <svg key={animKey} viewBox="0 0 1200 900" style={{ width: "100%", height: "100%" }}>
-              {/* Route bodies — single polyline per route (preserves the sweep
-                  feel of the original drawPath animation) */}
-              {polyData22.map((r, ri) => (
-                <polyline key={`body-${ri}`}
-                          points={r.pts.map(p => p.join(",")).join(" ")}
-                          fill="none" stroke={r.color} strokeWidth={5.5}
-                          strokeLinejoin="round" strokeLinecap="round"
-                          className="anim-draw"
-                          style={{ "--len": r.totalLen,
-                                   animation: `drawPath ${r.durMs}ms both ease-out ${r.startMs}ms` }}/>
-              ))}
-              {/* Arrowheads — fade in as the polyline draw reaches each
-                  segment endpoint (delay = startMs + cumLen/totalLen * durMs) */}
-              {arrows22.map(a => (
-                <polygon key={`arr-${a.key}`} points={a.pts} fill={a.color}
-                         style={{ opacity: 0,
-                                  animation: "fadeUp 200ms both ease-out",
-                                  animationDelay: `${a.delayMs.toFixed(0)}ms` }}/>
-              ))}
+            <svg viewBox="0 0 1200 900"
+                 preserveAspectRatio="xMidYMid meet"
+                 style={{ width: "100%", height: "100%",
+                          aspectRatio: "1200 / 900" }}>
+              {/* Animated subtree — keyed so animKey changes restart the
+                  drawPath/fadeUp animations. The <svg> itself stays mounted
+                  to keep its sizing stable on Safari iOS (avoids the 1-frame
+                  fallback to intrinsic 300x150 that shifts the parent flex). */}
+              <g key={animKey}>
+                {/* Route bodies — single polyline per route (preserves the sweep
+                    feel of the original drawPath animation) */}
+                {polyData22.map((r, ri) => (
+                  <polyline key={`body-${ri}`}
+                            points={r.pts.map(p => p.join(",")).join(" ")}
+                            fill="none" stroke={r.color} strokeWidth={5.5}
+                            strokeLinejoin="round" strokeLinecap="round"
+                            className="anim-draw"
+                            style={{ "--len": r.totalLen,
+                                     animation: `drawPath ${r.durMs}ms both ease-out ${r.startMs}ms` }}/>
+                ))}
+                {/* Arrowheads — fade in as the polyline draw reaches each
+                    segment endpoint (delay = startMs + cumLen/totalLen * durMs) */}
+                {arrows22.map(a => (
+                  <polygon key={`arr-${a.key}`} points={a.pts} fill={a.color}
+                           style={{ opacity: 0,
+                                    animation: "fadeUp 200ms both ease-out",
+                                    animationDelay: `${a.delayMs.toFixed(0)}ms` }}/>
+                ))}
+              </g>
 
               {/* Depot */}
               <rect x={depot.x - 18} y={depot.y - 18} width={36} height={36}
@@ -1383,7 +1396,9 @@ function Slide23Intro() {
               }
             ` }}/>
 
-            <svg viewBox="0 0 820 360" style={{ width: "100%", height: "100%", display: "block", overflow: "visible" }}>
+            <svg viewBox="0 0 820 360"
+                 preserveAspectRatio="xMidYMid meet"
+                 style={{ width: "100%", height: "100%", aspectRatio: "820 / 360", display: "block", overflow: "visible" }}>
               <g key={animKey}>
                 {/* Route 1: depot → P (vehicle empty leg) */}
                 <line x1={depot.x} y1={depot.y} x2={pickup.x} y2={pickup.y}

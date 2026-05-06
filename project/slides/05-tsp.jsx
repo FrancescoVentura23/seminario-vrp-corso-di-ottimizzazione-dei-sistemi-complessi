@@ -213,7 +213,9 @@ function SlideTSPHamiltonian() {
 
         <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 60, flex: 1, alignItems: "center" }}>
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 26, position: "relative" }}>
-            <svg viewBox="0 0 1000 760" style={{ width: "100%", height: "100%", display: "block" }}>
+            <svg viewBox="0 0 1000 760"
+                 preserveAspectRatio="xMidYMid meet"
+                 style={{ width: "100%", height: "100%", aspectRatio: "1000 / 760", display: "block" }}>
               <defs>
                 <pattern id="dotgrid-tsph" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
                   <circle cx="1" cy="1" r="1" fill="var(--line)"/>
@@ -637,7 +639,9 @@ function SlideTSPSubtourProblem() {
 
         <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 60, flex: 1, alignItems: "center" }}>
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 26, position: "relative" }}>
-            <svg viewBox="0 0 1050 720" style={{ width: "100%", height: "100%", display: "block" }}>
+            <svg viewBox="0 0 1050 720"
+                 preserveAspectRatio="xMidYMid meet"
+                 style={{ width: "100%", height: "100%", aspectRatio: "1050 / 720", display: "block" }}>
               <defs>
                 <pattern id="dotgrid-sub" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
                   <circle cx="1" cy="1" r="1" fill="var(--line)"/>
@@ -1130,7 +1134,9 @@ function SlideTSPExponential() {
           </div>
 
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 30, position: "relative" }}>
-            <svg viewBox="0 0 900 680" style={{ width: "100%", height: "100%", display: "block" }}>
+            <svg viewBox="0 0 900 680"
+                 preserveAspectRatio="xMidYMid meet"
+                 style={{ width: "100%", height: "100%", aspectRatio: "900 / 680", display: "block" }}>
               {/* Axes */}
               <line x1={80} y1={chartTop} x2={80} y2={chartY0} stroke="var(--ink)" strokeWidth={2}/>
               <line x1={80} y1={chartY0} x2={860} y2={chartY0} stroke="var(--ink)" strokeWidth={2}/>
@@ -1478,7 +1484,9 @@ function SlideTSPKeyIdentity() {
           <div ref={btnsRef} style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 18, display: "flex", flexDirection: "column", gap: 10 }}>
 
             <div style={{ flex: 1, minHeight: 0 }}>
-              <svg viewBox="0 0 1050 720" style={{ width: "100%", height: "100%", display: "block", overflow: "visible" }}>
+              <svg viewBox="0 0 1050 720"
+                   preserveAspectRatio="xMidYMid meet"
+                   style={{ width: "100%", height: "100%", aspectRatio: "1050 / 720", display: "block", overflow: "visible" }}>
                 <defs>
                   <pattern id="dotgrid-ki" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
                     <circle cx="1" cy="1" r="1" fill="var(--line)"/>

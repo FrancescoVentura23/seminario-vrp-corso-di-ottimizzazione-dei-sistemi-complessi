@@ -56,7 +56,9 @@ function SlideNode() {
           </div>
 
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 30, position: "relative" }}>
-            <svg viewBox="0 0 1000 700" style={{ width: "100%", height: "100%", display: "block" }}>
+            <svg viewBox="0 0 1000 700"
+                 preserveAspectRatio="xMidYMid meet"
+                 style={{ width: "100%", height: "100%", aspectRatio: "1000 / 700", display: "block" }}>
               {/* dotted grid */}
               <defs>
                 <pattern id="dotgrid-node" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
@@ -241,7 +243,9 @@ function SlideNodeAttributes() {
 
           {/* Right — same layout as SlideNode so nodes look continuous across the transition */}
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 30, position: "relative" }}>
-            <svg viewBox="0 0 1000 700" style={{ width: "100%", height: "100%", display: "block" }}>
+            <svg viewBox="0 0 1000 700"
+                 preserveAspectRatio="xMidYMid meet"
+                 style={{ width: "100%", height: "100%", aspectRatio: "1000 / 700", display: "block" }}>
               <defs>
                 <pattern id="dotgrid-nodeattr" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
                   <circle cx="1" cy="1" r="1" fill="var(--line)"/>
@@ -304,7 +308,9 @@ function SlideEdge() {
 
         <div style={{ marginTop: 50, display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 80, flex: 1, alignItems: "center" }}>
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 30, position: "relative" }}>
-            <svg viewBox="0 0 1000 680" style={{ width: "100%", height: "100%", display: "block" }}>
+            <svg viewBox="0 0 1000 680"
+                 preserveAspectRatio="xMidYMid meet"
+                 style={{ width: "100%", height: "100%", aspectRatio: "1000 / 680", display: "block" }}>
               <defs>
                 <pattern id="dotgrid-edge" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
                   <circle cx="1" cy="1" r="1" fill="var(--line)"/>
@@ -547,7 +553,9 @@ function SlideDirectedArc() {
 
         <div style={{ marginTop: 44, display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 70, flex: 1, alignItems: "center" }}>
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 30, position: "relative" }}>
-            <svg viewBox="0 0 1000 760" style={{ width: "100%", height: "100%", display: "block" }}>
+            <svg viewBox="0 0 1000 760"
+                 preserveAspectRatio="xMidYMid meet"
+                 style={{ width: "100%", height: "100%", aspectRatio: "1000 / 760", display: "block" }}>
               <defs>
                 <pattern id="dotgrid-dir" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
                   <circle cx="1" cy="1" r="1" fill="var(--line)"/>
@@ -738,7 +746,9 @@ function SlideDigraph() {
 
           {/* Right — digraph SVG */}
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 30, position: "relative" }}>
-            <svg viewBox="0 0 1000 780" style={{ width: "100%", height: "100%", display: "block" }}>
+            <svg viewBox="0 0 1000 780"
+                 preserveAspectRatio="xMidYMid meet"
+                 style={{ width: "100%", height: "100%", aspectRatio: "1000 / 780", display: "block" }}>
               <defs>
                 <pattern id="dotgrid-dig" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
                   <circle cx="1" cy="1" r="1" fill="var(--line)"/>
@@ -893,7 +903,9 @@ function SlideStarNotation() {
           </div>
 
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 30, position: "relative" }}>
-            <svg viewBox="0 0 1000 780" style={{ width: "100%", height: "100%", display: "block" }}>
+            <svg viewBox="0 0 1000 780"
+                 preserveAspectRatio="xMidYMid meet"
+                 style={{ width: "100%", height: "100%", aspectRatio: "1000 / 780", display: "block" }}>
               <defs>
                 <pattern id="dotgrid-star" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
                   <circle cx="1" cy="1" r="1" fill="var(--line)"/>
@@ -1059,7 +1071,9 @@ function SlideNetwork() {
           </div>
 
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 30, position: "relative" }}>
-            <svg viewBox="0 0 1000 780" style={{ width: "100%", height: "100%", display: "block" }}>
+            <svg viewBox="0 0 1000 780"
+                 preserveAspectRatio="xMidYMid meet"
+                 style={{ width: "100%", height: "100%", aspectRatio: "1000 / 780", display: "block" }}>
               <defs>
                 <pattern id="dotgrid-net" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
                   <circle cx="1" cy="1" r="1" fill="var(--line)"/>

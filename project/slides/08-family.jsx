@@ -42,7 +42,7 @@ function Slide20() {
             been bumped from 15 → 22 px so they stay legible in projection. */}
         <div style={{ marginTop: 24, background: "var(--paper-2)", border: "1px solid var(--line)", padding: 28, flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
           <div style={{ flex: 1, minHeight: 0 }}>
-            <svg viewBox="0 0 1600 680" preserveAspectRatio="xMidYMid meet" style={{ width: "100%", height: "100%", display: "block" }}>
+            <svg viewBox="0 0 1600 680" preserveAspectRatio="xMidYMid meet" style={{ width: "100%", height: "100%", aspectRatio: "1600 / 680", display: "block" }}>
               {/* TSP at root */}
               {(() => {
                 const box = (x, y, w, h, label, sub, accent) => (

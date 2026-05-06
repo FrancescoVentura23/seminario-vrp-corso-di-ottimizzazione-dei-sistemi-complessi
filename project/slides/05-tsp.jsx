@@ -1260,7 +1260,7 @@ function SlideTSPLazy() {
 
           {/* -------- Right column: flowchart -------- */}
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 18, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", minHeight: 0 }}>
-            <svg viewBox="0 0 790 640" preserveAspectRatio="xMidYMid meet" style={{ width: "100%", height: "100%", display: "block" }}>
+            <svg viewBox="0 0 790 640" preserveAspectRatio="xMidYMid meet" style={{ width: "100%", height: "100%", aspectRatio: "790 / 640", display: "block" }}>
               <defs>
                 <marker id="lz-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
                   <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--ink)"/>

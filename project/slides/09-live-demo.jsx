@@ -298,6 +298,24 @@ function SlideCWInitialSolution() {
 
 
 function Slide25() {
+  // Curved arc helper: left-hand Q bezier so reverse arcs (a→b and b→a)
+  // bow away from each other instead of overlapping. Returns {d, pts}.
+  const mkArc25 = (x1, y1, x2, y2) => {
+    const CURVE = 18;
+    const dx=x2-x1, dy=y2-y1, L=Math.hypot(dx,dy);
+    if (L<1) return {d:'', pts:''};
+    const mx=(x1+x2)/2, my=(y1+y2)/2;
+    const cpx=mx-(dy/L)*CURVE, cpy=my+(dx/L)*CURVE;
+    const d=`M ${x1},${y1} Q ${cpx.toFixed(1)},${cpy.toFixed(1)} ${x2},${y2}`;
+    const tdx=x2-cpx, tdy=y2-cpy, tL=Math.hypot(tdx,tdy);
+    const ux=tdx/tL, uy=tdy/tL;
+    const back=18, aw=6, al=12;
+    const tx=x2-ux*back, ty=y2-uy*back;
+    const bx=tx-ux*al, by=ty-uy*al;
+    const pts=`${tx.toFixed(1)},${ty.toFixed(1)} ${(bx-uy*aw).toFixed(1)},${(by+ux*aw).toFixed(1)} ${(bx+uy*aw).toFixed(1)},${(by-ux*aw).toFixed(1)}`;
+    return {d, pts};
+  };
+
   return (
     <section className="slide" data-label="Clarke-Wright idea">
       <SlideFrame>
@@ -312,23 +330,15 @@ function Slide25() {
               svg: (
                 <svg viewBox="0 0 600 400" style={{ width: "100%", height: 260, display: "block" }}>
                   <rect x={300-16} y={320-16} width={32} height={32} fill="var(--depot)"/>
-                  {/* Two round-trips, each is depot → customer → depot. Arrows
-                      on every leg make the round-trip nature explicit. back=18
-                      clears node r=14 and depot half-side=16. */}
-                  <polyline points="300,320 150,120 300,320" fill="none" stroke="var(--route-1)" strokeWidth={3.5} strokeDasharray="6 6"/>
-                  <polyline points="300,320 470,120 300,320" fill="none" stroke="var(--route-1)" strokeWidth={3.5} strokeDasharray="6 6"/>
                   {(() => {
-                    // Edges: depot→i, i→depot, depot→j, j→depot
-                    const edges = [[300,320,150,120],[150,120,300,320],[300,320,470,120],[470,120,300,320]];
-                    return edges.map(([x1,y1,x2,y2], k) => {
-                      const dx=x2-x1, dy=y2-y1, L=Math.hypot(dx,dy);
-                      const ux=dx/L, uy=dy/L;
-                      const back=18, aw=6, al=12;
-                      const tipX=x2-ux*back, tipY=y2-uy*back;
-                      const bx=tipX-ux*al, by=tipY-uy*al;
-                      const pts=`${tipX.toFixed(1)},${tipY.toFixed(1)} ${(bx-uy*aw).toFixed(1)},${(by+ux*aw).toFixed(1)} ${(bx+uy*aw).toFixed(1)},${(by-ux*aw).toFixed(1)}`;
-                      return <polygon key={k} points={pts} fill="var(--route-1)"/>;
-                    });
+                    // Four segments: depot→i, i→depot, depot→j, j→depot.
+                    // Bodies first, arrowheads second (gotcha #10).
+                    const segs = [[300,320,150,120],[150,120,300,320],[300,320,470,120],[470,120,300,320]];
+                    const arcs = segs.map(([x1,y1,x2,y2]) => mkArc25(x1,y1,x2,y2));
+                    return <>
+                      {arcs.map((a,k) => <path key={`b-${k}`} d={a.d} fill="none" stroke="var(--route-1)" strokeWidth={3.5} strokeDasharray="6 6"/>)}
+                      {arcs.map((a,k) => <polygon key={`h-${k}`} points={a.pts} fill="var(--route-1)"/>)}
+                    </>;
                   })()}
                   <circle cx={150} cy={120} r={14} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>
                   <text x={150} y={125} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={16} fontWeight={600}>i</text>

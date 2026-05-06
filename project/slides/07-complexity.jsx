@@ -12,7 +12,7 @@ function Slide16() {
         <div>Slides 22 — 26</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-        <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Four</div>
+
         <div className="hero" style={{ fontSize: 240 }}>Complexity</div>
         <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
           Why the VRP is hard — and why heuristics matter in practice.
@@ -600,8 +600,8 @@ function Slide18() {
 //   metaphor-groom.jpg        — Ketut Subiyanto  (Pexels)
 
 const METAPHOR_PHOTO_STYLE = {
-  width: 220,
-  height: 330,
+  width: 200,
+  height: 260,
   objectFit: "cover",
   objectPosition: "center 30%",
   borderRadius: 8,
@@ -629,7 +629,7 @@ function SlideClothingMetaphor() {
           Why an exact algorithm is general but slow, and a heuristic is fast but fragile.
         </div>
 
-        <div style={{ marginTop: 24, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, flex: 1 }}>
+        <div style={{ marginTop: 20, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32 }}>
 
           {/* === LEFT — EXACT ALGORITHM (off-the-rack) === */}
           <div style={{

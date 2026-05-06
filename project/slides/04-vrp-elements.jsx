@@ -233,23 +233,23 @@ function Slide07() {
       `}</style>
       <SlideFrame>
         <div className="tag">VRP elements</div>
-        <h2 className="title" style={{ marginTop: 20 }}>From the road network to a complete graph.</h2>
-        <div style={{ marginTop: 12, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 28 }}>
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", borderTop: "3px solid var(--accent)", padding: "18px 22px" }}>
+        <h2 className="title" style={{ marginTop: 10 }}>From the road network to a complete graph.</h2>
+        <div style={{ marginTop: 8, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 28 }}>
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", borderTop: "3px solid var(--accent)", padding: "12px 22px" }}>
             <div className="kicker" style={{ fontSize: 19, marginBottom: 8 }}>① Snapshot</div>
             <div style={{ fontSize: 25, lineHeight: 1.4 }}>All costs and travel times are <em>fixed</em> at solve time — the model captures one instant.</div>
           </div>
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", borderTop: "3px solid var(--accent)", padding: "18px 22px" }}>
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", borderTop: "3px solid var(--accent)", padding: "12px 22px" }}>
             <div className="kicker" style={{ fontSize: 19, marginBottom: 8 }}>② Fixed shortest path</div>
             <div style={{ fontSize: 25, lineHeight: 1.4 }}>Since parameters never change, a rational agent <em>always</em> takes the same <em>shortest path</em> between any two nodes.</div>
           </div>
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", borderTop: "3px solid var(--accent)", padding: "18px 22px" }}>
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", borderTop: "3px solid var(--accent)", padding: "12px 22px" }}>
             <div className="kicker" style={{ fontSize: 19, marginBottom: 8 }}>③ Network collapse</div>
             <div style={{ fontSize: 25, lineHeight: 1.4 }}>Pre-compute one cost per pair → junctions disappear, only customers remain in a <em>complete graph</em>.</div>
           </div>
         </div>
 
-        <div style={{ marginTop: 20, position: "relative", background: "var(--paper-2)", border: "1px solid var(--line)", padding: 20 }}>
+        <div style={{ marginTop: 10, position: "relative", background: "var(--paper-2)", border: "1px solid var(--line)", padding: 12 }}>
           {/* Always in DOM so btnRef stays stable; hidden once animation starts */}
           <button ref={btnRef} style={{
             position: "absolute", top: 20, right: 20, zIndex: 10,

@@ -1037,6 +1037,18 @@ function Slide22() {
     { pts: [[600,400],[750,120],[950,280],[1000,500],[300,700],[150,550],[600,400]],color: "var(--route-3)", startMs: 2200, durMs: 2500 },
     { pts: [[600,400],[200,380],[600,400]],                                          color: "var(--route-2)", startMs: 5000, durMs: 1300 },
   ];
+  // Detect bidirectional pairs across all routes22 so overlapping reverse
+  // arcs can be drawn as slight bezier curves instead of straight overlaps.
+  const segSet22 = new Set();
+  routes22.forEach(r => r.pts.slice(0, -1).forEach((p, i) => {
+    const q = r.pts[i+1];
+    segSet22.add(`${p[0]},${p[1]}>${q[0]},${q[1]}`);
+  }));
+  const isBidir22 = (p, q) =>
+    segSet22.has(`${p[0]},${p[1]}>${q[0]},${q[1]}`) &&
+    segSet22.has(`${q[0]},${q[1]}>${p[0]},${p[1]}`);
+  const CURVE22 = 40; // perpendicular bezier offset in viewBox units (1200×900)
+
   // Pre-compute segment metadata + arrowhead positions and timing.
   // Backoff = 26 px clears both circle nodes (r=22, gap 4) and the depot's
   // outer ring (half-side=24, gap 2). Arrow size aw=10, al=20 matches the
@@ -1045,9 +1057,27 @@ function Slide22() {
     const segs = r.pts.slice(0, -1).map((p, i) => {
       const [x1,y1] = p, [x2,y2] = r.pts[i+1];
       const dx = x2-x1, dy = y2-y1, L = Math.hypot(dx, dy);
-      return { x1, y1, x2, y2, L, ux: dx/L, uy: dy/L };
+      let ux = dx/L, uy = dy/L, cpx = null, cpy = null;
+      if (isBidir22(p, r.pts[i+1])) {
+        // Curve control point to the left of the arc direction
+        const mx = (x1+x2)/2, my = (y1+y2)/2;
+        cpx = mx - (dy/L) * CURVE22;
+        cpy = my + (dx/L) * CURVE22;
+        // Tangent at endpoint b = direction from cp to b (aligns arrowhead)
+        const tdx = x2 - cpx, tdy = y2 - cpy;
+        const tL = Math.hypot(tdx, tdy);
+        ux = tdx/tL; uy = tdy/tL;
+      }
+      return { x1, y1, x2, y2, L, ux, uy, cpx, cpy };
     });
-    return { ...r, segs, totalLen: segs.reduce((s, x) => s + x.L, 0) };
+    // SVG path d: L for straight segments, Q bezier for curved ones
+    let d = `M ${r.pts[0][0]} ${r.pts[0][1]}`;
+    segs.forEach(s => {
+      d += s.cpx !== null
+        ? ` Q ${s.cpx.toFixed(1)},${s.cpy.toFixed(1)} ${s.x2},${s.y2}`
+        : ` L ${s.x2},${s.y2}`;
+    });
+    return { ...r, segs, totalLen: segs.reduce((s, x) => s + x.L, 0), d };
   });
   const arrows22 = [];
   polyData22.forEach((r, ri) => {
@@ -1079,16 +1109,16 @@ function Slide22() {
                   to keep its sizing stable on Safari iOS (avoids the 1-frame
                   fallback to intrinsic 300x150 that shifts the parent flex). */}
               <g key={animKey}>
-                {/* Route bodies — single polyline per route (preserves the sweep
-                    feel of the original drawPath animation) */}
+                {/* Route bodies — single path per route. Bidirectional segments
+                    get a slight bezier curve so reverse arcs don't overlap. */}
                 {polyData22.map((r, ri) => (
-                  <polyline key={`body-${ri}`}
-                            points={r.pts.map(p => p.join(",")).join(" ")}
-                            fill="none" stroke={r.color} strokeWidth={5.5}
-                            strokeLinejoin="round" strokeLinecap="round"
-                            className="anim-draw"
-                            style={{ "--len": r.totalLen,
-                                     animation: `drawPath ${r.durMs}ms both ease-out ${r.startMs}ms` }}/>
+                  <path key={`body-${ri}`}
+                        d={r.d}
+                        fill="none" stroke={r.color} strokeWidth={5.5}
+                        strokeLinejoin="round" strokeLinecap="round"
+                        className="anim-draw"
+                        style={{ "--len": r.totalLen,
+                                 animation: `drawPath ${r.durMs}ms both ease-out ${r.startMs}ms` }}/>
                 ))}
                 {/* Arrowheads — fade in as the polyline draw reaches each
                     segment endpoint (delay = startMs + cumLen/totalLen * durMs) */}

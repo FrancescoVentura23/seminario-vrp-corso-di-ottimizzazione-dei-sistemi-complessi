@@ -13,7 +13,7 @@ function SlideTSPSection() {
         <div>Slides 28 — 38</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-        <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Five</div>
+
         <div className="hero" style={{ fontSize: 200 }}>Traveling<br/>Salesman</div>
         <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
           The simplest non-trivial routing problem — one vehicle, no capacity limit, visit everyone exactly once. The ancestor of every VRP.
@@ -1243,9 +1243,12 @@ function SlideTSPSubsetMatrix() {
   const VALID = "#2b7a5e";
   const EXCL  = "#b0a899";
 
-  const colW = 46, rowH = 52, leftPad = 62, topPad = 65;
+  const colW = 46, rowH = 52, leftPad = 62, topPad = 65, groupGap = 12;
   const dataH = n * rowH;
-  const svgW  = leftPad + 16 * colW + 20;
+  // colX: x start of column ci, accounting for inter-group gaps
+  const groupBoundaries = [1, 5, 11, 15];
+  const colX = (ci) => leftPad + ci * colW + groupBoundaries.filter(b => b <= ci).length * groupGap;
+  const svgW  = colX(15) + colW + 20;
   const svgH  = topPad + dataH + 95;
 
   const groups = [
@@ -1255,7 +1258,10 @@ function SlideTSPSubsetMatrix() {
     { size: 3, startIdx: 11, count: 4 },
     { size: 4, startIdx: 15, count: 1 },
   ];
-  const separators = [1, 5, 11, 15].map(idx => leftPad + idx * colW);
+  // Center x of a group
+  const groupCX = (g) => (colX(g.startIdx) + colX(g.startIdx + g.count - 1) + colW) / 2;
+  // x of separator between group ending at col (b-1) and starting at col b
+  const sepX = (b) => (colX(b - 1) + colW + colX(b)) / 2;
 
   return (
     <section className="slide" data-label="Subset enumeration V={A,B,C,D}">
@@ -1263,7 +1269,7 @@ function SlideTSPSubsetMatrix() {
         <div className="tag">TSP · DFJ subset count</div>
         <h2 className="title" style={{ marginTop: 28 }}>
           Example: all subsets of{" "}
-          <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent-2)" }}>
+          <span style={{ fontFamily: "var(--font-mono)" }}>
             V = {"{"} A, B, C, D {"}"}
           </span>.
         </h2>
@@ -1308,14 +1314,15 @@ function SlideTSPSubsetMatrix() {
 
               {groups.filter(g => g.size >= 2 && g.size <= n - 1).map(g => (
                 <rect key={g.size}
-                  x={leftPad + g.startIdx * colW + 3} y={topPad - 14}
-                  width={g.count * colW - 6} height={dataH + 28}
+                  x={colX(g.startIdx) + 3} y={topPad - 14}
+                  width={colX(g.startIdx + g.count - 1) + colW - colX(g.startIdx) - 6}
+                  height={dataH + 28}
                   rx={5} fill={VALID + "20"}
                 />
               ))}
 
               {groups.map(g => {
-                const cx = leftPad + (g.startIdx + g.count / 2) * colW;
+                const cx = groupCX(g);
                 const isValid = g.size >= 2 && g.size <= n - 1;
                 return (
                   <g key={g.size}>
@@ -1334,12 +1341,15 @@ function SlideTSPSubsetMatrix() {
                 );
               })}
 
-              {separators.map((x, i) => (
-                <line key={i}
-                  x1={x} y1={topPad - 32} x2={x} y2={topPad + dataH + 14}
-                  stroke="var(--ink-3)" strokeWidth={1} strokeDasharray="3 4" opacity={0.5}
-                />
-              ))}
+              {groupBoundaries.map((b, i) => {
+                const x = sepX(b);
+                return (
+                  <line key={i}
+                    x1={x} y1={topPad - 32} x2={x} y2={topPad + dataH + 14}
+                    stroke="var(--ink-3)" strokeWidth={1} strokeDasharray="3 4" opacity={0.5}
+                  />
+                );
+              })}
 
               {nodes.map((node, ri) => (
                 <text key={ri}
@@ -1354,13 +1364,13 @@ function SlideTSPSubsetMatrix() {
               {[1, 2, 3].map(ri => (
                 <line key={ri}
                   x1={leftPad} y1={topPad + ri * rowH}
-                  x2={leftPad + 16 * colW} y2={topPad + ri * rowH}
+                  x2={colX(15) + colW} y2={topPad + ri * rowH}
                   stroke="var(--line)" strokeWidth={0.8} opacity={0.6}
                 />
               ))}
 
               {allSubsets.map((s, ci) => {
-                const cx = leftPad + ci * colW + colW / 2;
+                const cx = colX(ci) + colW / 2;
                 const fg = s.valid ? VALID : EXCL;
                 return (
                   <g key={ci}>
@@ -1385,7 +1395,7 @@ function SlideTSPSubsetMatrix() {
 
               <line
                 x1={leftPad} y1={topPad + dataH + 14}
-                x2={leftPad + 16 * colW} y2={topPad + dataH + 14}
+                x2={colX(15) + colW} y2={topPad + dataH + 14}
                 stroke="var(--line)" strokeWidth={1.5}
               />
 
@@ -3035,7 +3045,7 @@ function Slide10B() {
             <div style={{ flex: 1 }}>
               <VRPGraph nodes={EX_NODES} routes={EX_ROUTES}
                         width={900} height={560} strokeWidth={3.6}
-                        showArrows
+                        showArrows curveBidirectional
                         className="vrp-cvrp"
                         bodyAnimMs={2200}
                         cascadeDelays={[200, 1200, 2200, 3200]}/>

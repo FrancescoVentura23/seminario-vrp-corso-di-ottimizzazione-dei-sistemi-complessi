@@ -90,6 +90,11 @@ function VRPGraph({
   // delays for this graph's className wrapper. Defaults mirror the global
   // [150, 450, 750, 1000] values in styles.css.
   cascadeDelays = [150, 450, 750, 1000],
+  // When true, segments whose reverse counterpart also appears in any route
+  // are drawn as slight quadratic-bezier curves so the two directions
+  // separate visually instead of overlapping. Opt-in only.
+  curveBidirectional = false,
+  curveAmount = 28,
 }) {
   const colors = routeColors || [
     "var(--route-1)", "var(--route-2)", "var(--route-3)",
@@ -97,10 +102,42 @@ function VRPGraph({
   ];
   const depot = nodes[0];
 
-  // Build route polyline points
-  const polylineFor = (route) => {
+  // Bidirectional pair detection — used when curveBidirectional is on.
+  // dirSegSet holds every directed "fromId:toId" present across all routes.
+  // isBidir(a,b) returns true when both a→b and b→a appear somewhere.
+  const dirSegSet = useMemo(() => {
+    if (!curveBidirectional) return null;
+    const s = new Set();
+    routes.forEach(route => {
+      const ids = [0, ...route, 0];
+      for (let i = 1; i < ids.length; i++) s.add(`${ids[i-1]}:${ids[i]}`);
+    });
+    return s;
+  }, [curveBidirectional, routes]);
+  const isBidir = (a, b) => !!dirSegSet && dirSegSet.has(`${a}:${b}`) && dirSegSet.has(`${b}:${a}`);
+
+  // Build SVG path `d` for a route. Bidirectional segments get a slight
+  // left-hand quadratic bezier so paired reverse arcs don't overlap.
+  // When curveBidirectional=false, isBidir is always false and all
+  // segments use L commands — identical to the old <polyline> behaviour.
+  const pathDataFor = (route) => {
     const ids = [0, ...route, 0];
-    return ids.map(i => `${nodes[i].x},${nodes[i].y}`).join(" ");
+    const n0 = nodes[ids[0]];
+    let d = `M ${n0.x} ${n0.y}`;
+    for (let i = 1; i < ids.length; i++) {
+      const a = nodes[ids[i-1]], b = nodes[ids[i]];
+      if (isBidir(ids[i-1], ids[i])) {
+        const dx = b.x - a.x, dy = b.y - a.y, L = Math.hypot(dx, dy);
+        const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+        // Control point offset perpendicular to the left of the arc direction
+        const cpx = mx - (dy / L) * curveAmount;
+        const cpy = my + (dx / L) * curveAmount;
+        d += ` Q ${cpx.toFixed(1)},${cpy.toFixed(1)} ${b.x},${b.y}`;
+      } else {
+        d += ` L ${b.x},${b.y}`;
+      }
+    }
+    return d;
   };
 
   // For length estimation for dasharray
@@ -132,9 +169,9 @@ function VRPGraph({
       {routes.map((route, ri) => {
         const len = approxLen(route);
         return (
-          <polyline
+          <path
             key={`r-${ri}`}
-            points={polylineFor(route)}
+            d={pathDataFor(route)}
             fill="none"
             stroke={colors[ri % colors.length]}
             strokeWidth={strokeWidth}
@@ -161,7 +198,19 @@ function VRPGraph({
           const dx = b.x - a.x, dy = b.y - a.y;
           const L = Math.hypot(dx, dy);
           cum += L;
-          segs.push({ b, dx, dy, L, cum, endIsDepot: ids[i] === 0 });
+          // Tangent direction at endpoint b: for a curved (bidirectional) segment
+          // the tangent is the direction from the bezier control point to b, not
+          // the chord direction, so the arrowhead aligns with the actual arc.
+          let ux = dx / L, uy = dy / L;
+          if (isBidir(ids[i-1], ids[i])) {
+            const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+            const cpx = mx - (dy / L) * curveAmount;
+            const cpy = my + (dx / L) * curveAmount;
+            const tdx = b.x - cpx, tdy = b.y - cpy;
+            const tL = Math.hypot(tdx, tdy);
+            ux = tdx / tL; uy = tdy / tL;
+          }
+          segs.push({ b, ux, uy, L, cum, endIsDepot: ids[i] === 0 });
         }
         const totalLen = cum || 1;
         // Match the cascading delays of .anim-draw-1..4 (or caller-supplied override).
@@ -172,7 +221,7 @@ function VRPGraph({
         const aw = Math.max(5, strokeWidth * 1.7);
         const al = Math.max(10, strokeWidth * 3.4);
         return segs.map((s, i) => {
-          const ux = s.dx / s.L, uy = s.dy / s.L;
+          const { ux, uy } = s;
           const retract = (s.endIsDepot ? depotRadius : nodeRadius) + 4;
           const tipX = s.b.x - ux * retract;
           const tipY = s.b.y - uy * retract;

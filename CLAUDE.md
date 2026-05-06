@@ -427,6 +427,37 @@ return <span dangerouslySetInnerHTML={{ __html: html }} data-tex-source={String(
 
 KaTeX viene caricato con `<script defer>` prima di Babel, quindi `window.katex` è già disponibile quando le slide renderizzano per la prima volta.
 
+### 17. Archi bidirezionali: usare bezier per evitare la sovrapposizione
+
+Quando due route (o i due tratti della stessa route) percorrono il segmento `a→b` e `b→a`, i due archi si sovrappongono perfettamente se tracciati come segmenti retti. Il risultato visivo è un singolo arco invece di due.
+
+**Soluzione obbligatoria**: rendere ogni arco come `<path>` con un bezier quadratico che curva leggermente a sinistra della propria direzione. L'arco opposto `b→a` curva anch'esso a sinistra della *propria* direzione, cioè a destra rispetto ad `a→b`, risultando in due archi chiaramente separati.
+
+Calcolo del control point (offset perpendicolare a sinistra):
+```javascript
+const CURVE = 22; // in unità del viewBox (800×560); scala proporzionalmente per SVG più grandi
+const dx = x2-x1, dy = y2-y1, L = Math.hypot(dx, dy);
+const mx = (x1+x2)/2, my = (y1+y2)/2;
+const cpx = mx - (dy/L)*CURVE;
+const cpy = my + (dx/L)*CURVE;
+const d = `M ${x1},${y1} Q ${cpx.toFixed(1)},${cpy.toFixed(1)} ${x2},${y2}`;
+```
+
+**Arrowhead**: per un bezier la tangente all'endpoint `(x2, y2)` è la direzione dal control point all'endpoint, *non* la direzione della corda:
+```javascript
+const tdx = x2-cpx, tdy = y2-cpy, tL = Math.hypot(tdx, tdy);
+const ux = tdx/tL, uy = tdy/tL; // usa questi per il poligono freccia
+```
+
+**Per `VRPGraph`**: usare il prop `curveBidirectional` (aggiunto in `components.jsx`). Il componente rileva automaticamente le coppie bidirezionali e applica la curva. Esempio:
+```jsx
+<VRPGraph ... showArrows curveBidirectional />
+```
+
+**Per SVG custom** (es. `SlideCWInitialSolution`, `Slide22`): aggiungere un helper `mkCurvedArc(x1,y1,x2,y2)` che restituisce `{ d, pts }` e sostituire `<line>` con `<path d={arc.d}>` e `mkArrow(...)` con `arc.pts`.
+
+Slide già corrette: `Slide10B` (slide 41), `Slide22` (slide 58), `SlideCWInitialSolution` (slide 72).
+
 ### 16. Non committare worktree Claude — `.claude/` deve restare in `.gitignore`
 
 Le worktree Claude (`.claude/worktrees/...`) hanno un proprio `.git` file e, se trackate dalla repo principale, vengono interpretate da git come **submodule** senza URL associato. Conseguenza: il workflow `pages-build-deployment` di GitHub Actions fallisce con:

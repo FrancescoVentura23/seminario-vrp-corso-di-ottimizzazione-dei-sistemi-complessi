@@ -12,7 +12,7 @@ function Slide24() {
         <div>Slides 57 — 60</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-        <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Interactive</div>
+
         <div className="hero" style={{ fontSize: 220 }}>Clarke–Wright</div>
         <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
           The savings heuristic — still the starting point for most real VRP solvers, 60 years later.
@@ -94,6 +94,203 @@ function SlideClarkeWrightIntro() {
           &nbsp;·&nbsp; A sequential version also exists — parallel dominates (Toth &amp; Vigo, Table 5.1).
         </div>
 
+      </SlideFrame>
+    </section>
+  );
+}
+
+
+function SlideCWInitialSolution() {
+  const DEPOT = { x: 420, y: 320 };
+  const CUSTS = [
+    { id: 1, x: 220, y: 180, d: 4 },
+    { id: 2, x: 300, y: 120, d: 3 },
+    { id: 3, x: 540, y: 110, d: 2 },
+    { id: 4, x: 660, y: 180, d: 5 },
+    { id: 5, x: 720, y: 340, d: 3 },
+    { id: 6, x: 640, y: 480, d: 4 },
+    { id: 7, x: 440, y: 520, d: 2 },
+    { id: 8, x: 240, y: 490, d: 3 },
+    { id: 9, x: 140, y: 350, d: 4 },
+  ];
+  const COLORS = [
+    "#e25c3e","#4a9ede","#5dbe72","#e8a838","#9b6bbf",
+    "#e67e22","#1abc9c","#e74c3c","#2980b9",
+  ];
+
+  const [started, setStarted] = React.useState(false);
+  const [animKey, setAnimKey] = React.useState(0);
+  const sectionRef = React.useRef(null);
+  const genRef     = React.useRef(null);
+  const rstRef     = React.useRef(null);
+
+  React.useEffect(() => {
+    const btn = genRef.current; if (!btn) return;
+    const h = () => { setStarted(true); setAnimKey(k => k + 1); };
+    btn.addEventListener("click", h);
+    return () => btn.removeEventListener("click", h);
+  }, []);
+
+  React.useEffect(() => {
+    const btn = rstRef.current; if (!btn) return;
+    const h = () => { setStarted(false); setAnimKey(0); };
+    btn.addEventListener("click", h);
+    return () => btn.removeEventListener("click", h);
+  }, []);
+
+  React.useEffect(() => {
+    const el = sectionRef.current; if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (!el.hasAttribute("data-deck-active")) { setStarted(false); setAnimKey(0); }
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ["data-deck-active"] });
+    return () => obs.disconnect();
+  }, []);
+
+  const GAP = 850;   // must be > RET + DUR so routes are strictly sequential
+  const DUR = 360;   // ms per segment
+  const RET = 400;   // ms after route start when return leg begins (DUR + 40ms gap)
+  const ARW = 310;   // ms after segment start when arrowhead fades in
+  const CURVE = 22; // perpendicular bezier offset so reverse arcs don't overlap
+
+  // Returns { d: SVG path, pts: arrowhead polygon points } for a curved arc.
+  // Both depot→ci and ci→depot curve to the left of their respective direction,
+  // so the two arcs bow away from each other and become visually distinct.
+  const mkCurvedArc = (x1, y1, x2, y2) => {
+    const dx = x2-x1, dy = y2-y1, L = Math.hypot(dx, dy);
+    if (L < 1) return { d: "", pts: "" };
+    const mx = (x1+x2)/2, my = (y1+y2)/2;
+    const cpx = mx - (dy/L)*CURVE;
+    const cpy = my + (dx/L)*CURVE;
+    const d = `M ${x1},${y1} Q ${cpx.toFixed(1)},${cpy.toFixed(1)} ${x2},${y2}`;
+    // Arrowhead tangent = direction from control-point to endpoint
+    const tdx = x2-cpx, tdy = y2-cpy, tL = Math.hypot(tdx, tdy);
+    const ux = tdx/tL, uy = tdy/tL;
+    const back = 18, aw = 7, al = 14;
+    const tx = x2-ux*back, ty = y2-uy*back;
+    const bx = tx-ux*al,   by = ty-uy*al;
+    const pts = `${tx.toFixed(1)},${ty.toFixed(1)} ${(bx-uy*aw).toFixed(1)},${(by+ux*aw).toFixed(1)} ${(bx+uy*aw).toFixed(1)},${(by-ux*aw).toFixed(1)}`;
+    return { d, pts };
+  };
+
+  return (
+    <section className="slide" data-label="CW — initial solution" ref={sectionRef}>
+      <SlideFrame>
+        <div className="tag">Clarke–Wright · step 02</div>
+        <h2 className="title" style={{ marginTop: 20 }}>
+          Initial solution — one dedicated round-trip per customer.
+        </h2>
+
+        <div style={{ marginTop: 20, flex: 1, display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 40, minHeight: 0 }}>
+
+          {/* Graph */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 12 }}>
+            <svg key={animKey} viewBox="0 0 840 600" style={{ width: "100%", height: "100%", display: "block" }}>
+
+              {/* All segment bodies first */}
+              {started && CUSTS.map((c, i) => {
+                const col = COLORS[i], d0 = i*GAP, d1 = d0+RET;
+                const L = Math.hypot(c.x-DEPOT.x, c.y-DEPOT.y);
+                const out = mkCurvedArc(DEPOT.x,DEPOT.y,c.x,c.y);
+                const ret = mkCurvedArc(c.x,c.y,DEPOT.x,DEPOT.y);
+                return (
+                  <React.Fragment key={"b"+i}>
+                    <path d={out.d} fill="none"
+                          stroke={col} strokeWidth={4} strokeLinecap="round"
+                          style={{ strokeDasharray:L, strokeDashoffset:L, "--len":L,
+                                   animation:`drawPath ${DUR}ms both ease-in-out`,
+                                   animationDelay:`${d0}ms` }}/>
+                    <path d={ret.d} fill="none"
+                          stroke={col} strokeWidth={4} strokeLinecap="round"
+                          style={{ strokeDasharray:L, strokeDashoffset:L, "--len":L,
+                                   animation:`drawPath ${DUR}ms both ease-in-out`,
+                                   animationDelay:`${d1}ms` }}/>
+                  </React.Fragment>
+                );
+              })}
+
+              {/* All arrowheads after */}
+              {started && CUSTS.map((c, i) => {
+                const col = COLORS[i], d0 = i*GAP, d1 = d0+RET;
+                const out = mkCurvedArc(DEPOT.x,DEPOT.y,c.x,c.y);
+                const ret = mkCurvedArc(c.x,c.y,DEPOT.x,DEPOT.y);
+                return (
+                  <React.Fragment key={"a"+i}>
+                    <polygon points={out.pts} fill={col}
+                             style={{ opacity:0, animation:"fadeUp 150ms both ease-out",
+                                      animationDelay:`${d0+ARW}ms` }}/>
+                    <polygon points={ret.pts} fill={col}
+                             style={{ opacity:0, animation:"fadeUp 150ms both ease-out",
+                                      animationDelay:`${d1+ARW}ms` }}/>
+                  </React.Fragment>
+                );
+              })}
+
+              {/* Depot */}
+              <rect x={DEPOT.x-16} y={DEPOT.y-16} width={32} height={32} fill="var(--depot)"/>
+              <rect x={DEPOT.x-20} y={DEPOT.y-20} width={40} height={40} fill="none" stroke="var(--depot)" strokeWidth={1.5}/>
+              <text x={DEPOT.x} y={DEPOT.y+44} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={15} fill="var(--ink-3)" letterSpacing="0.05em">DEPOT</text>
+
+              {/* Customers */}
+              {CUSTS.map(c => (
+                <g key={c.id}>
+                  <circle cx={c.x} cy={c.y} r={14} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.2}/>
+                  <text x={c.x} y={c.y+5} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill="var(--ink)" fontWeight={600}>{c.d}</text>
+                  <text x={c.x} y={c.y-22} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={13} fill="var(--ink-3)">c{c.id}</text>
+                </g>
+              ))}
+
+            </svg>
+          </div>
+
+          {/* Right panel */}
+          <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+            <div style={{ fontFamily:"var(--font-mono)", fontSize:20, color:"var(--ink-2)", lineHeight:1.5 }}>
+              9 customers → 9 vehicles. No legs shared — feasible but maximally wasteful.
+            </div>
+            <div style={{ background:"var(--ink)", color:"var(--paper)", padding:"10px 16px",
+                          fontFamily:"var(--font-mono)", fontSize:22 }}>
+              {"(0, i, 0)   i = 1 … 9"}
+            </div>
+
+            <div style={{ display:"flex", flexDirection:"column", gap:5, flex:1 }}>
+              {CUSTS.map((c, i) => {
+                const itemDelay = i*GAP + RET + DUR - 100;
+                const sharedStyle = {
+                  display:"flex", alignItems:"center", gap:10,
+                  fontFamily:"var(--font-mono)", fontSize:19, color:"var(--ink-2)",
+                };
+                const dot = <div style={{ width:12, height:12, borderRadius:"50%", background:COLORS[i], flexShrink:0 }}/>;
+                const label = <span>0 → c{c.id} → 0 &nbsp;<span style={{ color:"var(--ink-3)" }}>demand {c.d}</span></span>;
+                return started ? (
+                  <div key={"on-"+i+"-"+animKey}
+                       style={{ ...sharedStyle, opacity:0,
+                                animation:"fadeUp 200ms both ease-out",
+                                animationDelay:`${itemDelay}ms` }}>
+                    {dot}{label}
+                  </div>
+                ) : (
+                  <div key={"off-"+i} style={{ ...sharedStyle, opacity:0.2 }}>
+                    {dot}{label}
+                  </div>
+                );
+              })}
+            </div>
+
+            <div style={{ display:"flex", gap:10 }}>
+              <button ref={genRef} style={{
+                fontFamily:"var(--font-mono)", fontSize:21, padding:"10px 18px",
+                background:"var(--accent)", color:"white", border:"none",
+                cursor:"pointer", letterSpacing:"0.04em", textTransform:"uppercase",
+              }}>▶ generate</button>
+              <button ref={rstRef} style={{
+                fontFamily:"var(--font-mono)", fontSize:21, padding:"10px 18px",
+                background:"var(--paper)", color:"var(--ink)", border:"1px solid var(--ink)",
+                cursor:"pointer", letterSpacing:"0.04em", textTransform:"uppercase",
+              }}>reset</button>
+            </div>
+          </div>
+        </div>
       </SlideFrame>
     </section>
   );
@@ -211,4 +408,4 @@ function Slide26() {
 }
 
 
-Object.assign(window, { Slide24, SlideClarkeWrightIntro, Slide25, Slide26 });
+Object.assign(window, { Slide24, SlideClarkeWrightIntro, SlideCWInitialSolution, Slide25, Slide26 });

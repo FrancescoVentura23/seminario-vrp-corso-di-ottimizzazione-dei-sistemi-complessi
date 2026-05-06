@@ -2464,12 +2464,12 @@ function Slide10CapacityDemo() {
   ];
   // The 5th planned visit — node 3 — is the target of the impossible (red blinking) arc.
   const blinkTo = { x: 540, y: 110, label: "3" };
-  // Remaining (unvisited) customers shown faded for context.
+  // Remaining (unvisited) customers shown faded for context — with demand labels.
   const otherCusts = [
-    { x: 540, y: 110 }, // node 3
-    { x: 680, y: 180 }, { x: 730, y: 330 }, { x: 640, y: 470 },
-    { x: 460, y: 510 }, { x: 240, y: 480 }, { x: 570, y: 260 },
-    { x: 520, y: 420 },
+    { x: 540, y: 110, demand: 2 }, // node 3
+    { x: 680, y: 180, demand: 5 }, { x: 730, y: 330, demand: 3 }, { x: 640, y: 470, demand: 4 },
+    { x: 460, y: 510, demand: 2 }, { x: 240, y: 480, demand: 3 }, { x: 570, y: 260, demand: 3 },
+    { x: 520, y: 420, demand: 2 },
   ];
   const C = 13; // capacity = total demand of the 4 reachable customers
 
@@ -2602,11 +2602,17 @@ function Slide10CapacityDemo() {
           </pattern>
         </defs>
 
-        {/* Other customers — faded for context */}
+        {/* Other customers — faded for context, with demand labels */}
         {otherCusts.map((c, i) => (
-          <circle key={`oc-${i}`} cx={c.x} cy={c.y} r={12}
-                  fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.2}
-                  opacity={0.32}/>
+          <g key={`oc-${i}`} opacity={0.38}>
+            <circle cx={c.x} cy={c.y} r={12}
+                    fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.2}/>
+            <text x={c.x + 18} y={c.y + 6}
+                  fontFamily="var(--font-mono)" fontSize={22}
+                  fill="var(--accent)" fontWeight={700}>
+              d={c.demand}
+            </text>
+          </g>
         ))}
 
         {/* 4 visit segments (body + arrowhead) */}

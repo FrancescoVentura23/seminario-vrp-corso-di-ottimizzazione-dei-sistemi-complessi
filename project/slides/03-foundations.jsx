@@ -169,9 +169,9 @@ function SlideNodeAttributes() {
   React.useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const obs = new MutationObserver(() => {
+    const obs = new MutationObserver(() => requestAnimationFrame(() => {
       if (el.hasAttribute('data-deck-active')) setAnimKey(k => k + 1);
-    });
+    }));
     obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
     return () => obs.disconnect();
   }, []);
@@ -528,9 +528,9 @@ function SlideDirectedArc() {
   React.useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const obs = new MutationObserver(() => {
+    const obs = new MutationObserver(() => requestAnimationFrame(() => {
       if (el.hasAttribute('data-deck-active')) setAnimKey(k => k + 1);
-    });
+    }));
     obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
     return () => obs.disconnect();
   }, []);
@@ -646,9 +646,9 @@ function SlideDigraph() {
   React.useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const obs = new MutationObserver(() => {
+    const obs = new MutationObserver(() => requestAnimationFrame(() => {
       if (el.hasAttribute('data-deck-active')) setAnimKey(k => k + 1);
-    });
+    }));
     obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
     return () => obs.disconnect();
   }, []);
@@ -817,9 +817,9 @@ function SlideStarNotation() {
   React.useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const obs = new MutationObserver(() => {
+    const obs = new MutationObserver(() => requestAnimationFrame(() => {
       if (el.hasAttribute('data-deck-active')) setAnimKey(k => k + 1);
-    });
+    }));
     obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
     return () => obs.disconnect();
   }, []);
@@ -1007,9 +1007,9 @@ function SlideNetwork() {
   React.useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const obs = new MutationObserver(() => {
+    const obs = new MutationObserver(() => requestAnimationFrame(() => {
       if (el.hasAttribute('data-deck-active')) setAnimKey(k => k + 1);
-    });
+    }));
     obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
     return () => obs.disconnect();
   }, []);

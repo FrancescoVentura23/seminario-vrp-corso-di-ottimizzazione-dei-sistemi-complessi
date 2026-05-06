@@ -538,11 +538,11 @@ function Slide22Intro() {
   React.useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const obs = new MutationObserver(() => {
+    const obs = new MutationObserver(() => requestAnimationFrame(() => {
       if (el.hasAttribute('data-deck-active')) {
         setAnimKey(k => k + 1);
       }
-    });
+    }));
     obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
     return () => obs.disconnect();
   }, []);
@@ -991,13 +991,13 @@ function Slide22() {
   React.useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const obs = new MutationObserver(() => {
+    const obs = new MutationObserver(() => requestAnimationFrame(() => {
       if (el.hasAttribute('data-deck-active')) {
         setAnimKey(k => k + 1);
       } else {
         setAnimKey(0);
       }
-    });
+    }));
     obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
     return () => obs.disconnect();
   }, []);
@@ -1246,11 +1246,11 @@ function Slide23Intro() {
   React.useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const obs = new MutationObserver(() => {
+    const obs = new MutationObserver(() => requestAnimationFrame(() => {
       if (el.hasAttribute('data-deck-active')) {
         setAnimKey(k => k + 1);
       }
-    });
+    }));
     obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
     return () => obs.disconnect();
   }, []);
@@ -1678,13 +1678,13 @@ function Slide23() {
   React.useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const obs = new MutationObserver(() => {
+    const obs = new MutationObserver(() => requestAnimationFrame(() => {
       if (el.hasAttribute('data-deck-active')) {
         setAnimKey(k => k + 1);
       } else {
         setAnimKey(0);
       }
-    });
+    }));
     obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
     return () => obs.disconnect();
   }, []);

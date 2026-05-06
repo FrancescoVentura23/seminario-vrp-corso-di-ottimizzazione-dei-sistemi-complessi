@@ -81,7 +81,11 @@
       transform-origin: center center;
       flex-shrink: 0;
       background: #fff;
-      will-change: transform;
+      /* No will-change here: 'transform' on this element changes only on
+         resize (not animated), so promoting to a compositing layer brings
+         no perf win and on Safari iOS causes sub-pixel rounding to the
+         layer's pixel grid — visible as 1–2px shifts of position:absolute
+         children across slides on iPad. */
     }
 
     /* Slides live in light DOM (via <slot>) so authored CSS still applies.
@@ -268,7 +272,6 @@
         width: auto !important;
         height: auto !important;
         background: none;
-        will-change: auto;
       }
       ::slotted(*) {
         position: relative !important;
@@ -327,6 +330,12 @@
       window.addEventListener('keydown', this._onKey);
       window.addEventListener('resize', this._onResize);
       window.addEventListener('mousemove', this._onMouseMove, { passive: true });
+      // visualViewport fires resize when Safari iOS shows/hides the URL bar
+      // and accessory bar. Without this, the deck doesn't re-fit during the
+      // chrome transition and animations visibly jump.
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', this._onResize);
+      }
       // Initial collection + layout happens via slotchange, which fires on mount.
     }
 
@@ -334,6 +343,9 @@
       window.removeEventListener('keydown', this._onKey);
       window.removeEventListener('resize', this._onResize);
       window.removeEventListener('mousemove', this._onMouseMove);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', this._onResize);
+      }
       if (this._hideTimer) clearTimeout(this._hideTimer);
       if (this._mouseIdleTimer) clearTimeout(this._mouseIdleTimer);
     }
@@ -565,8 +577,16 @@
         this._canvas.style.transform = 'none';
         return;
       }
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
+      // Prefer visualViewport: on Safari iOS it tracks the actually-visible
+      // area as the URL bar collapses, while window.innerHeight reports the
+      // pre-collapse size and only updates on the next event-loop tick. The
+      // mid-frame mismatch causes the canvas to be sized for a viewport
+      // that no longer exists, which the user sees as animations "jumping"
+      // when they touch the screen. Fall back to window.* on browsers
+      // without visualViewport (none of the deck's targets, but cheap).
+      const vv = window.visualViewport;
+      const vw = vv ? vv.width  : window.innerWidth;
+      const vh = vv ? vv.height : window.innerHeight;
       const s = Math.min(vw / this.designWidth, vh / this.designHeight);
       this._canvas.style.transform = `scale(${s})`;
     }

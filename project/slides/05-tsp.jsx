@@ -42,12 +42,12 @@ function Slide09() {
   React.useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const obs = new MutationObserver(() => {
+    const obs = new MutationObserver(() => requestAnimationFrame(() => {
       if (!el.hasAttribute('data-deck-active')) {
         setShowRoute(false);
         setAnimKey(0);
       }
-    });
+    }));
     obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
     return () => obs.disconnect();
   }, []);
@@ -184,9 +184,9 @@ function SlideTSPHamiltonian() {
   React.useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const obs = new MutationObserver(() => {
+    const obs = new MutationObserver(() => requestAnimationFrame(() => {
       if (el.hasAttribute('data-deck-active')) setAnimKey(k => k + 1);
-    });
+    }));
     obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
     return () => obs.disconnect();
   }, []);
@@ -410,9 +410,9 @@ function SlideTSPDegree() {
   React.useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const obs = new MutationObserver(() => {
+    const obs = new MutationObserver(() => requestAnimationFrame(() => {
       if (el.hasAttribute('data-deck-active')) setAnimKey(k => k + 1);
-    });
+    }));
     obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
     return () => obs.disconnect();
   }, []);
@@ -558,9 +558,9 @@ function SlideTSPSubtourProblem() {
   React.useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const obs = new MutationObserver(() => {
+    const obs = new MutationObserver(() => requestAnimationFrame(() => {
       if (el.hasAttribute('data-deck-active')) setAnimKey(k => k + 1);
-    });
+    }));
     obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
     return () => obs.disconnect();
   }, []);
@@ -759,9 +759,9 @@ function SlideTSPDFJ() {
   React.useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const obs = new MutationObserver(() => {
+    const obs = new MutationObserver(() => requestAnimationFrame(() => {
       if (!el.hasAttribute('data-deck-active')) setActive(null);
-    });
+    }));
     obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
     return () => obs.disconnect();
   }, []);
@@ -1034,9 +1034,9 @@ function SlideTSPExponential() {
   React.useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const obs = new MutationObserver(() => {
+    const obs = new MutationObserver(() => requestAnimationFrame(() => {
       if (el.hasAttribute('data-deck-active')) setAnimKey(k => k + 1);
-    });
+    }));
     obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
     return () => obs.disconnect();
   }, []);
@@ -1322,9 +1322,9 @@ function SlideTSPKeyIdentity() {
   React.useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const obs = new MutationObserver(() => {
+    const obs = new MutationObserver(() => requestAnimationFrame(() => {
       if (!el.hasAttribute('data-deck-active')) setActiveVertex(null);
-    });
+    }));
     obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
     return () => obs.disconnect();
   }, []);
@@ -1603,7 +1603,7 @@ function SlideTSPMinCut() {
       if (!active) { setMode('integer'); setAnimStarted(false); setFracStarted(false); }
     };
     check();
-    const obs = new MutationObserver(check);
+    const obs = new MutationObserver(() => requestAnimationFrame(check));
     obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
     return () => obs.disconnect();
   }, []);

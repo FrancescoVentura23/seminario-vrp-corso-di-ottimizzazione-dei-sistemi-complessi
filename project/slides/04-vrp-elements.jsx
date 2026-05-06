@@ -12,7 +12,7 @@ function SlideVRPElementsSection() {
         <div>Slides 18 — 20</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-        <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Three</div>
+
         <div className="hero" style={{ fontSize: 240 }}>VRP elements</div>
         <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
           The ingredients of every routing problem — road graph, customers, depot, vehicles — and the TSP as their common ancestor.
@@ -103,10 +103,6 @@ function Slide06() {
           <circle cx={24} cy={34} r={5} stroke="var(--accent)" strokeWidth={1.5}/>
           <line x1={24} y1={30} x2={24} y2={34} stroke="var(--accent)" strokeWidth={1.5}/>
           <line x1={24} y1={34} x2={27} y2={34} stroke="var(--accent)" strokeWidth={1.5}/>
-          {/* Mini truck */}
-          <rect x={33} y={30} width={10} height={7} rx={1} stroke="var(--accent)" strokeWidth={1.5}/>
-          <circle cx={35} cy={38.5} r={2} stroke="var(--accent)" strokeWidth={1.5}/>
-          <circle cx={41} cy={38.5} r={2} stroke="var(--accent)" strokeWidth={1.5}/>
         </svg>
       ),
     },

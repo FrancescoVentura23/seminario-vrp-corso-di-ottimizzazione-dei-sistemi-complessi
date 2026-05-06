@@ -1247,6 +1247,159 @@ function Slide22B() {
 }
 
 
+// VRPB FORMULATION — two-index vehicle flow model P1 (Toth & Vigo 2002,
+// section 8.2.1). Arc partition Ā = A₁ ∪ A₂ ∪ A₃ encodes the
+// linehaul-before-backhaul precedence structurally: no arc (i∈B, j∈L) exists.
+
+function Slide22Form() {
+  const cA1 = "var(--route-1)";   // A₁: depot/L → L
+  const cA2 = "var(--route-2)";   // A₂: B → B/depot
+  const cA3 = "var(--route-3)";   // A₃: L → B/depot (interface)
+
+  // Arrowhead polygon for a straight segment
+  const ah = (x1, y1, x2, y2, r = 10, aw = 8, al = 15) => {
+    const dx = x2-x1, dy = y2-y1, L = Math.hypot(dx, dy);
+    const ux = dx/L, uy = dy/L;
+    const tx = x2 - ux*r, ty = y2 - uy*r;
+    const bx = tx - ux*al, by = ty - uy*al;
+    return `${tx.toFixed(1)},${ty.toFixed(1)} ${(bx-uy*aw).toFixed(1)},${(by+ux*aw).toFixed(1)} ${(bx+uy*aw).toFixed(1)},${(by-ux*aw).toFixed(1)}`;
+  };
+
+  return (
+    <section className="slide" data-label="VRPB formulation P1">
+      <SlideFrame>
+        <div className="tag">Family · VRPB · Model P1</div>
+        <h2 className="title" style={{ marginTop: 20 }}>
+          Two-index vehicle flow formulation — Toth &amp; Vigo.
+        </h2>
+
+        <div style={{ marginTop: 12, display: "grid", gridTemplateColumns: "1fr 1.45fr", gap: 48, flex: 1 }}>
+
+          {/* LEFT — arc partition diagram */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+
+            {/* Decision variable */}
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "9px 16px", fontSize: 21, lineHeight: 1.5 }}>
+              <TeX>{"x_{ij}=1"}</TeX> if arc <TeX>{"(i,j)\\in\\bar{A}"}</TeX> is used; <TeX>{"0"}</TeX> otherwise
+            </div>
+
+            {/* Arc partition SVG */}
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "12px 14px", flex: 1, display: "flex", flexDirection: "column" }}>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--ink-3)", letterSpacing: "0.07em", marginBottom: 6 }}>
+                ARC PARTITION — <TeX>{"\\bar{A} = A_1 \\cup A_2 \\cup A_3"}</TeX>
+              </div>
+              <svg viewBox="0 0 500 295" style={{ width: "100%", flex: 1, display: "block", overflow: "visible" }}>
+
+                {/* Depot */}
+                <rect x={15} y={153} width={50} height={50} rx={3} fill="var(--depot)"/>
+                <rect x={8} y={146} width={64} height={64} rx={3} fill="none" stroke="var(--depot)" strokeWidth={2}/>
+                <text x={40} y={184} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={18} fill="var(--paper)" fontWeight={700}>0</text>
+
+                {/* L block */}
+                <rect x={190} y={42} width={205} height={80} rx={6} fill="var(--paper)" stroke={cA1} strokeWidth={2.5}/>
+                <text x={292} y={78} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={18} fill={cA1} fontWeight={700}>L</text>
+                <text x={292} y={103} textAnchor="middle" fontFamily="var(--font-display)" fontSize={17} fill="var(--ink-2)">linehauls</text>
+
+                {/* B block */}
+                <rect x={285} y={198} width={200} height={78} rx={6} fill="var(--paper)" stroke={cA2} strokeWidth={2.5}/>
+                <text x={385} y={232} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={18} fill={cA2} fontWeight={700}>B</text>
+                <text x={385} y={256} textAnchor="middle" fontFamily="var(--font-display)" fontSize={17} fill="var(--ink-2)">backhauls</text>
+
+                {/* A₁: depot → L */}
+                <line x1={74} y1={162} x2={190} y2={95} stroke={cA1} strokeWidth={2.5} strokeLinecap="round"/>
+                <polygon points={ah(74, 162, 190, 95, 8)} fill={cA1}/>
+                <text x={115} y={117} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA1}>A₁</text>
+
+                {/* A₁: L self-loop (above block) */}
+                {/* Path M 220,42 C 240,4 345,4 365,42; tangent at end ≈ (0.466, 0.885) */}
+                <path d="M 220,42 C 240,4 345,4 365,42" fill="none" stroke={cA1} strokeWidth={2.5}/>
+                <polygon points="365,42 350.9,32.4 365.1,25.0" fill={cA1}/>
+                <text x={292} y={17} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA1}>A₁</text>
+
+                {/* A₃: L → B */}
+                <line x1={360} y1={122} x2={378} y2={198} stroke={cA3} strokeWidth={2.5} strokeLinecap="round"/>
+                <polygon points={ah(360, 122, 378, 198, 8)} fill={cA3}/>
+                <text x={398} y={163} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA3}>A₃</text>
+
+                {/* A₃: L → depot (dashed — linehaul-only route returns) */}
+                <line x1={200} y1={122} x2={75} y2={198} stroke={cA3} strokeWidth={2} strokeLinecap="round" strokeDasharray="5 4"/>
+                <polygon points={ah(200, 122, 75, 198, 8)} fill={cA3}/>
+                <text x={116} y={183} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA3}>A₃</text>
+
+                {/* A₂: B → depot */}
+                <line x1={285} y1={237} x2={76} y2={215} stroke={cA2} strokeWidth={2.5} strokeLinecap="round"/>
+                <polygon points={ah(285, 237, 76, 215, 8)} fill={cA2}/>
+                <text x={168} y={244} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA2}>A₂</text>
+
+                {/* A₂: B self-loop (below block) */}
+                {/* Path M 315,276 C 335,315 440,315 460,276; tangent at end ≈ (0.456,-0.890) */}
+                <path d="M 315,276 C 335,315 440,315 460,276" fill="none" stroke={cA2} strokeWidth={2.5}/>
+                <polygon points="460,276 460.3,293.0 446.1,285.7" fill={cA2}/>
+                <text x={388} y={314} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA2}>A₂</text>
+
+                {/* NO ARC: B → L (forbidden — enforces precedence) */}
+                <line x1={308} y1={198} x2={375} y2={122} stroke="#cc4444" strokeWidth={2}
+                      strokeDasharray="4 4" opacity={0.75}/>
+                <text x={356} y={150} textAnchor="middle" fontFamily="var(--font-mono)"
+                      fontSize={22} fill="#cc4444" fontWeight={700}>✗</text>
+
+              </svg>
+            </div>
+
+            {/* Key insight */}
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", borderLeft: "4px solid #cc4444", padding: "9px 14px", fontSize: 20, lineHeight: 1.4, color: "var(--ink-2)" }}>
+              No arc <TeX>{"(i,j)"}</TeX> with <TeX>{"i\\in B,\\,j\\in L"}</TeX> in <TeX>{"\\bar{A}"}</TeX> — precedence encoded <em>structurally</em> by the graph.
+            </div>
+          </div>
+
+          {/* RIGHT — formulation */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "22px 30px", display: "flex", flexDirection: "column" }}>
+
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--ink-3)", letterSpacing: "0.07em", marginBottom: 10 }}>MODEL P1 — TOTH &amp; VIGO (2002)</div>
+
+            <TeX display>{"\\min\\displaystyle\\sum_{(i,j)\\in\\bar{A}} c_{ij}\\, x_{ij}"}</TeX>
+
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--ink-3)", margin: "10px 0 8px" }}>subject to</div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "52px 1fr 90px", rowGap: 9, columnGap: 8, alignItems: "start", fontSize: 19 }}>
+
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--ink-3)", paddingTop: 4 }}>(8.2)</div>
+              <div><TeX>{"\\displaystyle\\sum_{i\\in\\Delta^-_j} x_{ij} = 1 \\;\\; \\forall\\, j \\in \\bar{V}\\setminus\\{0\\}"}</TeX></div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--ink-3)", paddingTop: 4 }}>in-degree</div>
+
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--ink-3)", paddingTop: 4 }}>(8.3)</div>
+              <div><TeX>{"\\displaystyle\\sum_{j\\in\\Delta^+_i} x_{ij} = 1 \\;\\; \\forall\\, i \\in \\bar{V}\\setminus\\{0\\}"}</TeX></div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--ink-3)", paddingTop: 4 }}>out-degree</div>
+
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--ink-3)", paddingTop: 4 }}>(8.4–5)</div>
+              <div><TeX>{"\\displaystyle\\sum_i x_{i0} = \\sum_j x_{0j} = K"}</TeX></div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--ink-3)", paddingTop: 4 }}>K vehicles</div>
+
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--accent)", paddingTop: 4 }}>(8.6)</div>
+              <div style={{ color: "var(--accent)" }}><TeX>{"\\displaystyle\\sum_{j\\in S}\\sum_{i\\in\\Delta^-_j\\setminus S} x_{ij} \\geq r(S) \\quad \\forall\\, S\\in\\mathcal{L}"}</TeX></div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--accent)", paddingTop: 4, lineHeight: 1.3 }}>CCC<br/>linehaul</div>
+
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--accent)", paddingTop: 4 }}>(8.7)</div>
+              <div style={{ color: "var(--accent)" }}><TeX>{"\\displaystyle\\sum_{i\\in S}\\sum_{j\\in\\Delta^+_i\\setminus S} x_{ij} \\geq r(S) \\quad \\forall\\, S\\in\\mathcal{B}"}</TeX></div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--accent)", paddingTop: 4, lineHeight: 1.3 }}>CCC<br/>backhaul</div>
+
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--ink-3)", paddingTop: 4 }}>(8.8)</div>
+              <div><TeX>{"x_{ij}\\in\\{0,1\\} \\;\\; \\forall\\,(i,j)\\in\\bar{A}"}</TeX></div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--ink-3)", paddingTop: 4 }}>integrality</div>
+
+            </div>
+
+            <div style={{ marginTop: 14, borderTop: "1px solid var(--line)", paddingTop: 12, fontSize: 18, color: "var(--ink-2)", lineHeight: 1.5 }}>
+              <TeX>{"\\mathcal{L}"}</TeX> (resp. <TeX>{"\\mathcal{B}"}</TeX>) = all subsets of <TeX>{"L"}</TeX> (resp. <TeX>{"B"}</TeX>) vertices. Degree constraints (8.2)–(8.5) make (8.6) and (8.7) equivalent — imposing either alone suffices.
+            </div>
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
 // ==========================================================
 // VRPPD INTRO — define pickup vs delivery with an animated
 // truck demo: cargo empty at depot, fills at the blue pickup,
@@ -2106,6 +2259,6 @@ function Slide23B() {
 
 Object.assign(window, {
   Slide19, Slide20, Slide21, Slide21B, Slide21C, Slide21D,
-  Slide22Intro, Slide22Load, Slide22LoadB, Slide22, Slide22B,
+  Slide22Intro, Slide22Load, Slide22LoadB, Slide22, Slide22B, Slide22Form,
   Slide23Intro, Slide23Load, Slide23Req, Slide23, Slide23B,
 });

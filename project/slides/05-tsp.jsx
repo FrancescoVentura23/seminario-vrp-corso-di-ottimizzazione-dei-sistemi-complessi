@@ -1226,6 +1226,191 @@ function SlideTSPExponential() {
 }
 
 
+function SlideTSPSubsetMatrix() {
+  const nodes = ["A", "B", "C", "D"];
+  const n = nodes.length;
+
+  const allSubsets = [];
+  for (let size = 0; size <= n; size++) {
+    for (let mask = 0; mask < (1 << n); mask++) {
+      const bits = nodes.map((_, i) => (mask >> (n - 1 - i)) & 1);
+      if (bits.reduce((a, b) => a + b, 0) === size) {
+        allSubsets.push({ mask, bits, size, valid: size >= 2 && size <= n - 1 });
+      }
+    }
+  }
+
+  const VALID = "#2b7a5e";
+  const EXCL  = "#b0a899";
+
+  const colW = 46, rowH = 52, leftPad = 62, topPad = 65;
+  const dataH = n * rowH;
+  const svgW  = leftPad + 16 * colW + 20;
+  const svgH  = topPad + dataH + 95;
+
+  const groups = [
+    { size: 0, startIdx: 0,  count: 1 },
+    { size: 1, startIdx: 1,  count: 4 },
+    { size: 2, startIdx: 5,  count: 6 },
+    { size: 3, startIdx: 11, count: 4 },
+    { size: 4, startIdx: 15, count: 1 },
+  ];
+  const separators = [1, 5, 11, 15].map(idx => leftPad + idx * colW);
+
+  return (
+    <section className="slide" data-label="Subset enumeration V={A,B,C,D}">
+      <SlideFrame>
+        <div className="tag">TSP · DFJ subset count</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          Example: all subsets of{" "}
+          <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent-2)" }}>
+            V = {"{"} A, B, C, D {"}"}
+          </span>.
+        </h2>
+
+        <div style={{ marginTop: 28, display: "grid", gridTemplateColumns: "280px 1fr", gap: 44, flex: 1, alignItems: "start" }}>
+
+          {/* LEFT */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+            <div className="lede" style={{ fontSize: 26, lineHeight: 1.35 }}>
+              Each column is the indicator vector <strong>1</strong><sub>S</sub>: a 1 in row <em>i</em> means node <em>i</em> &#8712; S.
+            </div>
+            <div style={{
+              background: "var(--paper-2)", border: "1px solid var(--line)",
+              padding: "16px 18px", fontFamily: "var(--font-mono)", fontSize: 19, lineHeight: 1.75
+            }}>
+              <div>2<sup>4</sup> = <strong>16</strong> subsets total</div>
+              <div style={{ color: EXCL, marginTop: 4 }}>&#8722; 1&#160;&#160;(|S| = 0, empty &#8709;)</div>
+              <div style={{ color: EXCL }}>&#8722; 4&#160;&#160;(|S| = 1, singletons)</div>
+              <div style={{ color: EXCL }}>&#8722; 1&#160;&#160;(|S| = 4, full V)</div>
+              <div style={{
+                borderTop: "1px solid var(--line)", marginTop: 8, paddingTop: 8,
+                color: VALID, fontWeight: 700
+              }}>
+                = 10 valid DFJ constraints
+              </div>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 19 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ width: 16, height: 16, borderRadius: 3, background: VALID, flexShrink: 0 }}/>
+                <span>2 &#8804; |S| &#8804; 3 &#8594; DFJ constraint</span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ width: 16, height: 16, borderRadius: 3, background: EXCL, flexShrink: 0 }}/>
+                <span style={{ color: "var(--ink-3)" }}>|S| = 0, 1, or 4 &#8594; excluded</span>
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT — Matrix SVG */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "20px 12px" }}>
+            <svg viewBox={`0 0 ${svgW} ${svgH}`} style={{ width: "100%", display: "block" }}>
+
+              {groups.filter(g => g.size >= 2 && g.size <= n - 1).map(g => (
+                <rect key={g.size}
+                  x={leftPad + g.startIdx * colW + 3} y={topPad - 14}
+                  width={g.count * colW - 6} height={dataH + 28}
+                  rx={5} fill={VALID + "20"}
+                />
+              ))}
+
+              {groups.map(g => {
+                const cx = leftPad + (g.startIdx + g.count / 2) * colW;
+                const isValid = g.size >= 2 && g.size <= n - 1;
+                return (
+                  <g key={g.size}>
+                    <text x={cx} y={topPad - 22}
+                      textAnchor="middle" fontFamily="var(--font-mono)" fontSize={15}
+                      fill={isValid ? VALID : EXCL} fontWeight={isValid ? 700 : 400}
+                    >
+                      {"|S|=" + g.size}
+                    </text>
+                    <text x={cx} y={topPad - 8}
+                      textAnchor="middle" fontSize={13} fill={isValid ? VALID : EXCL}
+                    >
+                      {isValid ? "✓" : "×"}
+                    </text>
+                  </g>
+                );
+              })}
+
+              {separators.map((x, i) => (
+                <line key={i}
+                  x1={x} y1={topPad - 32} x2={x} y2={topPad + dataH + 14}
+                  stroke="var(--ink-3)" strokeWidth={1} strokeDasharray="3 4" opacity={0.5}
+                />
+              ))}
+
+              {nodes.map((node, ri) => (
+                <text key={ri}
+                  x={leftPad - 12} y={topPad + ri * rowH + rowH / 2 + 7}
+                  textAnchor="end" fontFamily="var(--font-mono)" fontSize={20}
+                  fill="var(--ink)" fontWeight={700}
+                >
+                  {node}
+                </text>
+              ))}
+
+              {[1, 2, 3].map(ri => (
+                <line key={ri}
+                  x1={leftPad} y1={topPad + ri * rowH}
+                  x2={leftPad + 16 * colW} y2={topPad + ri * rowH}
+                  stroke="var(--line)" strokeWidth={0.8} opacity={0.6}
+                />
+              ))}
+
+              {allSubsets.map((s, ci) => {
+                const cx = leftPad + ci * colW + colW / 2;
+                const fg = s.valid ? VALID : EXCL;
+                return (
+                  <g key={ci}>
+                    {s.bits.map((bit, ri) => (
+                      <text key={ri}
+                        x={cx} y={topPad + ri * rowH + rowH / 2 + 7}
+                        textAnchor="middle" fontFamily="var(--font-mono)"
+                        fontSize={20} fontWeight={bit && s.valid ? 700 : 400}
+                        fill={bit ? fg : EXCL}
+                      >
+                        {bit}
+                      </text>
+                    ))}
+                    <text x={cx} y={topPad + dataH + 45}
+                      textAnchor="middle" fontSize={16} fill={fg}
+                    >
+                      {s.valid ? "✓" : "—"}
+                    </text>
+                  </g>
+                );
+              })}
+
+              <line
+                x1={leftPad} y1={topPad + dataH + 14}
+                x2={leftPad + 16 * colW} y2={topPad + dataH + 14}
+                stroke="var(--line)" strokeWidth={1.5}
+              />
+
+              <text
+                x={leftPad - 12} y={topPad + dataH + 45}
+                textAnchor="end" fontFamily="var(--font-mono)" fontSize={14} fill="var(--ink-3)"
+              >
+                DFJ?
+              </text>
+
+              <text
+                x={svgW / 2} y={svgH - 8}
+                textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill="var(--ink-3)"
+              >
+                FIG. — columns sorted by |S|; green = generates one DFJ constraint.
+              </text>
+            </svg>
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
 function SlideTSPLazy() {
   return (
     <section className="slide" data-label="Lazy subtour cut generation">
@@ -1613,7 +1798,7 @@ function SlideTSPKeyIdentity() {
 
 function SlideTSPMinCut() {
   const r = 30;
-  const [mode, setMode] = React.useState('integer');
+  const [mode, setMode] = React.useState(null); // null = nothing selected yet
   // animStep: 0 subtours, 1 callout (subtour), 2 crosses blink (dashed w=0),
   //           3 snap solid (w=1), 4 degree-constraints box, 5 old arcs blink+fade, 6 idle
   // (idle = post-animation / slide not yet active; disappearing arcs are simply not
@@ -1639,7 +1824,7 @@ function SlideTSPMinCut() {
     const check = () => {
       const active = el.hasAttribute('data-deck-active');
       setIsActive(active);
-      if (!active) { setMode('integer'); setAnimStarted(false); setFracStarted(false); }
+      if (!active) { setMode(null); setAnimStarted(false); setFracStarted(false); }
     };
     check();
     const obs = new MutationObserver(() => requestAnimationFrame(check));
@@ -2868,6 +3053,6 @@ function Slide10B() {
 
 Object.assign(window, {
   SlideTSPSection, Slide09, SlideTSPHamiltonian, SlideTSPFormulation,
-  SlideTSPDegree, SlideTSPSubtourProblem, SlideTSPDFJ, SlideTSPExponential,
+  SlideTSPDegree, SlideTSPSubtourProblem, SlideTSPDFJ, SlideTSPExponential, SlideTSPSubsetMatrix,
   SlideTSPLazy, SlideTSPKeyIdentity, SlideTSPMinCut, SlideTSPMinCutAlgo, SlideTSPMinCutImpl, Slide10, Slide10B,
 });

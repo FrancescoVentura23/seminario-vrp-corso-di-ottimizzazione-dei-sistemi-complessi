@@ -1907,7 +1907,7 @@ function Slide23() {
         <div className="tag">Family</div>
         <h2 className="title" style={{ marginTop: 28 }}>VRP with Pickup &amp; Delivery — coupled origin-destination pairs.</h2>
 
-        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 60, flex: 1 }}>
+        <div style={{ marginTop: 12, display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 60, flex: 1 }}>
 
           {/* LEFT — animated graph: 5 P–D pairs, 3 vehicles, dashed pair-links */}
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24, display: "flex", flexDirection: "column" }}>
@@ -1975,8 +1975,8 @@ function Slide23() {
               {/* Legend overlay — top-left of viewBox, rendered last so it
                   sits above routes and the dashed pair-links. Semi-opaque card
                   so anything underneath stays faintly visible. */}
-              <g transform="translate(30, 30)">
-                <rect width={420} height={155} fill="var(--paper)" fillOpacity={0.94}
+              <g transform="translate(30, 745)">
+                <rect width={420} height={145} fill="var(--paper)" fillOpacity={0.94}
                       stroke="var(--line)" strokeWidth={1.5} rx={4}/>
                 {/* P = pickup */}
                 <circle cx={36} cy={38} r={16}
@@ -2009,9 +2009,6 @@ function Slide23() {
               Slide23Intro (previous slide); here we keep only lede + rule
               callout + body small, mirroring Slide22's lean layout. */}
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 24 }}>
-            <div className="lede">
-              The customer set splits into <TeX>{"N"}</TeX> origin-destination <em>requests</em>: each request couples a pickup <TeX>{"O_i"}</TeX>, where the load is collected, with a delivery <TeX>{"D_i"}</TeX>, where the same load is dropped off. VRPPD adds a per-request pairing constraint on top of the CVRP core.
-            </div>
 
             {/* The pairing rule — heart of VRPPD */}
             <div style={{ fontSize: 26, background: "var(--paper-2)", border: "1px solid var(--line)", borderLeft: "4px solid var(--accent)", padding: "18px 22px", lineHeight: 1.45 }}>

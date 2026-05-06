@@ -1391,36 +1391,30 @@ function Slide22Form() {
 
             <div style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--ink-3)", margin: "10px 0 8px" }}>subject to</div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "52px 1fr 90px", rowGap: 9, columnGap: 8, alignItems: "start", fontSize: 19 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 90px", rowGap: 9, columnGap: 8, alignItems: "start", fontSize: 19 }}>
 
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--ink-3)", paddingTop: 4 }}>(8.2)</div>
               <div><TeX>{"\\displaystyle\\sum_{i\\in\\Delta^-_j} x_{ij} = 1 \\;\\; \\forall\\, j \\in \\bar{V}\\setminus\\{0\\}"}</TeX></div>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--ink-3)", paddingTop: 4 }}>in-degree</div>
 
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--ink-3)", paddingTop: 4 }}>(8.3)</div>
               <div><TeX>{"\\displaystyle\\sum_{j\\in\\Delta^+_i} x_{ij} = 1 \\;\\; \\forall\\, i \\in \\bar{V}\\setminus\\{0\\}"}</TeX></div>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--ink-3)", paddingTop: 4 }}>out-degree</div>
 
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--ink-3)", paddingTop: 4 }}>(8.4–5)</div>
               <div><TeX>{"\\displaystyle\\sum_i x_{i0} = \\sum_j x_{0j} = K"}</TeX></div>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--ink-3)", paddingTop: 4 }}>K vehicles</div>
 
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--accent)", paddingTop: 4 }}>(8.6)</div>
               <div style={{ color: "var(--accent)" }}><TeX>{"\\displaystyle\\sum_{j\\in S}\\sum_{i\\in\\Delta^-_j\\setminus S} x_{ij} \\geq r(S) \\quad \\forall\\, S\\in\\mathcal{L}"}</TeX></div>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--accent)", paddingTop: 4, lineHeight: 1.3 }}>CCC<br/>linehaul</div>
 
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--accent)", paddingTop: 4 }}>(8.7)</div>
               <div style={{ color: "var(--accent)" }}><TeX>{"\\displaystyle\\sum_{i\\in S}\\sum_{j\\in\\Delta^+_i\\setminus S} x_{ij} \\geq r(S) \\quad \\forall\\, S\\in\\mathcal{B}"}</TeX></div>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--accent)", paddingTop: 4, lineHeight: 1.3 }}>CCC<br/>backhaul</div>
 
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--ink-3)", paddingTop: 4 }}>(8.8)</div>
               <div><TeX>{"x_{ij}\\in\\{0,1\\} \\;\\; \\forall\\,(i,j)\\in\\bar{A}"}</TeX></div>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--ink-3)", paddingTop: 4 }}>integrality</div>
 
             </div>
 
             <div style={{ marginTop: 14, borderTop: "1px solid var(--line)", paddingTop: 12, fontSize: 18, color: "var(--ink-2)", lineHeight: 1.5 }}>
-              <TeX>{"\\mathcal{L}"}</TeX> (resp. <TeX>{"\\mathcal{B}"}</TeX>) = all subsets of <TeX>{"L"}</TeX> (resp. <TeX>{"B"}</TeX>) vertices. Degree constraints (8.2)–(8.5) make (8.6) and (8.7) equivalent — imposing either alone suffices.
+              <TeX>{"\\mathcal{L}"}</TeX> (resp. <TeX>{"\\mathcal{B}"}</TeX>) = all subsets of <TeX>{"L"}</TeX> (resp. <TeX>{"B"}</TeX>) vertices. Degree constraints make both capacity-cut constraints equivalent — imposing either alone suffices.
             </div>
           </div>
         </div>

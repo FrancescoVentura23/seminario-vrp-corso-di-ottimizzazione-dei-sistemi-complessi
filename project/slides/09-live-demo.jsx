@@ -343,10 +343,10 @@ function Slide25() {
                   <rect x={300-16} y={320-16} width={32} height={32} fill="var(--depot)"/>
                   <rect x={300-20} y={320-20} width={40} height={40} fill="none" stroke="var(--depot)" strokeWidth={1.5}/>
                   <text x={300} y={364} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={15} fill="var(--ink-3)" letterSpacing="0.05em">0</text>
-                  <circle cx={150} cy={120} r={14} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>
-                  <text x={150} y={125} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={16} fontWeight={600}>i</text>
-                  <circle cx={470} cy={120} r={14} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>
-                  <text x={470} y={125} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={16} fontWeight={600}>j</text>
+                  <circle cx={150} cy={120} r={20} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>
+                  <text x={150} y={127} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fontWeight={600}>i</text>
+                  <circle cx={470} cy={120} r={20} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>
+                  <text x={470} y={127} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fontWeight={600}>j</text>
                 </svg>
               ),
               cost: <>c(0,i) + c(i,0) + c(0,j) + c(j,0) = <b>2 c(0,i) + 2 c(0,j)</b></>
@@ -374,10 +374,10 @@ function Slide25() {
                   <rect x={300-16} y={320-16} width={32} height={32} fill="var(--depot)"/>
                   <rect x={300-20} y={320-20} width={40} height={40} fill="none" stroke="var(--depot)" strokeWidth={1.5}/>
                   <text x={300} y={364} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={15} fill="var(--ink-3)" letterSpacing="0.05em">0</text>
-                  <circle cx={150} cy={120} r={14} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>
-                  <text x={150} y={125} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={16} fontWeight={600}>i</text>
-                  <circle cx={470} cy={120} r={14} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>
-                  <text x={470} y={125} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={16} fontWeight={600}>j</text>
+                  <circle cx={150} cy={120} r={20} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>
+                  <text x={150} y={127} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fontWeight={600}>i</text>
+                  <circle cx={470} cy={120} r={20} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>
+                  <text x={470} y={127} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fontWeight={600}>j</text>
                 </svg>
               ),
               cost: <>c(0,i) + c(i,j) + c(j,0)</>

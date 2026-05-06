@@ -877,8 +877,10 @@ function Slide22LoadB() {
           Load profile along a VRPB route — 2 linehauls + 1 backhaul.
         </h2>
 
-        <div style={{ marginTop: 24, flex: 1, background: "var(--paper-2)", border: "1px solid var(--line)", padding: "28px 40px", display: "flex", flexDirection: "column" }}>
-          <svg viewBox="0 0 900 430" style={{ width: "100%", flex: 1, display: "block" }}>
+        <div style={{ marginTop: 24, flex: 1, background: "var(--paper-2)", border: "1px solid var(--line)", padding: "28px 40px", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+          <svg viewBox="0 0 900 430"
+               preserveAspectRatio="xMidYMid meet"
+               style={{ width: "100%", maxWidth: "100%", aspectRatio: "900 / 430", display: "block", overflow: "hidden" }}>
 
             {/* C reference line */}
             <line x1={60} y1={toY(C)} x2={860} y2={toY(C)}

@@ -12,7 +12,7 @@ function Slide19() {
         <div>Slides 50 — 57</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-        <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Seven</div>
+
         <div className="hero" style={{ fontSize: 240 }}>The family</div>
         <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
           A taxonomy of VRP variants — time windows, backhauls, pickup & delivery, and beyond.
@@ -1695,6 +1695,144 @@ function Slide23Load() {
 }
 
 
+// VRPPD REQUEST PAIRS — static diagram showing the pairing concept:
+// each request i couples a pickup O_i with a delivery D_i,
+// O_i must precede D_i on the same route.
+// Inserted between Slide23Load (load profile) and Slide23 (animated 5-pair demo).
+
+function Slide23Req() {
+  const depot  = { x: 500, y: 385 };
+  const O1 = { x: 148, y: 120 };
+  const O2 = { x: 852, y: 120 };
+  const D1 = { x: 148, y: 602 };
+  const D2 = { x: 852, y: 602 };
+
+  const c1 = "var(--route-1)";
+  const c2 = "var(--route-2)";
+  const R  = 22;
+  const dR = 20; // depot half-side
+
+  // Route: depot → O1 → O2 → D2 → D1 → depot
+  const routePts = [depot, O1, O2, D2, D1, depot];
+  const segs = routePts.slice(0, -1).map((a, i) => {
+    const b = routePts[i + 1];
+    const dx = b.x - a.x, dy = b.y - a.y, L = Math.hypot(dx, dy);
+    return { x1: a.x, y1: a.y, x2: b.x, y2: b.y, ux: dx / L, uy: dy / L };
+  });
+
+  const arrowPts = (s, retract) => {
+    const aw = 10, al = 20;
+    const tx = s.x2 - s.ux * retract, ty = s.y2 - s.uy * retract;
+    const bx = tx - s.ux * al, by = ty - s.uy * al;
+    return `${tx.toFixed(1)},${ty.toFixed(1)} ${(bx - s.uy * aw).toFixed(1)},${(by + s.ux * aw).toFixed(1)} ${(bx + s.uy * aw).toFixed(1)},${(by - s.ux * aw).toFixed(1)}`;
+  };
+  const retractFor = (i) => i === segs.length - 1 ? dR + 8 : R + 6;
+
+  const midY = (O1.y + D1.y) / 2;
+
+  return (
+    <section className="slide" data-label="VRPPD request pairs">
+      <SlideFrame>
+        <div className="tag">Family · VRPPD</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          A <em>request</em> pairs pickup <TeX>{"O_i"}</TeX> with delivery <TeX>{"D_i"}</TeX> — and <TeX>{"O_i"}</TeX> must precede <TeX>{"D_i"}</TeX> on the same route.
+        </h2>
+
+        <div style={{ marginTop: 28, display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 60, flex: 1 }}>
+
+          {/* LEFT — route diagram */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24, display: "flex", flexDirection: "column" }}>
+            <svg viewBox="0 0 1000 720" style={{ width: "100%", flex: 1, display: "block" }}>
+
+              {/* Pairing arcs — curve outside the route box */}
+              <path d={`M ${O1.x} ${O1.y} Q 0 ${midY} ${D1.x} ${D1.y}`}
+                    fill="none" stroke={c1} strokeWidth={2.5} strokeDasharray="9 6" opacity={0.7}/>
+              <path d={`M ${O2.x} ${O2.y} Q 1000 ${midY} ${D2.x} ${D2.y}`}
+                    fill="none" stroke={c2} strokeWidth={2.5} strokeDasharray="9 6" opacity={0.7}/>
+
+              {/* Request labels on the pairing arcs */}
+              <text x={25} y={midY + 6} textAnchor="middle"
+                    fontFamily="var(--font-mono)" fontSize={16} fill={c1} fontWeight={700}>req 1</text>
+              <text x={975} y={midY + 6} textAnchor="middle"
+                    fontFamily="var(--font-mono)" fontSize={16} fill={c2} fontWeight={700}>req 2</text>
+
+              {/* Route bodies (gotcha #10 — bodies first) */}
+              {segs.map((s, i) => (
+                <line key={`b-${i}`} x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2}
+                      stroke="var(--ink)" strokeWidth={5} strokeLinecap="round" opacity={0.8}/>
+              ))}
+
+              {/* Arrowheads (gotcha #10 — second pass) */}
+              {segs.map((s, i) => (
+                <polygon key={`a-${i}`} points={arrowPts(s, retractFor(i))} fill="var(--ink)" opacity={0.8}/>
+              ))}
+
+              {/* Depot */}
+              <rect x={depot.x - dR} y={depot.y - dR} width={dR * 2} height={dR * 2} fill="var(--depot)" rx={2}/>
+              <rect x={depot.x - dR - 5} y={depot.y - dR - 5} width={dR * 2 + 10} height={dR * 2 + 10}
+                    fill="none" stroke="var(--depot)" strokeWidth={2} rx={2}/>
+              <text x={depot.x} y={depot.y + 6} textAnchor="middle"
+                    fontFamily="var(--font-mono)" fontSize={18} fill="var(--paper)" fontWeight={700}>0</text>
+
+              {/* Pickup nodes O1, O2 — colored fill */}
+              {[[O1, "O₁", c1], [O2, "O₂", c2]].map(([n, lbl, col], i) => (
+                <g key={`P-${i}`}>
+                  <circle cx={n.x} cy={n.y} r={R} fill={col} stroke="var(--ink)" strokeWidth={2.2}/>
+                  <text x={n.x} y={n.y + 7} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={17} fill="var(--paper)" fontWeight={700}>{lbl}</text>
+                  <text x={n.x} y={n.y - R - 10} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={14} fill={col}>pickup</text>
+                </g>
+              ))}
+
+              {/* Delivery nodes D1, D2 — paper fill, colored stroke */}
+              {[[D1, "D₁", c1], [D2, "D₂", c2]].map(([n, lbl, col], i) => (
+                <g key={`D-${i}`}>
+                  <circle cx={n.x} cy={n.y} r={R} fill="var(--paper)" stroke={col} strokeWidth={3}/>
+                  <text x={n.x} y={n.y + 7} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={17} fill="var(--ink)" fontWeight={700}>{lbl}</text>
+                  <text x={n.x} y={n.y + R + 22} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={14} fill={col}>delivery</text>
+                </g>
+              ))}
+
+            </svg>
+          </div>
+
+          {/* RIGHT — constraint explanation */}
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 22 }}>
+
+            <div className="lede">
+              The customer set <TeX>{"N"}</TeX> splits into <strong>requests</strong>. Request <TeX>{"i"}</TeX> is a pair <TeX>{"(O_i,\\, D_i)"}</TeX>: the vehicle <em>collects</em> a load at <TeX>{"O_i"}</TeX> (pickup) and <em>drops it off</em> at <TeX>{"D_i"}</TeX> (delivery).
+            </div>
+
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "16px 20px", display: "flex", flexDirection: "column", gap: 14 }}>
+              <div>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--ink-3)", letterSpacing: "0.07em", marginBottom: 6 }}>CONSTRAINT (i) — SAME ROUTE</div>
+                <div style={{ fontSize: 23, lineHeight: 1.5 }}>
+                  <TeX>{"O_i"}</TeX> and <TeX>{"D_i"}</TeX> must be served by the <strong>same vehicle</strong> on the same circuit.
+                </div>
+              </div>
+              <div style={{ borderTop: "1px solid var(--line)", paddingTop: 14 }}>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--ink-3)", letterSpacing: "0.07em", marginBottom: 6 }}>CONSTRAINT (ii) — PRECEDENCE</div>
+                <div style={{ fontSize: 23, lineHeight: 1.5 }}>
+                  <TeX>{"O_i"}</TeX> must be visited <strong>before</strong> <TeX>{"D_i"}</TeX> — no delivery without a prior pickup.
+                </div>
+              </div>
+            </div>
+
+            <div className="body small" style={{ color: "var(--ink-3)" }}>
+              Unlike VRPB — where all linehauls precede all backhauls — here the precedence is <em>per request</em>: a single route may interleave pickups and deliveries freely, as long as each <TeX>{"O_i"}</TeX> precedes its own <TeX>{"D_i"}</TeX>.
+            </div>
+
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
 function Slide23() {
   const [animKey, setAnimKey] = React.useState(0);
   const sectionRef = React.useRef(null);
@@ -1972,5 +2110,5 @@ function Slide23B() {
 Object.assign(window, {
   Slide19, Slide20, Slide21, Slide21B, Slide21C, Slide21D,
   Slide22Intro, Slide22Load, Slide22LoadB, Slide22, Slide22B,
-  Slide23Intro, Slide23Load, Slide23, Slide23B,
+  Slide23Intro, Slide23Load, Slide23Req, Slide23, Slide23B,
 });

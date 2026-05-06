@@ -2446,9 +2446,297 @@ function SlideTSPMinCutImpl() {
   );
 }
 
-function Slide10() {
+// Capacity-runs-out demo for Slide10 (mode 1).
+// Truck starts full at depot, follows the first 4 stops of the Hamiltonian
+// cycle (9 -> 10 -> 1 -> 2), unloading each customer's demand. After stop 4
+// the cargo is empty. The next planned arc (2 -> 3) appears as a blinking
+// red dashed line, then a return arc 2 -> depot is drawn and the truck
+// goes home. Re-mount via key={animKey} to replay.
+function Slide10CapacityDemo() {
+  // Geometry — uses EX_NODES coordinates so the layout matches mode 0.
+  const depot = { x: 420, y: 300 };
+  // Visit order = first 4 customers of the Hamiltonian cycle [9,10,1,2,3,4,5,11,12,6,7,8].
+  const visits = [
+    { x: 140, y: 350, label: "9",  demand: 4 },
+    { x: 290, y: 260, label: "10", demand: 2 },
+    { x: 220, y: 170, label: "1",  demand: 4 },
+    { x: 330, y: 110, label: "2",  demand: 3 },
+  ];
+  // The 5th planned visit — node 3 — is the target of the impossible (red blinking) arc.
+  const blinkTo = { x: 540, y: 110, label: "3" };
+  // Remaining (unvisited) customers shown faded for context.
+  const otherCusts = [
+    { x: 540, y: 110 }, // node 3
+    { x: 680, y: 180 }, { x: 730, y: 330 }, { x: 640, y: 470 },
+    { x: 460, y: 510 }, { x: 240, y: 480 }, { x: 570, y: 260 },
+    { x: 520, y: 420 },
+  ];
+  const C = 13; // capacity = total demand of the 4 reachable customers
+
+  // ---- Timeline (ms) ----
+  const T_INIT  = 500;             // pause at depot before departing
+  const SEG     = 1400;            // arc draw duration (= truck travel time)
+  const UNLOAD  = 500;             // pause at each node while cargo drops
+  const STOP    = SEG + UNLOAD;    // 1900ms per visit
+  const T_LAST  = T_INIT + 4*STOP; // 8100 — truck just emptied at last stop
+  const T_BLINK = T_LAST + 400;    // 8500 — red dashed arc fades in
+  const T_RET   = T_LAST + 1500;   // 9600 — return arc starts drawing
+  const T_RET_DUR = 1800;
+  const T_END   = T_RET + T_RET_DUR + 500; // 11900
+
+  const pct = (t) => ((t / T_END) * 100).toFixed(2);
+
+  // Truck position keyframes — translate the truck's local origin to the
+  // current stop, offset upward so it floats above the node circle.
+  const Y_OFF = -34;
+  const truckStops = [
+    { t: 0,                      p: depot },
+    { t: T_INIT,                 p: depot },
+    { t: T_INIT + SEG,           p: visits[0] }, { t: T_INIT + STOP,     p: visits[0] },
+    { t: T_INIT + STOP + SEG,    p: visits[1] }, { t: T_INIT + 2*STOP,   p: visits[1] },
+    { t: T_INIT + 2*STOP + SEG,  p: visits[2] }, { t: T_INIT + 3*STOP,   p: visits[2] },
+    { t: T_INIT + 3*STOP + SEG,  p: visits[3] }, { t: T_LAST,            p: visits[3] },
+    { t: T_RET,                  p: visits[3] },
+    { t: T_RET + T_RET_DUR,      p: depot },
+    { t: T_END,                  p: depot },
+  ];
+  const truckMoveKf = truckStops.map(s =>
+    `${pct(s.t)}% { transform: translate(${s.p.x}px, ${s.p.y + Y_OFF}px); }`
+  ).join("\n              ");
+
+  // Cargo fill keyframes — y/height of the inner blue rectangle inside the
+  // 28-tall cargo box. Levels: 13/9/7/3/0 units out of capacity 13.
+  const lvl = (units) => {
+    const h = (units / 13) * 26;          // max usable fill height = 26
+    return { y: (6 - h).toFixed(2), h: h.toFixed(2) };
+  };
+  const L13 = lvl(13), L9 = lvl(9), L7 = lvl(7), L3 = lvl(3), L0 = lvl(0);
+  const cargoStops = [
+    { t: 0,                          ...L13 },
+    { t: T_INIT + SEG,               ...L13 },
+    { t: T_INIT + STOP,              ...L9  },
+    { t: T_INIT + STOP + SEG,        ...L9  },
+    { t: T_INIT + 2*STOP,            ...L7  },
+    { t: T_INIT + 2*STOP + SEG,      ...L7  },
+    { t: T_INIT + 3*STOP,            ...L3  },
+    { t: T_INIT + 3*STOP + SEG,      ...L3  },
+    { t: T_LAST,                     ...L0  },
+    { t: T_END,                      ...L0  },
+  ];
+  const cargoFillKf = cargoStops.map(s =>
+    `${pct(s.t)}% { y: ${s.y}px; height: ${s.h}px; }`
+  ).join("\n              ");
+
+  // Combined fade-in + blink keyframe for the impossible red arc.
+  // Within its (T_END - T_BLINK)ms duration: 0% opacity → fade in by 7% → blink ~6 cycles.
+  const blinkDur = T_END - T_BLINK;
+
+  // Arrowhead helper — small filled triangle pointing along (ux,uy) ending at (tipX,tipY).
+  const arrowPts = (x1, y1, x2, y2, retract) => {
+    const dx = x2 - x1, dy = y2 - y1;
+    const L = Math.hypot(dx, dy);
+    const ux = dx / L, uy = dy / L;
+    const tipX = x2 - ux * retract, tipY = y2 - uy * retract;
+    const aw = 7, al = 14;
+    const baseX = tipX - ux * al, baseY = tipY - uy * al;
+    return `${tipX.toFixed(2)},${tipY.toFixed(2)} ` +
+           `${(baseX - uy*aw).toFixed(2)},${(baseY + ux*aw).toFixed(2)} ` +
+           `${(baseX + uy*aw).toFixed(2)},${(baseY - ux*aw).toFixed(2)}`;
+  };
+
+  // For each visit segment, compute body length + arrowhead points.
+  const segments = visits.map((v, i) => {
+    const a = i === 0 ? depot : visits[i - 1];
+    const L = Math.hypot(v.x - a.x, v.y - a.y);
+    return { a, b: v, L, pts: arrowPts(a.x, a.y, v.x, v.y, 14) };
+  });
+  const blinkSeg = (() => {
+    const a = visits[3], b = blinkTo;
+    const L = Math.hypot(b.x - a.x, b.y - a.y);
+    return { a, b, L, pts: arrowPts(a.x, a.y, b.x, b.y, 14) };
+  })();
+  const returnSeg = (() => {
+    const a = visits[3], b = depot;
+    const L = Math.hypot(b.x - a.x, b.y - a.y);
+    return { a, b, L, pts: arrowPts(a.x, a.y, b.x, b.y, 22) };
+  })();
+
   return (
-    <section className="slide" data-label="One tour meets capacity">
+    <div style={{ position: "relative", width: "100%", height: "100%" }}>
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes s10cap-truckMove {
+              ${truckMoveKf}
+        }
+        @keyframes s10cap-cargoFill {
+              ${cargoFillKf}
+        }
+        @keyframes s10cap-blinkRed {
+          0%   { opacity: 0; }
+          7%   { opacity: 1; }
+          15%  { opacity: 0.18; }
+          22%  { opacity: 1; }
+          30%  { opacity: 0.18; }
+          37%  { opacity: 1; }
+          45%  { opacity: 0.18; }
+          52%  { opacity: 1; }
+          60%  { opacity: 0.18; }
+          67%  { opacity: 1; }
+          75%  { opacity: 0.18; }
+          82%  { opacity: 1; }
+          90%  { opacity: 0.18; }
+          100% { opacity: 1; }
+        }
+      ` }}/>
+
+      <svg viewBox="0 0 900 560" preserveAspectRatio="xMidYMid meet"
+           style={{ width: "100%", height: "100%", display: "block", overflow: "visible" }}>
+        {/* dotted grid background — subtle, matches Slide07 vibe */}
+        <defs>
+          <pattern id="s10cap-grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="1" fill="var(--line)"/>
+          </pattern>
+        </defs>
+
+        {/* Other customers — faded for context */}
+        {otherCusts.map((c, i) => (
+          <circle key={`oc-${i}`} cx={c.x} cy={c.y} r={12}
+                  fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.2}
+                  opacity={0.32}/>
+        ))}
+
+        {/* 4 visit segments (body + arrowhead) */}
+        {segments.map((s, i) => {
+          const startDelay = T_INIT + i * STOP;
+          return (
+            <React.Fragment key={`seg-${i}`}>
+              <line x1={s.a.x} y1={s.a.y} x2={s.b.x} y2={s.b.y}
+                    stroke="var(--ink)" strokeWidth={3.6} strokeLinecap="round"
+                    style={{
+                      "--len": s.L,
+                      strokeDasharray: s.L,
+                      strokeDashoffset: s.L,
+                      animation: `drawPath ${SEG}ms both ease-in-out`,
+                      animationDelay: `${startDelay}ms`,
+                    }}/>
+              <polygon points={s.pts} fill="var(--ink)"
+                       style={{ opacity: 0,
+                                animation: `fadeUp 250ms both ease-out`,
+                                animationDelay: `${startDelay + SEG - 60}ms` }}/>
+            </React.Fragment>
+          );
+        })}
+
+        {/* Blinking red dashed arc 2 -> 3 (the impossible next leg) */}
+        <line x1={blinkSeg.a.x} y1={blinkSeg.a.y} x2={blinkSeg.b.x} y2={blinkSeg.b.y}
+              stroke="#d33" strokeWidth={3.5} strokeLinecap="round"
+              strokeDasharray="9 9"
+              style={{
+                opacity: 0,
+                animation: `s10cap-blinkRed ${blinkDur}ms both ease-in-out`,
+                animationDelay: `${T_BLINK}ms`,
+              }}/>
+        <polygon points={blinkSeg.pts} fill="#d33"
+                 style={{
+                   opacity: 0,
+                   animation: `s10cap-blinkRed ${blinkDur}ms both ease-in-out`,
+                   animationDelay: `${T_BLINK}ms`,
+                 }}/>
+
+        {/* Return arc 2 -> depot */}
+        <line x1={returnSeg.a.x} y1={returnSeg.a.y} x2={returnSeg.b.x} y2={returnSeg.b.y}
+              stroke="var(--ink-3)" strokeWidth={3.4} strokeLinecap="round"
+              style={{
+                "--len": returnSeg.L,
+                strokeDasharray: returnSeg.L,
+                strokeDashoffset: returnSeg.L,
+                animation: `drawPath ${T_RET_DUR}ms both ease-in-out`,
+                animationDelay: `${T_RET}ms`,
+              }}/>
+        <polygon points={returnSeg.pts} fill="var(--ink-3)"
+                 style={{ opacity: 0,
+                          animation: `fadeUp 250ms both ease-out`,
+                          animationDelay: `${T_RET + T_RET_DUR - 60}ms` }}/>
+
+        {/* 4 visited customer circles + demand labels */}
+        {visits.map((v, i) => (
+          <g key={`vc-${i}`}>
+            <circle cx={v.x} cy={v.y} r={12}
+                    fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.4}/>
+            <text x={v.x + 16} y={v.y + 4}
+                  fontFamily="var(--font-mono)" fontSize={13}
+                  fill="var(--accent)" fontWeight={700}>
+              d={v.demand}
+            </text>
+          </g>
+        ))}
+
+        {/* Depot — black square */}
+        <rect x={depot.x - 18} y={depot.y - 18} width={36} height={36}
+              fill="var(--depot, #000)" rx={2}/>
+        <rect x={depot.x - 22} y={depot.y - 22} width={44} height={44}
+              fill="none" stroke="var(--depot, #000)" strokeWidth={1.5} rx={2}/>
+
+        {/* Truck — translates along the route, cargo height drops at each stop */}
+        <g style={{ animation: `s10cap-truckMove ${T_END}ms both linear` }}>
+          {/* cargo frame */}
+          <rect x={-30} y={-22} width={50} height={28}
+                fill="#5b6370" stroke="var(--ink)" strokeWidth={1.5} rx={2}/>
+          {/* cargo fill — animates y/height */}
+          <rect x={-29} width={48} fill="#7CC9F0"
+                style={{ animation: `s10cap-cargoFill ${T_END}ms both linear` }}/>
+          {/* cab */}
+          <polygon points="20,-22 36,-22 40,-12 40,6 20,6"
+                   fill="#3a414b" stroke="var(--ink)" strokeWidth={1.5}/>
+          {/* windshield */}
+          <polygon points="23,-19 33,-19 36,-11 23,-11"
+                   fill="rgba(180,230,255,0.6)"
+                   stroke="rgba(120,180,220,0.5)" strokeWidth={0.5}/>
+          {/* wheels */}
+          <circle cx={-16} cy={10} r={5} fill="var(--ink)"/>
+          <circle cx={28}  cy={10} r={5} fill="var(--ink)"/>
+          {/* capacity label */}
+          <text x={5} y={-30} textAnchor="middle"
+                fontFamily="var(--font-mono)" fontSize={11}
+                fill="var(--ink-3)" letterSpacing="0.08em">
+            C = {C}
+          </text>
+        </g>
+      </svg>
+    </div>
+  );
+}
+
+function Slide10() {
+  const [mode, setMode] = React.useState(0); // 0 = Hamiltonian, 1 = capacity demo
+  const [animKey, setAnimKey] = React.useState(0);
+  const sectionRef = React.useRef(null);
+  const btnRef = React.useRef(null);
+
+  // Reset to mode 0 whenever the slide leaves the active state.
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (!el.hasAttribute("data-deck-active")) {
+        setMode(0);
+        setAnimKey(0);
+      }
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ["data-deck-active"] });
+    return () => obs.disconnect();
+  }, []);
+
+  // Native click — React's delegation breaks once <section> is moved into <deck-stage>.
+  React.useEffect(() => {
+    const btn = btnRef.current;
+    if (!btn) return;
+    const handler = () => { setMode(1); setAnimKey(k => k + 1); };
+    btn.addEventListener("click", handler);
+    return () => btn.removeEventListener("click", handler);
+  }, []);
+
+  return (
+    <section ref={sectionRef} className="slide" data-label="One tour meets capacity">
       <SlideFrame>
         <div className="tag">CVRP · motivation</div>
         <h2 className="title" style={{ marginTop: 28 }}>One vehicle, one tour — until capacity gets in the way.</h2>
@@ -2467,17 +2755,48 @@ function Slide10() {
             </div>
           </div>
 
-          {/* Right — Hamiltonian graph */}
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24, display: "flex", flexDirection: "column" }}>
-            <div className="kicker">TSP · one vehicle · no capacity</div>
-            <div style={{ flex: 1 }}>
-              <VRPGraph nodes={EX_NODES} routes={[[9,10,1,2,3,4,5,11,12,6,7,8]]}
-                        width={900} height={560} routeColors={["var(--ink)"]} strokeWidth={3.6}
-                        className="hamilton-slow"
-                        showArrows bodyAnimMs={4500}/>
+          {/* Right — graph (Hamiltonian or capacity demo) */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 24, display: "flex", flexDirection: "column", position: "relative" }}>
+            <button
+              ref={btnRef}
+              style={{
+                position: "absolute",
+                top: 16,
+                right: 16,
+                zIndex: 10,
+                fontFamily: "var(--font-mono)",
+                fontSize: 14,
+                letterSpacing: "0.07em",
+                textTransform: "uppercase",
+                padding: "8px 18px",
+                background: "var(--accent)",
+                color: "#ffffff",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              {mode === 0 ? "Adding demand and capacity →" : "↻ Replay"}
+            </button>
+
+            <div className="kicker">
+              {mode === 0 ? "TSP · one vehicle · no capacity" : "Same tour, but with demand & finite capacity"}
             </div>
+
+            <div style={{ flex: 1, minHeight: 0 }}>
+              {mode === 0 ? (
+                <VRPGraph nodes={EX_NODES} routes={[[9,10,1,2,3,4,5,11,12,6,7,8]]}
+                          width={900} height={560} routeColors={["var(--ink)"]} strokeWidth={3.6}
+                          className="hamilton-slow"
+                          showArrows bodyAnimMs={4500}/>
+              ) : (
+                <Slide10CapacityDemo key={animKey}/>
+              )}
+            </div>
+
             <div className="body small" style={{ color: "var(--ink-3)", marginTop: 10, minHeight: 76 }}>
-              Hamiltonian circuit. Total demand may exceed any real vehicle's capacity.
+              {mode === 0
+                ? "Hamiltonian circuit. Total demand may exceed any real vehicle's capacity."
+                : "Capacity C = 13. After 4 customers the truck is empty: the next planned arc fails (red dashes) and the vehicle aborts back to the depot."}
             </div>
           </div>
         </div>

@@ -77,6 +77,15 @@ function VRPGraph({
   routeColors,
   labelFontSize = 16,
   viewBoxOverride,
+  // Show oriented arrowheads at the end of every segment of every route.
+  // Default off so existing callers (cover, VRP elements, Slide09) stay
+  // unchanged. Slides that want directed arcs (Slide10, Slide10B) opt in.
+  showArrows = false,
+  // Duration of the body draw animation in ms — used to scale per-segment
+  // arrowhead fade-in delays so each arrow appears as the body reaches
+  // its endpoint. Default 1200ms matches `.anim-draw` in styles.css;
+  // hamilton-slow callers (Slide10) override to 4500ms.
+  bodyAnimMs = 1200,
 }) {
   const colors = routeColors || [
     "var(--route-1)", "var(--route-2)", "var(--route-3)",
@@ -114,7 +123,8 @@ function VRPGraph({
         ))
       )}
 
-      {/* Routes */}
+      {/* Routes — bodies. CLAUDE.md gotcha #10: bodies first, arrowheads
+          second, in two separate .map() blocks (never interleaved). */}
       {routes.map((route, ri) => {
         const len = approxLen(route);
         return (
@@ -130,6 +140,56 @@ function VRPGraph({
             style={{ "--len": len }}
           />
         );
+      })}
+
+      {/* Routes — arrowheads (per gotcha #10, second separate .map()).
+          Each segment gets a small filled triangle at its destination,
+          retracted clear of the node circle / depot square. Per-segment
+          fade-in delay = cascade-delay-of-this-route + (cumLen/totalLen)
+          * bodyAnimMs, so the arrow lands exactly when the body draw
+          reaches that endpoint. */}
+      {showArrows && routes.map((route, ri) => {
+        const ids = [0, ...route, 0];
+        const segs = [];
+        let cum = 0;
+        for (let i = 1; i < ids.length; i++) {
+          const a = nodes[ids[i-1]], b = nodes[ids[i]];
+          const dx = b.x - a.x, dy = b.y - a.y;
+          const L = Math.hypot(dx, dy);
+          cum += L;
+          segs.push({ b, dx, dy, L, cum, endIsDepot: ids[i] === 0 });
+        }
+        const totalLen = cum || 1;
+        // Match the cascading delays of .anim-draw-1..4 in styles.css.
+        const cascadeDelay = animated ? [150, 450, 750, 1000][Math.min(ri, 3)] : 0;
+        const color = colors[ri % colors.length];
+        // Arrowhead size scales loosely with strokeWidth so it stays
+        // visually proportional across slides.
+        const aw = Math.max(5, strokeWidth * 1.7);
+        const al = Math.max(10, strokeWidth * 3.4);
+        return segs.map((s, i) => {
+          const ux = s.dx / s.L, uy = s.dy / s.L;
+          const retract = (s.endIsDepot ? depotRadius : nodeRadius) + 4;
+          const tipX = s.b.x - ux * retract;
+          const tipY = s.b.y - uy * retract;
+          const baseX = tipX - ux * al;
+          const baseY = tipY - uy * al;
+          const pts = `${tipX.toFixed(2)},${tipY.toFixed(2)} ` +
+                      `${(baseX - uy*aw).toFixed(2)},${(baseY + ux*aw).toFixed(2)} ` +
+                      `${(baseX + uy*aw).toFixed(2)},${(baseY - ux*aw).toFixed(2)}`;
+          const appearDelay = animated
+            ? Math.round(cascadeDelay + (s.cum / totalLen) * bodyAnimMs)
+            : 0;
+          return (
+            <polygon
+              key={`arr-${ri}-${i}`}
+              points={pts}
+              fill={color}
+              className={animated ? "anim-appear" : ""}
+              style={animated ? { "--appear-delay": `${appearDelay}ms` } : undefined}
+            />
+          );
+        });
       })}
 
       {/* Nodes */}

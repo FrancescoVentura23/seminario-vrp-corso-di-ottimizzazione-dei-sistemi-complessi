@@ -2473,7 +2473,8 @@ function Slide10() {
             <div style={{ flex: 1 }}>
               <VRPGraph nodes={EX_NODES} routes={[[9,10,1,2,3,4,5,11,12,6,7,8]]}
                         width={900} height={560} routeColors={["var(--ink)"]} strokeWidth={3.6}
-                        className="hamilton-slow"/>
+                        className="hamilton-slow"
+                        showArrows bodyAnimMs={4500}/>
             </div>
             <div className="body small" style={{ color: "var(--ink-3)", marginTop: 10, minHeight: 76 }}>
               Hamiltonian circuit. Total demand may exceed any real vehicle's capacity.
@@ -2517,7 +2518,8 @@ function Slide10B() {
             <div className="kicker" style={{ color: "var(--accent)" }}>CVRP · K vehicles · capacity C</div>
             <div style={{ flex: 1 }}>
               <VRPGraph nodes={EX_NODES} routes={EX_ROUTES}
-                        width={900} height={560} strokeWidth={3.6}/>
+                        width={900} height={560} strokeWidth={3.6}
+                        showArrows/>
             </div>
             <div className="body small" style={{ color: "var(--ink-3)", marginTop: 10, minHeight: 76 }}>
               Several routes, each depot-to-depot, each respecting capacity.

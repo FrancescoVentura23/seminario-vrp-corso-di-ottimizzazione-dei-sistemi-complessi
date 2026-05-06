@@ -951,8 +951,11 @@ function Slide22LoadB() {
               );
             })}
 
-            {/* q₀ annotation */}
-            <text x={(stops[0] + stops[1]) / 2} y={toY(legs[0]) - 22}
+            {/* q₀ annotation — sits 50px above the first step's top edge so
+                it clears the bold green load value '7' (fontSize 26 at
+                offset −14); a smaller offset makes the two labels visually
+                collide at the centre of the first leg. */}
+            <text x={(stops[0] + stops[1]) / 2} y={toY(legs[0]) - 50}
                   textAnchor="middle" fontFamily="var(--font-mono)" fontSize={18} fill="var(--ink-3)">
               {"q₀ = " + q0 + " < C"}
             </text>

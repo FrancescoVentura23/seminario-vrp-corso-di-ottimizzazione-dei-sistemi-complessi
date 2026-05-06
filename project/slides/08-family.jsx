@@ -811,7 +811,7 @@ function Slide22Load() {
         </h2>
 
         <div className="lede" style={{ marginTop: 18 }}>
-          The truck does not need to leave full, and no single customer unloads or loads the entire vehicle.
+          Each customer is served individually: linehaul customers <em>receive</em> goods, backhaul customers <em>hand back</em> goods. No single customer empties or fills the entire vehicle.
         </div>
 
         <div style={{ marginTop: 28, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 28, flex: 1 }}>
@@ -825,7 +825,7 @@ function Slide22Load() {
             <div style={{ fontSize: 22, color: "var(--ink-2)", lineHeight: 1.55 }}>
               <TeX>{"q_0"}</TeX> = truck load at departure.<br/>
               <TeX>{"L"}</TeX> = linehaul customers on this route.<br/><br/>
-              Since <strong>all deliveries precede all pickups</strong>, the truck must carry <em>all</em> linehaul goods from the start — the departure load equals the sum of linehaul demands.
+              The VRPB rule requires <strong>all linehaul stops to precede all backhaul stops</strong>. The truck must therefore carry <em>all</em> linehaul goods from the start — the departure load equals the sum of linehaul demands.
             </div>
           </div>
 
@@ -836,8 +836,8 @@ function Slide22Load() {
               <TeX>{"q \\;\\mathrel{-{=}}\\; d_i"}</TeX>
             </div>
             <div style={{ fontSize: 22, color: "var(--ink-2)", lineHeight: 1.55 }}>
-              The truck <strong>delivers</strong> <TeX>{"d_i"}</TeX> units to customer <TeX>{"L_i"}</TeX>.<br/><br/>
-              Load decreases by <TeX>{"d_i"}</TeX> at each linehaul stop — the truck gets lighter as it makes deliveries.
+              The truck <strong>unloads</strong> <TeX>{"d_i"}</TeX> units at customer <TeX>{"L_i"}</TeX>.<br/><br/>
+              Load decreases by <TeX>{"d_i"}</TeX> at each linehaul stop — the truck gets lighter as it serves each linehaul customer.
             </div>
           </div>
 
@@ -848,8 +848,8 @@ function Slide22Load() {
               <TeX>{"q \\;\\mathrel{+{=}}\\; d_j"}</TeX>
             </div>
             <div style={{ fontSize: 22, color: "var(--ink-2)", lineHeight: 1.55 }}>
-              The truck <strong>picks up</strong> <TeX>{"d_j"}</TeX> units from customer <TeX>{"B_j"}</TeX>.<br/><br/>
-              Load increases by <TeX>{"d_j"}</TeX> at each backhaul stop — the truck fills again on the return leg.
+              The truck <strong>collects</strong> <TeX>{"d_j"}</TeX> units from customer <TeX>{"B_j"}</TeX>.<br/><br/>
+              Load increases by <TeX>{"d_j"}</TeX> at each backhaul stop — the truck fills up again as it gathers inbound goods on the return leg.
             </div>
             <div style={{ marginTop: "auto", borderTop: "1px solid var(--line)", paddingTop: 14, fontSize: 22, color: "var(--ink-2)" }}>
               At every leg: load <TeX>{"\\leq C"}</TeX>

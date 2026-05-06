@@ -12,7 +12,7 @@ function Slide05() {
         <div>Slides 9 — 16</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-        <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Two</div>
+
         <div className="hero" style={{ fontSize: 240 }}>Graph Theory</div>
         <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
           Vertices, edges, arcs, simple graphs, digraphs and networks — the mathematical language every VRP model is written in.
@@ -154,9 +154,9 @@ function SlideNodeAttributes() {
       color: "var(--accent-3)",
       values: [
         { display: "+€40", color: "#2b7a5e" },
-        { display: "−€15", color: "#c14f3c" },
+        { display: "+€15", color: "#2b7a5e" },
         { display: "+€28", color: "#2b7a5e" },
-        { display: "−€22", color: "#c14f3c" },
+        { display: "+€22", color: "#2b7a5e" },
         { display: "+€35", color: "#2b7a5e" },
       ],
     },

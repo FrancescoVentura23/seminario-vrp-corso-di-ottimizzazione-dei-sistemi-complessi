@@ -12,7 +12,7 @@ function Slide11() {
         <div>Slides 40 — 46</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-        <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part Six</div>
+
         <div className="hero" style={{ fontSize: 240 }}>The CVRP</div>
         <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
           The capacitated VRP — the core member of the family, from which all other variants are built.
@@ -534,6 +534,176 @@ function Slide15() {
   );
 }
 
+// ---------------------------------------------------------------
+// Slide15Cut — visual implication of r(S) = 3 on the optimal solution.
+// Reuses the same demand multiset of Slide15 (5,4,4,3,3,3,2) for S.
+// Shows a generic digraph with two nodes outside S (in V\S besides
+// the depot) and at least r(S)=3 arcs going from V\S into S.
+// ---------------------------------------------------------------
+function Slide15Cut() {
+  // S — 7 customers, same demand multiset as Slide15.
+  // Total demand 24, capacity C = 10  ⇒  r(S) = ⌈24/10⌉ = 3.
+  const C = 10;
+  const sNodes = [
+    { id: 1, x: 560, y: 175, d: 5 },
+    { id: 2, x: 700, y: 185, d: 4 },
+    { id: 3, x: 800, y: 270, d: 4 },
+    { id: 4, x: 740, y: 380, d: 3 },
+    { id: 5, x: 600, y: 425, d: 3 },
+    { id: 6, x: 470, y: 365, d: 3 },
+    { id: 7, x: 625, y: 290, d: 2 },
+  ];
+  // V \ S — depot + 2 other customers (any demand, irrelevant to r(S)).
+  const depot = { x: 90, y: 270 };
+  const others = [
+    { id: 8, x: 230, y: 140, d: 4 },
+    { id: 9, x: 230, y: 410, d: 6 },
+  ];
+
+  // r(S) = 3 arcs entering S (each from a distinct node in V\S).
+  // Each arc is the *first* arc by which one of the (≥ 3) routes
+  // crosses the cut — a feasible CVRP solution must contain at
+  // least r(S) such arcs.
+  const cutArcs = [
+    { from: depot,    to: sNodes[0], label: "a" },
+    { from: others[0], to: sNodes[1], label: "b" },
+    { from: others[1], to: sNodes[5], label: "c" },
+  ];
+
+  // Arrow geometry — same scheme used elsewhere in the deck.
+  const arrowAt = (a, b, retract = 18) => {
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const L = Math.hypot(dx, dy);
+    const ux = dx / L, uy = dy / L;
+    const tipX = b.x - ux * retract;
+    const tipY = b.y - uy * retract;
+    const aw = 9, al = 18;
+    const baseX = tipX - ux * al;
+    const baseY = tipY - uy * al;
+    return `${tipX},${tipY} ${baseX - uy*aw},${baseY + ux*aw} ${baseX + uy*aw},${baseY - ux*aw}`;
+  };
+
+  // Boundary of S — a smooth blob enclosing all sNodes.
+  // Approximate with a rounded polygon (convex hull-ish) padded outward.
+  // Hand-tuned to fit the 7 chosen positions.
+  const sBoundary = "M 420,180  C 420,90  590,80  720,90  C 830,100  870,210  860,310  C 850,410  740,480  600,475  C 460,470  410,430  410,360  C 405,290  410,240  420,180 Z";
+
+  return (
+    <section className="slide" data-label="r(S) = 3 ⇒ ≥ 3 arcs enter S">
+      <SlideFrame>
+        <div className="tag">CVRP · capacity cuts</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          r(S) = 3 forces ≥ 3 arcs to enter S in the optimal solution.
+        </h2>
+
+        <div style={{ marginTop: 30, display: "grid", gridTemplateColumns: "1.25fr 1fr", gap: 50, flex: 1 }}>
+          {/* Left — directed graph with S highlighted and 3 entering arcs */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 18, position: "relative" }}>
+            <svg viewBox="0 0 900 540"
+                 preserveAspectRatio="xMidYMid meet"
+                 style={{ width: "100%", height: "100%", display: "block" }}>
+
+              {/* S region — translucent fill + dashed boundary */}
+              <path d={sBoundary}
+                    fill="var(--accent)" fillOpacity={0.08}
+                    stroke="var(--accent)" strokeWidth={2}
+                    strokeDasharray="8 6" />
+
+              {/* S label — placed clearly outside the blob, top-right */}
+              <text x={870} y={75} textAnchor="end"
+                    fontFamily="var(--font-display)" fontStyle="italic"
+                    fontSize={42} fill="var(--accent)" fontWeight={600}>S</text>
+
+              {/* V\S label — top-left */}
+              <text x={140} y={55} textAnchor="start"
+                    fontFamily="var(--font-display)" fontStyle="italic"
+                    fontSize={28} fill="var(--ink-3)">V \ S</text>
+
+              {/* Caption under the diagram — d(S), C, r(S) */}
+              <text x={450} y={520} textAnchor="middle"
+                    fontFamily="var(--font-mono)" fontSize={16}
+                    fill="var(--accent)" fontWeight={600}>
+                d(S) = 24,  C = {C}  ⇒  r(S) = 3
+              </text>
+
+              {/* Cut-crossing arcs — bodies first */}
+              {cutArcs.map((arc, i) => (
+                <line key={`cb-${i}`}
+                      x1={arc.from.x} y1={arc.from.y}
+                      x2={arc.to.x}   y2={arc.to.y}
+                      stroke="var(--accent)" strokeWidth={3.5}
+                      strokeLinecap="round" />
+              ))}
+              {/* Cut-crossing arcs — arrowheads (per gotcha #10, separate map) */}
+              {cutArcs.map((arc, i) => (
+                <polygon key={`ca-${i}`}
+                         points={arrowAt(arc.from, arc.to, 16)}
+                         fill="var(--accent)" />
+              ))}
+              {/* no arc labels — arrows are self-explanatory, count is in caption */}
+
+              {/* Depot — node "0" */}
+              <rect x={depot.x - 18} y={depot.y - 18} width={36} height={36}
+                    fill="var(--depot)" rx={2} />
+              <rect x={depot.x - 22} y={depot.y - 22} width={44} height={44}
+                    fill="none" stroke="var(--depot)" strokeWidth={1.5} rx={2} />
+              <text x={depot.x} y={depot.y + 6} textAnchor="middle"
+                    fontFamily="var(--font-mono)" fontSize={18}
+                    fill="var(--paper)" fontWeight={700}>0</text>
+              <text x={depot.x} y={depot.y + 42} textAnchor="middle"
+                    fontFamily="var(--font-mono)" fontSize={13}
+                    fill="var(--ink-3)">depot</text>
+
+              {/* V\S customers */}
+              {others.map((n) => (
+                <g key={`o-${n.id}`}>
+                  <circle cx={n.x} cy={n.y} r={16}
+                          fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.2}/>
+                  <text x={n.x} y={n.y + 5} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={14}
+                        fill="var(--ink)" fontWeight={600}>{n.id}</text>
+                </g>
+              ))}
+
+              {/* S customers — node + demand below */}
+              {sNodes.map((n) => (
+                <g key={`s-${n.id}`}>
+                  <circle cx={n.x} cy={n.y} r={17}
+                          fill="var(--paper)" stroke="var(--accent)" strokeWidth={2.4}/>
+                  <text x={n.x} y={n.y + 5} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={14}
+                        fill="var(--ink)" fontWeight={600}>{n.id}</text>
+                  <text x={n.x} y={n.y + 33} textAnchor="middle"
+                        fontFamily="var(--font-mono)" fontSize={13}
+                        fill="var(--accent)" fontWeight={600}>d={n.d}</text>
+                </g>
+              ))}
+            </svg>
+          </div>
+
+          {/* Right — derivation */}
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 22 }}>
+            <div className="body" style={{ fontSize: 28, lineHeight: 1.3 }}>
+              Pick any subset <span style={{ fontFamily: "var(--font-mono)" }}>S ⊆ V \ {`{0}`}</span>. The capacity-cut inequality reads
+            </div>
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "18px 24px", fontFamily: "var(--font-mono)", fontSize: 22 }}>
+              <TeX display>{"\\sum_{i \\in V \\setminus S}\\sum_{j \\in S} x_{ij} \\;\\geq\\; r(S)"}</TeX>
+            </div>
+            <div className="body" style={{ fontSize: 28, lineHeight: 1.3 }}>
+              For the S in the picture, the demands of Slide 44 give
+              {" "}<span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)" }}>r(S) = 3</span>.
+              So <em>every</em> feasible CVRP solution — and in particular the optimal one — must contain at least <span style={{ color: "var(--accent)", fontWeight: 600 }}>3 directed arcs</span> from <span style={{ fontFamily: "var(--font-mono)" }}>V\S</span> to <span style={{ fontFamily: "var(--font-mono)" }}>S</span>.
+            </div>
+            <div className="body small" style={{ color: "var(--ink-3)", lineHeight: 1.4 }}>
+              Reason: the 7 customers in S need at least 3 vehicles to be served (bin packing). Each vehicle that serves a customer in S must enter S at least once → ≥ 3 cut-crossing arcs.
+            </div>
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
 function Slide15B() {
   const rows = [
     { n:  5, val: "31",                   exp: null },
@@ -739,5 +909,5 @@ function Slide15C() {
 // ---------------------------------------------------------------
 
 Object.assign(window, {
-  Slide11, Slide14, Slide14B, Slide15, Slide15B, Slide15C,
+  Slide11, Slide14, Slide14B, Slide15, Slide15Cut, Slide15B, Slide15C,
 });

@@ -12,7 +12,7 @@ function SlideIntroSection() {
         <div>Slides 3 — 7</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-        <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Part One</div>
+
         <div className="hero" style={{ fontSize: 240 }}>Introduction</div>
         <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
           Where the VRP came from, who uses it today, and why it matters — the problem you meet every day and its economic scale.

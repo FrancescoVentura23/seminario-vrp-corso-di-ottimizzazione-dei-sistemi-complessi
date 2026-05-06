@@ -7,7 +7,7 @@ function Slide27() {
   return (
     <section className="slide section-slide" data-label="Part IX — Applications">
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-        <div className="kicker" style={{ color: "var(--paper-deep)", marginBottom: 40 }}>Applications</div>
+
         <div className="hero" style={{ fontSize: 240 }}>In the wild</div>
         <div style={{ fontFamily: "var(--font-display)", fontSize: 48, marginTop: 40, maxWidth: 1400, lineHeight: 1.15, color: "var(--paper)" }}>
           Four industries where VRP solvers directly drive planning decisions every day.

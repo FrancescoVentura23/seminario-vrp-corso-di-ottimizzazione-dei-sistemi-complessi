@@ -329,7 +329,6 @@ function Slide25() {
               desc: "Two separate round-trips: 0 → i → 0 and 0 → j → 0.",
               svg: (
                 <svg viewBox="0 0 600 400" style={{ width: "100%", height: 260, display: "block" }}>
-                  <rect x={300-16} y={320-16} width={32} height={32} fill="var(--depot)"/>
                   {(() => {
                     // Four segments: depot→i, i→depot, depot→j, j→depot.
                     // Bodies first, arrowheads second (gotcha #10).
@@ -340,6 +339,10 @@ function Slide25() {
                       {arcs.map((a,k) => <polygon key={`h-${k}`} points={a.pts} fill="var(--route-1)"/>)}
                     </>;
                   })()}
+                  {/* Depot rendered after arcs so it covers any arrowheads pointing into it */}
+                  <rect x={300-16} y={320-16} width={32} height={32} fill="var(--depot)"/>
+                  <rect x={300-20} y={320-20} width={40} height={40} fill="none" stroke="var(--depot)" strokeWidth={1.5}/>
+                  <text x={300} y={364} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={15} fill="var(--ink-3)" letterSpacing="0.05em">0</text>
                   <circle cx={150} cy={120} r={14} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>
                   <text x={150} y={125} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={16} fontWeight={600}>i</text>
                   <circle cx={470} cy={120} r={14} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>
@@ -353,7 +356,6 @@ function Slide25() {
               desc: "One single route visiting i then j: 0 → i → j → 0.",
               svg: (
                 <svg viewBox="0 0 600 400" style={{ width: "100%", height: 260, display: "block" }}>
-                  <rect x={300-16} y={320-16} width={32} height={32} fill="var(--depot)"/>
                   <polyline points="300,320 150,120 470,120 300,320" fill="none" stroke="var(--route-2)" strokeWidth={4}/>
                   {(() => {
                     // Single merged route 0 → i → j → 0
@@ -368,6 +370,10 @@ function Slide25() {
                       return <polygon key={k} points={pts} fill="var(--route-2)"/>;
                     });
                   })()}
+                  {/* Depot rendered after arcs so it covers any arrowheads pointing into it */}
+                  <rect x={300-16} y={320-16} width={32} height={32} fill="var(--depot)"/>
+                  <rect x={300-20} y={320-20} width={40} height={40} fill="none" stroke="var(--depot)" strokeWidth={1.5}/>
+                  <text x={300} y={364} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={15} fill="var(--ink-3)" letterSpacing="0.05em">0</text>
                   <circle cx={150} cy={120} r={14} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>
                   <text x={150} y={125} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={16} fontWeight={600}>i</text>
                   <circle cx={470} cy={120} r={14} fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>

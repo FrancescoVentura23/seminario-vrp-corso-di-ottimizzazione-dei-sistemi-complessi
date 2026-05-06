@@ -1653,8 +1653,12 @@ function Slide23Load() {
                 );
               })}
 
-              {/* Peak annotation above leg 2 (where both requests coexist) */}
-              <text x={(stops[2] + stops[3]) / 2} y={toY(legs[2]) - 26}
+              {/* Peak annotation above leg 2 (where both requests coexist) —
+                  sits 44px above the step's top so it clears the bold
+                  accent-coloured load value '7' (fontSize 18 at offset −10);
+                  a smaller offset lets the two labels visually collide
+                  (analog to the q₀ fix on Slide22LoadB, e0c54b4). */}
+              <text x={(stops[2] + stops[3]) / 2} y={toY(legs[2]) - 44}
                     textAnchor="middle" fontFamily="var(--font-mono)" fontSize={13} fill="var(--ink-3)">
                 {"peak = d₁ + d₂ ≤ C"}
               </text>

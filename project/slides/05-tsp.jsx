@@ -457,44 +457,56 @@ function SlideTSPDegree() {
       : seg(pos[selected], pos[0]);
 
     return (
-      <svg key={ak} viewBox="0 0 500 490"
-           style={{ width: "100%", height: "100%", display: "block" }}>
-        {/* candidate arcs — dashed gray */}
-        {cSegs.map((s, idx) => (
-          <line key={idx} x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2}
-            stroke="var(--ink-3)" strokeWidth={2} strokeDasharray="7 5"
-            style={{ opacity: 0, animation: "fadeUp 300ms both ease-out",
-                     animationDelay: `${500 + idx * 60}ms` }} />
-        ))}
+      // The SVG element itself never remounts — only the inner <g key={ak}>
+      // does. On Safari iOS, remounting an SVG with `width/height: 100%` but
+      // no aspect-ratio causes a 1-frame fallback to intrinsic 300x150,
+      // which makes the parent flex briefly recompute and the surrounding
+      // 'Out-degree' / 'In-degree' boxes visibly jump. Pinning the SVG's
+      // size via aspectRatio (matching the viewBox) keeps it stable; the
+      // animation reset still happens because the inner <g> remounts on ak.
+      <svg viewBox="0 0 500 490"
+           preserveAspectRatio="xMidYMid meet"
+           style={{ width: "100%", height: "100%",
+                    aspectRatio: "500 / 490",
+                    display: "block" }}>
+        <g key={ak}>
+          {/* candidate arcs — dashed gray */}
+          {cSegs.map((s, idx) => (
+            <line key={idx} x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2}
+              stroke="var(--ink-3)" strokeWidth={2} strokeDasharray="7 5"
+              style={{ opacity: 0, animation: "fadeUp 300ms both ease-out",
+                       animationDelay: `${500 + idx * 60}ms` }} />
+          ))}
 
-        {/* selected arc body */}
-        <line x1={sSeg.x1} y1={sSeg.y1} x2={sSeg.x2} y2={sSeg.y2}
-          stroke={color} strokeWidth={4} strokeLinecap="round"
-          style={{ "--len": sSeg.len, strokeDasharray: sSeg.len,
-                   animation: "drawPath 700ms both ease-in-out",
-                   animationDelay: "1100ms" }} />
+          {/* selected arc body */}
+          <line x1={sSeg.x1} y1={sSeg.y1} x2={sSeg.x2} y2={sSeg.y2}
+            stroke={color} strokeWidth={4} strokeLinecap="round"
+            style={{ "--len": sSeg.len, strokeDasharray: sSeg.len,
+                     animation: "drawPath 700ms both ease-in-out",
+                     animationDelay: "1100ms" }} />
 
-        {/* selected arrowhead */}
-        <polygon points={arrowPts(sSeg)} fill={color}
-          style={{ opacity: 0, animation: "fadeUp 150ms both ease-out",
-                   animationDelay: "1770ms" }} />
+          {/* selected arrowhead */}
+          <polygon points={arrowPts(sSeg)} fill={color}
+            style={{ opacity: 0, animation: "fadeUp 150ms both ease-out",
+                     animationDelay: "1770ms" }} />
 
-        {/* other nodes (unlabeled) */}
-        {pos.slice(1).map((n, i) => (
-          <g key={i} style={{ animation: "fadeUp 400ms both ease-out",
-                              animationDelay: `${(i + 1) * 80}ms` }}>
-            <circle cx={n.x} cy={n.y} r={r}
-              fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>
+          {/* other nodes (unlabeled) */}
+          {pos.slice(1).map((n, i) => (
+            <g key={i} style={{ animation: "fadeUp 400ms both ease-out",
+                                animationDelay: `${(i + 1) * 80}ms` }}>
+              <circle cx={n.x} cy={n.y} r={r}
+                fill="var(--paper)" stroke="var(--ink)" strokeWidth={2}/>
+            </g>
+          ))}
+
+          {/* focused node — same style as others, ink border */}
+          <g style={{ animation: "fadeUp 400ms both ease-out", animationDelay: "0ms" }}>
+            <circle cx={pos[0].x} cy={pos[0].y} r={r + 3}
+              fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
+            <text x={pos[0].x} y={pos[0].y + 7} textAnchor="middle"
+              fontFamily="var(--font-mono)" fontSize={19} fontWeight={700}
+              fill="var(--ink)">{focusLabel}</text>
           </g>
-        ))}
-
-        {/* focused node — same style as others, ink border */}
-        <g style={{ animation: "fadeUp 400ms both ease-out", animationDelay: "0ms" }}>
-          <circle cx={pos[0].x} cy={pos[0].y} r={r + 3}
-            fill="var(--paper)" stroke="var(--ink)" strokeWidth={2.5}/>
-          <text x={pos[0].x} y={pos[0].y + 7} textAnchor="middle"
-            fontFamily="var(--font-mono)" fontSize={19} fontWeight={700}
-            fill="var(--ink)">{focusLabel}</text>
         </g>
       </svg>
     );
@@ -806,7 +818,11 @@ function SlideTSPDFJ() {
 
         <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 60, flex: 1, alignItems: "center" }}>
           <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 26, position: "relative" }}>
-            <svg viewBox="0 0 1050 720" style={{ width: "100%", height: "100%", display: "block", overflow: "visible" }}>
+            <svg viewBox="0 0 1050 720"
+                 preserveAspectRatio="xMidYMid meet"
+                 style={{ width: "100%", height: "100%",
+                          aspectRatio: "1050 / 720",
+                          display: "block", overflow: "visible" }}>
               <defs>
                 <pattern id="dotgrid-dfj2" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
                   <circle cx="1" cy="1" r="1" fill="var(--line)"/>

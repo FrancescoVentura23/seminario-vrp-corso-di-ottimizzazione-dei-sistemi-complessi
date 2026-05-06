@@ -527,14 +527,27 @@ function SlideTSPDegree() {
                       gap: 36, flex: 1, minHeight: 0 }}>
 
           {/* OUT-DEGREE — violet */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 14, minHeight: 0 }}>
+          {/* minWidth/minHeight: 0 — grid items default to min-size: auto,
+              which lets a tall KaTeX \substack on iOS Safari push the
+              column past its track height and overlap siblings. */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 14, minWidth: 0, minHeight: 0 }}>
             <div style={{ fontFamily: "var(--font-mono)", fontSize: 22, color: "var(--ink-2)", lineHeight: 1.35 }}>
               <span style={{ color: "var(--accent)", fontWeight: 700 }}>Out-degree = 1</span>
               {" "}— exactly one arc <em>leaves</em> vᵢ.
             </div>
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)",
                           padding: "18px 26px", fontSize: 34 }}>
-              <TeX display>{"\\sum_{\\substack{j \\in V \\\\ j \\neq i}} x_{ij} = 1 \\qquad \\forall\\, i \\in V"}</TeX>
+              {/* translateZ(0) forces a fresh compositing layer for KaTeX:
+                  the deck-stage canvas sits inside a transform: scale() and
+                  on Safari iOS the inherited sub-pixel grid corrupts
+                  KaTeX's internal absolute offsets (the .vlist used for
+                  \substack), making the two stacked subscript lines
+                  collapse / overlap. Isolating the formula in its own
+                  composite layer makes Safari rasterise from a clean
+                  pixel grid. No-op on Chrome Android (no bug there). */}
+              <div style={{ transform: "translateZ(0)" }}>
+                <TeX display>{"\\sum_{\\substack{j \\in V \\\\ j \\neq i}} x_{ij} = 1 \\qquad \\forall\\, i \\in V"}</TeX>
+              </div>
             </div>
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)",
                           padding: 10, flex: 1, minHeight: 0, overflow: "hidden" }}>
@@ -543,14 +556,16 @@ function SlideTSPDegree() {
           </div>
 
           {/* IN-DEGREE — amber */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 14, minHeight: 0 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14, minWidth: 0, minHeight: 0 }}>
             <div style={{ fontFamily: "var(--font-mono)", fontSize: 22, color: "var(--ink-2)", lineHeight: 1.35 }}>
               <span style={{ color: "var(--accent-2)", fontWeight: 700 }}>In-degree = 1</span>
               {" "}— exactly one arc <em>arrives at</em> vⱼ.
             </div>
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)",
                           padding: "18px 26px", fontSize: 34 }}>
-              <TeX display>{"\\sum_{\\substack{i \\in V \\\\ i \\neq j}} x_{ij} = 1 \\qquad \\forall\\, j \\in V"}</TeX>
+              <div style={{ transform: "translateZ(0)" }}>
+                <TeX display>{"\\sum_{\\substack{i \\in V \\\\ i \\neq j}} x_{ij} = 1 \\qquad \\forall\\, j \\in V"}</TeX>
+              </div>
             </div>
             <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)",
                           padding: 10, flex: 1, minHeight: 0, overflow: "hidden" }}>

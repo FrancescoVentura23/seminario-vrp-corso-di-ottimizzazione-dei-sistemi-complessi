@@ -1376,11 +1376,6 @@ function Slide22Form() {
                 <polygon points="460,276 460.3,293.0 446.1,285.7" fill={cA2}/>
                 <text x={388} y={314} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA2}>A₂</text>
 
-                {/* NO ARC: B → L (forbidden — enforces precedence) */}
-                <line x1={308} y1={198} x2={375} y2={122} stroke="#cc4444" strokeWidth={2}
-                      strokeDasharray="4 4" opacity={0.75}/>
-                <text x={356} y={150} textAnchor="middle" fontFamily="var(--font-mono)"
-                      fontSize={22} fill="#cc4444" fontWeight={700}>✗</text>
 
               </svg>
             </div>

@@ -7,17 +7,17 @@ const { useState: cwUseState, useMemo: cwUseMemo, useEffect: cwUseEffect, useRef
 // Fixed demo instance — hand-placed for visual clarity
 const CW_DEPOT = { x: 420, y: 320, id: 0 };
 const CW_CUSTOMERS = [
-  { id: 1, x: 220, y: 180, demand: 4 },
-  { id: 2, x: 300, y: 120, demand: 3 },
-  { id: 3, x: 540, y: 110, demand: 2 },
-  { id: 4, x: 660, y: 180, demand: 5 },
-  { id: 5, x: 720, y: 340, demand: 3 },
-  { id: 6, x: 640, y: 480, demand: 4 },
-  { id: 7, x: 440, y: 520, demand: 2 },
-  { id: 8, x: 240, y: 490, demand: 3 },
-  { id: 9, x: 140, y: 350, demand: 4 },
+  { id: 1, x: 220, y: 180, demand: 1 },
+  { id: 2, x: 300, y: 120, demand: 2 },
+  { id: 3, x: 540, y: 110, demand: 3 },
+  { id: 4, x: 660, y: 180, demand: 4 },
+  { id: 5, x: 720, y: 340, demand: 5 },
+  { id: 6, x: 640, y: 480, demand: 6 },
+  { id: 7, x: 440, y: 520, demand: 7 },
+  { id: 8, x: 240, y: 490, demand: 8 },
+  { id: 9, x: 140, y: 350, demand: 9 },
 ];
-const CW_CAPACITY = 10;
+const CW_CAPACITY = 15;
 
 const cwDist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 
@@ -135,11 +135,34 @@ function ClarkeWrightDemo() {
         </div>
         <div style={{ flex: 1, padding: 20 }}>
           <svg viewBox="0 0 840 600" style={{ width: "100%", height: "100%", display: "block", overflow: "visible" }}>
-            {/* Spokes from depot for initial routes */}
-            {sim.routes.filter(r => r.custs.length === 1).map(r => {
+            {/* Single-customer round-trips — colored curved arcs depot→ci and ci→depot */}
+            {sim.routes.filter(r => r.custs.length === 1).map((r, ri) => {
               const c = custMap.get(r.custs[0]);
-              return <line key={`spoke-${r.id}`} x1={CW_DEPOT.x} y1={CW_DEPOT.y} x2={c.x} y2={c.y}
-                           stroke="var(--ink-3)" strokeWidth={2} strokeDasharray="4 5" opacity={0.55} />;
+              const color = routeColors[ri % routeColors.length];
+              const CURVE = 22;
+              const mkArc = (x1, y1, x2, y2) => {
+                const dx = x2-x1, dy = y2-y1, L = Math.hypot(dx, dy);
+                const mx = (x1+x2)/2, my = (y1+y2)/2;
+                const cpx = mx - (dy/L)*CURVE, cpy = my + (dx/L)*CURVE;
+                const d = `M ${x1},${y1} Q ${cpx.toFixed(1)},${cpy.toFixed(1)} ${x2},${y2}`;
+                const tdx = x2-cpx, tdy = y2-cpy, tL = Math.hypot(tdx, tdy);
+                const ux = tdx/tL, uy = tdy/tL;
+                const back = 18, aw = 7, al = 14;
+                const tx = x2-ux*back, ty = y2-uy*back;
+                const bx = tx-ux*al, by = ty-uy*al;
+                const pts = `${tx.toFixed(1)},${ty.toFixed(1)} ${(bx-uy*aw).toFixed(1)},${(by+ux*aw).toFixed(1)} ${(bx+uy*aw).toFixed(1)},${(by-ux*aw).toFixed(1)}`;
+                return { d, pts };
+              };
+              const out = mkArc(CW_DEPOT.x, CW_DEPOT.y, c.x, c.y);
+              const ret = mkArc(c.x, c.y, CW_DEPOT.x, CW_DEPOT.y);
+              return (
+                <g key={`spoke-${r.id}`}>
+                  <path d={out.d} fill="none" stroke={color} strokeWidth={3.5} strokeLinecap="round"/>
+                  <path d={ret.d} fill="none" stroke={color} strokeWidth={3.5} strokeLinecap="round"/>
+                  <polygon points={out.pts} fill={color}/>
+                  <polygon points={ret.pts} fill={color}/>
+                </g>
+              );
             })}
 
             {/* Merged routes — solid colored polyline (bodies first) */}
@@ -190,14 +213,15 @@ function ClarkeWrightDemo() {
               );
             })()}
 
-            {/* Cost labels on depot spokes (unmerged customers) */}
+            {/* Cost labels on single-customer round-trips — placed on outbound arc */}
             {sim.routes.filter(r => r.custs.length === 1).map(r => {
               const c = custMap.get(r.custs[0]);
               const mx = (CW_DEPOT.x + c.x) / 2;
               const my = (CW_DEPOT.y + c.y) / 2;
               const dx = c.x - CW_DEPOT.x, dy = c.y - CW_DEPOT.y;
               const L = Math.hypot(dx, dy);
-              const ox = -dy/L * 14, oy = dx/L * 14;
+              // offset outward (same side as the arc bulge) by 22 units
+              const ox = -dy/L * 22, oy = dx/L * 22;
               const label = L.toFixed(0);
               return (
                 <g key={`cl-spoke-${r.id}`}>

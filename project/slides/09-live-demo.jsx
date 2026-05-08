@@ -103,15 +103,15 @@ function SlideClarkeWrightIntro() {
 function SlideCWInitialSolution() {
   const DEPOT = { x: 420, y: 320 };
   const CUSTS = [
-    { id: 1, x: 220, y: 180, d: 4 },
-    { id: 2, x: 300, y: 120, d: 3 },
-    { id: 3, x: 540, y: 110, d: 2 },
-    { id: 4, x: 660, y: 180, d: 5 },
-    { id: 5, x: 720, y: 340, d: 3 },
-    { id: 6, x: 640, y: 480, d: 4 },
-    { id: 7, x: 440, y: 520, d: 2 },
-    { id: 8, x: 240, y: 490, d: 3 },
-    { id: 9, x: 140, y: 350, d: 4 },
+    { id: 1, x: 220, y: 180, d: 1 },
+    { id: 2, x: 300, y: 120, d: 2 },
+    { id: 3, x: 540, y: 110, d: 3 },
+    { id: 4, x: 660, y: 180, d: 4 },
+    { id: 5, x: 720, y: 340, d: 5 },
+    { id: 6, x: 640, y: 480, d: 6 },
+    { id: 7, x: 440, y: 520, d: 7 },
+    { id: 8, x: 240, y: 490, d: 8 },
+    { id: 9, x: 140, y: 350, d: 9 },
   ];
   const COLORS = [
     "#e25c3e","#4a9ede","#5dbe72","#e8a838","#9b6bbf",
@@ -270,7 +270,7 @@ function SlideCWInitialSolution() {
                     {dot}{label}
                   </div>
                 ) : (
-                  <div key={"off-"+i} style={{ ...sharedStyle, opacity:0.2 }}>
+                  <div key={"off-"+i} style={{ ...sharedStyle, opacity:0, pointerEvents:"none" }}>
                     {dot}{label}
                   </div>
                 );
@@ -282,8 +282,10 @@ function SlideCWInitialSolution() {
                 fontFamily:"var(--font-mono)", fontSize:21, padding:"10px 18px",
                 background:"var(--accent)", color:"white", border:"none",
                 cursor:"pointer", letterSpacing:"0.04em", textTransform:"uppercase",
-                animation: !started ? "pulse 1.8s ease-in-out 0s infinite" : "none",
-              }}>▶ generate</button>
+              }}>
+                ▶ generate
+                {!started && <span style={{ marginLeft: 10, fontSize: 14, color: "#fff", letterSpacing: "0.08em", animation: "blink 1.4s ease-in-out 0s infinite" }}>click</span>}
+              </button>
               <button ref={rstRef} style={{
                 fontFamily:"var(--font-mono)", fontSize:21, padding:"10px 18px",
                 background:"var(--paper)", color:"var(--ink)", border:"1px solid var(--ink)",

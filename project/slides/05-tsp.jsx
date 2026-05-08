@@ -2014,8 +2014,8 @@ function SlideTSPMinCut() {
     cursor: "pointer",
     userSelect: "none",
     background: active ? "rgba(107,74,245,0.08)" : "var(--paper-2)",
-    border: `1px solid ${active ? "var(--accent)" : "var(--line)"}`,
-    borderLeft: `${active ? 4 : 1}px solid ${active ? "var(--accent)" : "var(--line)"}`,
+    border: `1px solid ${active ? "var(--accent)" : mode === null ? "var(--accent)" : "var(--line)"}`,
+    borderLeft: `${active ? 4 : 2}px solid ${active ? "var(--accent)" : mode === null ? "var(--accent)" : "var(--line)"}`,
     padding: "14px 20px",
     fontSize: 20,
     lineHeight: 1.5,
@@ -2068,7 +2068,10 @@ function SlideTSPMinCut() {
 
             {/* Click to show the integer-tour scene on the right. */}
             <div data-mode="integer" style={btnStyle(isInt)}>
-              <div className="kicker" style={{ fontSize: 21, marginBottom: 3, color: isInt ? "var(--accent)" : "var(--ink-3)" }}>Integer tour</div>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 3 }}>
+                <div className="kicker" style={{ fontSize: 21, color: isInt ? "var(--accent)" : "var(--ink-3)" }}>Integer tour</div>
+                {mode === null && <span style={{ fontSize: 16, color: "var(--accent)", letterSpacing: "0.08em", animation: "blink 1.4s ease-in-out 0s infinite" }}>click ▸</span>}
+              </div>
               <div style={{ fontSize: 24, lineHeight: 1.4 }}>
                 A <em>Hamiltonian circuit</em> visits every node exactly once, so the path crosses the boundary of S exactly once in each direction: one arc exits (<TeX>{"\\delta^+(S)"}</TeX>) and one enters (<TeX>{"\\delta^-(S)"}</TeX>). Each <TeX>{"x_{ij}\\in\\{0,1\\}"}</TeX> is the <em>weight</em> of arc <TeX>{"(i,j)"}</TeX>: 1 if the tour uses it, 0 otherwise. Total boundary weight <TeX>{"x(\\delta(S))=1+1=2"}</TeX>.
               </div>
@@ -2076,7 +2079,10 @@ function SlideTSPMinCut() {
 
             {/* Click to show the fractional x* scene (DFJ violation). */}
             <div data-mode="fractional" style={btnStyle(isFrac)}>
-              <div className="kicker" style={{ fontSize: 21, marginBottom: 3, color: isFrac ? "var(--accent)" : "var(--ink-3)" }}>Fractional x*</div>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 3 }}>
+                <div className="kicker" style={{ fontSize: 21, color: isFrac ? "var(--accent)" : "var(--ink-3)" }}>Fractional x*</div>
+                {mode === null && <span style={{ fontSize: 16, color: "var(--accent)", letterSpacing: "0.08em", animation: "blink 1.4s ease-in-out 0.7s infinite" }}>click ▸</span>}
+              </div>
               <div style={{ fontSize: 24, lineHeight: 1.4 }}>
                 In the LP relaxation, <TeX>{"x^*_{ij}\\in[0,1]"}</TeX>: each vertex still satisfies deg = 1, but can <em>split</em> its flow. Here v₁ routes 0.7 inside S (v₁→v₂) and only 0.3 across the boundary (v₁→v₃). When <TeX>{"x^*(\\delta(S)) < 2"}</TeX> the DFJ constraint is violated.
               </div>

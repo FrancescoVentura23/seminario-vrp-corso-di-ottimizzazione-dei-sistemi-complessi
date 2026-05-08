@@ -112,6 +112,7 @@ function Slide09() {
                 border: "none",
                 cursor: "pointer",
                 visibility: showRoute ? "hidden" : "visible",
+                animation: !showRoute ? "pulse 1.8s ease-in-out 0s infinite" : "none",
               }}
             >
               find a possible solution
@@ -389,7 +390,7 @@ function SlideTSPFormulation() {
               <div style={{ color: "var(--accent)", whiteSpace: "nowrap" }}>
                 <TeX>{"\\sum_{i \\in S} \\sum_{\\substack{j \\in S \\\\ j \\neq i}} x_{ij} \\;\\leq\\; |S| - 1"}</TeX> &nbsp; ∀ S ⊊ V, &nbsp; 2 ≤ |S| ≤ n − 1
               </div>
-              <div style={{ color: "var(--accent)" }}>(subtour elim.)</div>
+              <div style={{ color: "var(--accent)" }}>(subtour elimination)</div>
 
               <div>xᵢⱼ ∈ {"{"}0, 1{"}"}</div>
               <div style={{ color: "var(--ink-3)" }}>(integrality)</div>
@@ -1023,8 +1024,8 @@ function SlideTSPDFJ() {
             </div>
             <div data-constraint="packing" style={{
               background: isPacking ? "rgba(107,74,245,0.08)" : "var(--paper-2)",
-              border: `1px solid ${isPacking ? "var(--accent)" : "var(--line)"}`,
-              borderLeft: `${isPacking ? 4 : 1}px solid ${isPacking ? "var(--accent)" : "var(--line)"}`,
+              border: `1px solid ${isPacking ? "var(--accent)" : active === null ? "var(--accent)" : "var(--line)"}`,
+              borderLeft: `${isPacking ? 4 : 1}px solid ${isPacking ? "var(--accent)" : active === null ? "var(--accent)" : "var(--line)"}`,
               padding: "22px 28px",
               fontFamily: "var(--font-mono)",
               fontSize: 30,
@@ -1033,13 +1034,16 @@ function SlideTSPDFJ() {
               transform: isPacking ? "translateX(6px)" : "translateX(0)",
               transition: "all 320ms ease",
             }}>
-              <div style={{ color: isPacking ? "var(--accent)" : "var(--ink-3)", fontSize: 22, marginBottom: 6 }}>packing form</div>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+                <div style={{ color: isPacking ? "var(--accent)" : "var(--ink-3)", fontSize: 22 }}>packing form</div>
+                {active === null && <span style={{ fontSize: 16, color: "var(--accent)", letterSpacing: "0.08em", animation: "blink 1.4s ease-in-out 0s infinite" }}>click ▸</span>}
+              </div>
               <TeX display>{"\\sum_{i \\in S}\\sum_{\\substack{j \\in S \\\\ j \\neq i}} x_{ij} \\;\\leq\\; |S| - 1"}</TeX>
             </div>
             <div data-constraint="cut" style={{
               background: isCut ? "rgba(107,74,245,0.08)" : "var(--paper-2)",
-              border: `1px solid ${isCut ? "var(--accent)" : "var(--line)"}`,
-              borderLeft: `${isCut ? 4 : 1}px solid ${isCut ? "var(--accent)" : "var(--line)"}`,
+              border: `1px solid ${isCut ? "var(--accent)" : active === null ? "var(--accent)" : "var(--line)"}`,
+              borderLeft: `${isCut ? 4 : 1}px solid ${isCut ? "var(--accent)" : active === null ? "var(--accent)" : "var(--line)"}`,
               padding: "22px 28px",
               fontFamily: "var(--font-mono)",
               fontSize: 30,
@@ -1048,7 +1052,10 @@ function SlideTSPDFJ() {
               transform: isCut ? "translateX(6px)" : "translateX(0)",
               transition: "all 320ms ease",
             }}>
-              <div style={{ color: isCut ? "var(--accent)" : "var(--ink-3)", fontSize: 22, marginBottom: 6 }}>equivalent cut form</div>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+                <div style={{ color: isCut ? "var(--accent)" : "var(--ink-3)", fontSize: 22 }}>equivalent cut form</div>
+                {active === null && <span style={{ fontSize: 16, color: "var(--accent)", letterSpacing: "0.08em", animation: "blink 1.4s ease-in-out 0.7s infinite" }}>click ▸</span>}
+              </div>
               <TeX display>{"\\sum_{i \\notin S}\\sum_{j \\in S} x_{ij} \\;\\geq\\; 1"}</TeX>
             </div>
             <div className="body small" style={{ color: "var(--ink-3)", fontSize: 20, lineHeight: 1.35 }}>
@@ -1630,9 +1637,9 @@ function SlideTSPKeyIdentity() {
     cursor: 'pointer',
     userSelect: 'none',
     flex: 1,
-    padding: '9px 0',
+    padding: '9px 12px',
     textAlign: 'center',
-    border: `2px solid ${activeVertex === vid ? 'var(--accent)' : 'var(--line)'}`,
+    border: `2px solid ${activeVertex === vid ? 'var(--accent)' : activeVertex === null ? 'var(--accent)' : 'var(--line)'}`,
     borderRadius: 4,
     background: activeVertex === vid ? 'rgba(107,74,245,0.1)' : 'var(--paper)',
     fontFamily: 'var(--font-mono)',
@@ -1640,6 +1647,10 @@ function SlideTSPKeyIdentity() {
     color: activeVertex === vid ? 'var(--accent)' : 'var(--ink-2)',
     fontWeight: activeVertex === vid ? 700 : 500,
     transition: 'all 220ms ease',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
   });
 
   return (
@@ -1773,8 +1784,12 @@ function SlideTSPKeyIdentity() {
 
             {/* Vertex selector buttons */}
             <div style={{ display: "flex", gap: 10 }}>
-              <div data-vertex="v1" style={btnStyle('v1')}>i = v₁</div>
-              <div data-vertex="v0" style={btnStyle('v0')}>i = v₀</div>
+              <div data-vertex="v1" style={btnStyle('v1')}>
+                i = v₁{activeVertex === null && <span style={{ fontSize: 14, color: "var(--accent)", animation: "blink 1.4s ease-in-out 0s infinite" }}>▸</span>}
+              </div>
+              <div data-vertex="v0" style={btnStyle('v0')}>
+                i = v₀{activeVertex === null && <span style={{ fontSize: 14, color: "var(--accent)", animation: "blink 1.4s ease-in-out 0.7s infinite" }}>▸</span>}
+              </div>
             </div>
 
             {/* Degree-constraint formula — animates in on click */}
@@ -2587,48 +2602,33 @@ function SlideTSPMinCutImpl() {
             {/* ── Ford–Fulkerson ───────────────────────────────────────── */}
             <Card title="Ford–Fulkerson / max-flow" accent="var(--accent)">
               <Section label="Idea">
-                The <em>max-flow / min-cut theorem</em> says: for any source s and sink t, the maximum s→t flow equals the capacity of the minimum s-t cut. So a max-flow algorithm is also a min-cut algorithm — for one specific pair (s, t) at a time.
-              </Section>
-              <Section label="Reduction to global min-cut">
-                Fix one vertex s ∈ V arbitrarily. For every other vertex t ∈ V \ {"{s}"}, compute a max-flow from s to t and read off the corresponding min s-t cut. The smallest of these n − 1 cuts is the global minimum cut.
-              </Section>
-              <Section label="Why it works">
-                Any partition (S, V\S) has s on one side. Pick any t on the other side: the s-t min-cut is <em>at most</em> cap(S, V\S). Sweeping t over all V \ {"{s}"} therefore sees every possible S — none escapes.
+                Max-flow = min-cut for any fixed pair (s, t). Fix any s ∈ V; run a max-flow to each t ∈ V \ {"{s}"}. Every partition (S, V\S) has s on one side, so the smallest of the n − 1 s-t cuts found is the global minimum cut.
               </Section>
               <Cost>
-                n − 1 max-flow calls; with Edmonds–Karp <TeX>{"O(n \\cdot V E^2)"}</TeX>. Conceptually simplest, computationally redundant — many flows duplicate work.
+                n − 1 max-flow calls; with Edmonds–Karp <TeX>{"O(n \\cdot VE^2)"}</TeX>. Simplest approach, but many flows duplicate work.
               </Cost>
             </Card>
 
             {/* ── Gomory–Hu ────────────────────────────────────────────── */}
             <Card title="Gomory–Hu tree" accent="var(--accent-2)">
               <Section label="Idea">
-                Build a single weighted tree T on V that simultaneously encodes <em>all</em> <TeX>{"\\binom{n}{2}"}</TeX> pairwise min-cuts. Property: for any u, v ∈ V, the min u-v cut in G equals the <em>lightest edge on the unique u-v path</em> in T.
+                A single weighted tree T on V encodes <em>all</em> <TeX>{"\\binom{n}{2}"}</TeX> pairwise min-cuts: the min u-v cut in G equals the <em>lightest edge on the unique u-v path</em> in T. The global min-cut is the lightest edge in T.
               </Section>
               <Section label="Construction">
-                Still uses n − 1 max-flow calls — one per tree edge — but each call runs on a contracted graph that reuses information from previous flows, avoiding redundant computation across queries.
-              </Section>
-              <Section label="Global min-cut from T">
-                Just pick the lightest edge of T. Removing it splits V into two components: those are exactly S* and V\S*, with cut value equal to that edge's weight.
+                n − 1 max-flow calls on contracted subgraphs — each reuses previous flows, avoiding redundant computation.
               </Section>
               <Cost>
-                n − 1 max-flow calls, but <em>any</em> later pairwise min-cut query is answered in <TeX>{"O(n)"}</TeX> by tree traversal — ideal when branch-and-cut calls separation many times on similar relaxations.
+                n − 1 max-flow calls; any later pairwise query answered in <TeX>{"O(n)"}</TeX> — ideal when B&C calls separation repeatedly.
               </Cost>
             </Card>
 
             {/* ── Stoer–Wagner ─────────────────────────────────────────── */}
             <Card title="Stoer–Wagner" accent="var(--ink)">
               <Section label="Idea">
-                A purely combinatorial algorithm — <em>no max-flow at all</em>. Skips the s-t reduction entirely and works directly on the global cut by repeated graph contraction.
-              </Section>
-              <Section label="One phase">
-                <em>Maximum-adjacency ordering</em>: start from any vertex, then greedily add the vertex most strongly connected to the already-selected set. The last two vertices added — call them s and t — define the <em>cut-of-the-phase</em>: separate t from V \ {"{t}"}, with weight equal to the sum of edges incident to t.
-              </Section>
-              <Section label="Repeat & contract">
-                Record the cut-of-the-phase, then contract s and t into a single supernode and run another phase on the smaller graph. After n − 1 phases, the lightest cut-of-the-phase is the global minimum cut.
+                Purely combinatorial — <em>no max-flow at all</em>. Each phase builds a <em>maximum-adjacency ordering</em>: greedily add the vertex most connected to the selected set. The last vertex t defines the <em>cut-of-the-phase</em>; then s and t are contracted. After n − 1 phases the lightest cut found is the global minimum cut.
               </Section>
               <Cost>
-                <TeX>{"O(nm + n^2 \\log n)"}</TeX> with Fibonacci heaps. No augmenting-path machinery, easier to implement than max-flow, very competitive in practice.
+                <TeX>{"O(nm + n^2 \\log n)"}</TeX> with Fibonacci heaps. No augmenting-path machinery — easier to implement, very competitive in practice.
               </Cost>
             </Card>
 
@@ -2989,6 +2989,7 @@ function Slide10() {
                   color: "#ffffff",
                   border: "none",
                   cursor: "pointer",
+                  animation: mode === 0 ? "pulse 1.8s ease-in-out 0s infinite" : "none",
                 }}
               >
                 {mode === 0 ? "Adding demand and capacity →" : "↻ Replay"}

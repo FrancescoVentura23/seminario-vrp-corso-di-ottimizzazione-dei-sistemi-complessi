@@ -282,6 +282,7 @@ function SlideCWInitialSolution() {
                 fontFamily:"var(--font-mono)", fontSize:21, padding:"10px 18px",
                 background:"var(--accent)", color:"white", border:"none",
                 cursor:"pointer", letterSpacing:"0.04em", textTransform:"uppercase",
+                animation: !started ? "pulse 1.8s ease-in-out 0s infinite" : "none",
               }}>▶ generate</button>
               <button ref={rstRef} style={{
                 fontFamily:"var(--font-mono)", fontSize:21, padding:"10px 18px",

@@ -163,16 +163,18 @@ function SlideNodeAttributes() {
   ];
 
   const [activeIdx, setActiveIdx] = React.useState(0);
+  const [hasInteracted, setHasInteracted] = React.useState(false);
   const [animKey, setAnimKey] = React.useState(0);
   const listRef = React.useRef(null);
   const sectionRef = React.useRef(null);
 
-  // Restart zoom animation every time this slide becomes active
+  // Restart zoom animation every time this slide becomes active; reset hint on leave.
   React.useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
     const obs = new MutationObserver(() => requestAnimationFrame(() => {
       if (el.hasAttribute('data-deck-active')) setAnimKey(k => k + 1);
+      else setHasInteracted(false);
     }));
     obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
     return () => obs.disconnect();
@@ -188,7 +190,7 @@ function SlideNodeAttributes() {
       const card = e.target.closest("[data-attr-idx]");
       if (!card || !el.contains(card)) return;
       const idx = parseInt(card.getAttribute("data-attr-idx"), 10);
-      if (!Number.isNaN(idx)) setActiveIdx(idx);
+      if (!Number.isNaN(idx)) { setActiveIdx(idx); setHasInteracted(true); }
     };
     el.addEventListener("click", handler);
     return () => el.removeEventListener("click", handler);
@@ -216,21 +218,24 @@ function SlideNodeAttributes() {
                 return (
                   <div key={a.key} data-attr-idx={i} style={{
                     padding: "18px 22px",
-                    border: `1px solid ${isActive ? "var(--accent)" : "var(--line)"}`,
-                    borderLeft: `${isActive ? 4 : 1}px solid ${isActive ? "var(--accent)" : "var(--line)"}`,
+                    border: `1px solid ${isActive ? "var(--accent)" : !hasInteracted ? "var(--accent)" : "var(--line)"}`,
+                    borderLeft: `${isActive ? 4 : 1}px solid ${isActive ? "var(--accent)" : !hasInteracted ? "var(--accent)" : "var(--line)"}`,
                     background: isActive ? "rgba(107,74,245,0.08)" : "var(--paper-2)",
                     transform: isActive ? "translateX(6px)" : "translateX(0)",
                     transition: "all 420ms ease",
                     cursor: "pointer",
                     userSelect: "none",
                   }}>
-                    <div style={{ display: "flex", alignItems: "baseline", gap: 14 }}>
-                      <div style={{ fontSize: 28, fontWeight: 600, color: isActive ? "var(--accent)" : "var(--ink)" }}>
-                        {a.name}
+                    <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 14 }}>
+                      <div style={{ display: "flex", alignItems: "baseline", gap: 14 }}>
+                        <div style={{ fontSize: 28, fontWeight: 600, color: isActive ? "var(--accent)" : "var(--ink)" }}>
+                          {a.name}
+                        </div>
+                        <div style={{ fontFamily: "var(--font-mono)", fontSize: 22, color: "var(--ink-3)" }}>
+                          {a.mono}
+                        </div>
                       </div>
-                      <div style={{ fontFamily: "var(--font-mono)", fontSize: 22, color: "var(--ink-3)" }}>
-                        {a.mono}
-                      </div>
+                      {!hasInteracted && <span style={{ fontSize: 16, color: "var(--accent)", letterSpacing: "0.08em", flexShrink: 0, animation: `blink 1.4s ease-in-out ${i * 0.35}s infinite` }}>click ▸</span>}
                     </div>
                     <div style={{ fontSize: 21, color: "var(--ink-2)", marginTop: 6, lineHeight: 1.3 }}>
                       {a.desc}

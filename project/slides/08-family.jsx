@@ -924,6 +924,7 @@ function Slide22Simplify() {
   const a3lb  = arr(360, 122, 378, 198);
   const a3ld  = arr(200, 122, 75, 198);
   const a2bd  = arr(285, 237, 76, 215);
+  const abl   = arr(308, 198, 375, 122);  // B → L (forbidden)
 
   return (
     <section ref={sectionRef} className="slide" data-label="A → Ā simplification">
@@ -990,14 +991,15 @@ function Slide22Simplify() {
               <polygon points="460,276 460.3,293.0 446.1,285.7" fill={cA2}/>
               <text x={388} y={314} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA2}>A₂</text>
 
-              {/* B → L (forbidden) — blink × 3 then fadeOut, removed from DOM at phase 2 */}
+              {/* B → L (forbidden oriented arc) — blink × 3 then fadeOut, removed at phase 2 */}
               {phase < 2 && (
                 <g style={phase === 1
                   ? { animation: "blink 500ms ease-in-out 0ms 3, fadeOut 500ms ease-out 1500ms forwards" }
                   : {}}>
-                  <line x1={308} y1={198} x2={375} y2={122}
-                        stroke="#cc4444" strokeWidth={2.5} strokeDasharray="5 4"/>
-                  <text x={352} y={152} textAnchor="middle" fontFamily="var(--font-mono)"
+                  <line x1={308} y1={198} x2={abl.lx} y2={abl.ly}
+                        stroke="#cc4444" strokeWidth={2.5} strokeDasharray="5 4" strokeLinecap="round"/>
+                  <polygon points={abl.pts} fill="#cc4444"/>
+                  <text x={340} y={157} textAnchor="middle" fontFamily="var(--font-mono)"
                         fontSize={20} fill="#cc4444" fontWeight={700}>✗</text>
                 </g>
               )}

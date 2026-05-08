@@ -862,6 +862,188 @@ function Slide22Load() {
   );
 }
 
+// A → Ā simplification: animated removal of forbidden B→L arcs.
+// Inserted after Slide22Load (partial loads), becomes slide 57.
+function Slide22Simplify() {
+  const [phase, setPhase] = React.useState(0);
+  // phase 0: B→L arc visible, button pulsing
+  // phase 1: B→L arc blinking + fading (animation running)
+  // phase 2: B→L arc removed from DOM, confirmation text shown
+
+  const sectionRef = React.useRef(null);
+  const btnRef     = React.useRef(null);
+  const timerRef   = React.useRef(null);
+
+  // Reset when slide leaves view
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (!el.hasAttribute('data-deck-active')) {
+        setPhase(0);
+        if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }
+      }
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
+    return () => obs.disconnect();
+  }, []);
+
+  // Native click listener (per CLAUDE.md §1)
+  React.useEffect(() => {
+    const btn = btnRef.current;
+    if (!btn) return;
+    const handler = () => {
+      setPhase(p => {
+        if (p !== 0) return p;
+        // 3 × 500ms blink + 500ms fadeOut = 2000ms; remove from DOM 100ms after
+        timerRef.current = setTimeout(() => setPhase(2), 2100);
+        return 1;
+      });
+    };
+    btn.addEventListener('click', handler);
+    return () => btn.removeEventListener('click', handler);
+  }, []);
+
+  const cA1 = "var(--route-1)";
+  const cA2 = "var(--route-2)";
+  const cA3 = "var(--route-3)";
+
+  // Arrow helper: returns polygon pts and the correct line-body endpoint
+  const arr = (x1, y1, x2, y2, r = 3, aw = 8, al = 14) => {
+    const dx = x2-x1, dy = y2-y1, LL = Math.hypot(dx, dy);
+    const ux = dx/LL, uy = dy/LL;
+    const tx = x2 - ux*r, ty = y2 - uy*r;
+    const bx = tx - ux*al, by = ty - uy*al;
+    return {
+      pts: `${tx.toFixed(1)},${ty.toFixed(1)} ${(bx-uy*aw).toFixed(1)},${(by+ux*aw).toFixed(1)} ${(bx+uy*aw).toFixed(1)},${(by-ux*aw).toFixed(1)}`,
+      lx: bx, ly: by,
+    };
+  };
+
+  const a1dep = arr(74, 162, 190, 95);
+  const a3lb  = arr(360, 122, 378, 198);
+  const a3ld  = arr(200, 122, 75, 198);
+  const a2bd  = arr(285, 237, 76, 215);
+
+  return (
+    <section ref={sectionRef} className="slide" data-label="A → Ā simplification">
+      <SlideFrame>
+        <div className="tag">Family · VRPB · Graph simplification</div>
+        <h2 className="title" style={{ marginTop: 20 }}>
+          Arcs <TeX>{"(i\\in B,\\,j\\in L)"}</TeX> can never be used — remove them from <TeX>{"A"}</TeX>.
+        </h2>
+
+        <div style={{ marginTop: 16, display: "flex", gap: 36, flex: 1 }}>
+
+          {/* Left — arc diagram */}
+          <div style={{ flex: "0 0 54%", background: "var(--paper-2)", border: "1px solid var(--line)", padding: "14px 16px", display: "flex", flexDirection: "column" }}>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--ink-3)", letterSpacing: "0.07em", marginBottom: 8 }}>
+              {phase < 2
+                ? <><TeX>{"A"}</TeX> — complete arc set (B → L included)</>
+                : <><TeX>{"\\bar{A} = A_1 \\cup A_2 \\cup A_3"}</TeX> — B → L arcs removed</>}
+            </div>
+
+            <svg viewBox="0 0 500 295" style={{ width: "100%", flex: 1, display: "block", overflow: "visible" }}>
+
+              {/* Depot */}
+              <rect x={15} y={153} width={50} height={50} rx={3} fill="var(--depot)"/>
+              <rect x={8} y={146} width={64} height={64} rx={3} fill="none" stroke="var(--depot)" strokeWidth={2}/>
+              <text x={40} y={184} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={18} fill="var(--paper)" fontWeight={700}>0</text>
+
+              {/* L block */}
+              <rect x={190} y={42} width={205} height={80} rx={6} fill="var(--paper)" stroke={cA1} strokeWidth={2.5}/>
+              <text x={292} y={78} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={18} fill={cA1} fontWeight={700}>L</text>
+              <text x={292} y={103} textAnchor="middle" fontFamily="var(--font-display)" fontSize={17} fill="var(--ink-2)">linehauls</text>
+
+              {/* B block */}
+              <rect x={285} y={198} width={200} height={78} rx={6} fill="var(--paper)" stroke={cA2} strokeWidth={2.5}/>
+              <text x={385} y={232} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={18} fill={cA2} fontWeight={700}>B</text>
+              <text x={385} y={256} textAnchor="middle" fontFamily="var(--font-display)" fontSize={17} fill="var(--ink-2)">backhauls</text>
+
+              {/* A₁: depot → L */}
+              <line x1={74} y1={162} x2={a1dep.lx} y2={a1dep.ly} stroke={cA1} strokeWidth={2.5} strokeLinecap="round"/>
+              <polygon points={a1dep.pts} fill={cA1}/>
+              <text x={112} y={116} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA1}>A₁</text>
+
+              {/* A₁: L self-loop */}
+              <path d="M 220,42 C 240,4 345,4 365,42" fill="none" stroke={cA1} strokeWidth={2.5}/>
+              <polygon points="365,42 350.9,32.4 365.1,25.0" fill={cA1}/>
+              <text x={292} y={17} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA1}>A₁</text>
+
+              {/* A₃: L → B */}
+              <line x1={360} y1={122} x2={a3lb.lx} y2={a3lb.ly} stroke={cA3} strokeWidth={2.5} strokeLinecap="round"/>
+              <polygon points={a3lb.pts} fill={cA3}/>
+              <text x={402} y={160} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA3}>A₃</text>
+
+              {/* A₃: L → depot (dashed) */}
+              <line x1={200} y1={122} x2={a3ld.lx} y2={a3ld.ly} stroke={cA3} strokeWidth={2} strokeLinecap="round" strokeDasharray="5 4"/>
+              <polygon points={a3ld.pts} fill={cA3}/>
+              <text x={152} y={133} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA3}>A₃</text>
+
+              {/* A₂: B → depot */}
+              <line x1={285} y1={237} x2={a2bd.lx} y2={a2bd.ly} stroke={cA2} strokeWidth={2.5} strokeLinecap="round"/>
+              <polygon points={a2bd.pts} fill={cA2}/>
+              <text x={168} y={246} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA2}>A₂</text>
+
+              {/* A₂: B self-loop */}
+              <path d="M 315,276 C 335,315 440,315 460,276" fill="none" stroke={cA2} strokeWidth={2.5}/>
+              <polygon points="460,276 460.3,293.0 446.1,285.7" fill={cA2}/>
+              <text x={388} y={314} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA2}>A₂</text>
+
+              {/* B → L (forbidden) — blink × 3 then fadeOut, removed from DOM at phase 2 */}
+              {phase < 2 && (
+                <g style={phase === 1
+                  ? { animation: "blink 500ms ease-in-out 0ms 3, fadeOut 500ms ease-out 1500ms forwards" }
+                  : {}}>
+                  <line x1={308} y1={198} x2={375} y2={122}
+                        stroke="#cc4444" strokeWidth={2.5} strokeDasharray="5 4"/>
+                  <text x={352} y={152} textAnchor="middle" fontFamily="var(--font-mono)"
+                        fontSize={20} fill="#cc4444" fontWeight={700}>✗</text>
+                </g>
+              )}
+            </svg>
+          </div>
+
+          {/* Right — explanation + button */}
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 20 }}>
+
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "20px 24px", fontSize: 21, lineHeight: 1.65, color: "var(--ink-2)" }}>
+              The VRPB rule forbids visiting any <TeX>{"j\\in L"}</TeX> <em>after</em> any <TeX>{"i\\in B"}</TeX>. Arcs <TeX>{"(i\\in B,\\,j\\in L)"}</TeX> will therefore never appear in a feasible solution.<br/><br/>
+              We can remove them entirely from <TeX>{"A"}</TeX>, obtaining the restricted graph <TeX>{"\\bar{A}"}</TeX>.
+            </div>
+
+            {phase < 2 && (
+              <button ref={btnRef} style={{
+                cursor: "pointer",
+                padding: "16px 24px",
+                fontSize: 21,
+                fontFamily: "var(--font-display)",
+                background: "var(--paper)",
+                border: "2px solid var(--accent)",
+                borderRadius: 6,
+                color: "var(--accent)",
+                fontWeight: 700,
+                letterSpacing: "0.04em",
+                transition: "all 200ms ease",
+                animation: phase === 0 ? "pulse 1.8s ease-in-out 0s infinite" : "none",
+              }}>
+                Remove B → L arcs: A → Ā
+              </button>
+            )}
+
+            {phase === 2 && (
+              <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", borderLeft: "4px solid var(--accent)", padding: "16px 20px", fontSize: 21, lineHeight: 1.5, color: "var(--ink-2)" }}>
+                <TeX>{"\\bar{A} = A_1 \\cup A_2 \\cup A_3"}</TeX> — precedence is now encoded <em>structurally</em> by the graph, not as an explicit constraint.
+              </div>
+            )}
+
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
 
 function Slide22LoadB() {
   const C = 10, dL1 = 4, dL2 = 3, dB1 = 5;
@@ -2287,6 +2469,6 @@ function Slide23B() {
 
 Object.assign(window, {
   Slide19, Slide20, Slide21, Slide21B, Slide21C, Slide21D,
-  Slide22Intro, Slide22Load, Slide22LoadB, Slide22, Slide22B, Slide22Form,
+  Slide22Intro, Slide22Load, Slide22Simplify, Slide22LoadB, Slide22, Slide22B, Slide22Form,
   Slide23Intro, Slide23Load, Slide23Req, Slide23, Slide23B,
 });

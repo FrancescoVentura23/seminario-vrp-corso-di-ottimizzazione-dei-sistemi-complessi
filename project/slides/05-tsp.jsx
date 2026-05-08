@@ -1785,10 +1785,10 @@ function SlideTSPKeyIdentity() {
             {/* Vertex selector buttons */}
             <div style={{ display: "flex", gap: 10 }}>
               <div data-vertex="v1" style={btnStyle('v1')}>
-                i = v₁{activeVertex === null && <span style={{ fontSize: 14, color: "var(--accent)", animation: "blink 1.4s ease-in-out 0s infinite" }}>▸</span>}
+                i = v₁{activeVertex === null && <span style={{ fontSize: 16, color: "var(--accent)", letterSpacing: "0.08em", animation: "blink 1.4s ease-in-out 0s infinite" }}>click ▸</span>}
               </div>
               <div data-vertex="v0" style={btnStyle('v0')}>
-                i = v₀{activeVertex === null && <span style={{ fontSize: 14, color: "var(--accent)", animation: "blink 1.4s ease-in-out 0.7s infinite" }}>▸</span>}
+                i = v₀{activeVertex === null && <span style={{ fontSize: 16, color: "var(--accent)", letterSpacing: "0.08em", animation: "blink 1.4s ease-in-out 0.7s infinite" }}>click ▸</span>}
               </div>
             </div>
 

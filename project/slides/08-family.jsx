@@ -1286,14 +1286,23 @@ function Slide22Form() {
   const cA2 = "var(--route-2)";   // A₂: B → B/depot
   const cA3 = "var(--route-3)";   // A₃: L → B/depot (interface)
 
-  // Arrowhead polygon for a straight segment
-  const ah = (x1, y1, x2, y2, r = 10, aw = 8, al = 15) => {
-    const dx = x2-x1, dy = y2-y1, L = Math.hypot(dx, dy);
-    const ux = dx/L, uy = dy/L;
-    const tx = x2 - ux*r, ty = y2 - uy*r;
-    const bx = tx - ux*al, by = ty - uy*al;
-    return `${tx.toFixed(1)},${ty.toFixed(1)} ${(bx-uy*aw).toFixed(1)},${(by+ux*aw).toFixed(1)} ${(bx+uy*aw).toFixed(1)},${(by-ux*aw).toFixed(1)}`;
+  // Returns { pts, lx, ly } — the polygon points and the correct line endpoint.
+  // The line body must end at (lx, ly) so it doesn't extend past the arrowhead tip.
+  const arr = (x1, y1, x2, y2, r = 3, aw = 8, al = 14) => {
+    const dx = x2-x1, dy = y2-y1, LL = Math.hypot(dx, dy);
+    const ux = dx/LL, uy = dy/LL;
+    const tx = x2 - ux*r, ty = y2 - uy*r;   // tip (r px before box edge)
+    const bx = tx - ux*al, by = ty - uy*al;  // base = where line body ends
+    return {
+      pts: `${tx.toFixed(1)},${ty.toFixed(1)} ${(bx-uy*aw).toFixed(1)},${(by+ux*aw).toFixed(1)} ${(bx+uy*aw).toFixed(1)},${(by-ux*aw).toFixed(1)}`,
+      lx: bx, ly: by,
+    };
   };
+
+  const a1dep = arr(74, 162, 190, 95);    // A₁: depot → L
+  const a3lb  = arr(360, 122, 378, 198);  // A₃: L → B
+  const a3ld  = arr(200, 122, 75, 198);   // A₃: L → depot (dashed)
+  const a2bd  = arr(285, 237, 76, 215);   // A₂: B → depot
 
   return (
     <section className="slide" data-label="VRPB formulation P1">
@@ -1336,9 +1345,9 @@ function Slide22Form() {
                 <text x={385} y={256} textAnchor="middle" fontFamily="var(--font-display)" fontSize={17} fill="var(--ink-2)">backhauls</text>
 
                 {/* A₁: depot → L */}
-                <line x1={74} y1={162} x2={190} y2={95} stroke={cA1} strokeWidth={2.5} strokeLinecap="round"/>
-                <polygon points={ah(74, 162, 190, 95, 8)} fill={cA1}/>
-                <text x={115} y={117} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA1}>A₁</text>
+                <line x1={74} y1={162} x2={a1dep.lx} y2={a1dep.ly} stroke={cA1} strokeWidth={2.5} strokeLinecap="round"/>
+                <polygon points={a1dep.pts} fill={cA1}/>
+                <text x={112} y={116} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA1}>A₁</text>
 
                 {/* A₁: L self-loop (above block) */}
                 {/* Path M 220,42 C 240,4 345,4 365,42; tangent at end ≈ (0.466, 0.885) */}
@@ -1347,19 +1356,19 @@ function Slide22Form() {
                 <text x={292} y={17} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA1}>A₁</text>
 
                 {/* A₃: L → B */}
-                <line x1={360} y1={122} x2={378} y2={198} stroke={cA3} strokeWidth={2.5} strokeLinecap="round"/>
-                <polygon points={ah(360, 122, 378, 198, 8)} fill={cA3}/>
-                <text x={398} y={163} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA3}>A₃</text>
+                <line x1={360} y1={122} x2={a3lb.lx} y2={a3lb.ly} stroke={cA3} strokeWidth={2.5} strokeLinecap="round"/>
+                <polygon points={a3lb.pts} fill={cA3}/>
+                <text x={402} y={160} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA3}>A₃</text>
 
                 {/* A₃: L → depot (dashed — linehaul-only route returns) */}
-                <line x1={200} y1={122} x2={75} y2={198} stroke={cA3} strokeWidth={2} strokeLinecap="round" strokeDasharray="5 4"/>
-                <polygon points={ah(200, 122, 75, 198, 8)} fill={cA3}/>
-                <text x={116} y={183} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA3}>A₃</text>
+                <line x1={200} y1={122} x2={a3ld.lx} y2={a3ld.ly} stroke={cA3} strokeWidth={2} strokeLinecap="round" strokeDasharray="5 4"/>
+                <polygon points={a3ld.pts} fill={cA3}/>
+                <text x={152} y={133} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA3}>A₃</text>
 
                 {/* A₂: B → depot */}
-                <line x1={285} y1={237} x2={76} y2={215} stroke={cA2} strokeWidth={2.5} strokeLinecap="round"/>
-                <polygon points={ah(285, 237, 76, 215, 8)} fill={cA2}/>
-                <text x={168} y={244} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA2}>A₂</text>
+                <line x1={285} y1={237} x2={a2bd.lx} y2={a2bd.ly} stroke={cA2} strokeWidth={2.5} strokeLinecap="round"/>
+                <polygon points={a2bd.pts} fill={cA2}/>
+                <text x={168} y={246} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA2}>A₂</text>
 
                 {/* A₂: B self-loop (below block) */}
                 {/* Path M 315,276 C 335,315 440,315 460,276; tangent at end ≈ (0.456,-0.890) */}

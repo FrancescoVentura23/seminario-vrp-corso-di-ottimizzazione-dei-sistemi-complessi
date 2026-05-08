@@ -976,8 +976,8 @@ function Slide22Simplify() {
               <polygon points={a3lb.pts} fill={cA3}/>
               <text x={402} y={160} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA3}>A₃</text>
 
-              {/* A₃: L → depot (dashed) */}
-              <line x1={200} y1={122} x2={a3ld.lx} y2={a3ld.ly} stroke={cA3} strokeWidth={2} strokeLinecap="round" strokeDasharray="5 4"/>
+              {/* A₃: L → depot */}
+              <line x1={200} y1={122} x2={a3ld.lx} y2={a3ld.ly} stroke={cA3} strokeWidth={2.5} strokeLinecap="round"/>
               <polygon points={a3ld.pts} fill={cA3}/>
               <text x={152} y={133} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA3}>A₃</text>
 
@@ -1501,7 +1501,9 @@ function Slide22Form() {
 
             <div style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--ink-3)", letterSpacing: "0.07em", marginBottom: 10 }}>MODEL P1 — TOTH &amp; VIGO (2002)</div>
 
-            <TeX display>{"\\min\\displaystyle\\sum_{(i,j)\\in\\bar{A}} c_{ij}\\, x_{ij}"}</TeX>
+            <div style={{ fontSize: 30, marginBottom: 4 }}>
+              <TeX display>{"\\min \\displaystyle\\sum_{(i,j)\\in\\bar{A}} c_{ij}\\, x_{ij}"}</TeX>
+            </div>
 
             <div style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--ink-3)", margin: "10px 0 8px" }}>subject to</div>
 

@@ -254,8 +254,10 @@ function Slide07() {
             fontFamily: "var(--font-mono)", fontSize: 18, letterSpacing: "0.06em",
             cursor: "pointer", textTransform: "uppercase",
             visibility: phase === 0 ? "visible" : "hidden",
-            animation: phase === 0 ? "pulse 1.8s ease-in-out 0s infinite" : "none",
-          }}>Network collapsing →</button>
+          }}>
+            Network collapsing →
+            {phase === 0 && <span style={{ marginLeft: 10, fontSize: 15, color: "#fff", letterSpacing: "0.08em", animation: "blink 1.4s ease-in-out 0s infinite" }}>click</span>}
+          </button>
 
           <svg viewBox="0 0 1400 500" style={{ width: "100%", height: "auto", display: "block" }}>
             <defs>

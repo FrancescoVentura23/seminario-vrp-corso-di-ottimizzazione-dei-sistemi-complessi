@@ -171,6 +171,62 @@ function ClarkeWrightDemo() {
               }).filter(Boolean);
             })}
 
+            {/* Current pair arc c(i,j) — shown only for the pair being evaluated */}
+            {(() => {
+              const curPair = step > 0 && step <= savings.length ? savings[step - 1] : null;
+              if (!curPair) return null;
+              const a = custMap.get(curPair.i), b = custMap.get(curPair.j);
+              const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+              const dx = b.x - a.x, dy = b.y - a.y, L = Math.hypot(dx, dy);
+              const ox = -dy/L * 14, oy = dx/L * 14;
+              return (
+                <g>
+                  <line x1={a.x} y1={a.y} x2={b.x} y2={b.y}
+                        stroke="var(--accent-2)" strokeWidth={2.2} strokeDasharray="6 4" opacity={0.8}/>
+                  <rect x={mx+ox-22} y={my+oy-9} width={44} height={16} rx={3} fill="var(--paper)" opacity={0.93}/>
+                  <text x={mx+ox} y={my+oy+5} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={12}
+                        fill="var(--accent-2)" fontWeight={700}>{L.toFixed(0)}</text>
+                </g>
+              );
+            })()}
+
+            {/* Cost labels on depot spokes (unmerged customers) */}
+            {sim.routes.filter(r => r.custs.length === 1).map(r => {
+              const c = custMap.get(r.custs[0]);
+              const mx = (CW_DEPOT.x + c.x) / 2;
+              const my = (CW_DEPOT.y + c.y) / 2;
+              const dx = c.x - CW_DEPOT.x, dy = c.y - CW_DEPOT.y;
+              const L = Math.hypot(dx, dy);
+              const ox = -dy/L * 14, oy = dx/L * 14;
+              const label = L.toFixed(0);
+              return (
+                <g key={`cl-spoke-${r.id}`}>
+                  <rect x={mx+ox-22} y={my+oy-9} width={44} height={16} rx={3} fill="var(--paper)" opacity={0.92}/>
+                  <text x={mx+ox} y={my+oy+5} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={12} fill="var(--ink-3)">{label}</text>
+                </g>
+              );
+            })}
+
+            {/* Cost labels on merged route arcs */}
+            {sim.routes.filter(r => r.custs.length > 1).flatMap((r, ri) => {
+              const nodes = [CW_DEPOT, ...r.custs.map(id => custMap.get(id)), CW_DEPOT];
+              return nodes.slice(0, -1).map((a, i) => {
+                const b = nodes[i+1];
+                const mx = (a.x + b.x) / 2;
+                const my = (a.y + b.y) / 2;
+                const dx = b.x - a.x, dy = b.y - a.y;
+                const L = Math.hypot(dx, dy);
+                const ox = -dy/L * 14, oy = dx/L * 14;
+                const label = L.toFixed(0);
+                return (
+                  <g key={`cl-seg-${ri}-${i}`}>
+                    <rect x={mx+ox-22} y={my+oy-9} width={44} height={16} rx={3} fill="var(--paper)" opacity={0.92}/>
+                    <text x={mx+ox} y={my+oy+5} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={12} fill="var(--ink-3)">{label}</text>
+                  </g>
+                );
+              });
+            })}
+
             {/* Highlight last merge edge */}
             {hl && (() => {
               const a = custMap.get(hl.i), b = custMap.get(hl.j);

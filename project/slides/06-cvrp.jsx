@@ -556,7 +556,7 @@ function Slide15Cut() {
   // V \ S — depot + 2 other customers (any demand, irrelevant to r(S)).
   const depot = { x: 90, y: 270 };
   const others = [
-    { id: 8, x: 230, y: 140, d: 4 },
+    { id: 8, x: 330, y: 50, d: 4 },
     { id: 9, x: 230, y: 410, d: 6 },
   ];
 

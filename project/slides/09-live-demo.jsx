@@ -331,13 +331,14 @@ function Slide25() {
               svg: (
                 <svg viewBox="0 0 600 400" style={{ width: "100%", height: 330, display: "block" }}>
                   {(() => {
-                    // Four segments: depot→i, i→depot, depot→j, j→depot.
+                    // Four segments: depot→i, i→depot (route-1), depot→j, j→depot (route-2).
                     // Bodies first, arrowheads second (gotcha #10).
                     const segs = [[300,320,150,120],[150,120,300,320],[300,320,470,120],[470,120,300,320]];
+                    const cols = ["var(--route-1)","var(--route-1)","var(--route-2)","var(--route-2)"];
                     const arcs = segs.map(([x1,y1,x2,y2]) => mkArc25(x1,y1,x2,y2));
                     return <>
-                      {arcs.map((a,k) => <path key={`b-${k}`} d={a.d} fill="none" stroke="var(--route-1)" strokeWidth={3.5} strokeDasharray="6 6"/>)}
-                      {arcs.map((a,k) => <polygon key={`h-${k}`} points={a.pts} fill="var(--route-1)"/>)}
+                      {arcs.map((a,k) => <path key={`b-${k}`} d={a.d} fill="none" stroke={cols[k]} strokeWidth={3.5}/>)}
+                      {arcs.map((a,k) => <polygon key={`h-${k}`} points={a.pts} fill={cols[k]}/>)}
                     </>;
                   })()}
                   {/* Depot rendered after arcs so it covers any arrowheads pointing into it */}
@@ -350,16 +351,16 @@ function Slide25() {
                   <text x={470} y={127} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fontWeight={600}>j</text>
                 </svg>
               ),
-              cost: <>c(0,i) + c(i,0) + c(0,j) + c(j,0) = <b>2 c(0,i) + 2 c(0,j)</b></>
+              cost: <TeX>{"c(0,i) + c(i,0) + c(0,j) + c(j,0)"}</TeX>
             },
             {
               t: "After merging",
               desc: "One single route visiting i then j: 0 → i → j → 0.",
               svg: (
                 <svg viewBox="0 0 600 400" style={{ width: "100%", height: 330, display: "block" }}>
-                  <polyline points="300,320 150,120 470,120 300,320" fill="none" stroke="var(--route-2)" strokeWidth={4}/>
+                  <polyline points="300,320 150,120 470,120 300,320" fill="none" stroke="var(--route-3)" strokeWidth={4}/>
                   {(() => {
-                    // Single merged route 0 → i → j → 0
+                    // Single merged route 0 → i → j → 0 (route-3)
                     const edges = [[300,320,150,120],[150,120,470,120],[470,120,300,320]];
                     return edges.map(([x1,y1,x2,y2], k) => {
                       const dx=x2-x1, dy=y2-y1, L=Math.hypot(dx,dy);
@@ -368,7 +369,7 @@ function Slide25() {
                       const tipX=x2-ux*back, tipY=y2-uy*back;
                       const bx=tipX-ux*al, by=tipY-uy*al;
                       const pts=`${tipX.toFixed(1)},${tipY.toFixed(1)} ${(bx-uy*aw).toFixed(1)},${(by+ux*aw).toFixed(1)} ${(bx+uy*aw).toFixed(1)},${(by-ux*aw).toFixed(1)}`;
-                      return <polygon key={k} points={pts} fill="var(--route-2)"/>;
+                      return <polygon key={k} points={pts} fill="var(--route-3)"/>;
                     });
                   })()}
                   {/* Depot rendered after arcs so it covers any arrowheads pointing into it */}
@@ -381,7 +382,7 @@ function Slide25() {
                   <text x={470} y={127} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={22} fontWeight={600}>j</text>
                 </svg>
               ),
-              cost: <>c(0,i) + c(i,j) + c(j,0)</>
+              cost: <TeX>{"c(0,i) + c(i,j) + c(j,0)"}</TeX>
             },
           ].map((c, i) => (
             <div key={i} style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "16px 20px", display: "flex", flexDirection: "column", gap: 8 }}>
@@ -393,9 +394,29 @@ function Slide25() {
           ))}
         </div>
 
-        <div style={{ marginTop: 16, background: "var(--ink)", color: "var(--paper)", padding: "14px 24px", fontFamily: "var(--font-mono)", fontSize: 21, lineHeight: 1.65 }}>
-          <div><span style={{ opacity: 0.55 }}>saving&nbsp;&nbsp;</span>s(i, j) &nbsp;=&nbsp; <span style={{ color: "var(--accent-2)" }}>[2 c(0,i) + 2 c(0,j)]</span> &nbsp;−&nbsp; <span style={{ color: "var(--accent-2)" }}>[c(0,i) + c(i,j) + c(j,0)]</span> &nbsp;=&nbsp; <span style={{ color: "var(--accent-2)" }}>c(0,i) + c(0,j) − c(i,j)</span></div>
-          <div style={{ opacity: 0.65, fontSize: 18 }}>→ merge the pair with the largest positive saving that remains feasible.</div>
+        <div style={{ marginTop: 16, background: "var(--ink)", color: "var(--paper)", padding: "14px 24px", lineHeight: 1.75 }}>
+          {/* General formula (valid for any cost matrix) */}
+          <div style={{ display: "flex", alignItems: "baseline", flexWrap: "wrap", gap: "0 2px", fontSize: 21 }}>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 17, opacity: 0.55, marginRight: 10 }}>saving</span>
+            <TeX>{"s(i,j) \\;=\\;"}</TeX>
+            <span style={{ color: "var(--accent-2)" }}><TeX>{"\\bigl[c(0,i) + c(i,0) + c(0,j) + c(j,0)\\bigr]"}</TeX></span>
+            <TeX>{"\\;-\\;"}</TeX>
+            <span style={{ color: "var(--accent-2)" }}><TeX>{"\\bigl[c(0,i) + c(i,j) + c(j,0)\\bigr]"}</TeX></span>
+            <TeX>{"\\;=\\;"}</TeX>
+            <span style={{ color: "var(--accent-2)" }}><TeX>{"c(i,0) + c(0,j) - c(i,j)"}</TeX></span>
+          </div>
+          {/* Symmetric simplification */}
+          <div style={{ display: "flex", alignItems: "baseline", flexWrap: "wrap", gap: "0 6px", fontSize: 19, marginTop: 5 }}>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--accent-2)", opacity: 0.8, marginRight: 4 }}>symmetric</span>
+            <TeX>{"c(i,0) = c(0,i)"}</TeX>
+            <span style={{ fontFamily: "var(--font-mono)", opacity: 0.55 }}>⟹</span>
+            <span style={{ color: "var(--accent-2)" }}><TeX>{"s(i,j) = c(0,i) + c(0,j) - c(i,j)"}</TeX></span>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 14, opacity: 0.45 }}>(Euclidean / undirected — standard CW)</span>
+          </div>
+          <div style={{ fontFamily: "var(--font-mono)", opacity: 0.45, fontSize: 15, marginTop: 3, fontStyle: "italic" }}>
+            ↳ assumes no one-way streets: road cost is the same in both directions, so the trip <em>to</em> the depot costs the same as the trip <em>from</em> it.
+          </div>
+          <div style={{ fontFamily: "var(--font-mono)", opacity: 0.65, fontSize: 17, marginTop: 5 }}>→ merge the pair with the largest positive saving that remains feasible.</div>
         </div>
       </SlideFrame>
     </section>

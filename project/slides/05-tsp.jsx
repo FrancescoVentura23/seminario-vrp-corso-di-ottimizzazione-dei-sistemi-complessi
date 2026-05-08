@@ -112,10 +112,10 @@ function Slide09() {
                 border: "none",
                 cursor: "pointer",
                 visibility: showRoute ? "hidden" : "visible",
-                animation: !showRoute ? "pulse 1.8s ease-in-out 0s infinite" : "none",
               }}
             >
               find a possible solution
+              {!showRoute && <span style={{ marginLeft: 10, fontSize: 13, color: "#fff", letterSpacing: "0.08em", animation: "blink 1.4s ease-in-out 0s infinite" }}>click</span>}
             </button>
 
             {/* Route overlay — rendered BEFORE VRPGraph so nodes sit on top */}
@@ -881,66 +881,65 @@ function SlideTSPDFJ() {
                     fontStyle="italic" fontSize={40} fill="var(--accent-2)">V \ S</text>
 
               {/* Cycle 1 — arc v₁→v₂ (index 1) blinks, then fades out.
-                  All delays include a 1500ms pause after the click, to give the viewer
-                  time to register which button was pressed before the animation begins.
                   Packing: blink at 1500ms, fade at 2800ms.
-                  Cut:     crossing arcs appear first, then this blinks at 3700ms and fades at 5000ms. */}
+                  Cut:     v₅→v₂ appears first (300ms), then this blinks at 1500ms, fades at 2700ms. */}
               {cycle1.map((e, i) => {
                 const s = segment(group1[e[0]], group1[e[1]]);
                 const animateHide = (isPacking || isCut) && i === 1;
-                const blinkDelay = isPacking ? 1500 : 3700;
-                const fadeDelay  = isPacking ? 2800 : 5000;
+                const blinkDelay = isPacking ? 1500 : 1500;
+                const fadeDelay  = isPacking ? 2800 : 2700;
                 return <line key={`c1-${i}-${animKey}`} {...s}
                              stroke="var(--accent)" strokeWidth={4} strokeLinecap="butt"
                              markerEnd="url(#arrow-accent-dfj)"
                              style={animateHide ? {
-                               animation: `fadeOut 450ms ease-out ${fadeDelay}ms both, blink 400ms ease-in-out ${blinkDelay}ms 3`,
+                               animation: `fadeOut 450ms ease-out ${fadeDelay}ms forwards, blink 400ms ease-in-out ${blinkDelay}ms 3`,
                              } : {}}/>;
               })}
               {/* Cycle 2 — arc v₅→v₃ (index 2):
-                  - on `cut` blinks at 3700ms (before crossings appear);
-                  - on `packing` blinks AFTER the two black crossing arcs are drawn
-                    (last arrow fadeUp ends ~5430ms → blink at 5600ms). */}
+                  Packing: blinks AFTER the two black crossing arcs (last fadeUp ~5430ms → blink 5600ms).
+                  Cut:     blinks together with v₁→v₂ at 1500ms, fades at 2700ms. */}
               {cycle2.map((e, i) => {
                 const s = segment(group2[e[0]], group2[e[1]]);
                 const animateHide = (isPacking || isCut) && i === 2;
-                const blinkDelay = isPacking ? 5600 : 3700;
-                const fadeDelay  = isPacking ? 6900 : 5000;
+                const blinkDelay = isPacking ? 5600 : 1500;
+                const fadeDelay  = isPacking ? 6900 : 2700;
                 return <line key={`c2-${i}-${animKey}`} {...s}
                              stroke="var(--accent-2)" strokeWidth={4} strokeLinecap="butt"
                              markerEnd="url(#arrow-accent2-dfj)"
                              style={animateHide ? {
-                               animation: `fadeOut 450ms ease-out ${fadeDelay}ms both, blink 400ms ease-in-out ${blinkDelay}ms 3`,
+                               animation: `fadeOut 450ms ease-out ${fadeDelay}ms forwards, blink 400ms ease-in-out ${blinkDelay}ms 3`,
                              } : {}}/>;
               })}
 
-              {/* Crossing arcs v₁→v₃ and v₂→v₅ — appear for both forms but with different ordering.
-                  Packing: crossings appear last (after callout).
-                  Cut:     crossings appear first (after the 1.5s initial pause). */}
+              {/* Crossing arcs — different sequence for packing vs cut.
+                  Packing: both appear together after callout (4100ms / 4400ms).
+                  Cut:     v₅→v₂ appears first (300ms), v₁→v₃ appears after fade (3300ms). */}
               {(isPacking || isCut) && (
                 <g key={`cross-${animKey}`}>
-                  <line {...crossV1V3}
-                        stroke="var(--ink)" strokeWidth={4} strokeLinecap="butt"
-                        style={{
-                          "--len": lenV1V3,
-                          strokeDasharray: lenV1V3,
-                          animation: "drawPath 900ms both ease-out",
-                          animationDelay: isPacking ? "4100ms" : "1500ms",
-                        }}/>
+                  {/* v₅→v₂: cut=300ms, packing=4400ms */}
                   <line {...crossV2V5}
                         stroke="var(--ink)" strokeWidth={4} strokeLinecap="butt"
                         style={{
                           "--len": lenV2V5,
                           strokeDasharray: lenV2V5,
                           animation: "drawPath 900ms both ease-out",
-                          animationDelay: isPacking ? "4400ms" : "1800ms",
+                          animationDelay: isPacking ? "4400ms" : "300ms",
                         }}/>
-                  <polygon points={crossArrowPts(crossV1V3, ux13, uy13)} fill="var(--ink)"
-                           style={{ opacity: 0, animation: "fadeUp 150ms both ease-out",
-                                    animationDelay: isPacking ? "4980ms" : "2380ms" }}/>
+                  {/* v₁→v₃: cut=3300ms (after fade), packing=4100ms */}
+                  <line {...crossV1V3}
+                        stroke="var(--ink)" strokeWidth={4} strokeLinecap="butt"
+                        style={{
+                          "--len": lenV1V3,
+                          strokeDasharray: lenV1V3,
+                          animation: "drawPath 900ms both ease-out",
+                          animationDelay: isPacking ? "4100ms" : "3300ms",
+                        }}/>
                   <polygon points={crossArrowPts(crossV2V5, ux25, uy25)} fill="var(--ink)"
                            style={{ opacity: 0, animation: "fadeUp 150ms both ease-out",
-                                    animationDelay: isPacking ? "5280ms" : "2680ms" }}/>
+                                    animationDelay: isPacking ? "5280ms" : "1180ms" }}/>
+                  <polygon points={crossArrowPts(crossV1V3, ux13, uy13)} fill="var(--ink)"
+                           style={{ opacity: 0, animation: "fadeUp 150ms both ease-out",
+                                    animationDelay: isPacking ? "4980ms" : "4180ms" }}/>
                 </g>
               )}
 
@@ -973,7 +972,7 @@ function SlideTSPDFJ() {
                                style={{
                                  opacity: 0,
                                  animation: "fadeUp 600ms both ease-out",
-                                 animationDelay: isPacking ? "3400ms" : "2900ms",
+                                 animationDelay: isPacking ? "3400ms" : "4600ms",
                                  overflow: "visible",
                                }}>
                   <div xmlns="http://www.w3.org/1999/xhtml" style={{
@@ -2076,7 +2075,7 @@ function SlideTSPMinCut() {
         <div style={{ marginTop: 22, display: "grid", gridTemplateColumns: "1.35fr 0.9fr", gap: 28, flex: 1, alignItems: "stretch", minHeight: 0 }}>
 
           {/* -------- Left column: the equivalence -------- */}
-          <div ref={btnsRef} style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+          <div ref={btnsRef} style={{ display: "flex", flexDirection: "column", gap: 9, justifyContent: "center" }}>
             <div className="lede" style={{ fontSize: 28, lineHeight: 1.3 }}>
               Read <TeX>{"x^*(\\delta(S))"}</TeX> as the <em>total weight</em> on the boundary — the sum <TeX>{"\\sum_{(i,j)\\in\\delta(S)} x^*_{ij}"}</TeX>, <em>not</em> a count of arcs.
             </div>
@@ -2989,10 +2988,10 @@ function Slide10() {
                   color: "#ffffff",
                   border: "none",
                   cursor: "pointer",
-                  animation: mode === 0 ? "pulse 1.8s ease-in-out 0s infinite" : "none",
                 }}
               >
                 {mode === 0 ? "Adding demand and capacity →" : "↻ Replay"}
+                {mode === 0 && <span style={{ marginLeft: 10, fontSize: 12, color: "#fff", letterSpacing: "0.08em", animation: "blink 1.4s ease-in-out 0s infinite" }}>click</span>}
               </button>
             </div>
 

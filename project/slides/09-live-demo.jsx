@@ -253,14 +253,14 @@ function SlideCWInitialSolution() {
               {"(0, i, 0)   i = 1 … 9"}
             </div>
 
-            <div style={{ display:"flex", flexDirection:"column", gap:5, flex:1 }}>
+            <div style={{ display:"flex", flexDirection:"column", gap:8, flex:1 }}>
               {CUSTS.map((c, i) => {
                 const itemDelay = i*GAP + RET + DUR - 100;
                 const sharedStyle = {
-                  display:"flex", alignItems:"center", gap:10,
-                  fontFamily:"var(--font-mono)", fontSize:19, color:"var(--ink-2)",
+                  display:"flex", alignItems:"center", gap:14,
+                  fontFamily:"var(--font-mono)", fontSize:24, color:"var(--ink-2)",
                 };
-                const dot = <div style={{ width:12, height:12, borderRadius:"50%", background:COLORS[i], flexShrink:0 }}/>;
+                const dot = <div style={{ width:14, height:14, borderRadius:"50%", background:COLORS[i], flexShrink:0 }}/>;
                 const label = <span>0 → c{c.id} → 0 &nbsp;<span style={{ color:"var(--ink-3)" }}>demand {c.d}</span></span>;
                 return started ? (
                   <div key={"on-"+i+"-"+animKey}
@@ -449,4 +449,72 @@ function Slide26() {
 }
 
 
-Object.assign(window, { Slide24, SlideClarkeWrightIntro, SlideCWInitialSolution, Slide25, Slide26 });
+function SlideCWProsCons() {
+  const pros = [
+    { head: "O(n² log n)", body: "Computing and sorting n² savings dominates — very fast even for hundreds of customers." },
+    { head: "K is a result, not an input", body: "Number of vehicles emerges from the merges; no need to fix it in advance." },
+    { head: "Greedy but principled", body: "Each merge is justified by a positive saving — the algorithm never wastes a move." },
+    { head: "Easy to extend", body: "Time windows, backhauls, open routes: add a feasibility check inside the merge test, nothing else changes." },
+  ];
+  const cons = [
+    { head: "No guarantee of optimality", body: "Greedy and irrevocable — once merged, two routes are never split again." },
+    { head: "~10–15% above optimal", body: "On benchmark instances (Toth & Vigo, 2002, Table 5.1). Competitive only after post-optimisation." },
+    { head: "Weak late-stage routes", body: "Good routes form early; the final routes tend to be circumferential and wasteful." },
+    { head: "Symmetric bias", body: "Quality degrades noticeably on directed / asymmetric instances." },
+  ];
+
+  const col = (items, accent) => (
+    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      {items.map((it, i) => (
+        <div key={i} style={{ background: "var(--paper-2)", border: "1px solid var(--line)",
+                              borderLeft: `4px solid ${accent}`, padding: "14px 20px" }}>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: 23, fontWeight: 700,
+                        color: accent, marginBottom: 6 }}>{it.head}</div>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: 20, color: "var(--ink-2)",
+                        lineHeight: 1.45 }}>{it.body}</div>
+        </div>
+      ))}
+    </div>
+  );
+
+  return (
+    <section className="slide" data-label="Clarke-Wright — pros and cons">
+      <SlideFrame>
+        <div className="tag">Clarke–Wright · assessment</div>
+        <h2 className="title" style={{ marginTop: 20 }}>Fast, simple — but how good?</h2>
+
+        <div style={{ marginTop: 24, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 28, flex: 1, minHeight: 0 }}>
+
+          {/* PROS */}
+          <div>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 18, letterSpacing: "0.1em",
+                          color: "var(--ink-3)", marginBottom: 12 }}>STRENGTHS</div>
+            {col(pros, "#3a9e6f")}
+          </div>
+
+          {/* CONS */}
+          <div>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 18, letterSpacing: "0.1em",
+                          color: "var(--ink-3)", marginBottom: 12 }}>WEAKNESSES</div>
+            {col(cons, "#c0392b")}
+          </div>
+        </div>
+
+        {/* Bottom banner */}
+        <div style={{ marginTop: 20, background: "var(--ink)", color: "var(--paper)",
+                      padding: "16px 28px", display: "flex", alignItems: "baseline",
+                      gap: 24, fontFamily: "var(--font-mono)", flexWrap: "wrap" }}>
+          <span style={{ fontSize: 17, opacity: 0.55, letterSpacing: "0.08em", flexShrink: 0 }}>BOTTOM LINE</span>
+          <span style={{ fontSize: 21 }}>
+            Alone: <span style={{ color: "var(--accent-2)", fontWeight: 700 }}>~12% above optimal.</span>
+            {"  "}With 3-opt post-processing: <span style={{ color: "var(--accent-2)", fontWeight: 700 }}>~7%</span> — still in milliseconds.
+            {"  "}Best metaheuristics reach <span style={{ color: "var(--accent-2)", fontWeight: 700 }}>1–3%</span>, but take orders of magnitude longer.
+          </span>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
+Object.assign(window, { Slide24, SlideClarkeWrightIntro, SlideCWInitialSolution, Slide25, Slide26, SlideCWProsCons });

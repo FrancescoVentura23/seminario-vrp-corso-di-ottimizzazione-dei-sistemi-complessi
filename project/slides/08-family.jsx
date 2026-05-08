@@ -923,6 +923,7 @@ function Slide22Simplify() {
   const a1dep = arr(74, 162, 190, 95);
   const a3lb  = arr(325, 122, 308, 198);  // A₃: L → B (left lane)
   const a3ld  = arr(200, 122, 75, 198);
+  const a3db  = arr(74, 178, 285, 218);   // A₃: depot → B
   const a2bd  = arr(285, 237, 76, 215);
   const abl   = arr(390, 198, 390, 122, 0);  // B → L forbidden (right lane, tip on L bottom edge)
 
@@ -981,6 +982,11 @@ function Slide22Simplify() {
               <polygon points={a3ld.pts} fill={cA3}/>
               <text x={152} y={133} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA3}>A₃</text>
 
+              {/* A₃: depot → B */}
+              <line x1={74} y1={178} x2={a3db.lx} y2={a3db.ly} stroke={cA3} strokeWidth={2.5} strokeLinecap="round"/>
+              <polygon points={a3db.pts} fill={cA3}/>
+              <text x={168} y={188} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA3}>A₃</text>
+
               {/* A₂: B → depot */}
               <line x1={285} y1={237} x2={a2bd.lx} y2={a2bd.ly} stroke={cA2} strokeWidth={2.5} strokeLinecap="round"/>
               <polygon points={a2bd.pts} fill={cA2}/>
@@ -1017,7 +1023,7 @@ function Slide22Simplify() {
               {[
                 { color: "var(--route-1)", label: <><TeX>{"A_1"}</TeX></>, desc: <>depot <TeX>{"\\to"}</TeX> L and L <TeX>{"\\to"}</TeX> L &nbsp;—&nbsp; linehaul arcs</> },
                 { color: "var(--route-2)", label: <><TeX>{"A_2"}</TeX></>, desc: <>B <TeX>{"\\to"}</TeX> B and B <TeX>{"\\to"}</TeX> depot &nbsp;—&nbsp; backhaul arcs</> },
-                { color: "var(--route-3)", label: <><TeX>{"A_3"}</TeX></>, desc: <>L <TeX>{"\\to"}</TeX> B and L <TeX>{"\\to"}</TeX> depot &nbsp;—&nbsp; transition arcs</> },
+                { color: "var(--route-3)", label: <><TeX>{"A_3"}</TeX></>, desc: <>L <TeX>{"\\to"}</TeX> B, L <TeX>{"\\to"}</TeX> depot and depot <TeX>{"\\to"}</TeX> B &nbsp;—&nbsp; transition arcs</> },
                 { color: "#cc4444",        label: <>B <TeX>{"\\to"}</TeX> L</>, desc: <>forbidden — violates linehaul-before-backhaul rule</> },
               ].map(({ color, label, desc }, i) => (
                 <div key={i} style={{ display: "flex", alignItems: "baseline", gap: 12, fontSize: 24, lineHeight: 1.4 }}>
@@ -1033,10 +1039,10 @@ function Slide22Simplify() {
                 padding: "18px 28px",
                 fontSize: 26,
                 fontFamily: "var(--font-display)",
-                background: "var(--paper)",
+                background: "var(--accent)",
                 border: "2px solid var(--accent)",
                 borderRadius: 6,
-                color: "var(--accent)",
+                color: "#fff",
                 fontWeight: 700,
                 letterSpacing: "0.04em",
                 display: "flex",

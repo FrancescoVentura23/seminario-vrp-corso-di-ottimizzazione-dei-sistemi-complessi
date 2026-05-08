@@ -920,27 +920,11 @@ function Slide22Simplify() {
     };
   };
 
-  // Bezier arrow curving LEFT of travel direction — for bidirectional pairs (CLAUDE.md §17)
-  const mkBiArc = (x1, y1, x2, y2, curve = 22, r = 3, aw = 8, al = 14) => {
-    const dx = x2-x1, dy = y2-y1, LL = Math.hypot(dx, dy);
-    const mx = (x1+x2)/2, my = (y1+y2)/2;
-    const cpx = mx - (dy/LL)*curve, cpy = my + (dx/LL)*curve;
-    const d = `M ${x1},${y1} Q ${cpx.toFixed(1)},${cpy.toFixed(1)} ${x2},${y2}`;
-    const tdx = x2-cpx, tdy = y2-cpy, tL = Math.hypot(tdx, tdy);
-    const ux = tdx/tL, uy = tdy/tL;
-    const tx = x2 - ux*r, ty = y2 - uy*r;
-    const bx = tx - ux*al, by = ty - uy*al;
-    return {
-      d,
-      pts: `${tx.toFixed(1)},${ty.toFixed(1)} ${(bx-uy*aw).toFixed(1)},${(by+ux*aw).toFixed(1)} ${(bx+uy*aw).toFixed(1)},${(by-ux*aw).toFixed(1)}`,
-    };
-  };
-
   const a1dep = arr(74, 162, 190, 95);
-  const a3lb  = mkBiArc(360, 122, 378, 198);   // L → B, curves left
+  const a3lb  = arr(360, 122, 378, 198);  // A₃: L → B (right side)
   const a3ld  = arr(200, 122, 75, 198);
   const a2bd  = arr(285, 237, 76, 215);
-  const abl   = mkBiArc(378, 198, 360, 122);   // B → L, curves right of L→B
+  const abl   = arr(368, 198, 350, 122);  // B → L forbidden — 10px left-offset, parallel to A₃
 
   return (
     <section ref={sectionRef} className="slide" data-label="A → Ā simplification">
@@ -987,10 +971,10 @@ function Slide22Simplify() {
               <polygon points="365,42 350.9,32.4 365.1,25.0" fill={cA1}/>
               <text x={292} y={17} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA1}>A₁</text>
 
-              {/* A₃: L → B (bezier, bidirectional pair with B→L) */}
-              <path d={a3lb.d} fill="none" stroke={cA3} strokeWidth={2.5} strokeLinecap="round"/>
+              {/* A₃: L → B */}
+              <line x1={360} y1={122} x2={a3lb.lx} y2={a3lb.ly} stroke={cA3} strokeWidth={2.5} strokeLinecap="round"/>
               <polygon points={a3lb.pts} fill={cA3}/>
-              <text x={420} y={152} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA3}>A₃</text>
+              <text x={402} y={160} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA3}>A₃</text>
 
               {/* A₃: L → depot (dashed) */}
               <line x1={200} y1={122} x2={a3ld.lx} y2={a3ld.ly} stroke={cA3} strokeWidth={2} strokeLinecap="round" strokeDasharray="5 4"/>
@@ -1007,12 +991,12 @@ function Slide22Simplify() {
               <polygon points="460,276 460.3,293.0 446.1,285.7" fill={cA2}/>
               <text x={388} y={314} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA2}>A₂</text>
 
-              {/* B → L (forbidden, solid bezier parallel to A₃) — blink × 3 then fadeOut, removed at phase 2 */}
+              {/* B → L (forbidden, straight, parallel to A₃) — blink × 3 then fadeOut, removed at phase 2 */}
               {phase < 2 && (
                 <g style={phase === 1
                   ? { animation: "blink 500ms ease-in-out 0ms 3, fadeOut 500ms ease-out 1500ms forwards" }
                   : {}}>
-                  <path d={abl.d} fill="none"
+                  <line x1={368} y1={198} x2={abl.lx} y2={abl.ly}
                         stroke="#cc4444" strokeWidth={2.5} strokeLinecap="round"/>
                   <polygon points={abl.pts} fill="#cc4444"/>
                 </g>

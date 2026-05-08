@@ -921,10 +921,10 @@ function Slide22Simplify() {
   };
 
   const a1dep = arr(74, 162, 190, 95);
-  const a3lb  = arr(360, 122, 378, 198);  // A₃: L → B (right side)
+  const a3lb  = arr(325, 122, 308, 198);  // A₃: L → B (left lane)
   const a3ld  = arr(200, 122, 75, 198);
   const a2bd  = arr(285, 237, 76, 215);
-  const abl   = arr(368, 198, 350, 122);  // B → L forbidden — 10px left-offset, parallel to A₃
+  const abl   = arr(390, 198, 390, 122, 0);  // B → L forbidden (right lane, tip on L bottom edge)
 
   return (
     <section ref={sectionRef} className="slide" data-label="A → Ā simplification">
@@ -972,9 +972,9 @@ function Slide22Simplify() {
               <text x={292} y={17} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA1}>A₁</text>
 
               {/* A₃: L → B */}
-              <line x1={360} y1={122} x2={a3lb.lx} y2={a3lb.ly} stroke={cA3} strokeWidth={2.5} strokeLinecap="round"/>
+              <line x1={325} y1={122} x2={a3lb.lx} y2={a3lb.ly} stroke={cA3} strokeWidth={2.5} strokeLinecap="round"/>
               <polygon points={a3lb.pts} fill={cA3}/>
-              <text x={402} y={160} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA3}>A₃</text>
+              <text x={288} y={168} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA3}>A₃</text>
 
               {/* A₃: L → depot */}
               <line x1={200} y1={122} x2={a3ld.lx} y2={a3ld.ly} stroke={cA3} strokeWidth={2.5} strokeLinecap="round"/>
@@ -996,7 +996,7 @@ function Slide22Simplify() {
                 <g style={phase === 1
                   ? { animation: "blink 500ms ease-in-out 0ms 3, fadeOut 500ms ease-out 1500ms forwards" }
                   : {}}>
-                  <line x1={368} y1={198} x2={abl.lx} y2={abl.ly}
+                  <line x1={390} y1={198} x2={abl.lx} y2={abl.ly}
                         stroke="#cc4444" strokeWidth={2.5} strokeLinecap="round"/>
                   <polygon points={abl.pts} fill="#cc4444"/>
                 </g>
@@ -1012,6 +1012,21 @@ function Slide22Simplify() {
               We can remove them entirely from <TeX>{"A"}</TeX>, obtaining the restricted graph <TeX>{"\\bar{A}"}</TeX>.
             </div>
 
+            {/* Arc legend */}
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "14px 20px", display: "flex", flexDirection: "column", gap: 10 }}>
+              {[
+                { color: "var(--route-1)", label: <><TeX>{"A_1"}</TeX></>, desc: <>depot <TeX>{"\\to"}</TeX> L and L <TeX>{"\\to"}</TeX> L &nbsp;—&nbsp; linehaul arcs</> },
+                { color: "var(--route-2)", label: <><TeX>{"A_2"}</TeX></>, desc: <>B <TeX>{"\\to"}</TeX> B and B <TeX>{"\\to"}</TeX> depot &nbsp;—&nbsp; backhaul arcs</> },
+                { color: "var(--route-3)", label: <><TeX>{"A_3"}</TeX></>, desc: <>L <TeX>{"\\to"}</TeX> B and L <TeX>{"\\to"}</TeX> depot &nbsp;—&nbsp; transition arcs</> },
+                { color: "#cc4444",        label: <>B <TeX>{"\\to"}</TeX> L</>, desc: <>forbidden — violates linehaul-before-backhaul rule</> },
+              ].map(({ color, label, desc }, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "baseline", gap: 10, fontSize: 19, lineHeight: 1.4 }}>
+                  <span style={{ color, fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 18, flexShrink: 0, minWidth: 48 }}>{label}</span>
+                  <span style={{ color: "var(--ink-2)" }}>{desc}</span>
+                </div>
+              ))}
+            </div>
+
             {phase < 2 && (
               <button ref={btnRef} style={{
                 cursor: "pointer",
@@ -1024,10 +1039,13 @@ function Slide22Simplify() {
                 color: "var(--accent)",
                 fontWeight: 700,
                 letterSpacing: "0.04em",
-                transition: "all 200ms ease",
-                animation: phase === 0 ? "pulse 1.8s ease-in-out 0s infinite" : "none",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 16,
               }}>
-                Remove B → L arcs: A → Ā
+                <span>Remove B → L arcs: A → Ā</span>
+                {phase === 0 && <span style={{ fontSize: 16, letterSpacing: "0.08em", animation: "blink 1.4s ease-in-out 0s infinite" }}>click ▸</span>}
               </button>
             )}
 
@@ -1494,10 +1512,39 @@ function Slide22Form() {
           Two-index vehicle flow formulation — Toth &amp; Vigo.
         </h2>
 
-        <div style={{ marginTop: 12, flex: 1, display: "flex", flexDirection: "column" }}>
+        <div style={{ marginTop: 12, flex: 1, display: "grid", gridTemplateColumns: "1fr 1.55fr", gap: 32 }}>
 
-          {/* Formulation — full width */}
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "22px 30px", display: "flex", flexDirection: "column", flex: 1 }}>
+          {/* LEFT — CCC explanation */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", borderLeft: "4px solid var(--accent)", padding: "14px 18px", fontSize: 20, lineHeight: 1.55, color: "var(--ink-2)" }}>
+              <strong style={{ color: "var(--accent)", fontFamily: "var(--font-mono)", fontSize: 15, letterSpacing: "0.06em", display: "block", marginBottom: 6 }}>CCC = CAPACITY-CUT CONSTRAINTS</strong>
+              For any subset <TeX>{"S"}</TeX> of customers, at least <TeX>{"r(S)"}</TeX> arcs must cross the boundary of <TeX>{"S"}</TeX>, where
+              <div style={{ margin: "10px 0", textAlign: "center" }}>
+                <TeX>{"r(S) = \\left\\lceil \\dfrac{\\displaystyle\\sum_{i\\in S} d_i}{C} \\right\\rceil"}</TeX>
+              </div>
+              is the minimum number of vehicles needed to serve all customers in <TeX>{"S"}</TeX>.
+            </div>
+
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "14px 18px", fontSize: 20, lineHeight: 1.55, color: "var(--ink-2)" }}>
+              <div style={{ borderLeft: "3px solid var(--route-1)", paddingLeft: 12, marginBottom: 12 }}>
+                <strong>CCC linehaul</strong> <TeX>{"(\\forall\\,S\\subseteq L)"}</TeX><br/>
+                At least <TeX>{"r(S)"}</TeX> arcs must <em>enter</em> <TeX>{"S"}</TeX> from outside — enough vehicles deliver goods to every linehaul customer in <TeX>{"S"}</TeX>.
+              </div>
+              <div style={{ borderLeft: "3px solid var(--route-2)", paddingLeft: 12 }}>
+                <strong>CCC backhaul</strong> <TeX>{"(\\forall\\,S\\subseteq B)"}</TeX><br/>
+                At least <TeX>{"r(S)"}</TeX> arcs must <em>leave</em> <TeX>{"S"}</TeX> to outside — enough vehicles collect goods from every backhaul customer in <TeX>{"S"}</TeX>.
+              </div>
+            </div>
+
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "10px 16px", fontSize: 18, color: "var(--ink-3)", lineHeight: 1.45 }}>
+              These are the VRPB analogue of the CVRP capacity-cut constraints — applied separately to <TeX>{"L"}</TeX> and <TeX>{"B"}</TeX> to account for the linehaul / backhaul partition.
+            </div>
+
+          </div>
+
+          {/* RIGHT — formulation */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "22px 30px", display: "flex", flexDirection: "column" }}>
 
             <div style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--ink-3)", letterSpacing: "0.07em", marginBottom: 10 }}>MODEL P1 — TOTH &amp; VIGO (2002)</div>
 

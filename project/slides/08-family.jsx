@@ -908,7 +908,7 @@ function Slide22Simplify() {
   const cA2 = "var(--route-2)";
   const cA3 = "var(--route-3)";
 
-  // Arrow helper: returns polygon pts and the correct line-body endpoint
+  // Straight arrow: returns polygon pts and correct line-body endpoint
   const arr = (x1, y1, x2, y2, r = 3, aw = 8, al = 14) => {
     const dx = x2-x1, dy = y2-y1, LL = Math.hypot(dx, dy);
     const ux = dx/LL, uy = dy/LL;
@@ -920,11 +920,27 @@ function Slide22Simplify() {
     };
   };
 
+  // Bezier arrow curving LEFT of travel direction — for bidirectional pairs (CLAUDE.md §17)
+  const mkBiArc = (x1, y1, x2, y2, curve = 22, r = 3, aw = 8, al = 14) => {
+    const dx = x2-x1, dy = y2-y1, LL = Math.hypot(dx, dy);
+    const mx = (x1+x2)/2, my = (y1+y2)/2;
+    const cpx = mx - (dy/LL)*curve, cpy = my + (dx/LL)*curve;
+    const d = `M ${x1},${y1} Q ${cpx.toFixed(1)},${cpy.toFixed(1)} ${x2},${y2}`;
+    const tdx = x2-cpx, tdy = y2-cpy, tL = Math.hypot(tdx, tdy);
+    const ux = tdx/tL, uy = tdy/tL;
+    const tx = x2 - ux*r, ty = y2 - uy*r;
+    const bx = tx - ux*al, by = ty - uy*al;
+    return {
+      d,
+      pts: `${tx.toFixed(1)},${ty.toFixed(1)} ${(bx-uy*aw).toFixed(1)},${(by+ux*aw).toFixed(1)} ${(bx+uy*aw).toFixed(1)},${(by-ux*aw).toFixed(1)}`,
+    };
+  };
+
   const a1dep = arr(74, 162, 190, 95);
-  const a3lb  = arr(360, 122, 378, 198);
+  const a3lb  = mkBiArc(360, 122, 378, 198);   // L → B, curves left
   const a3ld  = arr(200, 122, 75, 198);
   const a2bd  = arr(285, 237, 76, 215);
-  const abl   = arr(308, 198, 375, 122);  // B → L (forbidden)
+  const abl   = mkBiArc(378, 198, 360, 122);   // B → L, curves right of L→B
 
   return (
     <section ref={sectionRef} className="slide" data-label="A → Ā simplification">
@@ -971,10 +987,10 @@ function Slide22Simplify() {
               <polygon points="365,42 350.9,32.4 365.1,25.0" fill={cA1}/>
               <text x={292} y={17} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA1}>A₁</text>
 
-              {/* A₃: L → B */}
-              <line x1={360} y1={122} x2={a3lb.lx} y2={a3lb.ly} stroke={cA3} strokeWidth={2.5} strokeLinecap="round"/>
+              {/* A₃: L → B (bezier, bidirectional pair with B→L) */}
+              <path d={a3lb.d} fill="none" stroke={cA3} strokeWidth={2.5} strokeLinecap="round"/>
               <polygon points={a3lb.pts} fill={cA3}/>
-              <text x={402} y={160} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA3}>A₃</text>
+              <text x={420} y={152} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA3}>A₃</text>
 
               {/* A₃: L → depot (dashed) */}
               <line x1={200} y1={122} x2={a3ld.lx} y2={a3ld.ly} stroke={cA3} strokeWidth={2} strokeLinecap="round" strokeDasharray="5 4"/>
@@ -991,16 +1007,14 @@ function Slide22Simplify() {
               <polygon points="460,276 460.3,293.0 446.1,285.7" fill={cA2}/>
               <text x={388} y={314} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA2}>A₂</text>
 
-              {/* B → L (forbidden oriented arc) — blink × 3 then fadeOut, removed at phase 2 */}
+              {/* B → L (forbidden, solid bezier parallel to A₃) — blink × 3 then fadeOut, removed at phase 2 */}
               {phase < 2 && (
                 <g style={phase === 1
                   ? { animation: "blink 500ms ease-in-out 0ms 3, fadeOut 500ms ease-out 1500ms forwards" }
                   : {}}>
-                  <line x1={308} y1={198} x2={abl.lx} y2={abl.ly}
-                        stroke="#cc4444" strokeWidth={2.5} strokeDasharray="5 4" strokeLinecap="round"/>
+                  <path d={abl.d} fill="none"
+                        stroke="#cc4444" strokeWidth={2.5} strokeLinecap="round"/>
                   <polygon points={abl.pts} fill="#cc4444"/>
-                  <text x={340} y={157} textAnchor="middle" fontFamily="var(--font-mono)"
-                        fontSize={20} fill="#cc4444" fontWeight={700}>✗</text>
                 </g>
               )}
             </svg>
@@ -1496,82 +1510,10 @@ function Slide22Form() {
           Two-index vehicle flow formulation — Toth &amp; Vigo.
         </h2>
 
-        <div style={{ marginTop: 12, display: "grid", gridTemplateColumns: "1fr 1.45fr", gap: 48, flex: 1 }}>
+        <div style={{ marginTop: 12, flex: 1, display: "flex", flexDirection: "column" }}>
 
-          {/* LEFT — arc partition diagram */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-
-            {/* Decision variable */}
-            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "9px 16px", fontSize: 21, lineHeight: 1.5 }}>
-              <TeX>{"x_{ij}=1"}</TeX> if arc <TeX>{"(i,j)\\in\\bar{A}"}</TeX> is used; <TeX>{"0"}</TeX> otherwise
-            </div>
-
-            {/* Arc partition SVG */}
-            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "12px 14px", flex: 1, display: "flex", flexDirection: "column" }}>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--ink-3)", letterSpacing: "0.07em", marginBottom: 6 }}>
-                ARC PARTITION — <TeX>{"\\bar{A} = A_1 \\cup A_2 \\cup A_3"}</TeX>
-              </div>
-              <svg viewBox="0 0 500 295" style={{ width: "100%", flex: 1, display: "block", overflow: "visible" }}>
-
-                {/* Depot */}
-                <rect x={15} y={153} width={50} height={50} rx={3} fill="var(--depot)"/>
-                <rect x={8} y={146} width={64} height={64} rx={3} fill="none" stroke="var(--depot)" strokeWidth={2}/>
-                <text x={40} y={184} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={18} fill="var(--paper)" fontWeight={700}>0</text>
-
-                {/* L block */}
-                <rect x={190} y={42} width={205} height={80} rx={6} fill="var(--paper)" stroke={cA1} strokeWidth={2.5}/>
-                <text x={292} y={78} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={18} fill={cA1} fontWeight={700}>L</text>
-                <text x={292} y={103} textAnchor="middle" fontFamily="var(--font-display)" fontSize={17} fill="var(--ink-2)">linehauls</text>
-
-                {/* B block */}
-                <rect x={285} y={198} width={200} height={78} rx={6} fill="var(--paper)" stroke={cA2} strokeWidth={2.5}/>
-                <text x={385} y={232} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={18} fill={cA2} fontWeight={700}>B</text>
-                <text x={385} y={256} textAnchor="middle" fontFamily="var(--font-display)" fontSize={17} fill="var(--ink-2)">backhauls</text>
-
-                {/* A₁: depot → L */}
-                <line x1={74} y1={162} x2={a1dep.lx} y2={a1dep.ly} stroke={cA1} strokeWidth={2.5} strokeLinecap="round"/>
-                <polygon points={a1dep.pts} fill={cA1}/>
-                <text x={112} y={116} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA1}>A₁</text>
-
-                {/* A₁: L self-loop (above block) */}
-                {/* Path M 220,42 C 240,4 345,4 365,42; tangent at end ≈ (0.466, 0.885) */}
-                <path d="M 220,42 C 240,4 345,4 365,42" fill="none" stroke={cA1} strokeWidth={2.5}/>
-                <polygon points="365,42 350.9,32.4 365.1,25.0" fill={cA1}/>
-                <text x={292} y={17} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA1}>A₁</text>
-
-                {/* A₃: L → B */}
-                <line x1={360} y1={122} x2={a3lb.lx} y2={a3lb.ly} stroke={cA3} strokeWidth={2.5} strokeLinecap="round"/>
-                <polygon points={a3lb.pts} fill={cA3}/>
-                <text x={402} y={160} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA3}>A₃</text>
-
-                {/* A₃: L → depot (dashed — linehaul-only route returns) */}
-                <line x1={200} y1={122} x2={a3ld.lx} y2={a3ld.ly} stroke={cA3} strokeWidth={2} strokeLinecap="round" strokeDasharray="5 4"/>
-                <polygon points={a3ld.pts} fill={cA3}/>
-                <text x={152} y={133} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA3}>A₃</text>
-
-                {/* A₂: B → depot */}
-                <line x1={285} y1={237} x2={a2bd.lx} y2={a2bd.ly} stroke={cA2} strokeWidth={2.5} strokeLinecap="round"/>
-                <polygon points={a2bd.pts} fill={cA2}/>
-                <text x={168} y={246} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA2}>A₂</text>
-
-                {/* A₂: B self-loop (below block) */}
-                {/* Path M 315,276 C 335,315 440,315 460,276; tangent at end ≈ (0.456,-0.890) */}
-                <path d="M 315,276 C 335,315 440,315 460,276" fill="none" stroke={cA2} strokeWidth={2.5}/>
-                <polygon points="460,276 460.3,293.0 446.1,285.7" fill={cA2}/>
-                <text x={388} y={314} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA2}>A₂</text>
-
-
-              </svg>
-            </div>
-
-            {/* Key insight */}
-            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", borderLeft: "4px solid #cc4444", padding: "9px 14px", fontSize: 20, lineHeight: 1.4, color: "var(--ink-2)" }}>
-              No arc <TeX>{"(i,j)"}</TeX> with <TeX>{"i\\in B,\\,j\\in L"}</TeX> in <TeX>{"\\bar{A}"}</TeX> — precedence encoded <em>structurally</em> by the graph.
-            </div>
-          </div>
-
-          {/* RIGHT — formulation */}
-          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "22px 30px", display: "flex", flexDirection: "column" }}>
+          {/* Formulation — full width */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "22px 30px", display: "flex", flexDirection: "column", flex: 1 }}>
 
             <div style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--ink-3)", letterSpacing: "0.07em", marginBottom: 10 }}>MODEL P1 — TOTH &amp; VIGO (2002)</div>
 
@@ -1579,25 +1521,25 @@ function Slide22Form() {
 
             <div style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--ink-3)", margin: "10px 0 8px" }}>subject to</div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 90px", rowGap: 9, columnGap: 8, alignItems: "start", fontSize: 19 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 120px", rowGap: 14, columnGap: 12, alignItems: "start", fontSize: 22 }}>
 
               <div><TeX>{"\\displaystyle\\sum_{i\\in\\Delta^-_j} x_{ij} = 1 \\;\\; \\forall\\, j \\in \\bar{V}\\setminus\\{0\\}"}</TeX></div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--ink-3)", paddingTop: 4 }}>in-degree</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--ink-3)", paddingTop: 4 }}>in-degree</div>
 
               <div><TeX>{"\\displaystyle\\sum_{j\\in\\Delta^+_i} x_{ij} = 1 \\;\\; \\forall\\, i \\in \\bar{V}\\setminus\\{0\\}"}</TeX></div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--ink-3)", paddingTop: 4 }}>out-degree</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--ink-3)", paddingTop: 4 }}>out-degree</div>
 
               <div><TeX>{"\\displaystyle\\sum_i x_{i0} = \\sum_j x_{0j} = K"}</TeX></div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--ink-3)", paddingTop: 4 }}>K vehicles</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--ink-3)", paddingTop: 4 }}>K vehicles</div>
 
               <div style={{ color: "var(--accent)" }}><TeX>{"\\displaystyle\\sum_{j\\in S}\\sum_{i\\in\\Delta^-_j\\setminus S} x_{ij} \\geq r(S) \\quad \\forall\\, S\\in\\mathcal{L}"}</TeX></div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--accent)", paddingTop: 4, lineHeight: 1.3 }}>CCC<br/>linehaul</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--accent)", paddingTop: 4, lineHeight: 1.3 }}>CCC<br/>linehaul</div>
 
               <div style={{ color: "var(--accent)" }}><TeX>{"\\displaystyle\\sum_{i\\in S}\\sum_{j\\in\\Delta^+_i\\setminus S} x_{ij} \\geq r(S) \\quad \\forall\\, S\\in\\mathcal{B}"}</TeX></div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--accent)", paddingTop: 4, lineHeight: 1.3 }}>CCC<br/>backhaul</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--accent)", paddingTop: 4, lineHeight: 1.3 }}>CCC<br/>backhaul</div>
 
               <div><TeX>{"x_{ij}\\in\\{0,1\\} \\;\\; \\forall\\,(i,j)\\in\\bar{A}"}</TeX></div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--ink-3)", paddingTop: 4 }}>integrality</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--ink-3)", paddingTop: 4 }}>integrality</div>
 
             </div>
 

@@ -969,7 +969,7 @@ function Slide22Simplify() {
               {/* A₁: L self-loop */}
               <path d="M 220,42 C 240,4 345,4 365,42" fill="none" stroke={cA1} strokeWidth={2.5}/>
               <polygon points="365,42 350.9,32.4 365.1,25.0" fill={cA1}/>
-              <text x={292} y={17} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA1}>A₁</text>
+              <text x={292} y={3} textAnchor="middle" fontFamily="var(--font-mono)" fontSize={14} fill={cA1}>A₁</text>
 
               {/* A₃: L → B */}
               <line x1={325} y1={122} x2={a3lb.lx} y2={a3lb.ly} stroke={cA3} strokeWidth={2.5} strokeLinecap="round"/>

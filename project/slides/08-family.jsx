@@ -1007,21 +1007,21 @@ function Slide22Simplify() {
           {/* Right — explanation + button */}
           <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 20 }}>
 
-            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "20px 24px", fontSize: 21, lineHeight: 1.65, color: "var(--ink-2)" }}>
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "20px 24px", fontSize: 26, lineHeight: 1.55, color: "var(--ink-2)" }}>
               The VRPB rule forbids visiting any <TeX>{"j\\in L"}</TeX> <em>after</em> any <TeX>{"i\\in B"}</TeX>. Arcs <TeX>{"(i\\in B,\\,j\\in L)"}</TeX> will therefore never appear in a feasible solution.<br/><br/>
               We can remove them entirely from <TeX>{"A"}</TeX>, obtaining the restricted graph <TeX>{"\\bar{A}"}</TeX>.
             </div>
 
             {/* Arc legend */}
-            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "14px 20px", display: "flex", flexDirection: "column", gap: 10 }}>
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "14px 20px", display: "flex", flexDirection: "column", gap: 12 }}>
               {[
                 { color: "var(--route-1)", label: <><TeX>{"A_1"}</TeX></>, desc: <>depot <TeX>{"\\to"}</TeX> L and L <TeX>{"\\to"}</TeX> L &nbsp;—&nbsp; linehaul arcs</> },
                 { color: "var(--route-2)", label: <><TeX>{"A_2"}</TeX></>, desc: <>B <TeX>{"\\to"}</TeX> B and B <TeX>{"\\to"}</TeX> depot &nbsp;—&nbsp; backhaul arcs</> },
                 { color: "var(--route-3)", label: <><TeX>{"A_3"}</TeX></>, desc: <>L <TeX>{"\\to"}</TeX> B and L <TeX>{"\\to"}</TeX> depot &nbsp;—&nbsp; transition arcs</> },
                 { color: "#cc4444",        label: <>B <TeX>{"\\to"}</TeX> L</>, desc: <>forbidden — violates linehaul-before-backhaul rule</> },
               ].map(({ color, label, desc }, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "baseline", gap: 10, fontSize: 19, lineHeight: 1.4 }}>
-                  <span style={{ color, fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 18, flexShrink: 0, minWidth: 48 }}>{label}</span>
+                <div key={i} style={{ display: "flex", alignItems: "baseline", gap: 12, fontSize: 24, lineHeight: 1.4 }}>
+                  <span style={{ color, fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 22, flexShrink: 0, minWidth: 56 }}>{label}</span>
                   <span style={{ color: "var(--ink-2)" }}>{desc}</span>
                 </div>
               ))}
@@ -1030,8 +1030,8 @@ function Slide22Simplify() {
             {phase < 2 && (
               <button ref={btnRef} style={{
                 cursor: "pointer",
-                padding: "16px 24px",
-                fontSize: 21,
+                padding: "18px 28px",
+                fontSize: 26,
                 fontFamily: "var(--font-display)",
                 background: "var(--paper)",
                 border: "2px solid var(--accent)",
@@ -1045,12 +1045,12 @@ function Slide22Simplify() {
                 gap: 16,
               }}>
                 <span>Remove B → L arcs: A → Ā</span>
-                {phase === 0 && <span style={{ fontSize: 16, letterSpacing: "0.08em", animation: "blink 1.4s ease-in-out 0s infinite" }}>click ▸</span>}
+                {phase === 0 && <span style={{ fontSize: 20, letterSpacing: "0.08em", animation: "blink 1.4s ease-in-out 0s infinite" }}>click ▸</span>}
               </button>
             )}
 
             {phase === 2 && (
-              <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", borderLeft: "4px solid var(--accent)", padding: "16px 20px", fontSize: 21, lineHeight: 1.5, color: "var(--ink-2)" }}>
+              <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", borderLeft: "4px solid var(--accent)", padding: "18px 22px", fontSize: 26, lineHeight: 1.5, color: "var(--ink-2)" }}>
                 <TeX>{"\\bar{A} = A_1 \\cup A_2 \\cup A_3"}</TeX> — precedence is now encoded <em>structurally</em> by the graph, not as an explicit constraint.
               </div>
             )}

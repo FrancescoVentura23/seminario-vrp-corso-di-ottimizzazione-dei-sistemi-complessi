@@ -35,10 +35,11 @@ function computeSavings(depot, custs) {
   return list;
 }
 
-// Simulate Clarke-Wright merges up to `step` savings processed
+// Simulate Clarke-Wright merges up to `step` savings processed.
+// Returns lastAction: the outcome of the last evaluated pair — either a merge
+// or a skip with an explicit reason and relevant load/endpoint details.
 function cwSimulate(savings, capacity, custs, step) {
-  // Each customer starts as its own route [0, i, 0]; represent as list of customers.
-  const routeOfCust = new Map();     // custId -> routeIdx
+  const routeOfCust = new Map();
   const routes = custs.map(c => {
     const r = { id: c.id, custs: [c.id], load: c.demand, head: c.id, tail: c.id };
     routeOfCust.set(c.id, r);
@@ -46,39 +47,58 @@ function cwSimulate(savings, capacity, custs, step) {
   });
   const events = [];
   let considered = 0;
+  let lastAction = null; // { type:'merge'|'skip', i, j, s, reason?, ... }
+
   for (let k = 0; k < savings.length && considered < step; k++) {
     const { i, j, s } = savings[k];
     considered++;
-    if (s <= 0) continue;
+
+    if (s <= 0) {
+      lastAction = { type: 'skip', i, j, s, reason: 'negative_saving' };
+      continue;
+    }
     const ri = routeOfCust.get(i);
     const rj = routeOfCust.get(j);
-    if (!ri || !rj || ri === rj) continue;
-    // i must be at the end of ri, j at start of rj (or vice versa)
-    const iAtEnd   = ri.tail === i;
-    const iAtHead  = ri.head === i;
-    const jAtEnd   = rj.tail === j;
-    const jAtHead  = rj.head === j;
-    if (!((iAtEnd || iAtHead) && (jAtEnd || jAtHead))) continue;
-    if (ri.load + rj.load > capacity) continue;
-    // Merge so the interior edge becomes (i, j)
+    if (!ri || !rj || ri === rj) {
+      lastAction = { type: 'skip', i, j, s, reason: 'same_route' };
+      continue;
+    }
+    const iAtEnd  = ri.tail === i;
+    const iAtHead = ri.head === i;
+    const jAtEnd  = rj.tail === j;
+    const jAtHead = rj.head === j;
+    if (!((iAtEnd || iAtHead) && (jAtEnd || jAtHead))) {
+      lastAction = { type: 'skip', i, j, s, reason: 'not_endpoint',
+                     iFree: iAtEnd || iAtHead, jFree: jAtEnd || jAtHead };
+      continue;
+    }
+    if (ri.load + rj.load > capacity) {
+      lastAction = { type: 'skip', i, j, s, reason: 'capacity',
+                     loadI: ri.load, loadJ: rj.load, total: ri.load + rj.load };
+      continue;
+    }
+
+    // Merge
     let newList;
-    if (iAtEnd && jAtHead)         newList = [...ri.custs, ...rj.custs];
-    else if (iAtEnd && jAtEnd)     newList = [...ri.custs, ...rj.custs.slice().reverse()];
-    else if (iAtHead && jAtHead)   newList = [...ri.custs.slice().reverse(), ...rj.custs];
-    else                            newList = [...rj.custs, ...ri.custs];
+    if (iAtEnd && jAtHead)       newList = [...ri.custs, ...rj.custs];
+    else if (iAtEnd && jAtEnd)   newList = [...ri.custs, ...rj.custs.slice().reverse()];
+    else if (iAtHead && jAtHead) newList = [...ri.custs.slice().reverse(), ...rj.custs];
+    else                          newList = [...rj.custs, ...ri.custs];
     ri.custs = newList;
     ri.load  = ri.load + rj.load;
     ri.head  = newList[0];
     ri.tail  = newList[newList.length - 1];
-    // remap j side
     for (const c of rj.custs) routeOfCust.set(c, ri);
     rj.custs = [];
-    events.push({ step: considered, type: "merge", i, j, s });
+    lastAction = { type: 'merge', i, j, s };
+    events.push({ step: considered, type: 'merge', i, j, s });
   }
+
   return {
     routes: routes.filter(r => r.custs.length > 0),
     considered,
     lastEvent: events[events.length - 1] || null,
+    lastAction,
   };
 }
 
@@ -336,11 +356,28 @@ function ClarkeWrightDemo() {
         <div style={{ fontFamily: "var(--font-mono)", fontSize: 23, color: "var(--ink-2)", lineHeight: 1.4, minHeight: 64, borderTop: "1px solid var(--line)", paddingTop: 12 }}>
           {step === 0 ? (
             <>Initial state: every customer is served by a dedicated round-trip from the depot.</>
-          ) : hl ? (
-            <>Merged routes containing <b>c{hl.i}</b> and <b>c{hl.j}</b> — saving <b>{hl.s.toFixed(1)}</b>. New load fits within capacity.</>
-          ) : (
-            <>Pair skipped: merge infeasible (capacity exceeded or endpoints not free).</>
-          )}
+          ) : (() => {
+            const la = sim.lastAction;
+            if (!la) return null;
+            if (la.type === 'merge') {
+              return <>Merged routes containing <b>c{la.i}</b> and <b>c{la.j}</b> — saving <b>{la.s.toFixed(1)}</b>. New load fits within capacity.</>;
+            }
+            // skip cases
+            if (la.reason === 'negative_saving') {
+              return <>Pair (c{la.i}, c{la.j}) skipped — saving <b>{la.s.toFixed(1)}</b> ≤ 0: merging would <i>increase</i> total cost.</>;
+            }
+            if (la.reason === 'same_route') {
+              return <>Pair (c{la.i}, c{la.j}) skipped — both customers already belong to the <b>same route</b>: merging would create a cycle.</>;
+            }
+            if (la.reason === 'not_endpoint') {
+              const which = (!la.iFree && !la.jFree) ? `c${la.i} and c${la.j} are` : !la.iFree ? `c${la.i} is` : `c${la.j} is`;
+              return <>Pair (c{la.i}, c{la.j}) skipped — {which} an <b>interior node</b> of its route (not a free endpoint): cannot extend there.</>;
+            }
+            if (la.reason === 'capacity') {
+              return <>Pair (c{la.i}, c{la.j}) skipped — combined load <b>{la.loadI} + {la.loadJ} = {la.total}</b> exceeds capacity <b>C = {CW_CAPACITY}</b>.</>;
+            }
+            return <>Pair skipped.</>;
+          })()}
         </div>
       </div>
     </div>

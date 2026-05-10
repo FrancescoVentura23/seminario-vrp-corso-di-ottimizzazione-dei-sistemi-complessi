@@ -136,6 +136,30 @@ function ClarkeWrightDemo() {
   // Highlight last merge edge
   const hl = sim.lastEvent;
 
+  // Action description for the panel below controls
+  let actionMsg;
+  if (step === 0) {
+    actionMsg = "Initial state: every customer is served by a dedicated round-trip from the depot.";
+  } else {
+    const la = sim.lastAction;
+    if (!la) {
+      actionMsg = null;
+    } else if (la.type === 'merge') {
+      actionMsg = ["Merged routes containing c", la.i, " and c", la.j, " — saving ", la.s.toFixed(1), ". New load fits within capacity."];
+    } else if (la.reason === 'negative_saving') {
+      actionMsg = ["Pair (c", la.i, ", c", la.j, ") skipped — saving ", la.s.toFixed(1), " ≤ 0: merging would increase total cost."];
+    } else if (la.reason === 'same_route') {
+      actionMsg = ["Pair (c", la.i, ", c", la.j, ") skipped — both customers already belong to the same route: merging would create a cycle."];
+    } else if (la.reason === 'not_endpoint') {
+      const interior = (!la.iFree && !la.jFree) ? ("c" + la.i + " and c" + la.j + " are") : (!la.iFree ? ("c" + la.i + " is") : ("c" + la.j + " is"));
+      actionMsg = ["Pair (c", la.i, ", c", la.j, ") skipped — ", interior, " an interior node of its route (not a free endpoint): cannot extend there."];
+    } else if (la.reason === 'capacity') {
+      actionMsg = ["Pair (c", la.i, ", c", la.j, ") skipped — combined load ", la.loadI, " + ", la.loadJ, " = ", la.total, " exceeds capacity C = ", CW_CAPACITY, "."];
+    } else {
+      actionMsg = "Pair skipped.";
+    }
+  }
+
   // Savings table (top-N around current pointer)
   const topN = 8;
   const windowStart = Math.max(0, Math.min(step - 2, maxSteps - topN));
@@ -354,30 +378,7 @@ function ClarkeWrightDemo() {
 
         {/* Current action */}
         <div style={{ fontFamily: "var(--font-mono)", fontSize: 23, color: "var(--ink-2)", lineHeight: 1.4, minHeight: 64, borderTop: "1px solid var(--line)", paddingTop: 12 }}>
-          {step === 0 ? (
-            <>Initial state: every customer is served by a dedicated round-trip from the depot.</>
-          ) : (() => {
-            const la = sim.lastAction;
-            if (!la) return null;
-            if (la.type === 'merge') {
-              return <>Merged routes containing <b>c{la.i}</b> and <b>c{la.j}</b> — saving <b>{la.s.toFixed(1)}</b>. New load fits within capacity.</>;
-            }
-            // skip cases
-            if (la.reason === 'negative_saving') {
-              return <>Pair (c{la.i}, c{la.j}) skipped — saving <b>{la.s.toFixed(1)}</b> ≤ 0: merging would <i>increase</i> total cost.</>;
-            }
-            if (la.reason === 'same_route') {
-              return <>Pair (c{la.i}, c{la.j}) skipped — both customers already belong to the <b>same route</b>: merging would create a cycle.</>;
-            }
-            if (la.reason === 'not_endpoint') {
-              const which = (!la.iFree && !la.jFree) ? `c${la.i} and c${la.j} are` : !la.iFree ? `c${la.i} is` : `c${la.j} is`;
-              return <>Pair (c{la.i}, c{la.j}) skipped — {which} an <b>interior node</b> of its route (not a free endpoint): cannot extend there.</>;
-            }
-            if (la.reason === 'capacity') {
-              return <>Pair (c{la.i}, c{la.j}) skipped — combined load <b>{la.loadI} + {la.loadJ} = {la.total}</b> exceeds capacity <b>C = {CW_CAPACITY}</b>.</>;
-            }
-            return <>Pair skipped.</>;
-          })()}
+          {actionMsg}
         </div>
       </div>
     </div>

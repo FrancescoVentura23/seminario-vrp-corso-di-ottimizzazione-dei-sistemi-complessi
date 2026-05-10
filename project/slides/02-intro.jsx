@@ -141,7 +141,7 @@ function SlideORLink() {
             </div>
 
             <div className="body small" style={{ color: "var(--ink-3)", fontSize: 34, lineHeight: 1.3 }}>
-              Like TSP, assignment, knapsack or scheduling, the VRP is a <em>discrete</em> optimization problem: we pick one configuration out of a combinatorial space — and the space grows faster than we can enumerate it.
+              Like TSP, assignment, knapsack or scheduling, the VRP is a <em>discrete</em> optimization problem:
             </div>
           </div>
 
@@ -454,7 +454,7 @@ function Slide03() {
                 = <span style={{ color: "var(--accent-2)" }}>$10 M / year</span>.
               </div>
               <div style={{ fontSize: 22, color: "#d9d3c3", lineHeight: 1.4, marginTop: 4 }}>
-                At industrial scale, even marginal improvements in routing algorithms pay off enormously — which is why logistics giants still invest in optimization research sixty years after Dantzig & Ramser.
+                A company spending $1 B / year on deliveries that finds a routing algorithm 1% better than its current one pockets $10 M in savings — every single year, without touching prices or headcount. That is why giants like UPS, Amazon and DHL still invest heavily in optimization research today.
               </div>
             </div>
           </div>

@@ -132,20 +132,40 @@ function Slide09() {
                   pointerEvents: "none",
                 }}
               >
-                {routeSegments.map(([x1, y1, x2, y2], i) => {
+                {/* All arc bodies first, then all arrowheads (CLAUDE.md §10) */}
+                {routeSegments.map(([ax, ay, bx, by], i) => {
+                  const tour_next = tour[i + 1];
+                  const nr = tour_next === 0 ? 16 : 14; // depot radius vs customer
+                  const dx = bx - ax, dy = by - ay, L = Math.hypot(dx, dy);
+                  const ux = dx / L, uy = dy / L;
+                  const x1 = ax + ux * 14, y1 = ay + uy * 14;
+                  const x2 = bx - ux * nr,  y2 = by - uy * nr;
                   const len = Math.hypot(x2 - x1, y2 - y1);
                   return (
-                    <line key={i}
+                    <line key={`b-${i}`}
                       x1={x1} y1={y1} x2={x2} y2={y2}
-                      stroke="var(--accent)" strokeWidth={5} strokeLinecap="round"
+                      stroke="var(--accent)" strokeWidth={5} strokeLinecap="butt"
                       style={{
-                        strokeDasharray: len,
-                        strokeDashoffset: len,
-                        "--len": len,
-                        animation: `drawPath 700ms both ease-in-out`,
+                        "--len": len, strokeDasharray: len, strokeDashoffset: len,
+                        animation: "drawPath 700ms both ease-in-out",
                         animationDelay: `${i * 550}ms`,
                       }}
                     />
+                  );
+                })}
+                {routeSegments.map(([ax, ay, bx, by], i) => {
+                  const tour_next = tour[i + 1];
+                  const nr = tour_next === 0 ? 16 : 14;
+                  const dx = bx - ax, dy = by - ay, L = Math.hypot(dx, dy);
+                  const ux = dx / L, uy = dy / L;
+                  const x2 = bx - ux * nr, y2 = by - uy * nr;
+                  const aw = 9, al = 18;
+                  const pbx = x2 - ux * al, pby = y2 - uy * al;
+                  const pts = `${x2},${y2} ${pbx - uy*aw},${pby + ux*aw} ${pbx + uy*aw},${pby - ux*aw}`;
+                  return (
+                    <polygon key={`h-${i}`} points={pts} fill="var(--accent)"
+                      style={{ opacity: 0, animation: "fadeUp 150ms both ease-out",
+                               animationDelay: `${i * 550 + 680}ms` }}/>
                   );
                 })}
               </svg>
@@ -351,22 +371,22 @@ function SlideTSPFormulation() {
 
         <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 56, flex: 1 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 20, justifyContent: "center" }}>
-            <div className="body" style={{ color: "var(--ink-2)", fontSize: 26, lineHeight: 1.35 }}>
+            <div className="body" style={{ color: "var(--ink-2)", fontSize: 30, lineHeight: 1.35 }}>
               One decision variable per arc of the complete graph G = (V, A):
             </div>
-            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 22, fontFamily: "var(--font-mono)", fontSize: 23, lineHeight: 1.55 }}>
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: 22, fontFamily: "var(--font-mono)", fontSize: 27, lineHeight: 1.55 }}>
               xᵢⱼ = 1 &nbsp;if arc (i, j) belongs to the tour<br/>
               xᵢⱼ = 0 &nbsp;otherwise
             </div>
-            <div className="body" style={{ color: "var(--ink-2)", fontSize: 23, lineHeight: 1.35 }}>
+            <div className="body" style={{ color: "var(--ink-2)", fontSize: 27, lineHeight: 1.35 }}>
               The model needs three families of constraints:
             </div>
-            <ul style={{ margin: 0, paddingLeft: 22, fontSize: 22, color: "var(--ink-2)", lineHeight: 1.4, display: "flex", flexDirection: "column", gap: 8 }}>
+            <ul style={{ margin: 0, paddingLeft: 22, fontSize: 26, color: "var(--ink-2)", lineHeight: 1.4, display: "flex", flexDirection: "column", gap: 8 }}>
               <li><em>Out-degree 1</em> — the tour <em>leaves</em> every vertex exactly once.</li>
               <li><em>In-degree 1</em> — the tour <em>arrives</em> at every vertex exactly once.</li>
               <li style={{ color: "var(--accent)" }}><em>Subtour elimination</em> — the selected arcs must form a <em>single</em> connected cycle.</li>
             </ul>
-            <div className="body small" style={{ color: "var(--ink-3)", fontSize: 20, lineHeight: 1.35 }}>
+            <div className="body small" style={{ color: "var(--ink-3)", fontSize: 23, lineHeight: 1.35 }}>
               Without the third family, degree-feasible solutions could break into several disjoint cycles.
             </div>
           </div>
@@ -886,8 +906,9 @@ function SlideTSPDFJ() {
               {cycle1.map((e, i) => {
                 const s = segment(group1[e[0]], group1[e[1]]);
                 const animateHide = (isPacking || isCut) && i === 1;
-                const blinkDelay = isPacking ? 1500 : 1500;
-                const fadeDelay  = isPacking ? 2800 : 2700;
+                // packing: blink 1500ms, fade 2800ms  |  cut: blink 2600ms (after callout), fade 3700ms
+                const blinkDelay = isPacking ? 1500 : 2600;
+                const fadeDelay  = isPacking ? 2800 : 3700;
                 return <line key={`c1-${i}-${animKey}`} {...s}
                              stroke="var(--accent)" strokeWidth={4} strokeLinecap="butt"
                              markerEnd="url(#arrow-accent-dfj)"
@@ -897,12 +918,12 @@ function SlideTSPDFJ() {
               })}
               {/* Cycle 2 — arc v₅→v₃ (index 2):
                   Packing: blinks AFTER the two black crossing arcs (last fadeUp ~5430ms → blink 5600ms).
-                  Cut:     blinks together with v₁→v₂ at 1500ms, fades at 2700ms. */}
+                  Cut:     blinks together with v₁→v₂ at 2600ms (after callout), fades at 3700ms. */}
               {cycle2.map((e, i) => {
                 const s = segment(group2[e[0]], group2[e[1]]);
                 const animateHide = (isPacking || isCut) && i === 2;
-                const blinkDelay = isPacking ? 5600 : 1500;
-                const fadeDelay  = isPacking ? 6900 : 2700;
+                const blinkDelay = isPacking ? 5600 : 2600;
+                const fadeDelay  = isPacking ? 6900 : 3700;
                 return <line key={`c2-${i}-${animKey}`} {...s}
                              stroke="var(--accent-2)" strokeWidth={4} strokeLinecap="butt"
                              markerEnd="url(#arrow-accent2-dfj)"
@@ -925,21 +946,21 @@ function SlideTSPDFJ() {
                           animation: "drawPath 900ms both ease-out",
                           animationDelay: isPacking ? "4400ms" : "300ms",
                         }}/>
-                  {/* v₁→v₃: cut=3300ms (after fade), packing=4100ms */}
+                  {/* v₁→v₃: cut=4600ms (after blink+fade), packing=4100ms */}
                   <line {...crossV1V3}
                         stroke="var(--ink)" strokeWidth={4} strokeLinecap="butt"
                         style={{
                           "--len": lenV1V3,
                           strokeDasharray: lenV1V3,
                           animation: "drawPath 900ms both ease-out",
-                          animationDelay: isPacking ? "4100ms" : "3300ms",
+                          animationDelay: isPacking ? "4100ms" : "4600ms",
                         }}/>
                   <polygon points={crossArrowPts(crossV2V5, ux25, uy25)} fill="var(--ink)"
                            style={{ opacity: 0, animation: "fadeUp 150ms both ease-out",
                                     animationDelay: isPacking ? "5280ms" : "1180ms" }}/>
                   <polygon points={crossArrowPts(crossV1V3, ux13, uy13)} fill="var(--ink)"
                            style={{ opacity: 0, animation: "fadeUp 150ms both ease-out",
-                                    animationDelay: isPacking ? "4980ms" : "4180ms" }}/>
+                                    animationDelay: isPacking ? "4980ms" : "5480ms" }}/>
                 </g>
               )}
 
@@ -972,7 +993,7 @@ function SlideTSPDFJ() {
                                style={{
                                  opacity: 0,
                                  animation: "fadeUp 600ms both ease-out",
-                                 animationDelay: isPacking ? "3400ms" : "4600ms",
+                                 animationDelay: isPacking ? "3400ms" : "1400ms",
                                  overflow: "visible",
                                }}>
                   <div xmlns="http://www.w3.org/1999/xhtml" style={{
@@ -1812,6 +1833,87 @@ function SlideTSPKeyIdentity() {
               </div>
             )}
 
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
+function SlideTSPBridge() {
+  return (
+    <section className="slide" data-label="DFJ ⟺ min-cut — algebraic bridge">
+      <SlideFrame>
+        <div className="tag">TSP · Algebraic bridge</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          One chain of algebra: from the key identity to <em style={{ color: "var(--accent)" }}>min-cut</em>.
+        </h2>
+
+        <div style={{ marginTop: 24, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, flex: 1, alignItems: "start" }}>
+
+          {/* ---- Left: step-by-step derivation ---- */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", borderLeft: "4px solid var(--accent)", padding: "12px 22px" }}>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--accent)", letterSpacing: "0.08em", marginBottom: 6 }}>STARTING POINT — KEY IDENTITY</div>
+              <div style={{ fontSize: 28 }}>
+                <TeX display>{"2\\,x^*(A(S)) + x^*(\\delta(S)) = 2|S|"}</TeX>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", gap: 12, paddingLeft: 16 }}>
+              <div style={{ fontSize: 26, color: "var(--ink-3)" }}>↓</div>
+              <div style={{ fontSize: 22, color: "var(--ink-3)", fontStyle: "italic" }}>isolate <TeX>{"x^*(A(S))"}</TeX></div>
+            </div>
+
+            <div style={{ paddingLeft: 16, fontSize: 28 }}>
+              <TeX display>{"x^*(A(S)) \\;=\\; |S| - \\tfrac{1}{2}\\,x^*(\\delta(S))"}</TeX>
+            </div>
+
+            <div style={{ background: "var(--paper-2)", border: "1px solid #c1272d", borderLeft: "4px solid #c1272d", padding: "12px 22px" }}>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "#c1272d", letterSpacing: "0.08em", marginBottom: 6 }}>DFJ CONSTRAINT VIOLATED WHEN</div>
+              <div style={{ fontSize: 28 }}>
+                <TeX display>{"x^*(A(S)) > |S|-1"}</TeX>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", gap: 12, paddingLeft: 16 }}>
+              <div style={{ fontSize: 26, color: "var(--ink-3)" }}>↓</div>
+              <div style={{ fontSize: 22, color: "var(--ink-3)", fontStyle: "italic" }}>substitute the expression for <TeX>{"x^*(A(S))"}</TeX></div>
+            </div>
+
+            <div style={{ paddingLeft: 16, fontSize: 28 }}>
+              <TeX display>{"\\begin{aligned}\n|S| - \\tfrac{1}{2}\\,x^*(\\delta(S)) &> |S|-1 \\\\\n\\tfrac{1}{2}\\,x^*(\\delta(S)) &< 1 \\\\\nx^*(\\delta(S)) &< 2\n\\end{aligned}"}</TeX>
+            </div>
+          </div>
+
+          {/* ---- Right: conclusion + min-cut punchline ---- */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 20, justifyContent: "center" }}>
+
+            <div style={{ background: "var(--accent)", color: "var(--paper)", padding: "20px 28px" }}>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 16, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 10, color: "var(--paper-deep)", opacity: 0.9 }}>Conclusion</div>
+              <div style={{ fontSize: 28 }}>
+                <TeX display>{"\\text{DFJ violated} \\;\\Longleftrightarrow\\; x^*(\\delta(S)) < 2"}</TeX>
+              </div>
+              <div style={{ marginTop: 10, fontSize: 22, color: "var(--paper-deep)", fontStyle: "italic", opacity: 0.95 }}>
+                The DFJ constraint on S is violated iff the total LP weight crossing the S-boundary is less than 2.
+              </div>
+            </div>
+
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "18px 22px" }}>
+              <div className="kicker" style={{ marginBottom: 10 }}>Why this means min-cut</div>
+              <div style={{ fontSize: 24, color: "var(--ink-2)", lineHeight: 1.45 }}>
+                To find the <em>most violated</em> DFJ constraint we need the S that minimises <TeX>{"x^*(\\delta(S))"}</TeX>. Minimising a boundary weight over all subsets S is the definition of a <em>global min-cut</em> — solvable in polynomial time.
+              </div>
+            </div>
+
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "14px 20px", display: "flex", alignItems: "center", gap: 14 }}>
+              <div style={{ fontSize: 28, color: "var(--accent)" }}>→</div>
+              <div style={{ fontSize: 23, color: "var(--ink-2)", lineHeight: 1.4 }}>
+                If min<sub>S</sub> <TeX>{"x^*(\\delta(S))"}</TeX> ≥ 2, <em>no</em> DFJ cut is violated and the LP solution is already subtour-free.
+              </div>
+            </div>
           </div>
         </div>
       </SlideFrame>
@@ -3070,5 +3172,5 @@ function Slide10B() {
 Object.assign(window, {
   SlideTSPSection, Slide09, SlideTSPHamiltonian, SlideTSPFormulation,
   SlideTSPDegree, SlideTSPSubtourProblem, SlideTSPDFJ, SlideTSPExponential, SlideTSPSubsetMatrix,
-  SlideTSPLazy, SlideTSPKeyIdentity, SlideTSPMinCut, SlideTSPMinCutAlgo, SlideTSPMinCutImpl, Slide10, Slide10B,
+  SlideTSPLazy, SlideTSPKeyIdentity, SlideTSPBridge, SlideTSPMinCut, SlideTSPMinCutAlgo, SlideTSPMinCutImpl, Slide10, Slide10B,
 });

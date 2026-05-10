@@ -33,9 +33,21 @@ function Slide17A() {
   // two curves cross around n = N0 = 14. For n < N0, T may sit ABOVE c·f(n);
   // for n ≥ N0 we have T(n) ≤ c·f(n) — that's the formal definition.
   // ---------------------------------------------------------------------------
-  const T = (n) => 0.4 * n * n + 4 * n + 3 * Math.sin(0.6 * n);
+  // T(n): quadratic trend + visible multi-frequency noise to mimic real
+  // algorithm measurements (cache effects, branch mispredictions, etc.).
+  // Integer-sampled so the polyline looks like discrete benchmark data.
   const F = (n) => 0.7 * n * n;            // c · f(n) with c = 0.7, f(n) = n²
   const N0   = 14;
+  const T = (n) => {
+    const base  = 0.4 * n * n + 4 * n;
+    const noise = 18 * Math.sin(2.1 * n)
+                + 11 * Math.sin(4.7 * n + 1.3)
+                +  7 * Math.cos(1.3 * n + 0.7)
+                +  5 * Math.sin(7.3 * n + 2.9);
+    const raw = Math.max(0, base + noise);
+    // enforce T(n) ≤ c·f(n) for all n ≥ N0 (the formal definition guarantees this)
+    return n >= N0 ? Math.min(raw, F(n) - 2) : raw;
+  };
   const nMax = 30;
   const yMax = 700;
   // Plot area inside the 400×280 viewBox: x ∈ [60, 380], y ∈ [20, 230].
@@ -43,7 +55,7 @@ function Slide17A() {
   const yMap = (v) => 230 - (210 / yMax) * v;
 
   const samples = [];
-  for (let i = 0; i <= 60; i++) samples.push(i * 0.5);   // n = 0, 0.5, …, 30
+  for (let i = 0; i <= nMax; i++) samples.push(i);   // integer steps → jagged "benchmark" look
 
   const fmt   = (a, b) => `${a.toFixed(1)},${b.toFixed(1)}`;
   const tPath = samples.map(n => fmt(xMap(n), yMap(T(n)))).join(" ");

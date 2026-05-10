@@ -366,7 +366,7 @@ function Slide21C() {
               <div style={{ color: "var(--accent)", fontSize: 20 }}><TeX>{"\\tau_j \\geq \\tau_i + s_i + t_{ij} - M(1 - x_{ij}) \\quad \\forall\\,(i,j) \\in A"}</TeX></div>
               <div style={{ color: "var(--accent)", fontSize: 18 }}>(v) time linking</div>
 
-              <div style={{ fontSize: 20 }}>xᵢⱼ ∈ {"{"} 0, 1 {"}"} &nbsp;·&nbsp; τᵢ ≥ 0</div>
+              <div style={{ fontSize: 20 }}><TeX>{"x_{ij}\\in\\{0,1\\}\\;\\forall\\,(i,j)\\in A,\\quad \\tau_i\\geq 0\\;\\forall\\,i\\in V"}</TeX></div>
               <div style={{ color: "var(--ink-3)", fontSize: 18 }}>(domain)</div>
             </div>
 
@@ -1563,22 +1563,22 @@ function Slide22Form() {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 120px", rowGap: 14, columnGap: 12, alignItems: "start", fontSize: 22 }}>
 
               <div><TeX>{"\\displaystyle\\sum_{i\\in\\Delta^-_j} x_{ij} = 1 \\;\\; \\forall\\, j \\in \\bar{V}\\setminus\\{0\\}"}</TeX></div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--ink-3)", paddingTop: 4 }}>in-degree</div>
+              <div style={{ fontSize: 18, color: "var(--ink-3)" }}>in-degree</div>
 
               <div><TeX>{"\\displaystyle\\sum_{j\\in\\Delta^+_i} x_{ij} = 1 \\;\\; \\forall\\, i \\in \\bar{V}\\setminus\\{0\\}"}</TeX></div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--ink-3)", paddingTop: 4 }}>out-degree</div>
+              <div style={{ fontSize: 18, color: "var(--ink-3)" }}>out-degree</div>
 
               <div><TeX>{"\\displaystyle\\sum_i x_{i0} = \\sum_j x_{0j} = K"}</TeX></div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--ink-3)", paddingTop: 4 }}>K vehicles</div>
+              <div style={{ fontSize: 18, color: "var(--ink-3)" }}>K vehicles</div>
 
               <div style={{ color: "var(--accent)" }}><TeX>{"\\displaystyle\\sum_{j\\in S}\\sum_{i\\in\\Delta^-_j\\setminus S} x_{ij} \\geq r(S) \\quad \\forall\\, S\\in\\mathcal{L}"}</TeX></div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--accent)", paddingTop: 4, lineHeight: 1.3 }}>CCC<br/>linehaul</div>
+              <div style={{ fontSize: 18, color: "var(--accent)", lineHeight: 1.3 }}>CCC<br/>linehaul</div>
 
               <div style={{ color: "var(--accent)" }}><TeX>{"\\displaystyle\\sum_{i\\in S}\\sum_{j\\in\\Delta^+_i\\setminus S} x_{ij} \\geq r(S) \\quad \\forall\\, S\\in\\mathcal{B}"}</TeX></div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--accent)", paddingTop: 4, lineHeight: 1.3 }}>CCC<br/>backhaul</div>
+              <div style={{ fontSize: 18, color: "var(--accent)", lineHeight: 1.3 }}>CCC<br/>backhaul</div>
 
               <div><TeX>{"x_{ij}\\in\\{0,1\\} \\;\\; \\forall\\,(i,j)\\in\\bar{A}"}</TeX></div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--ink-3)", paddingTop: 4 }}>integrality</div>
+              <div style={{ fontSize: 18, color: "var(--ink-3)" }}>integrality</div>
 
             </div>
 
@@ -2372,6 +2372,115 @@ function Slide23() {
 }
 
 
+function Slide23Form() {
+  const newItems = [
+    {
+      num: "vi",
+      tag: "Load linking (Big-M)",
+      text: "If arc (i,j) is used, the vehicle load at j equals the load at i plus the signed demand at j. When xᵢⱼ = 0 the constraint is trivially satisfied.",
+    },
+    {
+      num: "vii",
+      tag: "Precedence",
+      text: "For each request k, the delivery Dₖ must be visited after the pickup Oₖ on the same route, and they must be served by the same vehicle.",
+    },
+  ];
+
+  return (
+    <section className="slide" data-label="VRPPD — ILP formulation">
+      <SlideFrame>
+        <div className="tag">VRPPD · Formulation</div>
+        <h2 className="title" style={{ marginTop: 28 }}>
+          VRPPD = CVRP + a load variable <TeX>{"y_i"}</TeX> and a position variable <TeX>{"\\tau_i"}</TeX>.
+        </h2>
+
+        <div style={{ marginTop: 32, display: "grid", gridTemplateColumns: "1fr 1.35fr", gap: 52, flex: 1 }}>
+
+          {/* Left — new variables + constraint explanations */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 18, justifyContent: "center" }}>
+            <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "14px 20px", fontSize: 24, lineHeight: 1.6 }}>
+              <div style={{ fontFamily: "var(--font-mono)", marginBottom: 4, color: "var(--ink-3)", fontSize: 20, letterSpacing: "0.05em", textTransform: "uppercase" }}>New variables</div>
+              <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)" }}>y<sub>i</sub></span> = vehicle load when <em>leaving</em> node <span style={{ fontFamily: "var(--font-mono)" }}>i</span><br/>
+              <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)" }}>τ<sub>i</sub></span> = service position (order) of node <span style={{ fontFamily: "var(--font-mono)" }}>i</span> on its route<br/>
+              <span style={{ fontFamily: "var(--font-mono)" }}>d<sub>i</sub></span> = signed demand: <TeX>{"d_{O_k} = +q_k"}</TeX>, <TeX>{"d_{D_k} = -q_k"}</TeX>
+            </div>
+
+            <div style={{ fontFamily: "var(--font-display)", fontSize: 24, color: "var(--ink-2)" }}>
+              Inherits all CVRP constraints (i–iii); adds:
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {newItems.map((c, i) => (
+                <div key={i} style={{
+                  border: "1px solid var(--accent)",
+                  borderLeft: "4px solid var(--accent)",
+                  background: "rgba(107,74,245,0.08)",
+                  padding: "14px 20px",
+                  display: "flex", alignItems: "center", gap: 18,
+                }}>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: 52, lineHeight: 1, color: "var(--accent)", fontStyle: "italic", flexShrink: 0, minWidth: 66, textAlign: "center" }}>
+                    ({c.num})
+                  </div>
+                  <div>
+                    <div className="kicker" style={{ color: "var(--accent)", fontSize: 20 }}>{c.tag}</div>
+                    <div style={{ fontFamily: "var(--font-display)", fontSize: 24, lineHeight: 1.25, marginTop: 4 }}>
+                      {c.text}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right — ILP: CVRP rows in normal ink, VRPPD rows in accent */}
+          <div style={{ background: "var(--paper-2)", border: "1px solid var(--line)", padding: "28px 36px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+            <div style={{ fontFamily: "var(--font-display)", fontSize: 30, marginBottom: 16 }}>
+              <TeX display>{"\\min \\displaystyle\\sum_{i \\in V} \\sum_{j \\in V} c_{ij}\\, x_{ij}"}</TeX>
+            </div>
+            <div style={{ color: "var(--ink-3)", marginBottom: 10, fontFamily: "var(--font-mono)", fontSize: 20 }}>subject to</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr auto", rowGap: 10, columnGap: 14, alignItems: "center" }}>
+              <div style={{ fontSize: 20 }}><TeX>{"\\sum_{i \\in V} x_{ij} = 1 \\;\\forall\\, j \\in V \\setminus \\{0\\}"}</TeX></div>
+              <div style={{ color: "var(--ink-3)", fontSize: 18 }}>(ii) in-degree</div>
+
+              <div style={{ fontSize: 20 }}><TeX>{"\\sum_{j \\in V} x_{ij} = 1 \\;\\forall\\, i \\in V \\setminus \\{0\\}"}</TeX></div>
+              <div style={{ color: "var(--ink-3)", fontSize: 18 }}>(ii) out-degree</div>
+
+              <div style={{ fontSize: 20 }}><TeX>{"\\sum_{j \\in V} x_{0j} = K"}</TeX></div>
+              <div style={{ color: "var(--ink-3)", fontSize: 18 }}>(i) K vehicles leave</div>
+
+              <div style={{ fontSize: 20 }}><TeX>{"\\sum_{i \\in V} x_{i0} = K"}</TeX></div>
+              <div style={{ color: "var(--ink-3)", fontSize: 18 }}>(i) K vehicles return</div>
+
+              <div style={{ fontSize: 20 }}><TeX>{"\\textstyle\\sum_{i \\notin S}\\sum_{j \\in S} x_{ij} \\geq r(S) \\;\\forall\\, S \\subseteq V \\setminus \\{0\\}"}</TeX></div>
+              <div style={{ color: "var(--ink-3)", fontSize: 18 }}>(iii) capacity-cut</div>
+
+              <div style={{ color: "var(--accent)", fontSize: 20 }}><TeX>{"y_j \\geq y_i + d_j - M(1-x_{ij}) \\quad \\forall\\,(i,j)\\in A"}</TeX></div>
+              <div style={{ color: "var(--accent)", fontSize: 18 }}>(vi) load linking</div>
+
+              <div style={{ color: "var(--accent)", fontSize: 20 }}><TeX>{"0 \\leq y_i \\leq C \\quad \\forall\\, i \\in V"}</TeX></div>
+              <div style={{ color: "var(--accent)", fontSize: 18 }}>(vi) load bounds</div>
+
+              <div style={{ color: "var(--accent)", fontSize: 20 }}><TeX>{"\\tau_{D_k} \\geq \\tau_{O_k} + 1 \\quad \\forall\\, k \\in R"}</TeX></div>
+              <div style={{ color: "var(--accent)", fontSize: 18 }}>(vii) precedence</div>
+
+              <div style={{ color: "var(--accent)", fontSize: 20 }}><TeX>{"\\tau_j \\geq \\tau_i + 1 - M(1-x_{ij}) \\quad \\forall\\,(i,j)\\in A"}</TeX></div>
+              <div style={{ color: "var(--accent)", fontSize: 18 }}>(vii) pos. linking</div>
+
+              <div style={{ fontSize: 20 }}><TeX>{"x_{ij}\\in\\{0,1\\}\\;\\forall\\,(i,j)\\in A,\\quad y_i,\\tau_i\\geq 0\\;\\forall\\,i\\in V"}</TeX></div>
+              <div style={{ color: "var(--ink-3)", fontSize: 18 }}>(domain)</div>
+            </div>
+
+            <div style={{ marginTop: 18, fontFamily: "var(--font-mono)", fontSize: 18, color: "var(--ink-3)", lineHeight: 1.5 }}>
+              M = large constant; R = set of requests. Constraints (vi)–(vii) enforce coupling: the same vehicle serves O<sub>k</sub> and D<sub>k</sub>, in that order.
+            </div>
+          </div>
+        </div>
+      </SlideFrame>
+    </section>
+  );
+}
+
+
 function Slide23B() {
   const cases = [
     {
@@ -2453,5 +2562,5 @@ function Slide23B() {
 Object.assign(window, {
   Slide19, Slide20, Slide21, Slide21B, Slide21C, Slide21D,
   Slide22Intro, Slide22Load, Slide22Simplify, Slide22LoadB, Slide22, Slide22B, Slide22Form,
-  Slide23Intro, Slide23Load, Slide23Req, Slide23, Slide23B,
+  Slide23Intro, Slide23Load, Slide23Req, Slide23, Slide23Form, Slide23B,
 });

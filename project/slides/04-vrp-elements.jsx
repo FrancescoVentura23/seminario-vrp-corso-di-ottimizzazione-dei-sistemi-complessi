@@ -9,7 +9,7 @@ function SlideVRPElementsSection() {
     <section className="slide section-slide" data-label="Part III — VRP elements">
       <div style={{ position: "absolute", top: 80, left: 120, right: 120, display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 31, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--paper-deep)" }}>
         <div>Part III of IX</div>
-        <div>Slides 18 — 20</div>
+        <div>Slides 18 — 21</div>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
 
@@ -403,6 +403,55 @@ function Slide07() {
 }
 
 
+function SlideRealRoadNetwork() {
+  return (
+    <section className="slide" data-label="A real road network">
+      <div style={{ position: "absolute", inset: 0, background: "#030712" }}>
+        <img
+          src="assets/roma_neon_cyberpunk_20260216_121605%20copia.png"
+          alt="Roma — road network"
+          style={{
+            position: "absolute", inset: 0,
+            width: "100%", height: "100%",
+            objectFit: "cover",
+            opacity: 0.8,
+          }}
+        />
+        {/* top gradient + title */}
+        <div style={{
+          position: "absolute", top: 0, left: 0, right: 0, zIndex: 2,
+          padding: "44px 64px 140px",
+          background: "linear-gradient(180deg, rgba(3,7,18,0.92) 0%, transparent 100%)",
+        }}>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: 18, letterSpacing: "0.14em", color: "var(--accent)", textTransform: "uppercase", marginBottom: 14 }}>VRP elements</div>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: 60, color: "#fff", lineHeight: 1.15, maxWidth: 860 }}>
+            Modeling a real road network exactly is not feasible.
+          </div>
+        </div>
+        {/* bottom gradient + caption */}
+        <div style={{
+          position: "absolute", bottom: 0, left: 0, right: 0, zIndex: 2,
+          padding: "140px 64px 48px",
+          background: "linear-gradient(0deg, rgba(3,7,18,0.92) 0%, transparent 100%)",
+        }}>
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 48 }}>
+            <div style={{ fontFamily: "var(--font-display)", fontSize: 30, color: "rgba(255,255,255,0.82)", lineHeight: 1.5, maxWidth: 920 }}>
+              Roma's road network — thousands of nodes and arcs, each with its own cost and travel time.
+              Pre-computing shortest paths between every customer pair collapses all of this into a compact, tractable complete graph.
+            </div>
+            <div style={{ flex: 1 }} />
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "rgba(255,255,255,0.35)", textAlign: "right", lineHeight: 1.8 }}>
+              <div>Roma, Italia</div>
+              <div>© OpenStreetMap contributors</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
 function Slide08() {
   return (
     <section className="slide" data-label="Vertices and arcs">
@@ -450,5 +499,5 @@ function Slide08() {
 
 
 Object.assign(window, {
-  SlideVRPElementsSection, Slide06, Slide07, Slide08,
+  SlideVRPElementsSection, Slide06, Slide07, SlideRealRoadNetwork, Slide08,
 });

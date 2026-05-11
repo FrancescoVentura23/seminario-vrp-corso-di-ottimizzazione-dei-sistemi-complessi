@@ -1712,7 +1712,7 @@ function SlideTSPKeyIdentity() {
                   Denoting <TeX>{"x^*(F) = \\sum_{(i,j)\\in F} x^*_{ij}"}</TeX> (total LP weight over arc set F):
                 </div>
 
-                <TeX display>{"2\\,x^*(A(S)) \\;+\\; x^*(\\delta(S)) \\;=\\; 2|S|"}</TeX>
+                <TeX display>{"\\sum_{i \\in S}\\sum_{j \\neq i}\\!\\bigl(x^*_{ij}+x^*_{ji}\\bigr) = 2\\,x^*(A(S))+x^*(\\delta(S)) = 2|S|"}</TeX>
 
                 <div style={{ fontSize: 18, color: "var(--ink-2)", marginTop: 6, fontStyle: "italic" }}>
                   This is the foundation for why every violated DFJ constraint can be found as a minimum cut.
@@ -1874,7 +1874,7 @@ function SlideTSPBridge() {
             <div style={{ background: "var(--paper-2)", border: "1px solid #c1272d", borderLeft: "4px solid #c1272d", padding: "12px 22px" }}>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "#c1272d", letterSpacing: "0.08em", marginBottom: 6 }}>DFJ CONSTRAINT VIOLATED WHEN</div>
               <div style={{ fontSize: 28 }}>
-                <TeX display>{"x^*(A(S)) > |S|-1"}</TeX>
+                <TeX display>{"x^*(A(S)) \\;=\\; \\sum_{i \\in S}\\sum_{\\substack{j \\in S \\\\ j \\neq i}} x^*_{ij} \\;>\\; |S|-1"}</TeX>
               </div>
             </div>
 

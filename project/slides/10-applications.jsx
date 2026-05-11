@@ -45,15 +45,11 @@ function Slide30() {
           Further reading — P. Toth & D. Vigo (eds.), <em>The Vehicle Routing Problem</em>, SIAM Monographs on Discrete Math., 2002.
         </div>
 
-        <div style={{ marginTop: 56, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 48, fontFamily: "var(--font-mono)", fontSize: 26, letterSpacing: "0.04em" }}>
+        <div style={{ marginTop: 56, display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 48, fontFamily: "var(--font-mono)", fontSize: 26, letterSpacing: "0.04em" }}>
           <div>
             <div style={{ color: "var(--paper-deep)", marginBottom: 8, fontSize: 20, letterSpacing: "0.12em", textTransform: "uppercase" }}>Course</div>
             <div>Optimization of Complex Systems</div>
             <div style={{ color: "var(--paper-deep)" }}>MSc Management Engineering</div>
-          </div>
-          <div>
-            <div style={{ color: "var(--paper-deep)", marginBottom: 8, fontSize: 20, letterSpacing: "0.12em", textTransform: "uppercase" }}>Next lecture</div>
-            <div>Exact methods — branch-and-cut for CVRP</div>
           </div>
           <div>
             <div style={{ color: "var(--paper-deep)", marginBottom: 8, fontSize: 20, letterSpacing: "0.12em", textTransform: "uppercase" }}>Try it yourself</div>

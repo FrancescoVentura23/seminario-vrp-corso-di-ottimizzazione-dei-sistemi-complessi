@@ -862,6 +862,196 @@ function Slide22Load() {
   );
 }
 
+// Full-screen animated VRP colour map — 5 vivid routes from one central depot.
+function SlideColorBurst() {
+  const [gen, setGen] = React.useState(0);
+  const sectionRef = React.useRef(null);
+  const btnRef     = React.useRef(null);
+
+  // Replay animation every time the slide becomes active (§6 pattern extended)
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new MutationObserver(() => {
+      if (el.hasAttribute('data-deck-active')) setGen(g => g + 1);
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['data-deck-active'] });
+    return () => obs.disconnect();
+  }, []);
+
+  // Native click handler (§1 — no onClick)
+  React.useEffect(() => {
+    const btn = btnRef.current;
+    if (!btn) return;
+    const h = () => setGen(g => g + 1);
+    btn.addEventListener('click', h);
+    return () => btn.removeEventListener('click', h);
+  }, []);
+
+  const DEP = { x: 960, y: 534 };
+  const SEG_DUR    = 440;  // ms per segment draw
+  const SEG_STRIDE = 370;  // ms between consecutive segments in same route
+  const RSTARTS    = [0, 560, 1120, 1680, 2240]; // route stagger offsets
+
+  const ROUTES = [
+    { color: "#FF3366", name: "Route A", cust: [{x:1264,y:162}, {x:1622,y:292}, {x:1794,y:470}] },
+    { color: "#00E5A0", name: "Route B", cust: [{x:1714,y:704}, {x:1494,y:900}, {x:1154,y:834}] },
+    { color: "#FFB800", name: "Route C", cust: [{x:796,y:918},  {x:496,y:958},  {x:196,y:826}]  },
+    { color: "#9B5DE5", name: "Route D", cust: [{x:178,y:612},  {x:96,y:366},   {x:344,y:196}]  },
+    { color: "#00B4D8", name: "Route E", cust: [{x:694,y:156},  {x:938,y:58},   {x:1148,y:138}] },
+  ];
+
+  // Dark text on bright-background nodes (amber, mint)
+  const tCol = c => (c === "#FFB800" || c === "#00E5A0") ? "#080b1e" : "#fff";
+
+  // Precompute segments and per-node fade-in delays
+  const comp = ROUTES.map((r, ri) => {
+    const rs   = RSTARTS[ri];
+    const wpts = [DEP, ...r.cust, DEP];
+    const segs = wpts.slice(0, -1).map((p, si) => {
+      const q = wpts[si + 1];
+      return { x1:p.x, y1:p.y, x2:q.x, y2:q.y,
+               len: Math.hypot(q.x-p.x, q.y-p.y),
+               delay: rs + si * SEG_STRIDE };
+    });
+    return { ...r, ri, segs,
+             nodeDelays: r.cust.map((_, ci) => rs + ci * SEG_STRIDE + SEG_DUR) };
+  });
+
+  // Legend fades in after last route finishes
+  const lgDelay = RSTARTS[4] + 3 * SEG_STRIDE + SEG_DUR + 350;
+
+  const RINGS = [120, 260, 420, 600, 790, 990];
+  const SPOTS = [
+    { x:155,  y:175,  r:190, c:"#FF3366" },
+    { x:1762, y:175,  r:168, c:"#00B4D8" },
+    { x:1782, y:858,  r:175, c:"#00E5A0" },
+    { x:138,  y:858,  r:158, c:"#9B5DE5" },
+    { x:960,  y:1012, r:138, c:"#FFB800" },
+  ];
+
+  return (
+    <section ref={sectionRef} className="slide" data-label="VRP in colour"
+      style={{ background: "#080b1e", overflow: "hidden" }}>
+
+      {/* ── Layer 1: static background ── */}
+      <svg viewBox="0 0 1920 1080"
+           style={{ position:"absolute", inset:0, width:"100%", height:"100%", pointerEvents:"none" }}>
+        <defs>
+          <pattern id="cb-dotgrid" x="0" y="0" width="52" height="52" patternUnits="userSpaceOnUse">
+            <circle cx="26" cy="26" r="1.2" fill="rgba(255,255,255,0.055)"/>
+          </pattern>
+        </defs>
+
+        {/* ambient colour blobs in each corner */}
+        {SPOTS.map((s, i) => (
+          <circle key={`sp${i}`} cx={s.x} cy={s.y} r={s.r} fill={s.c} opacity={0.09}/>
+        ))}
+
+        {/* dot grid */}
+        <rect x="0" y="0" width="1920" height="1080" fill="url(#cb-dotgrid)"/>
+
+        {/* concentric rings from depot */}
+        {RINGS.map((r, i) => (
+          <circle key={`rg${i}`} cx={DEP.x} cy={DEP.y} r={r}
+            fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="1.5"/>
+        ))}
+
+        {/* depot glow base */}
+        <circle cx={DEP.x} cy={DEP.y} r={56} fill="rgba(255,255,255,0.1)"/>
+      </svg>
+
+      {/* ── Layer 2: animated paths + nodes (remounted on gen change) ── */}
+      <svg key={gen} viewBox="0 0 1920 1080"
+           style={{ position:"absolute", inset:0, width:"100%", height:"100%", pointerEvents:"none" }}>
+
+        {/* glow halos (wide, low-opacity) — rendered before bodies so they sit under */}
+        {comp.map(r =>
+          r.segs.map((s, si) => (
+            <line key={`${r.name}G${si}`} x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2}
+              stroke={r.color} strokeWidth={18} strokeLinecap="round"
+              style={{ strokeDasharray:s.len, strokeDashoffset:s.len, "--len":s.len,
+                       opacity:0.17,
+                       animation:`drawPath ${SEG_DUR}ms both ease-in-out`,
+                       animationDelay:`${s.delay}ms` }}/>
+          ))
+        )}
+
+        {/* path bodies */}
+        {comp.map(r =>
+          r.segs.map((s, si) => (
+            <line key={`${r.name}B${si}`} x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2}
+              stroke={r.color} strokeWidth={6} strokeLinecap="round"
+              style={{ strokeDasharray:s.len, strokeDashoffset:s.len, "--len":s.len,
+                       opacity:0.92,
+                       animation:`drawPath ${SEG_DUR}ms both ease-in-out`,
+                       animationDelay:`${s.delay}ms` }}/>
+          ))
+        )}
+
+        {/* customer nodes — appear as each segment arrives */}
+        {comp.map((r, ri) =>
+          r.cust.map((c, ci) => (
+            <g key={`${r.name}N${ci}`}
+               style={{ opacity:0, animation:`fadeIn 320ms both ease-out`,
+                        animationDelay:`${r.nodeDelays[ci]}ms` }}>
+              <circle cx={c.x} cy={c.y} r={40} fill={r.color} opacity={0.16}/>
+              <circle cx={c.x} cy={c.y} r={24} fill={r.color}/>
+              <text x={c.x} y={c.y+8} textAnchor="middle"
+                fontFamily="JetBrains Mono, monospace" fontSize={17} fontWeight="700"
+                fill={tCol(r.color)}>{ri*3+ci+1}</text>
+            </g>
+          ))
+        )}
+      </svg>
+
+      {/* ── Layer 3: depot (static, always on top of paths) ── */}
+      <svg viewBox="0 0 1920 1080"
+           style={{ position:"absolute", inset:0, width:"100%", height:"100%", pointerEvents:"none" }}>
+        <circle cx={DEP.x} cy={DEP.y} r={38} fill="#fff"/>
+        <circle cx={DEP.x} cy={DEP.y} r={26} fill="#080b1e"/>
+        <text x={DEP.x} y={DEP.y+9} textAnchor="middle"
+          fontFamily="JetBrains Mono, monospace" fontSize={22} fontWeight="700" fill="#fff">D</text>
+      </svg>
+
+      {/* ── Title ── */}
+      <div style={{ position:"absolute", top:46, left:68, right:68 }}>
+        <div style={{ fontFamily:"Atkinson Hyperlegible, sans-serif",
+                      fontSize:58, fontWeight:700, color:"#fff", lineHeight:1.1 }}>
+          Five vehicles · five colours · one depot
+        </div>
+        <div style={{ marginTop:12, fontFamily:"JetBrains Mono, monospace",
+                      fontSize:23, color:"rgba(255,255,255,0.42)" }}>
+          {ROUTES.length} routes · {ROUTES.reduce((s,r)=>s+r.cust.length,0)} customers · every tour returns to D
+        </div>
+      </div>
+
+      {/* ── Route legend ── */}
+      <div style={{ position:"absolute", bottom:50, left:68, display:"flex", gap:36 }}>
+        {ROUTES.map((r, i) => (
+          <div key={i} style={{ display:"flex", alignItems:"center", gap:10,
+                                opacity:0, animation:`fadeIn 400ms both ease-out`,
+                                animationDelay:`${lgDelay + i*110}ms` }}>
+            <div style={{ width:40, height:6, borderRadius:3, background:r.color }}/>
+            <span style={{ fontFamily:"JetBrains Mono, monospace", fontSize:19, color:r.color }}>
+              {r.name}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Replay button (native click via ref, §1) ── */}
+      <button ref={btnRef} style={{
+        position:"absolute", bottom:46, right:68,
+        background:"rgba(255,255,255,0.07)", border:"1px solid rgba(255,255,255,0.15)",
+        color:"rgba(255,255,255,0.6)", fontFamily:"JetBrains Mono, monospace",
+        fontSize:19, padding:"12px 26px", cursor:"pointer", borderRadius:4,
+      }}>↺ replay</button>
+    </section>
+  );
+}
+
+
 // A → Ā simplification: animated removal of forbidden B→L arcs.
 // Inserted after Slide22Load (partial loads), becomes slide 57.
 function Slide22Simplify() {
@@ -2561,6 +2751,6 @@ function Slide23B() {
 
 Object.assign(window, {
   Slide19, Slide20, Slide21, Slide21B, Slide21C, Slide21D,
-  Slide22Intro, Slide22Load, Slide22Simplify, Slide22LoadB, Slide22, Slide22B, Slide22Form,
+  Slide22Intro, Slide22Load, SlideColorBurst, Slide22Simplify, Slide22LoadB, Slide22, Slide22B, Slide22Form,
   Slide23Intro, Slide23Load, Slide23Req, Slide23, Slide23Form, Slide23B,
 });
